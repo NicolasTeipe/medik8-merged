@@ -1,0 +1,90 @@
+<div id="wayfx-product-bar">
+    <div class="wayfx-wrapper">
+        <div class="wayfx-product-bar__left">
+            <div class="wayfx-product-bar__title">{{ product.title }}</div>
+            {% if product_size %}
+                <div class="wayfx-product-bar__size">
+                    {{ product_size }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="wayfx-product-bar__right">
+            <div class="wayfx-product__actions">
+                <div class="yotpo bottomLine"
+                     data-product-id="{{ product.id }}"
+                     data-product-models="{{ product.id }}"
+                     data-name="{{ product.title | escape }}"
+                     data-url="{{ shop.url }}{{ product.url }}"
+                     data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
+                     data-description="{{ product.description | escape }}"
+                     data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+                </div>
+                <button class="js-anchor-scroll-button btn btn--small">{{ 'products.product.buy_now' | t }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+  DomReadyPromise().then(() => {
+  
+    const isInViewport = el => {
+      const rect = el.getBoundingClientRect()
+      return (
+        rect.bottom > 0 &&
+        rect.right > 0 &&
+        rect.top < (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth)
+      )
+    }
+    
+    const showProductBar = () => {
+      const viewportTop = window.pageYOffset
+      const header = document.querySelector('.js-header-main')
+      let additionalOffset = 0
+      const msgBar = document.querySelector('.js-below-header-msg-bar')
+      if(msgBar) additionalOffset += msgBar.offsetHeight - 1
+      const stickyTopValue = header.offsetHeight + additionalOffset + (header.offsetTop - viewportTop)
+      const addToCart = document.querySelector('#AddToCart')
+      const wayfxProductBar = document.querySelector('#wayfx-product-bar')
+    
+      if (isInViewport(addToCart) && !addToCart.classList.contains('hide')) {
+        wayfxProductBar.classList.remove('active')
+      } else {
+        if (viewportTop > 700 && !addToCart.classList.contains('hide')) {
+          wayfxProductBar.classList.add('active')
+          wayfxProductBar.style.top = `${stickyTopValue}px`
+        }
+      }
+    }
+    
+    window.addEventListener('resize', showProductBar)
+    window.addEventListener('scroll', showProductBar)
+    
+    showProductBar()
+
+    const anchorScrollButton = document.querySelector('.js-anchor-scroll-button:not([data-bound])')
+    if(anchorScrollButton){
+      anchorScrollButton.dataset.bound = true    
+      anchorScrollButton.addEventListener('click',(e) => {
+        const top = ( 
+          window.innerWidth <= 1023 ? 
+            ( document.querySelector('.js-product-form-wrapper').getBoundingClientRect().top + window.pageYOffset - 
+              ( document.querySelector('.js-header-main')?.offsetHeight || 0 ) -
+              ( document.querySelector('.js-below-header-msg-bar')?.offsetHeight || 0 )
+            ) :
+            0
+        )
+
+        window.scrollTo({
+          top: top ,
+          behavior: 'smooth'
+        });
+        
+      })
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

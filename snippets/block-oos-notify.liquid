@@ -1,0 +1,73 @@
+<h3>{{ section.settings.oos__heading }}</h3>
+<div class="rte">{{ section.settings.oos__content }}</div>
+<form class="js-oos-notification-form form-vertical">
+  <input type="email" 
+         name="email" 
+         class="input-full" 
+         aria-label="Enter your email address"
+         placeholder="Email" 
+         autocorrect="off" 
+         autocapitalize="off" 
+         required>
+  <button aria-label="Sign up for notifications" type="submit" class="btn btn--full btn--large btn--row">{{ section.settings.oos__button_text }}</button>
+  <div class="js-oos-notification-form__message rte">{{ section.settings.oos__below_button__default }}</div>
+</form>
+
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.js-oos-notification-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+  
+      const form = e.currentTarget;
+      const message = form.querySelector('.js-oos-notification-form__message');
+      const emailInput = form.querySelector('[name="email"]');
+      const productSelect = document.getElementById('productSelect');
+      
+      const oosFormMessageStates = {
+        default:{{ section.settings.oos__below_button__default | json }},
+        success:{{ section.settings.oos__below_button__success | json }},
+        error:{{ section.settings.oos__below_button__error | json }}
+      }
+  
+      const url = 'https://a.klaviyo.com/client/back-in-stock-subscriptions/?company_id={{ settings.klaviyo_api }}'
+  
+      const options = {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          revision: '2024-02-15',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          data: {
+            type: 'back-in-stock-subscription',
+            attributes: {
+              channels: ['EMAIL'],
+              profile: {
+                data: {
+                  type: 'profile',
+                  attributes: {
+                    email: emailInput.value,
+                  }
+                }
+              }
+            },
+            relationships: {
+              variant: {
+                data: {
+                  type: 'catalog-variant',
+                  id: `$shopify:::$default:::${productSelect.value}`
+                }
+              }
+            }
+          }
+        })
+      };
+  
+      fetch(url, options)
+      .then(() => message.innerHTML = oosFormMessageStates.success)
+      .catch(() => message.innerHTML = oosFormMessageStates.error);
+    });
+  });
+</script>

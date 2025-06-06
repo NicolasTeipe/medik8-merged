@@ -1,0 +1,159 @@
+{% if settings.search_provider == 'algolia' %}
+  {{ "stylesheets.algolia-search.css" | asset_url | stylesheet_tag }}
+
+  {%- capture wayfx_search_icon -%}
+  <button aria-label="Search" id="header-search-icon" class="wayfx-header__icon search-icon">
+    <i class="wayfx-icon wayfx-icon-search"></i>
+  </button>
+  {%- endcapture -%}
+
+  <algolia-search-header class="hide flex justify-center">
+    <div class="inner">
+      <form action="/search" method="get" role="search" class="block-rel" autocomplete="off">
+        {{ wayfx_search_icon }}
+        <input aria-label="{{ 'general.search.placeholder' | t }}"
+                type="search"
+                name="q"
+                placeholder="{{ 'general.search.placeholder' | t }}"
+                class="ag-input t-rm">
+                <input hidden name="view" value="ag">
+      </form>
+      <div class="ag-products"></div>
+      <div class="ag-links"></div>
+    </div>
+
+    <button aria-label="Close Search" type="button" id="algoliaSearchClose">
+      {%- render 'icon-close' -%}
+    </button>
+
+    <template>
+      {%- assign link_list = section.settings.algolia_links_default -%}
+      {
+        "translations": {
+          "shop_all": "{{ 'general.search.shop_all' | t }}",
+          "view_all": "{{ 'general.search.view_all' | t }}",
+          "results_no_search": "{{ 'general.search.results.no_search' | t }}",
+          "results_false": "{{ 'general.search.results.false' | t }}",
+          "results_true": "{{ 'general.search.results.true' | t }}"
+        },
+        "agConfig": {
+          "appId": "{{ section.settings.algolia_app_id }}",
+          "publicApi": "{{ section.settings.algolia_api_key }}",
+          "prefix": "{{ section.settings.algolia_index_prefix }}",
+          "indices": {
+            "products": true,
+            "collections": true,
+            "pages": {%- if section.settings.algolia_display_pages -%}true{%- else -%}false{%- endif -%},
+            "articles": {%- if section.settings.algolia_display_articles -%}true{%- else -%}false{%- endif -%}
+          },
+          "debounce": "{{ section.settings.algolia_debounce }}"
+        },
+        "settings": {
+          "shop_all_url": "{{ section.settings.algolia_shop_all }}",
+          "currency": "{{ cart.currency.symbol }}",
+          "titles": {
+            "collections": "{{ section.settings.algolia_collection_header }}",
+            "content": "{{ section.settings.algolia_content_header }}"
+          }
+        },
+        "defaultLinks": [{%- for title in link_list.links -%}{"{{ title.title }}": { {%- for link in title.links -%}"{{ link.title }}": "{{ link.url }}"{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]
+      }
+    </template>
+  </algolia-search-header>
+
+  <div class="algolia-mask hide"></div>
+
+  <script type="text/javascript">
+    window.algoliaThemeSettings = {{ section.settings | json }}
+  </script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Algolia Search Header",
+    "tag": "section",
+    "class": "algolia",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Algolia Configuration"
+      },
+      {
+        "type": "text",
+        "id": "algolia_app_id",
+        "label": "Algolia App ID"
+      },
+      {
+        "type": "text",
+        "id": "algolia_api_key",
+        "label": "Algolia Search ID",
+        "info": "The public 'Search API Key'"
+      },
+      {
+        "type": "text",
+        "id": "algolia_index_prefix",
+        "label": "Algolia Index Prefix",
+        "info": "For example: 'uk', 'us', 'int'"
+      },
+      {
+        "type": "range",
+        "id": "algolia_debounce",
+        "min": 0,
+        "max": 1000,
+        "step": 50,
+        "label": "Debounce",
+        "default": 500,
+        "info": "The time, in ms, between releasing a key, and the search being performed. Releasing another key before this time will reset the timer."
+      },
+      {
+        "type": "header",
+        "content": "Search Results"
+      },
+      {
+        "type": "checkbox",
+        "id": "algolia_display_pages",
+        "label": "Display Pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "algolia_display_articles",
+        "label": "Display Articles",
+        "default": true
+      },
+      {
+        "type": "paragraph",
+        "content": "If displaying both pages & articles, the results will be combined into 1 section."
+      },
+      {
+        "type": "text",
+        "id": "algolia_collection_header",
+        "label": "Collection Links Title",
+        "default": "Collections"
+      },
+      {
+        "type": "text",
+        "id": "algolia_content_header",
+        "label": "Content Links Title",
+        "default": "Content"
+      },
+      {
+        "type": "link_list",
+        "id": "algolia_links_default",
+        "label": "Default Search Links",
+        "info": "The links to display when there is no search query."
+      },
+      {
+        "type": "url",
+        "id": "algolia_shop_all",
+        "label": "Link: Shop All",
+        "info": "Used when there are no products to display / link to."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Algolia Search Header"
+      }
+    ]
+  }
+{% endschema %}

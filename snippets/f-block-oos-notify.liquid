@@ -1,0 +1,45 @@
+<f-oos-notify
+  data-message-default="{{ section.settings.oos__below_button__default | escape }}"
+  data-message-success="{{ section.settings.oos__below_button__success | escape }}"
+  data-message-error="{{ section.settings.oos__below_button__error | escape }}"
+  data-product="{{ product.id }}"
+  data-klaviyo-api="{{ settings.klaviyo_api }}"
+  data-klaviyo-list-id="{{ settings.klaviyo_list_id }}"
+>
+  <h3>{{ section.settings.oos__heading }}</h3>
+
+  <div class="js-oos-notification-form__content rte">
+    {{ section.settings.oos__content }}
+  </div>
+
+  <div class="js-oos-notification-form form-vertical">
+    <input type="email"
+          name="email"
+          class="input-full"
+          aria-label="Enter your email address"
+          placeholder="Email"
+          autocorrect="off"
+          autocapitalize="off"
+          required>
+
+    <label for="oos-accept-policy" class="js-oos-notification-form__accept-policy">
+      <input type="checkbox" name="oos-accept-policy" id="oos-accept-policy">
+      <div class="js-oos-notification-form__accept-policy__content rte">
+        {{ section.settings.oos__accept_policy_text }}
+      </div>
+    </label>
+
+    <button
+      aria-label="Sign up for notifications"
+      class="btn btn--full btn--large btn--row"
+    >
+      {{ section.settings.oos__button_text }}
+    </button>
+
+    <div class="js-oos-notification-form__message rte">
+      {{ section.settings.oos__below_button__default }}
+    </div>
+  </div>
+</f-oos-notify>
+
+<script src="{{ 'f-block-oos-notify.js' | asset_url }}" defer></script>

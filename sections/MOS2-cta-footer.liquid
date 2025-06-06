@@ -1,0 +1,75 @@
+{%- assign background_color = section.settings.background_color -%}
+{%- assign image = section.settings.image | image_url: height: 208 -%}
+{%- assign heading = section.settings.heading -%}
+{%- assign paragraph = section.settings.paragraph -%}
+{%- assign cta_link = section.settings.cta_link -%}
+{%- assign cta_text = section.settings.cta_text -%}
+
+{%- if background_color != blank -%}
+    <style type="text/css">
+        .wayfx-block--cta-footer {background: {{ background_color }}};
+    </style>
+{%- endif -%}
+
+<div class="wayfx-wrapper">
+    {% if image %}
+        <div class="wayfx-block__image">
+            <img width="208" height="208" loading="lazy" src="{{ image }}" alt="" />
+        </div>
+    {% else %}
+        {% if heading != blank %}
+            <h2 class="h2--primary">{{ heading }}</h2>
+        {% endif %}
+    {% endif %}
+    {% if paragraph != blank %}{{ paragraph }}{% endif %}
+    {% if cta_link != blank and cta_text != blank %}
+        <a href="{{ cta_link }}" class="btn--invert btn--xlarge">{{ cta_text }}</a>
+    {% endif %}
+</div>
+
+{% schema %}
+{
+    "name": "CTA - Footer",
+    "tag": "section",
+    "class": "wayfx-block wayfx-block--cta-footer mos2--component",
+    "presets": [
+      {
+        "name": "CTA - Footer"
+      }
+    ],
+    "settings": [
+        {
+            "id": "background_color",
+            "type": "color",
+            "label": "Background Color",
+            "default": "#000"
+        },
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Header Image",
+            "info": "This will take place of the header text"
+        },
+        {
+            "id": "paragraph",
+            "type": "richtext",
+            "label": "Paragraph"
+        },
+        {
+            "id": "cta_text",
+            "type": "text",
+            "label": "CTA Text"
+        },
+        {
+            "id": "cta_link",
+            "type": "url",
+            "label": "CTA Link"
+        }
+    ]
+}
+{% endschema %}

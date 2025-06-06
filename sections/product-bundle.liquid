@@ -1,0 +1,264 @@
+{% case section.blocks.size %}
+  {% when 2 %}
+    {% assign layout = "half" %}
+  {% when 3 %}
+    {% assign layout = "third" %}
+{% endcase%}
+
+<div class="product_bundler">
+  <div class="wayfx-wrapper">
+    <div class="reward-block-wrapper">
+      <div class="wayfx-block__heading block-para-head">
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2--primary text-center">{{ section.settings.title | escape }}</h2>
+        {%- endif -%} 
+        {%- if section.settings.subtitle != blank -%}
+          <p class="text-center">{{ section.settings.subtitle }}</p>
+        {%- endif -%} 
+      </div>
+    </div>
+    <div class="grid">
+      <div class="grid__item one-third medium-down--one-whole">
+        <div class="bundle_img_wrapper">
+          {% if section.settings.bundle_image == blank %}
+            {{ 'product-5' | placeholder_svg_tag }}
+            <div class="bundle_content">{{section.settings.bundle_content}}</div>
+          {% else %}
+            <div class="bundle_img-{{section.id}}"></div>
+            <div class="bundle_content">{{section.settings.bundle_content}}</div>
+          {% endif%}
+        </div>
+      </div>
+      <div class="grid__item two-thirds medium-down--one-whole product-cards">
+        {% for block in section.blocks %}
+          {% assign product = block.settings.product %}
+          {% assign discount = block.settings.discount_percentage %}   
+            <div class="bundle-product grid__item one-{{layout}}">
+            {% if product.variants.size > 1 %}
+              {% assign index = forloop.index %}
+              {% if block.settings.variant_sku != blank%}
+                {% for variant in product.variants %}
+                  {%- if variant.sku == block.settings.variant_sku -%}
+                    {% render 'MOS2-product-grid-item' product_layout: "minimal", product: product, variant: variant, block_id: block.id, discount: discount %}
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <p>{{ 'sections.admin_info.product_with_variants' | t }}</p>
+              {% endif%}
+            {% else %}
+              {% render 'MOS2-product-grid-item' product_layout: "minimal", product: product, block_id: block.id, discount: discount %}
+            {% endif %} 
+          </div>
+
+        {% endfor %}
+        <div class="grid__item one-whole no-padding">
+          <button class="btn--full btn--outline" id="bundle--{{section.id}}"
+                {% for block in section.blocks %}
+                  data-product-{{block.id}}="{{block.settings.product.selected_or_first_available_variant.id}}"
+                {% endfor%}>
+                {{section.settings.bundle_cta_text}}
+          </button>
+        </div>
+      </div>    
+    </div>
+  </div>
+</div>
+
+<style>
+#bundle--{{section.id}}.btn--adding {
+  background: #1a1a1a !important;
+}
+.bundle_img-{{section.id}} {
+  height: 100%;
+  border-radius: 7px;
+  position:relative;
+  background:   url("{{section.settings.bundle_image | image_url: height: 500 }}") no-repeat;
+  background-size: cover;
+  background-position: {{section.settings.bundle_img_position}};
+}
+</style>
+
+<script>
+// Wait for page to be parsed
+document.addEventListener ("DOMContentLoaded", function() {  
+  // Making an event listener for the alternate buy button in the Liquid part
+  const btn = document.getElementById ("bundle--{{section.id}}");
+  btn.addEventListener("click", (e) => {
+    const data = {
+      items: [
+        {% for block in section.blocks %}
+          {% assign product = block.settings.product %}
+          {% assign product_value = 100 %} 
+          {% assign discount_percentage = block.settings.discount_percentage %}
+          {% assign discounted_value = product_value | minus: discount_percentage %}
+          {% assign value_discounted = product.price_max | times: discount | divided_by: 100 %}
+          {% assign final_price = product.price_max | minus: value_discounted %}
+          {% if block.settings.variant_sku != blank %}
+            {% for variant in product.variants %}
+              {%- if variant.sku == block.settings.variant_sku -%}
+                {% assign variant_id = variant.id %}
+              {% endif %}
+            {% endfor%}
+          {% else %}
+            {% assign variant_id = block.settings.product.selected_or_first_available_variant.id %}
+          {% endif %}
+          {
+            quantity: 1,  
+            id: {{variant_id}},
+            properties: {
+              _bundle_id: '{{ section.id }}',
+              _bundle: '{{ section.settings.bundle_name }}',  
+              _bundle_discount: {{ discounted_value | divided_by: 100.00 }},
+              _bundle_prod_count: {{section.blocks.size}}
+
+            }
+          },
+        {% endfor %}
+      ]
+    }
+
+  let buttonHtml = $("#bundle--{{section.id}}").html();
+
+  $("#bundle--{{section.id}}")
+    .addClass('btn--adding')
+      .html('<img style="position: relative; top: 1px; max-width: 20px;" src="https://cdn.medik8.com/dd7aab93-06ca-45e0-939c-af4b7956bcb8/loader.svg" alt="" />');
+
+  // Making the fetch request using Shopify Routes to ensure no issues with localisation
+  fetch(window.Shopify.routes.root+'cart/add.js', {
+    body: JSON.stringify(data),
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'xmlhttprequest'
+      },
+      method: 'POST'
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      {% comment %} console.log('Result: ', json) {% endcomment %}
+      window.GlobalCartMain.updateData()
+      window.globalSideBarUI__cart.open()
+      $("#bundle--{{section.id}}")
+          .removeClass('btn--adding')
+            .html(buttonHtml);
+    }).catch( (err) => {
+      {% comment %} console.error(err) {% endcomment %}
+    });
+  });
+});
+</script>
+
+{% schema %}
+  {
+    "name": "Product Bundle Builder",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Bundle header"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Bundle Title",
+        "default": "Bundle title message"
+      },
+      {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Bundle Subtitle",
+        "default": "Bundle Subtitle message"
+      },
+      {
+        "type": "header",
+        "content": "Bundle Settings"
+      },
+      {
+        "type": "text",
+        "id": "bundle_name",
+        "label": "Bundle Identifier",
+        "default": "Special Bundle",
+        "info": "Also displayed as the bundle message"
+      },
+      {
+        "type": "image_picker",
+        "id": "bundle_image",
+        "label": "Bundle Image"
+      },
+      {
+        "type": "select",
+        "id": "bundle_img_position",
+        "label": "Bundle Image alignment",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "bundle_content",
+        "default": "Additional <i>Bundle</i> <b>Content</b>",
+        "label": "Bundle Additional Content"
+      },
+      {
+        "type": "text",
+        "id": "bundle_cta_text",
+        "label": "Bundle CTA text",
+        "default": "Buy Now"
+      }
+    ],
+    "max_blocks": 3,
+    "blocks": [
+      {
+        "name": "Product",
+        "type": "product",
+        "settings": [
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Select Product"
+          },
+          {
+            "type": "text",
+            "id": "variant_sku",
+            "label": "Product Variant",
+            "info": "Specify the product variant for discount - (leave empty if no variant)"
+          },
+          {
+            "type": "range",
+            "id": "discount_percentage",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "%",
+            "label": "Product Discount",
+            "default": 0
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Product Bundle Builder",
+        "blocks": [
+          {
+            "type": "product"
+          },
+          {
+            "type": "product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

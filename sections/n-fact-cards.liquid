@@ -1,0 +1,123 @@
+{%- assign row_1_heading = section.settings.row_1_heading -%}
+{%- assign row_2_heading = section.settings.row_2_heading -%}
+<div class="wayfx-wrapper">
+    {% if row_1_heading %}<h2 class="h2--primary text-center">{{ row_1_heading }}</h2>{% endif %}
+    <div class="grid flex flex row-wrap align-stretch justify-left wayfx-block__row">
+      	{%- assign delay = 150 -%}
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'row-1' %}
+                    {%- assign image = block.settings.image -%}
+                    {%- assign title = block.settings.title -%}
+                    {%- assign paragraph = block.settings.paragraph -%}
+                    <div class="grid__item large--one-quarter one-half">
+                        <div class="wayfx-block__card block-fh" data-aos="fade-up" data-aos-delay="{{ delay }}" data-aos-offset="300">
+                            <div class="wayfx-image">
+                                <img loading="lazy" alt="{{ image.alt }}" width="96" height="96" data-blink-src="{{ image | image_url: height: 96 }}" alt="" />
+                            </div>
+                            <div class="wayfx-text">
+                                <h3 class="h4--primary">{{ title }}</h3>
+                                <p>{{ paragraph }}</p>
+                            </div>
+                        </div>
+                    </div>
+      				{%- assign delay = delay | plus: 100 -%}
+            {% endcase %}
+        {% endfor %}
+    </div>
+    {% if row_2_heading %}<h2 class="h2--primary text-center">{{ row_2_heading }}</h2>{% endif %}
+    <div class="grid flex flex row-wrap align-stretch justify-left wayfx-block__row">
+      	{%- assign delay = 150 -%}
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'row-2' %}
+                {%- assign image = block.settings.image -%}
+                {%- assign title = block.settings.title -%}
+                {%- assign paragraph = block.settings.paragraph -%}
+                    <div class="grid__item large--one-quarter one-half">
+                        <div class="wayfx-block__card block-fh" data-aos="fade-up" data-aos-delay="{{ delay }}" data-aos-offset="300">
+                            <div class="wayfx-image">
+                                <img loading="lazy" alt="{{ image.alt }}" width="96" height="96" data-blink-src="{{ image | image_url: height: 96 }}" alt="" />
+                            </div>
+                            <div class="wayfx-text">
+                                <h3 class="h4--primary">{{ title }}</h3>
+                                <p>{{ paragraph }}</p>
+                            </div>
+                        </div>
+                    </div>
+      				{%- assign delay = delay | plus: 100 -%}
+            {% endcase %}
+        {% endfor %}
+    </div>
+
+</div>
+
+{% schema %}
+    {
+      "name": "Fact Cards",
+      "presets": [
+        {
+          "name": "Fact Cards",
+          "category": "Text"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--fact-cards",
+      "settings": [
+        {
+            "id": "row_1_heading",
+            "type": "text",
+            "label": "Row 1 Heading"
+        },
+        {
+            "id": "row_2_heading",
+            "type": "text",
+            "label": "Row 2 Heading"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "row-1",
+            "name": "Row 1 Fact Card",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Icon"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "text",
+                    "label": "Paragraph"
+                }
+            ]
+        },
+        {
+            "type": "row-2",
+            "name": "Row 2 Fact Card",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Icon"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "text",
+                    "label": "Paragraph"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}

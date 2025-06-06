@@ -1,0 +1,265 @@
+{%- assign is_account_portal = false -%}{%- if request.path contains '/tools/recurring' -%}{%- assign is_account_portal = true -%}{%- endif -%}
+<!doctype html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="{{ request.locale.iso_code  }}"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js" lang="{{ request.locale.iso_code  }}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{ request.locale.iso_code }}"> <!--<![endif]-->
+<head>
+  <!-- Google Consent Mode V2 Consentmo -->
+{% render 'gcm-integration-script' %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  {%- if settings.favicon_enable -%}
+  <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+  {%- endif -%}
+  <title>
+    {% if template == 'search.ag' %}
+      Search: results for {{ search.term }}
+    {% else %}
+    {{ page_title | replace: "[hidden]", "" }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    {% endif %}
+  </title>
+
+  {%- if page_description -%}
+  <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+  {%- render 'social-meta-tags' -%}
+  {% if template contains 'collection' %}
+  <link rel="canonical" href="{{ shop.url }}{{ collection.url }}" />
+  {% else %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  {% endif %}
+  {%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-predictive-search.css' | asset_url }}" media="print" onload="this.media='all'">
+  {%- endif -%}
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <script>
+  (function(w,d,t,r,u)
+  {
+    var f,n,i;
+    w[u]=w[u]||[],f=function()
+    {
+      var o={ti:"97030992", enableAutoSpaTracking: true};
+      o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")
+    },
+    n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function()
+    {
+      var s=this.readyState;
+      s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)
+    },
+    i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)
+  })
+  (window,document,"script","//bat.bing.com/bat.js","uetq");
+</script>
+  
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+  <meta name="format-detection" content="telephone=no">
+
+  {%- render 'noindex' -%}
+  {%- render 'pages-template-redirect' -%}
+
+  {%- render 'header-scripts' -%}
+
+  {{ "discounts.css" | asset_url | stylesheet_tag }}
+
+  {%- if hreflang_snippet -%}
+    {% include 'gwa-hreflang' %}
+  {%- endif -%}
+  {{ content_for_header }}
+
+  {% render 'module-header-scripts' %}
+
+{% comment %}theme-check-disable {% endcomment %}
+  <!-- Loyalty LION script --> 
+  {% include "loyaltylion" %}
+{% comment %}theme-check-enable {% endcomment %}
+
+{%- comment -%} See MED-2140 {%- endcomment -%}
+{%- capture analyzify_body_content -%}
+  {% render 'analyzify-gtm-body' %}
+{%- endcapture -%}
+{% unless analyzify_body_content contains 'Liquid error' %}
+  {{ analyzify_body_content }}
+{% endunless %}
+
+{% render 'theme-settings-to-js' %}
+
+{% render 'symplify-analytics' %}
+
+{%- comment -%} Load global css {%- endcomment -%}
+{{ 'stylesheets.global.css' | asset_url | stylesheet_tag: preload: true }}
+
+{%- if request.path contains '/policies/' -%}
+  {{ 'policies.css' | asset_url | stylesheet_tag: preload: true }}
+{%- endif -%}
+
+{{ 'recharge-variables.css' | asset_url | stylesheet_tag: preload: true }}
+
+{%- render 'f-product-config' -%}
+
+{%- if template contains 'collection' or template contains 'product' %}
+  <script src="{{ 'f-breadcrumb.js' | asset_url }}" defer></script>
+{% endif %}
+
+
+
+  <meta name="google-site-verification" content="GstPQsEtN_8-YsXie6DXZJ5JNhr0ihybiCkvX4BZmvE" />
+        </head>
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}" >
+
+  {% section 'global__product-pre-sale' %}
+  {% render 'quick-view-item-script' %}
+  {% render 'module-body-scripts' %}
+
+  {% section 'announcement-bar' %}
+  {% section 'header' %}
+  {% section 'algolia-search-header' %}
+  {% section 'header-below' %}
+
+  {%- capture cfl -%}
+    {{ content_for_layout }}
+  {%- endcapture -%}
+
+  <div id="PageContainer">
+
+    
+    <main role="main" class="wayfx-main">
+      {% render 'content_for_layout', cfl: cfl %}
+    </main>
+
+    {%- if template == 'index' or template == 'collection' %}
+        {% section 'global-3column-cta' %}
+    {% endif %}
+    {% section 'footer' %}
+
+  </div>
+
+  <script src="{{ 'wayfx.js' | asset_url }}" defer></script>
+
+  <script>
+    {% if settings.resetPassword %}
+    $(function() {
+      wayfx.resetPasswordSuccess();
+    });
+    {% endif %}
+  </script>
+
+
+
+
+  <script type="text/javascript">(function e(){var e=document.createElement("script");e.type="text/javascript",e.async=true,e.src="//staticw2.yotpo.com/{{ settings.yotpo_api_key }}/widget.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();</script>
+
+  {% for country in localization.available_countries %}
+    {% if country.market.metafields.custom.default_market == true %}
+      {% assign default_market = country.iso_code %}
+    {% endif %}
+  {% endfor %}
+
+  <script>
+    {% comment %} Moved over from dawn {% endcomment %}
+
+    window.shopUrl = '{{ shop.url }}';
+    window.default_market = '{{ default_market }}'
+    window.routes = {
+      predictive_search_url: '{{ routes.predictive_search_url }}'
+    };
+  </script>
+
+
+  <!-- Temp mobile viewport bug fix  -->
+  <style>
+
+    .js-drawer-open-right .drawer--right {
+      max-height: 100vh;
+      max-height: -webkit-fill-available;
+    }
+
+  </style>
+
+  <!--   Quickfix for ingredients page section padding -->
+{% if canonical_url contains "/shop-by-ingredient" %}
+  <style>
+    .wayfx-block--callout-3column {
+      padding: 0 !important;
+      background: white !important;
+    }
+  </style>
+{% endif %}
+
+<!-- Find local store skincare page (temp) -->
+{% if canonical_url contains "/find-local-store-skincare" %}
+  <style>
+    [class^="wayfx-space--"] {
+      display: none;
+    }
+    .wayfx-block--faq {
+      border-bottom: 1px solid #bfbfbf !important;
+    }
+  </style>
+  <script>
+    setTimeout(function() {
+      $(".wayfx-block--faqs").each(function(i) {
+        if (i == 0) {
+          $(this).css('margin-bottom', '-3em');
+        }
+      });
+    });
+  </script>
+{% endif %}
+
+
+
+<script>
+
+{% if template == 'cart' %}
+  $(".cart__variant:contains('Reward')").hide()
+  .closest('.cart__info')
+  .append('<div class="cart-item__discount cart-item__discount--mobile"><i class="wayfx-icon wayfx-icon-tag"></i> Regalo</div>');
+{% endif %}
+
+</script>
+
+{% render 'discounts' %}
+
+{%- if shop.name == 'Medik8-US' -%}
+  <script type='text/javascript'>
+    var script = document.createElement('script');
+    script.src = 'https://xp2023-pix.s3.amazonaws.com/px_2p2PC.js';
+    document.getElementsByTagName('head')[0].appendChild(script);
+  </script>
+{%- endif -%}
+
+
+{% render 'swymSnippet' %}
+
+{% render 'provenance_sdk' %}
+
+    <style>
+ .read-more-collection:hover{cursor:pointer}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js">
+</script>
+<script>
+  var jq224 = jQuery.noConflict(true);
+  jq224('#truncated').on('click', function(){
+    jq224('#truncated').fadeOut(300, function(){ 
+      jq224('#fullDescription').fadeIn(500);
+    })
+  });
+</script>
+
+  <!-- Kolsquare script for tracking order -->
+  <script>
+if (window) {const urlParams = new URLSearchParams(window?.location?.search);
+const sales_token = urlParams.get('ts');
+if (sales_token) {window.localStorage.setItem('kolsquare', JSON.stringify({ sales_token }));}}
+</script>
+</body>
+</html>
+
+{%- comment -%}
+  // Keep only whilst the US store is transitioning to the new v2 PDP template
+  // Once complete, this section can be removed.
+{%- endcomment -%}
+{%- if shop.name == 'Medik8-US' and template.suffix != 'v2' -%}
+  {%- render 'afterpay' -%}
+{%- endif -%}

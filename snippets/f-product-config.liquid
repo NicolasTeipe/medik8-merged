@@ -1,0 +1,15 @@
+{%- comment -%}
+  This snippet is run from the head and is used to configure any resources required for the new PDP templates
+{%- endcomment -%}
+
+{%- comment -%}
+  Build an array of product template names for the new product template(s).
+{%- endcomment -%}
+{%- assign new_pdp_templates = 'product.v2' | split: ',' -%}
+
+{% liquid
+  if new_pdp_templates contains template
+    echo 'main-product.css' | asset_url | stylesheet_tag: preload: true
+    echo 'f-product-accordion.css' | asset_url | stylesheet_tag: preload: true
+  endif
+%}

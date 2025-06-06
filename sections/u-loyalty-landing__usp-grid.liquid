@@ -1,0 +1,112 @@
+<div class="block-grid block-grid--f flex flex-grid--x2 row-wrap align-top justify-center tac">
+  {% if section.settings.h1 %}
+    <h1 class="block-12/12 h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h1>
+  {% else %}
+    <h2 class="block-12/12 h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.blocks %}
+  <div class="flex  row-wrap align-centtoper justify-center tac">
+    {% for block in section.blocks %}
+      <div class="row--x2 block-4/12 cell-l cell-r flex column-wrap flex-grid align-center justify-left @mobile__block-11/12">
+        {% if block.settings.title %}
+        <h3 class="h-style h-style--accent t-xl lh-s">{{ block.settings.title }}</h3>
+        {% endif %}
+        {% if block.settings.sub_heading %}
+        <h4 class="h-style t-ucase t-m f-w600">{{ block.settings.sub_heading }}</h4>
+        {% endif %}
+        {% if block.settings.text %}
+        <div class="rte-content t-m lh-ml">
+          {{ block.settings.text }}
+        </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+    color:{{ section.settings.color }};
+    background:{{ section.settings.background }};
+    padding:var(--gutter-unit-x4) 0 var(--gutter-unit-x2);
+  }
+</style>
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/usp-grid",
+  "limit":1,
+  "settings":[
+    {
+      "type":"header",
+      "content":"design/color-scheme"
+    },
+    {
+      "type":"color",
+      "id":"background",
+      "label":"Color:Background",
+      "default":"#000000"
+    },
+    {
+      "type":"color",
+      "id":"color",
+      "label":"Color:Text",
+      "default":"#ffffff"
+    },
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin"
+    },
+    {
+      "type":"header",
+      "content":"Content:heading"
+    },
+    
+    {
+      "type": "checkbox",
+      "id": "h1",
+      "label": "is h1",
+      "default":false
+    }, 
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading"
+    }
+  ],
+  "blocks":[ 
+    { 
+      "type":"block",
+      "name":"block",
+      "settings":[ 
+      
+        { 
+          "type":"text",
+          "id":"title",
+          "label":"Heading"
+        },
+        { 
+          "type":"text",
+          "id":"sub_heading",
+          "label":"Sub-heading"
+        },
+        { 
+          "type":"richtext",
+          "id":"text",
+          "label":"Text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,54 @@
+<div class="note form-success" id="ResetSuccess" style="display:none;">
+  {{ 'customer.recover_password.success' | t }}
+</div>
+<div id="CustomerLoginForm">
+  {% form 'customer_login' %}
+    {% if template contains 'blank-login' or template contains 'ajax' %}
+      <input type="hidden" name="return_to" value="/pages/my-medik8-rewards">
+    {% endif %}
+
+    {% if template contains "collection" and template.suffix contains "rewards" %}
+      <input type="hidden" name="return_to" value="/collections/my-medik8-rewards">
+    {% endif%}
+
+    <div class="text-center">
+      <h2 class="h2--secondary">{{ 'customer.login.title' | t }}</h2>
+    </div>
+
+    {%- if request.path contains '/login' -%}
+      {{ form.errors | default_errors }}
+    {%- endif -%}
+
+    <label for="CustomerEmail" class="hidden-label">{{ 'customer.login.email' | t }}</label>
+    <input type="email" name="customer[email]" id="CustomerEmail" required class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" autofocus>
+
+    {% if form.password_needed %}
+      <label for="CustomerPassword" class="hidden-label">{{ 'customer.login.password' | t }}</label>
+      <input type="password" value="" name="customer[password]" id="CustomerPassword" required class="input-full{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{ 'customer.login.password' | t }}">
+    {% endif %}
+
+    {% if form.password_needed %}
+      <div class="text-center">
+        <a href="#recover" class="js-password-reset-toggle" id="RecoverPassword">{{ 'customer.login.forgot_password' | t }}</a>
+      </div>
+    {% endif %}
+    <button type="submit" class="btn btn--xlarge btn--full">{{ 'customer.login.sign_in' | t }}</button>
+  {% endform %}
+</div>
+<div id="RecoverPasswordForm" style="display: none;">
+    <div class="text-center">
+        <h2 class="h2--secondary">{{ 'customer.recover_password.title' | t }}</h2>
+        <p class="p--md">{{ 'customer.recover_password.subtext' | t }}</p>
+    </div>
+    <div class="form-vertical">
+        {% form 'recover_customer_password' %}
+            {{ form.errors | default_errors }}
+            <label for="RecoverEmail" class="hidden-label">{{ 'customer.recover_password.email' | t }}</label>
+            <input type="email" value="" name="email" id="RecoverEmail" class="input-full" placeholder="{{ 'customer.recover_password.email' | t }}" autocorrect="off" autocapitalize="off">
+            <button type="submit" class="btn btn--full btn--xlarge">{{ 'customer.recover_password.submit' | t }}</button>
+            <div class="text-center">
+                <button type="button" id="HideRecoverPasswordLink" class="js-password-reset-toggle text-link">{{ 'customer.recover_password.cancel' | t }}</button>
+            </div>
+        {% endform %}
+    </div>
+</div>

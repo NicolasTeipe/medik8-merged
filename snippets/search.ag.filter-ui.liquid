@@ -1,0 +1,47 @@
+<div class="{{ titleWrapperClass }} filter-sidebar__heading flex row-wrap align-center justify-space row cb">
+  {% if isMobileSideBar %}
+  <button aria-label="Close Filters" class="modal-close filter-sidebar__mobile-close" type="button">
+    <i class="wayfx-icon wayfx-icon-long-arrow-left"></i>
+  </button>
+  {% endif %}
+  <h2 class="h-style  t-ucase t-xxs ls-20">Filter By</h2>
+  <button class="js-clear-filters {{ resetButtonClass }} t-ucase t-xxxs ls-15 btn-rest" aria-hidden="true" style="display:none"><u>Reset</u></button>
+</div>
+<div class="flex flex-grid column-nowrap {{ setsWrapperClass }}">
+  {% assign activeFilters = false %}
+  {% assign categories = settings.filter_categories | split: ', ' %}
+  {% for category in categories %}
+    {% liquid 
+      case category 
+        when "type"
+          assign proxy_filters = settings.filter_type | split: ', '
+        when "concern"
+          assign proxy_filters = settings.filter_concern | split: ', '
+        when "ingredients"
+          assign proxy_filters = settings.filter_ingredients | split: ', '
+        when "csa"
+          assign proxy_filters = settings.filter_csa | split: ', '
+      endcase
+    %}
+    <fieldset class="filter-sidebar__set flex column-nowrap" data-key="{{ category }}">
+      <legend class="filter-sidebar__ledgend t-ucase t-xxs ls-20 f-w600 row block-12/12">{{ category }}</legend>
+      <div class="flex flex-grid--d4 column-nowrap">
+        {% for proxy_filter in proxy_filters %}
+          {% assign active = false %}
+          {% for filter in search.filters %}
+            {% assign active_values = filter.active_values | map: 'value' %}
+            {% if active_values contains proxy_filter %}
+              {% assign active = true %}
+              {% assign activeFilters = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+          <label class="gbl-styled-checkbox">
+            <input class="gbl-styled-checkbox__input" type="checkbox" name="{{ category }}" value="{{ proxy_filter }}"{% if active %} checked{% endif %}>
+            <span  class="gbl-styled-checkbox__content filter-sidebar__input-content flex row-wrap align-center block-rel">{{ proxy_filter }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+  {% endfor %}
+</div>

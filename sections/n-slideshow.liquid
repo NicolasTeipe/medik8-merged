@@ -1,0 +1,332 @@
+{% for block in section.blocks %}
+{% case block.type %}
+{% when 'hero-with-cta' %}
+{%- assign heading = block.settings.heading -%}
+{%- assign heading_color = block.settings.heading_color -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign paragraph_color = block.settings.paragraph_color -%}
+{%- assign image = block.settings.image -%}
+{% liquid 
+   assign image_alt = block.settings.image.alt
+   if image_alt == blank 
+     assign image_alt = block.settings.heading
+   endif 
+%}
+{%- assign mobile_image = block.settings.mobile_image -%}
+{%- assign cta_text = block.settings.cta_text -%}
+{%- assign cta_link = block.settings.cta_link -%}
+{%- assign cta_bg_color = block.settings.cta_bg_color -%}
+{%- assign cta_text_color = block.settings.cta_text_color -%}
+{%- assign alignment = block.settings.alignment -%}
+
+<div {{ block.shopify_attributes }} 
+     class="wayfx-hero-slider wayfx-hero-slider--normal wayfx-hero-slider--{{ alignment }} wayfx-hero-slider--{{ block.id }}"
+     role="img" aria-label="{{ image_alt }}">
+  <style type="text/css">
+    .wayfx-hero-slider--{{ block.id }} h1 {
+      color: {{ heading_color }};
+    }
+    .wayfx-hero-slider--{{ block.id }} p {
+      color: {{ paragraph_color }};
+    }
+    .wayfx-hero-slider--{{ block.id }} .btn {
+      background: {{ cta_bg_color }};
+      border-color: {{ cta_bg_color }};
+      color: {{ cta_text_color }};
+    }
+    .wayfx-hero-slider--{{ block.id }} .btn:hover {
+      background: transparent;
+      color: {{ cta_bg_color }};
+    }
+    @media all and (min-width: 1024px) {
+      .wayfx-hero-slider--{{ block.id }} {
+        background-image: url('{{ image | image_url: width: 2300 }}');
+          }
+    }
+    @media all and (max-width: 1023px) {
+      .wayfx-hero-slider--{{ block.id }} .wayfx-wrapper {
+        {%- if mobile_image == blank -%}
+        background: #fff url('{{ image | image_url: width: 2300 }}') no-repeat center center / cover;
+          {%- else -%}
+          background: #fff url('{{ mobile_image | image_url: width: 1500 }}') no-repeat center center / cover
+            {%- endif -%}
+            }
+
+      {%- if heading_color == '#ffffff' -%}
+      .wayfx-hero-slider--{{ block.id }} h1 {
+        text-shadow: 0 0 2px rgba(0,0,0,0.2)
+      }
+      .wayfx-hero-slider--{{ block.id }} p {
+        text-shadow: 0 0 20px rgba(0,0,0,0.4)
+      }
+      {%- endif -%}
+    }
+  </style>
+  <div class="wayfx-wrapper{% if block.settings.mobile_image_centered %} mdk8--hero--mobile-image-centered{% endif %}">
+    <div class="wayfx-hero-slider__column">
+      {%- if heading -%}
+      <h1 class="h1--secondary">{{ heading }}</h1>
+      {%- endif -%}
+      {%- if paragraph -%}
+      {{ paragraph }}
+      {%- endif -%}
+      {%- if cta_link and cta_text -%}
+      <a href="{{ cta_link }}" class="btn btn--xlarge">{{ cta_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{% when 'hero-with-video' %}
+{%- assign heading = block.settings.heading -%}
+{%- assign heading_color = block.settings.heading_color -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign paragraph_color = block.settings.paragraph_color -%}
+{%- assign video = block.settings.video -%}
+{%- assign mob_video = block.settings.mob_video -%}
+{%- assign cta_text = block.settings.cta_text -%}
+{%- assign cta_link = block.settings.cta_link -%} 
+{%- assign cta_bg_color = block.settings.cta_bg_color -%}
+{%- assign cta_text_color = block.settings.cta_text_color -%}
+{%- assign alignment = block.settings.alignment -%}
+
+<div {{ block.shopify_attributes }} class="wayfx-hero-slider wayfx-hero-slider--normal wayfx-hero-slider--{{ block.id }}">
+  <div class="background-video-wrapper ">
+    <div class="wayfx-hero-slider__column">
+      {%- if heading -%}
+      <h1 class="h1--secondary" style="color: {{heading_color}}">{{ heading }}</h1>
+      {%- endif -%}
+      {%- if paragraph -%}
+      <span class="bg-video-subheading" style="color: {{paragraph_color}}; margin-bottom: 16px;">{{ paragraph }}</span>
+      {%- endif -%}
+      {%- if cta_link and cta_text -%}
+      <a style="color: {{cta_text_color}}; background-color: {{cta_bg_color}}; border:none;" href="{{ cta_link }}" class="btn btn--xlarge">{{ cta_text }}</a>
+      {%- endif -%}
+    </div>
+
+    {% if mob_video != blank %}
+    <span class="mob-hide">
+      <video playsinline muted autoplay loop preload="auto">
+        <source src="https://ucarecdn.com/{{ video }}/"  type="video/mp4">
+        {{ 'general.errors.html_video' | t }}
+      </video>  
+    </span>
+    <span class="desk-hide">
+      <video playsinline muted autoplay loop preload="auto">
+        <source src="https://ucarecdn.com/{{ mob_video }}/"  type="video/mp4">
+        {{ 'general.errors.html_video' | t }}
+      </video>  
+    </span>
+    {% else %}
+    <video playsinline muted autoplay loop preload="auto">
+      <source src="https://ucarecdn.com/{{ video }}/"  type="video/mp4">
+      {{ 'general.errors.html_video' | t }}
+    </video>  
+    {% endif %}
+
+  </div>
+</div>
+{% endcase %}
+{% endfor %}
+
+{% schema %}
+  {
+    "name": "Hero",
+    "presets": [
+        {
+            "name": "Hero"
+        }
+    ],
+    "tag": "section",
+    "class": "wayfx-block wayfx-block--hero-slider slider--dot-alt",
+    "blocks": [
+        {
+            "type": "hero-with-cta",
+            "name": "Hero w/ CTA",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "heading_color",
+                    "type": "color",
+                    "label": "Heading Text Color"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "html",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "paragraph_color",
+                    "type": "color",
+                    "label": "Paragraph Text Color"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "mobile_image",
+                    "type": "image_picker",
+                    "label": "Mobile Background Image"
+                },
+                {
+                    "id": "mobile_image_centered",
+                    "type": "checkbox",
+                    "default": false,
+                    "label": "Image is centered push content to start and end of the slide."
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_bg_color",
+                    "type": "color",
+                    "label": "CTA Background Color",
+                    "default": "#000000"
+                },
+                {
+                    "id": "cta_text_color",
+                    "type": "color",
+                    "label": "CTA Text Color",
+                    "default": "#ffffff"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "label": "Slider Alignment",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "left-centered",
+                            "label": "Left Centered"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        },
+                        {
+                            "value": "right-centered",
+                            "label": "Right Centered"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "hero-with-video",
+            "name": "Hero w/ Video",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "heading_color",
+                    "type": "color",
+                    "label": "Heading Text Color"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "html",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "paragraph_color",
+                    "type": "color",
+                    "label": "Paragraph Text Color"
+                },
+                {
+                    "id": "video",
+                    "type": "text",
+                    "label": "Video ID",
+                    "info": "Please get the video ID from Uploadcare"
+                },
+                {
+                    "id": "mob_video",
+                    "type": "text",
+                    "label": "Mobile Video ID",
+                    "info": "Please get the video ID from Uploadcare"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_bg_color",
+                    "type": "color",
+                    "label": "CTA Background Color",
+                    "default": "#000000"
+                },
+                {
+                    "id": "cta_text_color",
+                    "type": "color",
+                    "label": "CTA Text Color",
+                    "default": "#ffffff"
+                }
+            ]
+        }
+    ]
+  }
+{% endschema %}
+
+{% javascript %}
+
+var heroSliderSettings = {
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: false,
+  speed: 300,
+  draggable: true,
+  infinite: true,
+  adaptiveHeight: false,
+  useTransform: false,
+  mobileFirst: true,
+  dots: true,
+  autoplay: true,
+  autoplaySpeed: 5000,
+  responsive: [{
+    breakpoint: 768,
+    settings: {
+      draggable: false
+    }
+  }]
+};
+
+var $slides = $('.wayfx-block--hero-slider');
+
+document.addEventListener("shopify:section:unload", function(event) {
+  $slides.slick('unslick');
+});
+
+document.addEventListener("shopify:section:load", function(event) {
+  $slides.slick(heroSliderSettings);
+});
+
+$slides.slick(heroSliderSettings);
+
+{% endjavascript %}

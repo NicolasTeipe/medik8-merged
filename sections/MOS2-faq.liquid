@@ -1,0 +1,114 @@
+<div class="wayfx-wrapper">
+  {%- if section.settings.show_toc -%}
+    <div class="wayfx-block--faq__toc">
+        <h5>{{section.settings.toc_heading}}</h5>
+        <ul>
+            {%- for block in section.blocks -%}
+              {%- assign heading = block.settings.heading -%}
+              {% if block.type == "header" %}
+                <li>
+                  <a href="#{{ heading | handleize }}">{{ heading }}</a>
+                </li>
+              {% endif%}
+            {%- endfor -%}
+        </ul>
+    </div>
+  {%- endif -%}
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+
+      {% when "header" %}
+        {%- assign heading = block.settings.heading -%}
+        {%- assign paragraph = block.settings.paragraph -%}
+
+        <div class="wayfx-block--faqs__header">
+          <h2 class="h2--primary" id="{{ heading | handleize }}">{{ heading }}</h2>
+          {{ paragraph }}
+      	</div>
+
+      {% when "faq"%}
+        {%- assign faq_title = block.settings.faq_title -%}
+        {%- assign faq_description = block.settings.faq_description -%}
+
+        <div class="wayfx-block--faq">
+          <div id="{{ faq_title | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+            {{ faq_title }}
+          </div>
+          <div class="wayfx-block--faq__content">
+            {{ faq_description }}
+          </div>
+        </div>
+
+    {% endcase %}
+  {% endfor %}
+</div>
+
+
+{% schema %}
+{
+  "name": "FAQ's",
+  "tag": "section",
+  "class": "wayfx-block wayfx-block--faqs",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_toc",
+      "label": "Show Table of Contents",
+      "default": false
+    },
+    {
+      "id": "toc_heading",
+      "type": "text",
+      "label": "TOC Heading",
+      "default": "Categories"
+    }
+  ],
+  "blocks": [
+     {
+       "name": "Header",
+       "type": "header",
+       "settings": [
+        {
+          "id": "heading",
+          "type": "text",
+          "label": "Heading",
+          "default": "FAQ Category"
+        },
+        {
+            "id": "paragraph",
+            "type": "richtext",
+            "label": "Paragraph"
+        }
+       ]
+     },
+     {
+      "name": "FAQ Entry",
+      "type": "faq",
+      "settings": [
+        {
+          "id": "faq_title",
+          "type": "text",
+          "label": "Faq Title",
+          "default": "FAQ Title"
+        },
+        {
+            "id": "faq_description",
+            "type": "richtext",
+            "label": "Faq Description"
+        }
+      ]
+    }
+  ],
+  "templates": ["index", "article", "page", "product"],
+  "presets": [
+    {
+      "name": "FAQ's "
+    }
+  ]
+}
+{% endschema %}

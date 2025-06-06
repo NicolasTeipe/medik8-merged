@@ -1,0 +1,10 @@
+{%- comment -%}
+  Used to pull in store specific data from theme settings and make them available in JS
+{%- endcomment -%}
+
+<script>
+  window.Shopify.storefrontApi = {
+    "token": "{{ shop.metafields.storefront_api.token }}",
+    "version": "{{ settings.storefront-api-version }}"
+  }
+</script>

@@ -1,0 +1,28 @@
+<section class="wayfx-block wayfx-block--login">
+  <div class="wayfx-wrapper">
+      <div class="wayfx-block__tabs">
+          <div data-tab="login" class="wayfx-block__tab">{{ 'customer.login.title' | t }}</div>
+          <div data-tab="register" class="wayfx-block__tab selected">{{ 'customer.register.title' | t }}</div>
+      </div>
+      <div class="grid">
+          <div data-content="login" class="wayfx-block__login-form grid__item large--one-half">
+              <div class="wayfx-block__left">
+                  {% render 'login-form' %}
+              </div>
+          </div>
+          <div data-content="register" class="wayfx-block__register-form grid__item large--one-half">
+              <div class="wayfx-block__right">
+                  {% render 'register-form' %}
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<style type="text/css">
+  @media all and (max-width: 1023px) {
+      .wayfx-block__login-form {
+          display: none;
+      }
+  }
+</style>

@@ -1,0 +1,92 @@
+{%- assign block_height = block.settings.block_height -%}
+
+{%- assign image_one = block.settings.block_1_image | image_url: width: 960 -%}
+{%- assign image_two = block.settings.block_2_image | image_url: width: 960 -%}
+
+{%- assign heading_one = block.settings.block_1_title -%}
+{%- assign heading_two = block.settings.block_2_title -%}
+
+{%- assign subheading_one = block.settings.block_1_subheading -%}
+{%- assign subheading_two = block.settings.block_2_subheading -%}
+
+{%- assign cta_text_one = block.settings.block_1_cta_text -%}
+{%- assign cta_text_two = block.settings.block_2_cta_text -%}
+
+{%- assign cta_link_one = block.settings.block_1_cta_link -%}
+{%- assign cta_link_two = block.settings.block_2_cta_link -%}
+
+{%- assign video_option_one = block.settings.block_1_video -%}
+{%- assign video_option_two = block.settings.block_2_video -%}
+
+<style type="text/css">
+    {% if image_one %}
+    .wayfx-block--editorial-2columns-{{ block.id }} .wayfx-block__one a {
+        background-image: url({{ image_one }});
+    }
+    {% endif %}
+    {% if image_two %}
+    .wayfx-block--editorial-2columns-{{ block.id }} .wayfx-block__two a {
+        background-image: url({{ image_two }});
+    }
+    {% endif %}
+</style>
+
+<section class="wayfx-block wayfx-block--editorial-2columns wayfx-block--editorial-2columns-{{ block.id}} wayfx-block--editorial-2columns-{% if block_height == 'large' %}large{% else %}medium{% endif %}">
+    <div class="wayfx-wrapper">
+        <div class="grid">
+            <div class="grid__item large--two-quarters wayfx-block__one">
+                <a href="{{ cta_link_one }}"{% if video_option_one == 'yes' %} data-fancybox{% endif %}>
+                    <div>
+                        {% if subheading_one %}
+                            <div class="wayfx-block--editorial__subheading">
+                                {{ subheading_one }}
+                            </div>
+                        {% endif %}
+                        {% if video_option_one == 'yes' %}
+                            <div class="wayfx-block__play">
+                                <i class="wayfx-icon wayfx-icon-play"></i>
+                            </div>
+                        {% endif %}
+                        {% if heading_one %}
+                            <h3 class="wayfx-block--editorial__heading">
+                                {{ heading_one }}
+                            </h3>
+                        {% endif %}
+                        {% if cta_text_one != '' %}
+                            <div class="btn btn--large">
+                                {{ cta_text_one }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="grid__item large--two-quarters wayfx-block__two">
+                <a href="{{ cta_link_two }}"{% if video_option_two == 'yes' %} data-fancybox{% endif %}>
+                    <div>
+                        {% if subheading_two %}
+                            <div class="wayfx-block--editorial__subheading">
+                                {{ subheading_two }}
+                            </div>
+                        {% endif %}
+                        {% if video_option_two == 'yes' %}
+                            <div class="wayfx-block__play">
+                                <i class="wayfx-icon wayfx-icon-play"></i>
+                            </div>
+                        {% endif %}
+                        {% if heading_two %}
+                            <h3 class="wayfx-block--editorial__heading">
+                                {{ heading_two }}
+                            </h3>
+                        {% endif %}
+                        {% if cta_text_two != '' %}
+                            <div class="btn btn--large">
+                                {{ cta_text_two }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+

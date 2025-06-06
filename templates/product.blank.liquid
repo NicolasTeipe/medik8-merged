@@ -1,0 +1,20 @@
+{% layout none %}
+
+{
+	"title": "{{ product.title }}",
+	"price": "{{ product.price | money }}",
+	"metafields": [
+	{% for field in product.metafields.sf_product_hero %}
+	{	
+		"{{ field | first | escape }}": "{{ field | last | escape }}"
+	}{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+	],
+	"variants": [
+      {% for variant in product.variants %}
+      	{
+			"variant_id": "{{ variant.id }}"
+		}{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+  	]
+}

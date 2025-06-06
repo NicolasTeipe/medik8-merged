@@ -1,0 +1,216 @@
+{%- assign person_quote_1 = block.settings.person_quote_1 -%}
+{%- assign person_image_1 = block.settings.person_image_1 -%}
+{%- assign person_name_1 = block.settings.person_name_1 -%}
+{%- assign person_title_1 = block.settings.person_title_1 -%}
+{%- assign person_company_image_1 = block.settings.person_company_image_1 -%}
+
+{%- assign person_quote_2 = block.settings.person_quote_2 -%}
+{%- assign person_image_2 = block.settings.person_image_2 -%}
+{%- assign person_name_2 = block.settings.person_name_2 -%}
+{%- assign person_title_2 = block.settings.person_title_2 -%}
+{%- assign person_company_image_2 = block.settings.person_company_image_2 -%}
+
+{%- assign person_quote_3 = block.settings.person_quote_3 -%}
+{%- assign person_image_3 = block.settings.person_image_3 -%}
+{%- assign person_name_3 = block.settings.person_name_3 -%}
+{%- assign person_title_3 = block.settings.person_title_3 -%}
+{%- assign person_company_image_3 = block.settings.person_company_image_3 -%}
+
+{%- assign person_quote_4 = block.settings.person_quote_4 -%}
+{%- assign person_image_4 = block.settings.person_image_4 -%}
+{%- assign person_name_4 = block.settings.person_name_4 -%}
+{%- assign person_title_4 = block.settings.person_title_4 -%}
+{%- assign person_company_image_4 = block.settings.person_company_image_4 -%}
+
+{%- assign person_quote_5 = block.settings.person_quote_5 -%}
+{%- assign person_image_5 = block.settings.person_image_5 -%}
+{%- assign person_name_5 = block.settings.person_name_5 -%}
+{%- assign person_title_5 = block.settings.person_title_5 -%}
+{%- assign person_company_image_5 = block.settings.person_company_image_5 -%}
+
+{%- assign cta_button_text = block.settings.cta_button_text -%}
+{%- assign cta_button_link = block.settings.cta_button_link -%}
+
+<section class="wayfx-block wayfx-block--social-proof{% if person_quote_1 != '' and person_quote_2 != '' %} wayfx-block--social-proof-with-slider{% endif %}">
+    <div class="wayfx-wrapper">
+        <h2 class="h2--primary">{{ block.settings.heading }}</h2>
+        <div class="wayfx-block--social-proof__items wayfx-block--social-proof-{{ block.id }}">
+            {%- if person_quote_1 != '' -%}
+                <div class="wayfx-block--social-proof__item">
+                    {%- unless person_image_1 contains 'no-image' -%}
+                        <div class="wayfx-block--social-proof__image">
+                            <img loading="lazy" src="{{ person_image_1 | image_url }}" alt="{{ person_name_1 }}" width="{{person_image_1.width}}" height="{{person_image_1.height}}"/>
+                        </div>
+                    {%- endunless -%}
+                    <div class="wayfx-block--social-proof__testimonial">
+                        <blockquote>
+                            <div>{{ person_quote_1 }}</div>
+                            <cite>
+                                {%- if person_name_1 != '' -%}
+                                    <div class="wayfx-block--social-proof__name">
+                                        {{ person_name_1 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- if person_title_1 != '' -%}
+                                    <div class="wayfx-block--social-proof__title">
+                                        {{ person_title_1 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- unless person_company_image_1 contains 'no-image' -%}
+                                    <div class="wayfx-block--social-proof__company">
+                                        <img loading="lazy" src="{{ person_company_image_1 | image_url }}" alt="{{person_company_image_1.alt}}" width="{{person_company_image_1.width}}" height="{{person_company_image_1.height}}"/>
+                                    </div>
+                                {%- endunless -%}
+                            </cite>
+                        </blockquote>
+                    </div>
+                </div>
+            {%- endif -%}
+            {%- if person_quote_2 != '' -%}
+                <div class="wayfx-block--social-proof__item">
+                    {%- unless person_image_2 contains 'no-image'-%}
+                        <div class="wayfx-block--social-proof__image">
+                            <img loading="lazy" src="{{ person_image_2 | image_url }}" alt="{{ person_name_2 }}" width="{{person_image_2.width}}" height="{{person_image_2.height}}" />
+                        </div>
+                    {%- endunless -%}
+                    <div class="wayfx-block--social-proof__testimonial">
+                        <blockquote>
+                            <div>{{ person_quote_2 }}</div>
+                            <cite>
+                                {%- if person_name_2 != '' -%}
+                                    <div class="wayfx-block--social-proof__name">
+                                        {{ person_name_2 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- if person_title_2 != '' -%}
+                                    <div class="wayfx-block--social-proof__title">
+                                        {{ person_title_2 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- unless person_company_image_2 contains 'no-image' -%}
+                                    <div class="wayfx-block--social-proof__company">
+                                        <img loading="lazy" src="{{ person_company_image_2 | image_url }}" alt="{{person_company_image_2.alt}}" width="{{person_company_image_2.width}}" height="{{person_company_image_2.height}}" />
+                                    </div>
+                                {%- endunless -%}
+                            </cite>
+                        </blockquote>
+                    </div>
+                </div>
+            {%- endif -%}
+            {%- if person_quote_3 != '' -%}
+                <div class="wayfx-block--social-proof__item">
+                    {%- unless person_image_3 contains 'no-image'-%}
+                        <div class="wayfx-block--social-proof__image">
+                            <img loading="lazy" src="{{ person_image_3 | image_url }}" alt="{{ person_name_3 }}" width="{{person_image_3.width}}" height="{{person_image_3.height}}" />
+                        </div>
+                    {%- endunless -%}
+                    <div class="wayfx-block--social-proof__testimonial">
+                        <blockquote>
+                            <div>{{ person_quote_3 }}</div>
+                            <cite>
+                                {%- if person_name_3 != '' -%}
+                                    <div class="wayfx-block--social-proof__name">
+                                        {{ person_name_3 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- if person_title_3 != '' -%}
+                                    <div class="wayfx-block--social-proof__title">
+                                        {{ person_title_3 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- unless person_company_image_3 contains 'no-image' -%}
+                                    <div class="wayfx-block--social-proof__company">
+                                        <img loading="lazy" src="{{ person_company_image_3 | image_url }}" alt="{{person_company_image_3.alt}}" width="{{person_company_image_3.width}}" height="{{person_company_image_3.height}}" />
+                                    </div>
+                                {%- endunless -%}
+                            </cite>
+                        </blockquote>
+                    </div>
+                </div>
+            {%- endif -%}
+            {%- if person_quote_4 != '' -%}
+                <div class="wayfx-block--social-proof__item">
+                    {%- unless person_image_4 contains 'no-image' -%}
+                        <div class="wayfx-block--social-proof__image">
+                            <img loading="lazy" src="{{ person_image_4 | image_url }}" alt="{{ person_name_4 }}" width="{{person_image_4.width}}" height="{{person_image_4.height}}" />
+                        </div>
+                    {%- endunless -%}
+                    <div class="wayfx-block--social-proof__testimonial">
+                        <blockquote>
+                            <div>{{ person_quote_4 }}</div>
+                            <cite>
+                                {%- if person_name_4 != '' -%}
+                                    <div class="wayfx-block--social-proof__name">
+                                        {{ person_name_4 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- if person_title_4 != '' -%}
+                                    <div class="wayfx-block--social-proof__title">
+                                        {{ person_title_4 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- unless person_company_image_4 contains 'no-image' -%}
+                                    <div class="wayfx-block--social-proof__company">
+                                        <img loading="lazy" src="{{ person_company_image_4 | image_url }}" alt="{{person_company_image_4}}"  width="{{person_company_image_4.width}}" height="{{person_company_image_4.height}}"/>
+                                    </div>
+                                {%- endunless -%}
+                            </cite>
+                        </blockquote>
+                    </div>
+                </div>
+            {%- endif -%}
+            {%- if person_quote_5 != '' -%}
+                <div class="wayfx-block--social-proof__item">
+                    {%- unless person_image_5 contains 'no-image' -%}
+                        <div class="wayfx-block--social-proof__image">
+                            <img loading="lazy" src="{{ person_image_5 | image_url }}" alt="{{ person_name_5 }}" width="{{person_image_5.width}}" height="{{person_image_5.height}}" />
+                        </div>
+                    {%- endunless -%}
+                    <div class="wayfx-block--social-proof__testimonial">
+                        <blockquote>
+                            <div>{{ person_quote_5 }}</div>
+                            <cite>
+                                {%- if person_name_5 != '' -%}
+                                    <div class="wayfx-block--social-proof__name">
+                                        {{ person_name_5 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- if person_title_5 != '' -%}
+                                    <div class="wayfx-block--social-proof__title">
+                                        {{ person_title_5 }}
+                                    </div>
+                                {%- endif -%}
+                                {%- unless person_company_image_5 contains 'no-image' -%}
+                                    <div class="wayfx-block--social-proof__company">
+                                        <img loading="lazy" src="{{ person_company_image_5 | image_url }}" alt="{{person_company_image_5.alt}}" width="{{person_company_image_1.width}}" height="{{person_company_image_1.height}}" />
+                                    </div>
+                                {%- endunless -%}
+                            </cite>
+                        </blockquote>
+                    </div>
+                </div>
+            {%- endif -%}
+        </div>
+        {%- if cta_button_link != '' and cta_button_text != '' -%}
+            <div class="wayfx-block--social-proof__cta">
+                <a href="{{ cta_button_link }}" class="btn--outline btn--xlarge">{{ cta_button_text }}</a>
+            </div>
+        {%- endif -%}
+    </div>
+</section>
+
+{%- if person_quote_1 != '' and person_quote_2 != '' -%}
+    <script>
+         $(document).ready(function() {
+              $('.wayfx-block--social-proof-{{ block.id }}').slick({
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    arrows: true,
+                    draggable: false,
+                    dots: true,
+                    adaptiveHeight: true
+              }).show();
+         });
+    </script>
+{%- endif -%}

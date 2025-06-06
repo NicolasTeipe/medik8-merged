@@ -1,0 +1,266 @@
+body.search-open {
+  overflow-y: scroll;
+  position: fixed;
+  width: 100%;
+}
+
+.algolia-mask {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: #1111118a;
+}
+
+/* ----------------------------- */
+/* ----- Algolia Container ----- */
+/* ----------------------------- */
+
+algolia-search-header {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--color-white);
+  z-index: 10000;
+  border-top: 1px solid #ddd;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.35);
+}
+
+algolia-search-header .inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: max-content;
+  grid-column-gap: 0px;
+  gap: 0px;
+
+  grid-template-areas:
+    'form'
+    'results'
+    'content';
+
+  width: 100%;
+  max-width: 1200px;
+  max-height: 100dvh;
+  padding: 20px 20px 0;
+  overflow-y: auto;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .inner {
+    grid-template-columns: 19fr 6fr;
+    grid-template-rows: auto 1fr;
+    gap: 0 64px;
+
+    grid-template-areas:
+      'form content'
+      'results content';
+
+    padding: 40px 20px;
+  }
+}
+
+/* ------------------------------- */
+/* ----- Algolia Search Form ----- */
+/* ------------------------------- */
+
+algolia-search-header form {
+  grid-area: form;
+  width: calc(100% - 30px);
+  background: var(--color-white);
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  box-shadow: none;
+  transition: box-shadow 0.2s;
+  margin-bottom: 22px;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header form {
+    width: 100%;
+    margin-bottom: 35px;
+  }
+}
+
+algolia-search-header .search-icon {
+  width: 26px;
+  position: absolute;
+  top: 11px;
+  left: 10px;
+}
+
+algolia-search-header .ag-input {
+  width: 100%;
+  line-height: 20px;
+  padding: 13px 20px 11px 42px;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .ag-input {
+    font-size: 14px;
+  }
+}
+
+algolia-search-header .ag-input::placeholder {
+  color: #c7c7c7;
+  opacity: 1;
+}
+
+algolia-search-header #algoliaSearchClose {
+  width: 30px;
+  height: 30px;
+  background-size: 11px;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 28px;
+  right: 14px;
+  background: var(--color-white);
+  border-radius: 50%;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header #algoliaSearchClose {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    border-radius: 0;
+  }
+}
+
+algolia-search-header #algoliaSearchClose svg {
+  display: flex;
+  margin: auto;
+  width: 12px;
+}
+
+/* ---------------------------------- */
+/* ----- Algolia Search Content ----- */
+/* ---------------------------------- */
+
+algolia-search-header .ag-links {
+  grid-area: content;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .ag-links {
+    display: block;
+  }
+}
+
+algolia-search-header .ag-links__wrapper {
+  flex: 1 1 auto;
+}
+
+algolia-search-header .ag-links__wrapper {
+  margin-bottom: 30px;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .ag-links__wrapper:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+algolia-search-header .ag-links h2 {
+  margin: 0 0 13px;
+  letter-spacing: 1.2px;
+  color: #3a3a3a;
+}
+
+algolia-search-header .ag-links ul {
+  margin: 0;
+}
+
+algolia-search-header .ag-links li {
+  margin: 0 0 9px;
+  letter-spacing: 1.2px;
+}
+
+algolia-search-header .ag-links li a {
+  color: #3a3a3a;
+}
+
+/* ---------------------------------- */
+/* ----- Algolia Search Results ----- */
+/* ---------------------------------- */
+
+algolia-search-header .ag-products {
+  grid-area: results;
+  margin-bottom: 22px;
+  overflow-x: hidden;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .ag-products {
+    overflow: visible;
+  }
+}
+
+algolia-search-header .results-title {
+  color: #3a3a3a;
+}
+
+algolia-search-header .results-title a {
+  color: #3a3a3a;
+}
+
+algolia-search-header .product-card {
+  max-width: 210px;
+  color: #3a3a3a;
+}
+
+@media screen and (min-width: 1024px) {
+  algolia-search-header .product-card {
+    padding-right: 8px;
+  }
+}
+
+algolia-search-header .product-card__description {
+  color: #7e7c7c;
+}
+
+algolia-search-header .product-card__price {
+  color: #7e7c7c;
+}
+
+/* ---------------------------------- */
+/* ----- Keen Slider Navigation ----- */
+/* ---------------------------------- */
+
+@media screen and (max-width: 1023px) {
+  algolia-search-header .ag-products .navigation-wrapper {
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+
+  algolia-search-header .ag-products .arrow {
+    top: 30%;
+  }
+
+  algolia-search-header .ag-products .dots {
+    padding: 5px 0 20px;
+  }
+
+  algolia-search-header .ag-products .dot {
+    width: 12px;
+    height: 12px;
+    margin: 0 4px;
+  }
+
+  algolia-search-header .ag-products .arrow--left {
+    left: 4px;
+  }
+
+  algolia-search-header .ag-products .arrow--right {
+    right: 4px;
+  }
+}

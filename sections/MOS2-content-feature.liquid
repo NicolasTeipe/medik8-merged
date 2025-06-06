@@ -1,0 +1,120 @@
+{%- assign image = section.settings.image | image_url: width: 1100 -%}
+{%- assign image_alignment = section.settings.image_alignment -%}
+{%- assign content_alignment = section.settings.content_alignment -%}
+{%- assign horizontal_alignment = section.settings.horizontal_alignment -%}
+{%- assign heading = section.settings.heading -%}
+{%- assign paragraph = section.settings.paragraph -%}
+{%- assign cta_link = section.settings.cta_link -%}
+{%- assign cta_text = section.settings.cta_text -%}
+
+
+    <section class="mos2--component wayfx-block horizontal-alignment-{{section.id}} wayfx-block--feature{% if content_alignment == 'top' %} wayfx-block--content-top{% endif %}{% if image_alignment == 'left' %} wayfx-block--image-left{% else %} wayfx-block--image-right{% endif %}">
+        <div class="wayfx-wrapper">
+            <div class="grid">
+                {% if image_alignment == 'left' %}
+                    {% if section.settings.image %}
+                    <div class="grid__item large--one-half">
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ image }}" alt="" width="1100" height="1100"/>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                <div class="grid__item large--one-half">
+                    <div class="wayfx-block__text">
+                        {% if heading != blank %}<h2 class="h2--primary">{{ heading }}</h2>{% endif %}
+                        {% if paragraph %}
+                          <p>{{ paragraph }}</p>
+                        {% endif %}
+                        {% if cta_link and cta_text %}
+                            <a href="{{ cta_link }}" class="btn--outline btn--xlarge">{{ cta_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if image_alignment == 'right' %}
+                    {% if section.settings.image %}
+                        <div class="grid__item large--one-half">
+                          <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ image }}" alt="" width="1100" height="1100"/>
+                          </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+
+<style>
+    .horizontal-alignment-{{section.id}}{
+        text-align:{{section.settings.horizontal_alignment}};
+    }
+</style>
+
+
+{% schema %}
+{
+    "name": "Content - Feature",
+    "presets": [
+      {
+        "name": "Content - Feature"
+      }
+    ],
+    "settings": [
+        {
+            "type": "select",
+            "id": "image_alignment",
+            "label": "Image Alignment",
+            "options": [
+                { "value": "left", "label": "Left"},
+                { "value": "right", "label": "Right"}
+            ]
+        },
+        {
+            "type": "select",
+            "id": "content_alignment",
+            "label": "Content Alignment",
+            "options": [
+                { "value": "center", "label": "Center"},
+                { "value": "top", "label": "Top"}
+            ]
+        },
+        {
+            "type": "select",
+            "id": "horizontal_alignment",
+            "label": "Horizontal Alignment",
+            "options": [
+                { "value": "left", "label": "Left"},
+                { "value": "center", "label": "Center"},
+                { "value": "right", "label": "Right"}
+            ]
+        },
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "paragraph",
+            "type": "textarea",
+            "label": "Paragraph",
+            "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Feature Image"
+        },
+        {
+            "id": "cta_text",
+            "type": "text",
+            "label": "CTA Text"
+        },
+        {
+            "id": "cta_link",
+            "type": "url",
+            "label": "CTA Link"
+        }
+    ]
+}
+{% endschema %}

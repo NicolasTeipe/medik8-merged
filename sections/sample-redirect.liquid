@@ -1,0 +1,10 @@
+{%- assign parent_product = product.metafields.sample.parent_product.value -%}
+<script>
+  {%- if parent_product -%}
+    window.location.replace(
+      'https://{{ shop.domain }}/products/{{ parent_product.product.handle}}?variant={{ parent_product.id }}'
+    )
+  {%- else -%}
+    window.location.replace('https://{{ shop.domain }}')
+  {%- endif -%}
+</script>

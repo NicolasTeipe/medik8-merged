@@ -1,0 +1,502 @@
+{%- assign sidebar = section.settings.sidebar_menu -%}
+{% include 'wayfx-blocks' %}
+{% schema %}
+    {
+      "name": "Wayfx Blocks",
+        "settings": [
+            {
+                "id": "sidebar_heading",
+                "type": "text",
+                "label": "Sidebar Heading"
+            },
+            {
+                "id": "sidebar_menu",
+                "type": "link_list",
+                "label": "Sidebar Menu"
+            },
+            {
+                "type": "select",
+                "id": "sidebar_color_scheme",
+                "options": [
+                    { "value": "light", "label": "Light"},
+                    { "value": "dark", "label": "Dark"}
+                ],
+                "label": "Sidebar Color Scheme"
+            },
+            {
+              "type": "select",
+              "id": "show_footer_newsletter",
+              "label": "Show Footer Newsletter Block?",
+              "options": [
+                { "value": "no", "label": "No"},
+                { "value": "yes", "label": "Yes"}
+              ]
+            }
+        ],
+      "blocks": [
+        {
+            "type": "breadcrumb",
+            "name": "Breadcrumb"
+        },
+		{
+            "type": "spacer",
+            "name": "Blank Space",
+            "settings": [{
+                    "id": "space",
+                    "type": "range",
+                    "min": 8,
+                    "max": 160,
+                    "step": 8,
+                    "unit": "px",
+                    "label": "Blank Space",
+                    "default": 8,
+                    "info": "This component is used to add space between a section"
+            }]
+        },
+		{
+            "type": "content-standard",
+            "name": "Content - Standard",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+				{
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Feature Image"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-full-image",
+            "name": "Hero w/ Full Image Cover",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading",
+                    "default": "Hello world"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                }
+            ]
+        },
+		{
+            "type": "hero-with-video-bg",
+            "name": "Hero w/ Video Bg",
+            "settings": [
+				{
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Video Bg",
+					"info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_left", "label": "Top Left"},
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "top_right", "label": "Top Right"},
+                        { "value": "bottom_left", "label": "Bottom Left"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "bottom_right", "label": "Bottom Right"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "video_link",
+                    "type": "url",
+                    "label": "Enter the vimeo link for the video here."
+                },
+				{
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-image",
+            "name": "Hero w/ Content & Imagery",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-media",
+            "name": "Hero w/ Media",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "left_center", "label": "Left Center"},
+                        { "value": "center_center", "label": "Center"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-overlay-box",
+            "name": "Hero w/ Text Overlay Box",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_left", "label": "Top Left"},
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "top_right", "label": "Top Right"},
+                        { "value": "bottom_left", "label": "Bottom Left"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "bottom_right", "label": "Bottom Right"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-title-paragraph",
+            "name": "Hero w/ Title & Paragraph",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-video",
+            "name": "Hero w/ Video",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                  "id": "video",
+                  "type": "html",
+                  "label": "Video Embed"
+                }
+            ]
+        },
+        {
+            "type": "faq",
+            "name": "FAQ",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "toc",
+                    "label": "Table of Contents",
+                    "default": false,
+                    "info": "Enable or Disable"
+                },
+                {
+                    "id": "faq_title_1",
+                    "type": "text",
+                    "label": "Faq Title 1"
+                },
+                {
+                    "id": "faq_description_1",
+                    "type": "richtext",
+                    "label": "Faq Description 1"
+                },
+                {
+                    "id": "faq_title_2",
+                    "type": "text",
+                    "label": "Faq Title 2"
+                },
+                {
+                    "id": "faq_description_2",
+                    "type": "richtext",
+                    "label": "Faq Description 2"
+                },
+                {
+                    "id": "faq_title_3",
+                    "type": "text",
+                    "label": "Faq Title 3"
+                },
+                {
+                    "id": "faq_description_3",
+                    "type": "richtext",
+                    "label": "Faq Description 3"
+                },
+                {
+                    "id": "faq_title_4",
+                    "type": "text",
+                    "label": "Faq Title 4"
+                },
+                {
+                    "id": "faq_description_4",
+                    "type": "richtext",
+                    "label": "Faq Description 4"
+                },
+                {
+                    "id": "faq_title_5",
+                    "type": "text",
+                    "label": "Faq Title 5"
+                },
+                {
+                    "id": "faq_description_5",
+                    "type": "richtext",
+                    "label": "Faq Description 5"
+                },
+                {
+                    "id": "faq_title_6",
+                    "type": "text",
+                    "label": "Faq Title 6"
+                },
+                {
+                    "id": "faq_description_6",
+                    "type": "html",
+                    "label": "Faq Description 6"
+                },
+                {
+                    "id": "faq_title_7",
+                    "type": "text",
+                    "label": "Faq Title 7"
+                },
+                {
+                    "id": "faq_description_7",
+                    "type": "richtext",
+                    "label": "Faq Description 7"
+                },
+                {
+                    "id": "faq_title_8",
+                    "type": "text",
+                    "label": "Faq Title 8"
+                },
+                {
+                    "id": "faq_description_8",
+                    "type": "richtext",
+                    "label": "Faq Description 8"
+                },
+                {
+                    "id": "faq_title_9",
+                    "type": "text",
+                    "label": "Faq Title 9"
+                },
+                {
+                    "id": "faq_description_9",
+                    "type": "richtext",
+                    "label": "Faq Description 9"
+                },
+                {
+                    "id": "faq_title_10",
+                    "type": "text",
+                    "label": "Faq Title 10"
+                },
+                {
+                    "id": "faq_description_10",
+                    "type": "richtext",
+                    "label": "Faq Description 10"
+                }
+            ]
+        },
+		{
+            "type": "image-block",
+            "name": "Image",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+				{
+                    "type": "select",
+                    "id": "size",
+                    "options": [
+                        { "value": "narrow", "label": "Narrow"},
+                        { "value": "full_width", "label": "Full Width"}
+                    ],
+                    "label": "Image Size"
+                }
+            ]
+        },
+        {
+            "type": "cta-block-footer",
+            "name": "CTA - Footer",
+            "settings": [
+                {
+                    "id": "background_color",
+                    "type": "color",
+                    "label": "Background Color",
+                    "default": "#000"
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Header Image",
+                    "info": "This will take place of the header text"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "page-content",
+            "name": "Page Content",
+            "settings": [
+                {
+                    "type": "select",
+                    "id": "width",
+                    "options": [
+                        { "value": "narrow", "label": "Narrow"},
+                        { "value": "wide", "label": "Wide"}
+                    ],
+                    "label": "Content Width"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}

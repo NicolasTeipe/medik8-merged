@@ -1,0 +1,140 @@
+{% if section.blocks.size %}
+{% for block in section.blocks %}
+  <template class="js-collection-advert"  data-insert-index="{{ block.settings.insert_at_index }}">
+    <div class="wayfx-product__item-ad ad-quart">
+      {% if block.settings.image  %}
+        {% liquid 
+          if block.settings.image != blank
+            assign altText =  block.settings.image.alt
+          elsif block.settings.title != blank
+            assign altText = block.settings.title 
+          else
+            assign altText = collection.title | replace: '[hidden]', ''
+          endif  
+        %}
+        {% render 'global.lazy-image', 
+                   image_desktop:block.settings.image,
+                   image_class:'block-12/12 block-fh block-abc block-objc',
+                   alt:altText
+        %}
+      {% endif %}
+      {% if block.settings.title != blank %}
+        <h2 class="wayfx-product__grid-title" data-touch="false">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.sub_title != blank %}
+        <span class="wayfx-product__grid-subtitle">{{ block.settings.sub_title }}</span>
+      {% endif %}
+      {% if block.settings.paragraph != blank %}
+        {{ block.settings.paragraph }}
+      {% endif %}
+      {% if block.settings.cta_link and block.settings.cta_text != blank %}
+        <a class="btn--secondary" href="{{ block.settings.cta_link }}">{{ block.settings.cta_text }}</a>
+      {% endif %}
+    </div>
+  </template>
+{% endfor %}
+
+<script type="text/javascript">
+  class ThumbnailInsert{
+    constructor({template,itemsWrapper}){
+      this.template = template && template.innerHTML.length ? template.innerHTML : false
+      this.insertIndex = parseInt(template.dataset.insertIndex)
+      this.itemsWrapper = itemsWrapper
+      this.render()
+    }
+
+    htmlToNode(html) {
+      var template = document.createElement('template');
+      html = html.trim()
+      template.innerHTML = html
+      return template.content.firstChild;
+    }
+
+    render(){
+      let target = document.querySelector(this.itemsWrapper)?.querySelectorAll('.wayfx-product__item')
+      target = target && target.length ? Array.from(target).filter( element => element.offsetWidth > 0 || element.offsetHeight > 0) : false
+      target = target && target.length && target[this.insertIndex - 1] ? target[this.insertIndex - 1] : false
+      if(this.element && target){
+        target.after(this.element)
+      }else if(this.template && target){
+        this.element = this.htmlToNode(this.template)
+        target.insertAdjacentElement('afterend', this.element )
+      }else if(!target && this.element){
+        this.element.remove()
+        this.element = false
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.js-collection-advert')?.forEach( template => {
+      const insert = new ThumbnailInsert({
+        template:template,
+        itemsWrapper:'.wayfx-products'
+      })
+      window.collectionFiltersUpdate$.subscribe( () => {
+        insert.render()
+      })
+    })
+  })
+</script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "collection/adverts",
+    "enabled_on":{
+      "templates":["collection"]
+    },
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "Enable",
+        "label": "enable"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Advert",
+        "type": "advert",
+        "settings": [
+          {
+            "type": "text",
+            "id": "insert_at_index",
+            "label": "Insert at Index"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "sub_title",
+            "label": "Sub title"
+          },
+          {
+            "type": "richtext",
+            "id": "paragraph",
+            "label": "Paragraph"
+          },
+          {
+            "type": "url",
+            "id": "cta_link",
+            "label": "CTA Link"
+          },
+          {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          }
+        ]
+      }
+    ]    
+}
+{% endschema %}

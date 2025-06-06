@@ -1,0 +1,23 @@
+{% section 'u-loyalty-landing_temp-scripts' %}
+
+{% section 'u-loyalty-landing__hero' %}
+
+{% if customer %}
+  {% section 'u-loyalty-landing__nav' %}
+  {% section 'u-loyalty-landing__current-tier' %}
+  {% section 'u-loyalty-landing__points-bar' %}
+  {% section 'u-loyalty-landing__rewards-list' %}
+  {% section 'u-loyalty-landing__earn-points-grid' %}
+  {% section 'u-loyalty-landing__benefits-table' %}
+  {% section 'u-loyalty-landing__activity-list' %}
+  {% section 'u-loyalty-landing__refer-a-freind' %}
+{% else %}
+  {% section 'u-loyalty-landing__usp-grid' %}
+  {% section 'u-loyalty-landing__benefits-table' %}
+  {% section 'u-loyalty-landing__points-bar' %}
+  {% section 'u-loyalty-landing__earn-points-grid' %}
+  {% section 'u-loyalty-landing__refer-a-freind' %}
+  {% section 'u-loyalty-landing__banner' %}
+{% endif %}
+
+{% section 'u-loyalty-landing__faqs' %}

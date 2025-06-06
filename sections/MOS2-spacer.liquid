@@ -1,0 +1,25 @@
+<section style="height: {{section.settings.section_spacer}}px"></section>
+{% schema %}
+{
+  "name": "MOS2-Spacer",
+  "templates": ["index", "article", "page", "product"],
+  "settings": [
+    {
+      "type": "range",
+      "id": "section_spacer",
+      "min": 0,
+      "max": 80,
+      "step": 20,
+      "unit": "px",
+      "label": "Section Spacer",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Section Spacer"
+    }
+  ]
+}
+
+{% endschema %}

@@ -1,0 +1,8 @@
+.shopify-policy__container strong,
+.shopify-policy__container b {
+  font-weight: 600;
+}
+
+.shopify-policy__container a {
+  color: #0000EE;
+}

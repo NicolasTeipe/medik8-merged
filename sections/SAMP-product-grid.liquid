@@ -1,0 +1,388 @@
+{%- comment -%}
+  Need option to stop users adding samples if a logged in state is required
+{%- endcomment -%}
+
+{%- comment -%} Build sample Validation String {%- endcomment -%}
+
+
+{% liquid
+  if customer and customer.orders_count == 0
+    assign customer_is_validated = true
+  endif
+%}
+
+<div class="section-wrapper">
+  {%- unless section.settings.samples_title == empty -%}
+    <span class="samples__title d-block block-c block-9/12 row h-style--accent t-xl tac">{{ section.settings.samples_title }}</span>
+  {%- endunless -%}
+  {%- unless section.settings.samples_title == empty -%}
+    <span class="samples__para d-block block-c block-9/12 row--x2 t-m tac">{{ section.settings.samples_para }}</span>
+  {%- endunless -%}
+
+  <div class="block-grid flex flex-grid-y row-wrap align-top justify-center">
+    {% comment %} #TODO - bring product sorting to collection level in order to accomodate "sort by" feature without compromising on variants {% endcomment %}
+
+    {% liquid 
+      if section.blocks.size == 4
+        assign block_width = "block-3/12"
+      else
+        assign block_width = "block-4/12"
+      endif
+    %}
+    
+    {% for block in section.blocks %}
+      <global-sample-thumb class="{{ block_width }} @mobile__block-12/12 cell-l--d4 cell-r--d4 flex column-nowrap">
+        {% liquid
+          assign product = block.settings.product
+          assign sample_variant = product.selected_or_first_available_variant
+          assign sample_desc = product.description
+          if block.settings.sku 
+            for variant in product.variants
+              if variant.sku == block.settings.variant_sku 
+                assign sample_variant = variant
+                break
+              endif
+            endfor
+          endif
+
+          unless sample_variant.title == "Default Title"
+            assign sample_title = sample_variant.title
+          else
+            assign sample_title = product.title
+          endunless
+
+          assign image = product.featured_image 
+          if variant.image 
+            assign image = variant.featured_image
+          endif 
+        %}
+
+        {%- assign image_classes = "block-12/12 block-has-shadow" -%}
+        {%- unless customer_is_validated -%}
+          {%- assign image_classes = image_classes | append: ' opacity-layer' -%}
+        {%- endunless -%}
+
+        {{ image | 
+          image_url: width: 512 | 
+          image_tag: loading: 'lazy', class: image_classes
+        }}
+
+        <span class="sample-product__title d-block t-ucase t-xxs f-w500 lh-r tac">{{ sample_title }}</span>
+        <span class="sample-product__desc row--d2 t-xxs f-w400 lh-m tac">{{ sample_desc }}</span>
+
+        <form class="js-sample-atc" action="/cart/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="{{ sample_variant.id }}" />
+          <input 
+            min="1" 
+            type="hidden" 
+            name="quantity" 
+            value="1" 
+            data-variant-id="{{ sample_variant.id }}"
+            data-variant-inventory-qty="1"
+          />
+          <input 
+            type="hidden" 
+            name="properties[_upsell_validation]" 
+            value='{
+              "samples_use_global_max":true
+            }' 
+          />
+          <input type="hidden" name="id" value="{{ sample_variant.id }}" />   
+        </form>
+        <template>
+          {
+            "session_key":{{ section.id | json }},
+            "section_id":{{ section.id | json }},
+            "validation":{
+              "samples_use_global_max":true,
+              "upsell":true,
+              {% if section.settings.customer_validation != 'none' %}
+              "customer":{
+                "current":{
+                  "id":{{ customer.id | json }},
+                  "tags":{{ customer.tags | json }},
+                  "email": {{ customer.email | json }},
+                  "orders_count": {{ customer.orders_count | json }}
+                },
+                "required":{
+                  {% if section.settings.customer_validation == 'existing_customer_only' %}
+                  "existing_customer_only": true
+                  {% else %}
+                  "new_customer_only": true
+                  {% endif %}
+                }
+              },
+              {% endif %}
+              "offer_id": {{ section.id | json }},
+              "max_items":{{ section.settings.max_samples | json }},
+              "validation_error_message": {{ section.settings.validation_error_message | json }}
+            },
+            "translations":{
+              "add_to_bag": {{ 'products.product.add_to_cart' | t | json }},
+              "sample_in_bag":{{ 'sampling.sample_in_bag' | t | json }},
+              "max_samples_in_bag":{{ 'sampling.max_samples_in_bag' | t | json }}
+            }
+          }
+        </template>
+      </global-sample-thumb>
+    {% endfor %}
+  </div>
+</div>
+
+<script type="module">
+  import {GlobalSampleThumb} from {{ 'scripts.sampling.js' | asset_url | json }};
+
+  if (!customElements.get('global-sample-thumb')) {
+    customElements.define('global-sample-thumb', GlobalSampleThumb);
+  }
+</script>
+
+<style type="text/css">
+  {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+  }
+  #shopify-section-{{ section.id }} .section-wrapper {
+    display: block;
+    max-width: {{ section.settings.max-width }}px;
+    margin: auto;
+    padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 24px {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .opacity-layer {
+    opacity: .30;
+  }
+
+  #shopify-section-{{ section.id }} form button {
+    height: 42px;
+  }
+
+  #shopify-section-{{ section.id }} form button:disabled{
+    pointer-events:none;
+    border:none;
+  }
+
+  #shopify-section-{{ section.id }} .btn--feedback {
+    width: 100%;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid #000;
+    border-radius: 0.25rem;
+    user-select: none;
+    padding-top: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .btn--feedback__add {
+    background: {{ section.settings.sample_add_color }};
+  }
+
+  #shopify-section-{{ section.id }} .btn--feedback__max {
+    background: {{ section.settings.sample_max_color }};
+  }
+
+  global-sample-thumb img {
+    border-radius: 5px;
+  }
+
+  .sample-product__title {
+    font-family: "ridley_groteskmedium";
+    letter-spacing: 1.2px;
+    margin: 16px 0 10px;
+  }
+
+  @media all and (min-width: 768px) {
+    .sample-product__title {
+      font-family: "ridley_groteskregular";
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+  }
+  @media all and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .section-wrapper{
+      padding: {{ section.settings.padding_top }}px 48px {{ section.settings.padding_bottom }}px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "sampling/product-grid",
+  
+  "presets": [
+    {
+      "name": "sampling/product-grid"
+    }
+  ],
+  "settings": [
+   
+    {
+      "type": "header",
+      "content": "Positioning"
+    },
+    {
+      "type": "range",
+      "id": "max-width",
+      "min": 1000,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1440,
+      "label": "Max Width - Desktop",
+      "info": "How wide the section should be on desktop (inc side Padding)."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Bottom",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "mobile-padding",
+      "min": -50,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile Padding Modifier",
+      "info": "Adjust how much bigger or smaller the section padding should be on mobile",
+      "default": -25
+    },
+    {
+      "type": "header",
+      "content": "Styles & Content"
+    },
+    {
+      "type": "text",
+      "id": "samples_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "samples_para",
+      "label": "Paragraph"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background Colour",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sample_add_color",
+      "label": "Sample Added Colour",
+      "default": "#EDF7EE"
+    },
+    {
+      "type": "color",
+      "id": "sample_max_color",
+      "label": "Max Samples Colour",
+      "default": "#F8EEEB"
+    },
+    {
+      "type": "header",
+      "content": "Validation"
+    },
+    
+    {
+      "type": "paragraph",
+      "content": "Existing customers: has account + has placed >1 orders"
+    },
+    {
+      "type": "paragraph",
+      "content": "New customers: has account + has placed 0 orders"
+    },
+    {
+      "type": "select",
+      "id": "customer_validation",
+      "label": "Customer Validation",
+      "options": [
+        {
+          "value": "none",
+          "label": "All users"
+        },
+        {
+          "value": "existing_customer_only",
+          "label": "Existing customers"
+        },
+        {
+          "value": "new_customers_only",
+          "label": "New Customers"
+        }
+      ],
+      "default": "none"
+    },
+
+    {
+      "type": "textarea",
+      "id": "validation_error_message",
+      "label": "Message when cart fails validation",
+      "default": "Your cart contains inellegible offers"
+    },
+    {
+      "type": "range",
+      "id": "max_samples",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Max samples",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "ATC button Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "params_use",
+      "label": "Use URL params",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "params_key",
+      "label": "Key"
+    },
+    {
+      "type": "textarea",
+      "id": "params_values",
+      "label": "values (comma seperated for multiple)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "product",
+      "limit": 4,
+      "settings": [
+        {
+          "id": "product",
+          "type": "product",
+          "label": "Product"
+        },
+        {
+          "id": "variant_sku",
+          "type": "text",
+          "label": "Variant SKU"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

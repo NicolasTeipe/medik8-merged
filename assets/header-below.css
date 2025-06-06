@@ -1,0 +1,94 @@
+.below-header-msg-bar {
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 102px;
+  z-index: 98; }
+  @media (max-width: 768px) {
+    .below-header-msg-bar.modal-open {
+      z-index: 1; } }
+
+@media all and (min-width: 1023px) {
+  .below-header-msg-bar__slider {
+    justify-content: center; } }
+
+@media all and (max-width: 1024px) {
+  .below-header-msg-bar {
+    top: 68px; } }
+
+@media all and (max-width: 767px) {
+  .below-header-msg-bar {
+    top: 73px; } }
+
+.below-header-msg-bar__message {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px 40px;
+  position: relative; }
+
+.below-header-msg-bar__message:not(:last-child):after {
+  content: '';
+  position: absolute;
+  right: 0;
+  height: 23px;
+  width: 1px;
+  background: #fff;
+  top: 50%;
+  transform: translate(0, -50%); }
+
+.keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide.below-header-msg-bar__message {
+  width: auto; }
+
+.below-header-msg-bar__image {
+  width: auto;
+  height: auto;
+  object-fit: contain; }
+
+.below-header-msg-bar__text--has-image {
+  margin-left: 10px; }
+
+.below-header-msg-bar__message--reverse .below-header-msg-bar__image {
+  order: 2; }
+
+.below-header-msg-bar__message--reverse .below-header-msg-bar__text {
+  order: 1; }
+
+.below-header-msg-bar__message--reverse .below-header-msg-bar__text--has-image {
+  margin-right: 10px;
+  margin-left: 0px; }
+
+.below-header-msg-bar__message p {
+  font-size: 16px;
+  margin-bottom: 0;
+  line-height: 1.4;
+  font-family: ridley_groteskmedium,sans-serif; }
+
+.below-header-msg-bar__message a {
+  color: #fff;
+  text-decoration: underline; }
+
+.below-header-msg-bar__message a:hover {
+  text-decoration: none; }
+
+@media all and (max-width: 1380px) {
+  .below-header-msg-bar__message {
+    padding: 6px 30px; }
+  .below-header-msg-bar__message p {
+    font-size: 13px; } }
+
+@media all and (max-width: 1023px) {
+  .below-header-msg-bar__message {
+    padding: 2px 20px; }
+  .below-header-msg-bar__message p {
+    font-size: 11px; }
+  .below-header-msg-bar__message:not(:last-child):after {
+    display: none; }
+  .keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide.below-header-msg-bar__message {
+    width: 100%; } }

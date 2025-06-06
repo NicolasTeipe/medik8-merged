@@ -1,0 +1,177 @@
+.f-popover:not(#product-gallery-mobile-popover) {
+  pointer-events: none;
+  z-index: 999997;
+}
+
+.f-popover:not(#product-gallery-mobile-popover) .f-popover-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999998;
+  background-color: rgba(0, 0, 0, 0.33);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.f-popover:not(#product-gallery-mobile-popover) .f-popover-content {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+  opacity: 0;
+  overflow-y: auto;
+  background: #fff;
+  transform: translateY(20%);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  padding: 24px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+/* gallery popover specific */
+#product-gallery-mobile-popover.f-popover {
+  pointer-events: none;
+  z-index: 999997;
+  position: fixed;
+  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+}
+
+#product-gallery-mobile-popover.f-popover .f-popover-content {
+  height: 100vh;
+  opacity: 0;
+  overflow-y: auto;
+  background: #fff;
+  transform: translateY(20%);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  padding: 24px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+/* gallery popover specific ENDS */
+
+
+
+.f-popover-content h3 {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  margin-bottom: 27px;
+}
+
+.f-popover-content .rte,
+.f-popover-content .rte p {
+  margin-bottom: 0;
+}
+
+.f-popover-content .js-oos-notification-form__content,
+.f-popover-content .input-full,
+.f-popover-content .js-oos-notification-form__accept-policy {
+  margin-bottom: 24px;
+}
+
+.js-oos-notification-form__accept-policy .rte {
+  font-size: 12px;
+}
+
+.f-popover-content .input-full {
+  background-color: #f6f6f6;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  font-size: 14px;
+}
+
+.f-popover-content .input-full::placeholder {
+  color: #000;
+}
+
+.f-popover-content .input-full:focus-within {
+  background-color: #fff;
+  border-color: #000;
+}
+
+.f-popover-content .js-oos-notification-form__accept-policy {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+}
+
+.f-popover-content input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  accent-color: #000;
+  margin: 0;
+}
+
+.f-popover-content .btn {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  margin-bottom: 0 !important;
+}
+
+.f-popover-content .btn[disabled] {
+  cursor: not-allowed;
+}
+
+.f-popover .js-oos-notification-form__message {
+  margin-top: 24px;
+}
+
+.f-popover .js-oos-notification-form__message:empty {
+  display: none;
+}
+
+.f-popover .form-vertical {
+  margin-bottom: 0;
+}
+
+.f-popover:not(#product-gallery-mobile-popover).is-visible,
+#product-gallery-mobile-popover.f-popover.is-visible {
+  pointer-events: initial;
+}
+
+.f-popover:not(#product-gallery-mobile-popover).is-visible .f-popover-content,
+.f-popover:not(#product-gallery-mobile-popover).is-visible .f-popover-overlay,
+#product-gallery-mobile-popover.f-popover.is-visible .f-popover-content,
+#product-gallery-mobile-popover.f-popover.is-visible .f-popover-overlay {
+  opacity: 1;
+}
+
+.f-popover:not(#product-gallery-mobile-popover).is-visible .f-popover-content,
+#product-gallery-mobile-popover.f-popover.is-visible .f-popover-content {
+  transform: translateY(0);
+}
+
+.f-popover-close {
+  background-color: #f6f6f6;
+  padding: 14px;
+  line-height: 0;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 9;
+  border-radius: 5px;
+}
+
+@media screen and (min-width: 768px) {
+  .f-popover:not(#product-gallery-mobile-popover) .f-popover-content {
+    width: 440px;
+    max-height: 450px;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translateX(-50%) translateY(-50%);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  .f-popover:not(#product-gallery-mobile-popover).is-visible .f-popover-content,
+  #product-gallery-mobile-popover.f-popover.is-visible .f-popover-content {
+    transform: translateX(-50%) translateY(-50%);
+  }
+}

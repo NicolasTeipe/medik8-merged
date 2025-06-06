@@ -1,0 +1,39 @@
+{% comment %}theme-check-disable{% endcomment %}
+
+{%- comment -%}
+  Theme check states 'This snippet is not used'.
+  Will disable theme-check for file, rrather than deleting.
+{%- endcomment -%}
+
+{% comment %} Check if third image exists {% endcomment %}
+{% if card_product.media.size >= 3 %}
+  {% assign hover_image = card_product.images[2] %}
+{% else %}
+  {% assign hover_image = card_product.images[1] %}
+{% endif %}
+
+<div class="card-wrapper">
+  <div class="card">
+    <div class="card__inner"> 
+      {%- if card_product.featured_media -%}
+        <div class="card__media">
+          <div class="card__image">
+            <a href="{{ card_product.url | within: collection }}" class="wayfx-product__grid-image">
+              <div class="reveal">
+                {% comment %} <img class="lazyload" data-src="{% render "bgset", image: card_product %}" alt="{{ card_product.featured_image.alt | escape }}"> {% endcomment %}
+                <img loading="lazy" src="{{ card_product.featured_image.src | image_url: width: 281, height: 281 }}" alt="{{ card_product.featured_image.alt | escape }}-{{ index }}" width="{{card_product.featured_image.width}}" height="{{card_product.featured_image.height}}">
+                <img loading="lazy" class="hidden" src="{{ hover_image | image_url: width: 281, height: 281 }}" alt="{{ hover_image.alt | escape }}-hover-{{ index }}" width="{{hover_image.width }}" height="{{hover_image.height}}" />
+              </div>
+            </a>
+            <h1 class="card__title">
+              <a href="{{ card_product.url | within: collection }}">{{ card_product.title }}</a>
+            </h1>
+            <a href="{{ card_product.url | within: collection }}" class="btn--medium btn--outline">Shop Now</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% comment %}theme-check-enable{% endcomment %}

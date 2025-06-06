@@ -1,0 +1,30 @@
+{%- assign background_color = block.settings.background_color -%}
+{%- assign image = block.settings.image | image_url: height: 208 -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign cta_link = block.settings.cta_link -%}
+{%- assign cta_text = block.settings.cta_text -%}
+
+{%- if background_color != '' -%}
+    <style type="text/css">
+        .wayfx-block--cta-footer {background: {{ background_color }}};
+    </style>
+{%- endif -%}
+
+<section class="wayfx-block wayfx-block--cta-footer">
+    <div class="wayfx-wrapper">
+        {% if block.settings.image %}
+            <div class="wayfx-block__image">
+                <img width="200" height="200" loading="lazy" src="{{ image }}" alt="" />
+            </div>
+        {% else %}
+            {% if heading != '' %}
+                <h2 class="h2--primary">{{ heading }}</h2>
+            {% endif %}
+        {% endif %}
+        {% if paragraph != '' %}{{ paragraph }}{% endif %}
+        {% if cta_link != '' and cta_text != '' %}
+            <a href="{{ cta_link }}" class="btn--invert btn--xlarge">{{ cta_text }}</a>
+        {% endif %}
+    </div>
+</section>

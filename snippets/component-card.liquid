@@ -1,0 +1,15 @@
+<div class="card-wrapper">
+  <a href="{{ item.url }}" class="card">
+    <div class="card__inner"> 
+      <div class="card__image">
+        {% if item.image %}
+          <img loading="lazy" src="{% render "bgset", image: item %}" alt="{{ item.image.alt | escape }}" width="{{item.image.width}}" height="{{item.image.height}}"> 
+        {% else %}
+          <img loading="lazy" src="https://ucarecdn.com/f68ce19f-eae7-4b4e-ad80-24428334d37f/" width="300" height="auto">
+        {% endif %}
+      </div>
+      <h1 class="card__title">{{ item.title }}</h1>
+      <span class="card__btn btn--medium btn--outline">Read item</span>
+    </div>   
+  </a>
+</div>

@@ -1,0 +1,126 @@
+{%- assign heading = section.settings.heading -%}
+
+<section class="wayfx-block wayfx-block--before-after ba-slider-{{section.id}}">
+<div class="wayfx-wrapper">
+    {% if heading %}<h2 class="h2--primary text-center">{{ heading }}</h2>{% endif %}
+    <div class="wayfx-block--before-after__slider{% if section.blocks.size > 1 %} wayfx-block--before-after__slider-active slider--dot-alt{% endif %}" {% if section.blocks.size > 1 %}style="display: none;"{% endif %}>
+        {% for block in section.blocks %}
+          {%- assign show_reviews = block.settings.show_reviews -%}
+            {% case block.type %}
+                {% when 'comparison' %}
+                    {%- assign before_image = block.settings.before_image -%}
+              {%- assign after_image = block.settings.after_image -%}
+              {%- assign before_text = block.settings.before_text -%}
+              {%- assign after_text = block.settings.after_text -%}
+                    <div class="wayfx-block--before-after__slide">
+                        <div class="wayfx-grid">
+                            <div class="wayfx-block__left">
+                              <div class="ba-slider">
+                                <span class="ba-slider__after">{{ after_text }}</span>
+                                 <img loading="lazy" src="{{ after_image | image_url: width: 1100 }}" alt="" height="1100" width="1100">
+                                <div class="resize">
+                                  <span class="ba-slider__before">{{ before_text }}</span>
+                                  <img loading="lazy" src="{{ before_image | image_url: width: 1100 }}" alt="" height="1100" width="1100">
+                                </div>
+                                <span class="handle"></span>
+                              </div>
+                            </div>
+                            <div class="wayfx-block__right">
+                              {% assign product = block.settings.product %}
+                              {% render 'product-grid-item', product: product, product_layout: 'full', reviews: show_reviews %}
+                            </div>
+                        </div>
+                    </div>
+            {% endcase %}
+        {% endfor %}
+    </div>
+</div>
+</section>
+
+<style>
+ 
+  .ba-slider-{{ section.id }} { 
+    background-color: {{ section.settings.bg_color }};
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Before & After Slider",
+  "presets": [
+    {
+      "name": "Before & After Slider"
+    }
+  ],
+  "settings": [
+    {
+      "id": "bg_color",
+      "type": "color",
+      "label": "Background Color",
+      "default": "#F9F9F9"
+    },
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading"
+    }
+  ],
+  "blocks": [
+    {
+     "type": "comparison",
+     "name": "Before & After",
+     "settings": [
+      {
+       "id": "before_image",
+       "type": "image_picker",
+       "label": "Before Image"
+      },
+      {
+       "id": "before_text",
+       "type": "text",
+       "label": "Before Text",
+       "info": "Example: Before"
+      },
+      {
+       "id": "after_image",
+       "type": "image_picker",
+       "label": "After Image"
+      },
+      {
+       "id": "after_text",
+       "type": "text",
+       "label": "After Text",
+       "info": "Example: After 2 weeks"
+      },
+      {
+       "id": "product",
+       "type": "product",
+       "label": "Product"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_reviews",
+        "label": "Show Product Reviews",
+        "default": true
+      }
+     ]
+    }
+   ]
+ }
+{% endschema %}
+
+{% javascript %}
+
+ $(document).ready(function() {
+      $('.wayfx-block--before-after__slider-active').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            draggable: false,
+            infinite: true,
+            swipe: false,
+            dots: false
+      }).show();
+ });
+
+{% endjavascript %}

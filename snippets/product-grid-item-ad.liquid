@@ -1,0 +1,32 @@
+{% assign ad_image = settings.ad_image | image_url %}
+{% assign ad_opacity = settings.ad_image_opacity %}
+{% assign ad_title = settings.ad_title %}
+{% assign ad_subtitle = settings.ad_subtitle %}
+{% assign ad_paragraph = settings.ad_paragraph %}
+{% assign ad_cta_link = settings.ad_cta_link %}
+{% assign ad_cta_text = settings.ad_cta_text %}
+
+<div class="wayfx-product__item-ad ad-quart"
+     style="background-image: url('{{ ad_image }}')">
+
+  {% if ad_title != blank %}
+    <h2 class="wayfx-product__grid-title" data-touch="false">{{ ad_title }}</h2>
+  {% endif %}
+  {% if ad_subtitle != blank %}
+    <span class="wayfx-product__grid-subtitle">{{ ad_subtitle }}</span>
+  {% endif %}
+  {% if ad_paragraph != blank %}
+    {{ ad_paragraph }}
+  {% endif %}
+  {% if ad_cta_text != blank %}
+    <a class="btn--secondary" href="{{ ad_cta_link }}"
+     data-touch="false">{{ ad_cta_text }}</a>
+  {% endif %}
+
+</div>
+
+<style>
+  .wayfx-product__item-ad:after {
+    background: rgba(0, 0, 0, .{{ad_opacity}});
+  }
+</style>

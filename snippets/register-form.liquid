@@ -1,0 +1,49 @@
+<h2 class="h2--secondary text-center">{{ 'customer.register.title' | t }}</h2>
+
+{% unless template contains 'blank-login' or template contains 'ajax' %}
+<ul class="wayfx-list">
+    <li>{{ 'customer.register.usp_1' | t }}</li>
+    <li>{{ 'customer.register.usp_2' | t }}</li>
+    <li>{{ 'customer.register.usp_3' | t }}</li>
+    <li>{{ 'customer.register.usp_4' | t }}</li>
+    <li>{{ 'customer.register.usp_5' | t }}</li>
+    <li>{{ 'customer.register.usp_6' | t }}</li>
+</ul>
+{% endunless %}
+
+{% form 'create_customer' %}
+
+   {% if template contains 'blank-login' or template contains 'ajax' %}
+  <input type="hidden" name="return_to" value="/pages/refer-a-friend">
+  {% endif %}
+
+	{%- if request.path contains '/register' -%}
+    {{ form.errors | default_errors }}
+	{%- endif -%}
+    <label for="FirstName" class="hidden-label">{{ 'customer.register.first_name' | t }}</label>
+    <input type="text" name="customer[first_name]" id="FirstName" class="input-full" placeholder="{{ 'customer.register.first_name' | t }}" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus>
+    <label for="LastName" class="hidden-label">{{ 'customer.register.last_name' | t }}</label>
+    <input type="text" name="customer[last_name]" id="LastName" class="input-full" placeholder="{{ 'customer.register.last_name' | t }}" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocapitalize="words">
+    <label for="Email" class="hidden-label">{{ 'customer.register.email' | t }}</label>
+    <input type="email" name="customer[email]" id="Email" required class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.register.email' | t }}" {% if form.email %} value="{{ form.email }}"{% endif %} autocorrect="off" autocapitalize="off">
+    <label for="CreatePassword" class="hidden-label">{{ 'customer.register.password' | t }}</label>
+    <global-password-input inputId="CreatePassword"
+                           inputClass="input-full{% if form.errors contains 'password' %} error{% endif %}"
+                           inputName="customer[password]"
+                           inputPlaceholder="{{ 'customer.register.password' | t }}"
+                           validationHintText="{{ 'customer.password_validation_hint' | t }}">
+    </global-password-input>
+    <button type="submit" class="btn btn--xlarge btn--full">{{ 'customer.register.submit' | t }}</button>
+    <div>
+      <div class="checkbox">
+        <input type="checkbox" required id="register_terms">
+        <label for="register_terms">
+          	<small>
+              {{ 'customer.register.agree' | t }}
+              <a class="js-policy-fancybox" href="/policies/terms-of-service">{{ 'customer.register.tos' | t }}</a> &
+          	  <a class="js-policy-fancybox" href="/policies/privacy-policy">{{ 'customer.register.privacy' | t }}</a>.
+          	</small>
+        </label>
+      </div>
+    </div>
+{% endform %}

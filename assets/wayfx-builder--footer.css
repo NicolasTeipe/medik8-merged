@@ -1,0 +1,46 @@
+.wayfx-builder-footer {
+  margin-top: 28px; }
+  @media all and (min-width: 768px) {
+    .wayfx-builder-footer {
+      text-align: center; } }
+  @media all and (max-width: 767px) {
+    .wayfx-builder-footer {
+      border-top: 1px solid #E8E8E8;
+      margin-top: 0;
+      padding-top: 39px; } }
+  .wayfx-builder-footer .wayfx-builder-footer__copyright {
+    color: #666;
+    font-size: 14px;
+    line-height: 1; }
+    @media all and (min-width: 768px) {
+      .wayfx-builder-footer .wayfx-builder-footer__copyright {
+        text-align: center; } }
+  .wayfx-builder-footer .wayfx-builder-footer__links {
+    margin-top: 16px;
+    margin-bottom: 56px; }
+    @media all and (max-width: 767px) {
+      .wayfx-builder-footer .wayfx-builder-footer__links {
+        margin-bottom: 24px; } }
+    .wayfx-builder-footer .wayfx-builder-footer__links ul {
+      display: inline-flex;
+      list-style: none;
+      margin: 0;
+      padding: 0; }
+      @media all and (max-width: 767px) {
+        .wayfx-builder-footer .wayfx-builder-footer__links ul {
+          flex-wrap: wrap; } }
+      .wayfx-builder-footer .wayfx-builder-footer__links ul li {
+        margin-left: 8px;
+        margin-right: 8px;
+        line-height: 1; }
+        @media all and (max-width: 767px) {
+          .wayfx-builder-footer .wayfx-builder-footer__links ul li {
+            flex: 1 50%;
+            margin: 8px 0;
+            max-width: 50%; } }
+        .wayfx-builder-footer .wayfx-builder-footer__links ul li a {
+          color: #666;
+          font-size: 12px;
+          text-decoration: underline; }
+          .wayfx-builder-footer .wayfx-builder-footer__links ul li a:hover {
+            color: #000; }

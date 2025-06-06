@@ -1,0 +1,26 @@
+{%- assign image = block.settings.image | image_url: width: 1100 -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign cta_link = block.settings.cta_link -%}
+{%- assign cta_text = block.settings.cta_text -%}
+
+{% if heading %}
+    <section class="wayfx-block wayfx-block--standard">
+        <div class="wayfx-wrapper">
+          <div class="wayfx-block__text">
+            {% if heading != blank %}
+            <h2 class="h2--primary">{{ heading }}</h2>
+            {% endif %}
+            {% if block.settings.image %}
+              <div class="wayfx-block__image">
+                <img loading="lazy" data-blink-src="{{ image }}" alt="test" />
+              </div>
+            {% endif %}
+            {% if paragraph != blank %}{{ paragraph }}{% endif %}
+            {% if cta_link != blank and cta_text != blank %}
+            <a href="{{ cta_link }}" class="btn btn--xlarge">{{ cta_text }}</a>
+            {% endif %}
+          </div>
+        </div>
+    </section>
+{% endif %}

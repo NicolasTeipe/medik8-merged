@@ -1,0 +1,254 @@
+{{ "header.css" | asset_url | stylesheet_tag }}
+
+{% render 'header-extra-links', layout: 'desktop' %}
+
+<div class="wayfx-wrapper">
+    <div class="wayfx-header__left">
+        <div class="wayfx-header__mobile-nav">
+          <button aria-label="Mobile menu" id="wayfxNavTrigger" class="wayfx-header__icon">
+            <i class="wayfx-icon wayfx-icon-menu"></i>
+          </button>
+      </div>
+
+      {% if settings.search_provider == 'algolia' %}
+        <button aria-label="Search" id="header-search-icon" class="wayfx-header__icon search-icon">
+          <i class="wayfx-icon wayfx-icon-search"></i>
+        </button>
+      {% elsif settings.search_provider == 'algolia_legacy' %}
+        {% render "algolia-search-bar" %}
+      {%- else -%}
+        {% render "search-bar" %}
+      {% endif %}
+
+    </div>
+
+    <div class="wayfx-header__logo" itemscope itemtype="http://schema.org/Organization">
+      <a aria-label="Home" href="{{shop.secure_url}}" itemprop="url"  class="wayfx-header__logo-link">
+        <svg xmlns="http://www.w3.org/2000/svg" role="graphics-symbol" aria-label="Medik8 Logo" width="258.89" height="58.44" viewBox="0 0 258.89 58.44"> <g id="Medik8_Logo_Black_TM" data-name="Medik8_Logo_Black TM" transform="translate(-78.39 -183.38)"> <g id="Group_1" data-name="Group 1"> <path id="Path_1" data-name="Path 1" d="M329.46,199.81c0,4.18-1.26,8.92-5.37,12.24-6.4-3.32-12.71-6.32-12.71-12.87,0-4.66,3-9.48,8.61-9.48,5.76,0,9.47,3.48,9.47,10.11m-22.11,29.21c0-5.21,2.53-10.42,6.47-12.48,7.03,3.87,14.84,7.19,14.84,14.29a9.942,9.942,0,0,1-9.87,10.19c-5.67.01-11.44-3.23-11.44-12m-4.81-26.05c0,6.32,4.9,9.95,10.5,13.11-7.5,2.45-12.16,8.05-12.16,13.74,0,6.16,5.84,12,17.37,12,9.32,0,19.03-4.42,19.03-14.92,0-7.58-6.16-11.21-12.48-14.53,6.87-2.61,10.66-6.87,10.66-11.53,0-7.5-7.82-11.92-15.79-11.92-8.53-.01-17.13,5.44-17.13,14.05m-32.93-19.59h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v47.06c0,2.92-.63,3.08-6.08,3.47v.79h20.92v-.79c-5.45-.39-6.08-.55-6.08-3.47V220.81a6.006,6.006,0,0,1,5.45,3.08l11.61,17.13H299.7v-.63c-3-.39-4.11-2.45-5.05-3.79l-14.37-19.58,7.66-9.16c2.13-2.68,3.4-4.74,9-5.53v-.79H279.33v.79c9.16.47,8.69,4.03,6.24,7.03l-5.76,7.11c-2.76,3.24-3.87,3.71-10.19,3.71v-36.8ZM245.8,200.76h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v29.69c0,2.92-.63,3.08-6.08,3.47v.79h20.92v-.79c-5.45-.39-6.08-.55-6.08-3.47Zm-10.43-9.4c0,3.24,2.53,5.13,5.76,5.13s5.76-1.9,5.76-5.13c0-3.16-2.53-5.13-5.76-5.13s-5.76,1.97-5.76,5.13m-13.47-7.98h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v14.05a16.05,16.05,0,0,0-9.32-3c-9.79,0-18.63,7.66-18.63,20.53,0,11.84,6,20.53,16.11,20.53a15.657,15.657,0,0,0,11.84-5.69h.39l.16,5.69h.79l13.5-1.74v-.79c-5.45-.39-6.08-.55-6.08-3.79Zm-16.59,55.28c-5.92,0-10.82-6-10.82-17.69,0-10.98,3.24-19.42,10.58-19.42,3.32,0,8.05,1.97,8.05,10.74v22.98a12.032,12.032,0,0,1-7.81,3.39m-40.85-37.11c3.95,0,6.63,2.53,6.71,9.08a38.61,38.61,0,0,1-.63,6.63H153.8c.63-9.63,5.05-15.71,10.66-15.71m.39-.79c-9.87,0-19.9,7.5-19.9,20.92,0,10.66,6.55,20.13,19.11,20.13a19.866,19.866,0,0,0,14.61-6.4l-.32-.63a15.605,15.605,0,0,1-10.11,3.71c-7.9,0-14.53-6.16-14.53-18.79v-1.66H178.5a19.785,19.785,0,0,0,.63-4.74c.02-9.31-7.25-12.54-14.28-12.54m-38.05,36c0,2.92-.63,3.08-6.08,3.47v.79h21.24v-.79c-5.45-.39-6.08-.55-6.08-3.47V190.02c0-2.92.63-3.08,6.08-3.47v-.79H127.43l-15.16,42.16L94.5,185.75H78.39v.79c6.4.39,7.03.55,7.03,3.47v46.74c0,2.92-.63,3.08-7.03,3.47v.79H96.63v-.79c-9.08-.39-10.42-.55-10.42-3.47V189.14l21.87,52.27h.55l18.48-52.19Z"/> </g> </g></svg>
+      </a>
+      <link itemprop="logo"  content="{{ 'logo.png' | asset_url }}">
+    </div>
+    <div class="wayfx-header__right">
+        <!--<div class="wayfx-header__favorites">
+          <a aria-label="Wishlist" href="#swym-wishlist" class="swym-wishlist wayfx-header__icon">
+              <i class="wayfx-icon wayfx-icon-heart"></i>
+          </a>
+        </div>
+        <div style="display:none;" id="swym-wishlist"></div>-->
+        {% if shop.customer_accounts_enabled %}
+          <div class="wayfx-header__account">
+              <a aria-label="My account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="wayfx-header__icon">
+                  <i class="wayfx-icon wayfx-icon-user"></i>
+              </a>
+          </div>
+        {% endif %}
+        <div class="wayfx-header__cart">
+          <a class="wayfx-header__icon js-cart-toggle jsonly"
+              href="/cart"
+              aria-controls="CartDrawer"
+              aria-expanded="false">
+              <i class="wayfx-icon wayfx-icon-bag"></i>
+              <span class="js-global-cart-counter global-cart-counter">{{ cart.item_count }}</span>
+          </a>
+          <noscript>
+            <a href="{{ routes.cart_url }}"
+              class="wayfx-header__icon js-drawer-open-right"
+              aria-controls="CartDrawer"
+              aria-expanded="false">
+                <i class="wayfx-icon wayfx-icon-bag"></i>
+                <span class="js-global-cart-counter global-cart-counter">{{ cart.item_count }}</span>
+            </a>
+            <style> .jsonly { display: none } </style>
+          </noscript>
+        </div>
+    </div>
+</div>
+
+<nav class="wayfx-header__nav wayfx-header__nav--desktop">
+
+  	{% for link in section.settings.main-menu.links %}
+      {% assign link-handle = link.title | handleize  %}
+  		{%- if forloop.index == 2 -%}
+			{%- assign shop_dropdown = true -%}
+		{%- endif -%}
+  		<div class="wayfx-header__nav-link wayfx-header__has-dropdown">
+          <a href="{{ link.url }}">
+              <span class="wayfx-text">{{ link.title }}</span>
+          </a>
+          
+          <div class="wayfx-header__dropdown  
+            {%- for lvl1_link in link.links -%}{% if forloop.length <= 1 %} single-menu {% endif %}{%endfor%} 
+            {% if forloop.index <= 6 %} wayfx-header__dropdown--full{% else %} wayfx-header__dropdown--small{% endif %}">
+              {%- for lvl1_link in link.links -%}
+                {%- if lvl1_link.links != blank -%}
+            	  {%- if forloop.first -%}<div class="wayfx-wrapper">{%- endif -%}
+                    <div class="wayfx-header__dropdown-column">
+                      <span class="heading">{{ lvl1_link.title }}</span>
+                      <ul>
+                        {%- for lvl2_link in lvl1_link.links -%}
+                          <li><a href="{{ lvl2_link.url }}"{% if lvl2_link.url contains 'youtube.com' %} data-fancybox{% endif %}>{{ lvl2_link.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+            		{%- if shop_dropdown and forloop.last -%}
+                      <div class="wayfx-header__dropdown-column">
+                        <a href="{{ routes.all_products_collection_url }}" class="wayfx-header__shop-all-link">{{ 'general.header.shop_all' | t }}</a>
+                        {%- if section.settings.menu_shop_img -%}
+                          <a href="{{ routes.all_products_collection_url }}" class="wayfx-header__kit-link">
+                            {% render 'global.lazy-image', 
+                              image_desktop:section.settings.menu_shop_img,
+                              image_mobile:section.settings.menu_shop_img,
+                              image_class:'img-config'
+                            %}
+                            <div class="wayfx-header__kit-title">{{ 'general.header.kit_title' | t }}</div>
+  <!--                           <div class="wayfx-header__kit-text">Pick your Vitamin C, Sunscreen and Vitamin A</div> -->
+                            <div class="wayfx-header__kit-discount">{{ 'general.header.cta' | t }}</div>
+                          </a>
+                        {%- endif -%}
+                      </div>
+                      {%- assign shop_dropdown = false -%}
+                    {%- endif -%}
+            	  {%- if forloop.last -%}</div>{%- endif -%}
+                  {%- endif -%}
+			  {% endfor %}
+
+              {%- for lvl1_link in link.links -%}
+                {%- if lvl1_link.links == blank -%}
+					{%- if forloop.first -%}<ul style="text-align:center">{%- endif -%}
+                      <li>
+                        <a href="{{ lvl1_link.url }}"{% if lvl1_link.url contains 'youtube.com' %} data-fancybox{% endif %}>{{ lvl1_link.title }}</a>
+                      </li>
+              		{%- if forloop.last -%}</ul>{%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+
+  	{% endfor %}
+</nav>
+
+<nav class="wayfx-mobile__nav">
+  <div class="wayfx-mobile__nav-wrapper">
+    <div class="wayfx-mobile__heading">
+        <div class="wayfx-mobile__heading-left">
+            <button aria-label="Go back"  id="wayfxMobileNavBack" style="display: none;" data-back-menu="0">
+                <i class="wayfx-icon wayfx-icon-long-arrow-left"></i>
+            </button>
+        </div>
+        <div class="wayfx-mobile__heading-center"></div>
+        <div class="wayfx-mobile__heading-right">
+            <button aria-label="Close Navigation" id="wayfxMobileNavClose">
+                <i class="wayfx-icon wayfx-icon-close-thin"></i>
+            </button>
+        </div>
+    </div>
+    <div class="wayfx-mobile__body">
+      <ul class="wayfx-mobile__level wayfx-mobile__level0">
+        {% for link in section.settings.main-menu.links %}
+        <li class="wayfx-mobile__level0-link wayfx-mobile__has-sub-menu">
+          <div class="wayfx-mobile__level-title" data-nav-title="{{ link.title }}">{{ link.title }}</div>
+          {% if link.links != blank %}
+          <ul class="wayfx-mobile__level wayfx-mobile__level1" data-nav-body="{{ link.title }}" style="display: none;">
+            {% for child_link in link.links %}
+              {% if child_link.links != blank %}
+                <li class="wayfx-mobile__level1-link wayfx-mobile__has-sub-menu">
+                  <div class="wayfx-mobile__level-title" data-nav-title="{{ child_link.title }}">{{ child_link.title }}</div>
+                  <ul class="wayfx-mobile__level wayfx-mobile__level2 wayfx-mobile__level-links" data-nav-title="{{ child_link.title }}" data-nav-body="{{ child_link.title }}" style="display: none;">
+                    {% for grandchild_link in child_link.links %}
+                    <li class="wayfx-mobile__level2-link">
+                      <a href="{{ grandchild_link.url }}"{% if grandchild_link.url contains 'youtube.com' %} data-fancybox{% endif %}>{{ grandchild_link.title }}</a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li class="wayfx-mobile__level2-link">
+                  <a href="{{ child_link.url }}"{% if child_link.url contains 'youtube.com' %} data-fancybox{% endif %}>{{ child_link.title }}</a>
+                </li>
+              {% endif %}
+              {%- if link.title == 'Shop' -%}
+              	{%- if forloop.last -%}
+            		<li class="wayfx-mobile__level2-link">
+                        <a href="{{ routes.all_products_collection_url }}">{{ 'general.header.shop_all' | t }}</a>
+                      </li>
+
+                {%- if section.settings.menu_shop_img -%}
+                  <li class="wayfx-mobile__bundle">
+                    <a href="{{ routes.all_products_collection_url }}" class="wayfx-header__kit-link">
+                      {% render 'global.lazy-image', 
+                        image_desktop:section.settings.menu_shop_img,
+                        image_mobile:section.settings.menu_shop_img,
+                        image_class:'img-config'
+                      %}
+                      <div class="wayfx-header__kit-title">{{ 'general.header.kit_title' | t }}</div>
+  <!--                     <div class="wayfx-header__kit-text">Pick your Vitamin C, Sunscreen and Vitamin A</div> -->
+                        <div class="wayfx-header__kit-discount">{{ 'general.header.cta' | t }}</div>
+                      </a>
+                  </li>
+                {%- endif -%}
+            	{%- endif -%}
+              {%- endif -%}
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% render 'header-extra-links', layout: 'mobile' %}
+
+    </div>
+  </div>
+</nav>
+
+<style>
+    .single-menu { text-align:center; }
+</style>
+
+{% schema %}
+    {
+        "name": "Header",
+        "tag": "header",
+        "class": "wayfx-header js-header-main",
+        "settings": [
+          {
+            "type": "link_list",
+            "id": "main-menu",
+            "label": "Main Menu"
+          },
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo image"
+          },
+          {
+            "type": "image_picker",
+            "id": "favicon",
+            "label": "Favicon",
+            "info": "32 x 32px .png required"
+          },
+          {
+            "type": "header",
+            "content": "Extra Links"
+          },
+          {
+            "type": "link_list",
+            "id": "header_extra_links",
+            "label": "Header Extra Links Menu"
+          },
+          {
+            "type": "header",
+            "content": "Shop Menu Image"
+          },
+          {
+            "type": "paragraph",
+            "content": "The image to display in the menu"
+          },
+          {
+            "type": "image_picker",
+            "id": "menu_shop_img",
+            "label": "Image",
+            "info": "Leave blank for no image"
+          }
+        ]
+    }
+{% endschema %}

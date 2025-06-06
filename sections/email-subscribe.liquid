@@ -1,0 +1,104 @@
+{%- assign list_id = settings.klaviyo_list_id -%}
+{%- assign klaviyo_public_key = settings.klaviyo_api -%}
+
+{%- assign heading = section.settings.heading -%}
+{%- assign paragraph = section.settings.paragraph -%}
+{%- assign small_print = section.settings.small_print -%}
+
+<div class="wayfx-block__text">
+  {% if heading != blank %}
+  <h2 class="h2--secondary">{{ heading }}</h2>
+  {% endif %}
+  {% if paragraph != blank %}
+  <p>{{ paragraph }}</p>
+  {% endif %}
+</div>
+
+<form id="email_subscribe_signup_{{ list_id }}"
+  class="klaviyo_bare_embed_{{ list_id }}"
+  action="#"
+  method="POST"
+  >
+  <div class="email-subscribe__success hide">
+    <small style="display: inline-block; margin: 1rem 0" class="form-message form-message--success toast-message-success" tabindex="-1" data-form-status>
+      {{ section.settings.success }}
+    </small>
+  </div>
+  <div class="email-subscribe__fields flex-group" style="margin: 1rem 0; width: 100%">
+    <input type="hidden" name="list_id" value="{{ list_id }}">
+    <input type="hidden" name="key" value="{{ klaviyo_public_key }}">
+    <input type="hidden" name="source" value="{{ section.settings.source }}">
+    <input type="hidden" name="hpf" value="">
+    <input type="email" required value="{{ customer.email }}" name="email" placeholder="{{ 'contact.form.email' | t }}" class="email-subscribe-input"/>
+    <button type="submit" class="btn email-subscribe-button" name="commit"><i class="fa fa-angle-right"></i></button>
+  </div>
+  {% if small_print != blank %}
+    <div style="margin: 0 .5rem;">
+      <input type="checkbox" required id="small_print_{{ settings.klaviyo_list_id }}" style="vertical-align: middle">
+      <label for="small_print_{{ settings.klaviyo_list_id }}" class="email-subscribe-label">
+      {{ small_print }}
+      </label>
+    </div>
+  {% endif %}
+</form>
+
+<script type="text/javascript">
+  // Handle subscribe form
+  DomReadyPromise().then(() => {
+    const form = document.querySelector('#email_subscribe_signup_{{ list_id }}');
+  
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const result = await klaviyoSubscribe(form);
+  
+      if (result) {
+        document
+          .querySelector('.email-subscribe__success')
+          .classList.remove('hide');
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+    "name": "Email Subscribe",
+    "tag": "section",
+    "class": "mos2--component email-subscribe-wrapper",
+    "presets": [
+      {
+        "name": "Email Subscribe"
+      }
+    ],
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "paragraph",
+            "type": "textarea",
+            "label": "Paragraph",
+            "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+        },
+        {
+            "id": "small_print",
+            "type": "text",
+            "label": "Small Print"
+        },
+        {
+          "id": "success",
+          "type": "textarea",
+          "label": "Success message",
+          "default":"Thanks for subscribing!"
+      },
+      {
+        "id": "source",
+        "type": "text",
+        "label": "source",
+        "default":"npdsignup"
+      }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,55 @@
+<div class="wayfx-wrapper">
+    <h2 class="h2--primary text-center">Reviews</h2>
+	<div class="yotpo yotpo-main-widget" data-product-id="{{ product.id }}" data-name="{{ product.title | escape }}" data-url="{{ shop.url }}{{ product.url }}" data-image-url="{{ product.featured_image | image_url: "large" |replace: '?', '%3F' | replace: '&','%26'}}" data-description="{{ product.description | escape }}"></div>
+</div>
+
+<script>
+  {% comment %}js-policy fancybox is global function that is currently laoded in the module-footer-newsletter-snippet{% endcomment %}
+  $(document).ready(function() {
+  	setTimeout(function(){
+    	$('#write-review-tabpanel-main-widget .submit-button')
+        	.first()
+        	.prepend('<div style="margin-top: 17px;text-align: right;"><small>By submitting this review, you agree to the <a class="js-policy-fancybox" href="/policies/terms-of-service">Terms of Service</a> and <a class="js-policy-fancybox" href="/policies/privacy-policy">Privacy Policy</a>.</small></div>');
+  	}, 2000);
+  });
+</script>
+
+{% if template.suffix == 'alternate' %}
+  <style>
+    .wayfx-product__reviews {padding-top: 0;}
+  </style>
+{% endif %}
+
+{% stylesheet %}
+
+.wayfx-product__reviews {
+    padding: 128px 0;
+  }
+  @media (max-width: 1023px) {
+    .wayfx-product__reviews {
+      padding: 60px 0;
+    }
+  }
+  .wayfx-product__reviews .wayfx-wrapper {
+    max-width: 1115px;
+  }
+  .yotpo-bottomline .yotpo-stars {
+    margin-right: 5px;
+  }
+ 
+
+{% endstylesheet %}
+
+{% schema %}
+    {
+        "name": "Reviews",
+        "presets": [
+          {
+            "name": "Reviews"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__reviews"
+    }
+{% endschema %}

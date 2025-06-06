@@ -1,0 +1,637 @@
+/** refer a friend page **/
+/** earn point **/
+/** faq **/
+
+.lion-tier-benefits-compare__row-cell--tier-0 {
+
+	.lion-tier-benefits-compare__benefit-status-circle {
+		background-color: rgb(184, 0, 0);
+	}
+
+}
+
+.lion-tier-benefits-compare__row-cell--tier-2 {
+
+	.lion-tier-benefits-compare__benefit-status-circle {
+		background-color: rgb(83, 0, 235);
+	}
+}
+
+.lion-tier-benefits-compare__row-cell--tier-1 {
+	.lion-tier-benefits-compare__benefit-status-circle {
+		background-color: rgb(0, 77, 207);
+	}
+}
+
+.spendmore-inner {
+	#loyaltylion {
+		.lion-tier-benefits-compare th:first-child:after {
+			content: "Rewards";
+		}
+	}
+}
+
+.customer_delta {
+	text-align: center;
+	padding: 4em 0em;
+
+	p {
+		margin-bottom: 0 !important;
+		font-size: 18px;
+		text-transform: capitalize;
+	}
+}
+
+.signup-btn {
+	margin: 26px 0 0 0;
+
+	.login-form-popup {
+		padding: 14px 65px 13px;
+		text-transform: uppercase;
+		margin: 0 !important;
+	}
+}
+
+.main-banner-text {
+	h1 {
+		margin-bottom: 29px;
+	}
+}
+
+.steps-sections {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	text-align: center;
+	justify-content: center;
+}
+
+.steps-blocks {
+	width: calc(100% / 3);
+	padding: 10px 12px;
+}
+
+.how-it-works {
+	padding: 4em 0em;
+
+	.wayfx-block__heading {
+		margin: 0 0 40px 0;
+	}
+}
+
+.steps-numbers-text {
+	h5 {
+		margin: 0 0 15px 0;
+		font-size: 25px;
+		font-weight: normal;
+		text-transform: uppercase;
+	}
+
+	p {
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 22px;
+	}
+}
+
+.steps-numbers-img {
+	img {
+		max-width: 150px;
+	}
+
+	margin: 0 0 6px 0;
+}
+
+.spend-section {
+	.wayfx-block__heading {
+		text-align: center;
+	}
+
+	padding: 4em 0em;
+}
+
+.block-para-head {
+	p {
+		text-transform: uppercase;
+		font-size: 17px;
+	}
+}
+
+.spendmore-inner {
+	background: #fff;
+	box-shadow: 0 1px 15px rgba(0, 0, 0, 0.24);
+
+	tr {
+		td {
+			text-align: center;
+			font-weight: normal;
+			font-size: 15px;
+			border-width: 0 1px 0px 0 !important;
+			border-color: #6F6F6F !important;
+			padding: 6px 13px !important;
+			text-transform: uppercase;
+			border-style: solid !important;
+
+			img {
+				max-width: 34px;
+				margin: auto;
+			}
+
+			&:last-child {
+				border-right: none !important;
+			}
+
+			text-align: center;
+			font-weight: normal;
+			font-size: 15px;
+			border-width: 0 1px 0px 0;
+			border-color: #6F6F6F;
+			padding: 6px 13px;
+			text-transform: uppercase;
+		}
+
+		th {
+			text-align: center;
+			text-transform: uppercase;
+			font-weight: normal;
+			font-size: 21px;
+			border-width: 0 1px 1px 0 !important;
+			border-color: #6F6F6F !important;
+			padding: 15px 13px !important;
+			border-style: solid !important;
+
+			&:last-child {
+				border-right: none !important;
+			}
+
+			&:nth-child(2) {
+				background: #f8f8f8;
+			}
+
+			&:nth-child(3) {
+				background: #f2f2f2;
+			}
+
+			&:nth-child(4) {
+				background: #d8d8d8;
+			}
+		}
+	}
+
+	tbody {
+		tr {
+			&:first-child {
+				td {
+					padding-top: 34px !important;
+				}
+			}
+
+			td {
+				&:nth-child(2) {
+					background: #f8f8f8;
+				}
+
+				&:nth-child(3) {
+					background: #f2f2f2;
+				}
+
+				&:nth-child(4) {
+					background: #d8d8d8;
+				}
+			}
+		}
+	}
+}
+
+.spendmore-table {
+	padding: 40px 0 0 0;
+}
+
+.earnpoints-sec {
+	.wayfx-block__heading {
+		text-align: center;
+		margin: 0 0 30px 0;
+	}
+
+	#loyaltylion {
+		.lion-rules-list {
+			-ms-grid-columns: 1fr 30px 1fr;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			padding: 0;
+			border-radius: 0;
+			grid-gap: 30px;
+			background: none;
+			padding: 0;
+			border-radius: 0;
+			grid-gap: 30px;
+			background: none;
+
+			@media all and (max-width: 749px) {
+				grid-template-columns: 1fr 1fr;
+			}
+
+			.lion-rule-item__content {
+				text-align: center;
+				background: #fff;
+				box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.24);
+				border-radius: 0;
+
+				.lion-rule-item__title {
+					margin: 3px 0 8px 0;
+					font-size: 20px;
+					text-transform: uppercase;
+					font-weight: normal;
+					color: #000;
+					padding: 0 1em;
+				}
+
+				.lion-rule-item__points {
+					span {
+						text-transform: uppercase;
+						font-size: 15px;
+						margin: 0;
+						color: #000;
+					}
+				}
+
+				.lion-rule-item__icon {
+					background-color: #4a4a4a;
+				}
+			}
+		}
+	}
+}
+
+.earnpoints-row {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -20px;
+}
+
+.earnpoints-col {
+	width: 50%;
+	padding: 0 20px 36px;
+}
+
+.earnpoints-col-img {
+	img {
+		max-width: 70px;
+	}
+}
+
+.earnpoints-col-text {
+	h5 {
+		margin: 3px 0 8px 0;
+		font-size: 20px;
+		text-transform: uppercase;
+		font-weight: normal;
+	}
+
+	p {
+		text-transform: uppercase;
+		font-size: 15px;
+		margin: 0;
+	}
+}
+
+.earnpoints-col-inner {
+	text-align: center;
+	background: #fff;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.24);
+	padding: 25px 13px;
+}
+
+.so-tab {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	border-bottom: 1px solid #bfbfbf;
+	margin: 0;
+
+	input {
+		position: absolute;
+		opacity: 0;
+		z-index: -1;
+
+		&:checked {
+			~ {
+				.so-tab-content {
+					max-height: none;
+				}
+			}
+		}
+	}
+
+	label {
+		&::after {
+			position: absolute;
+			right: 8px;
+			top: 31px;
+			display: block;
+			width: 26px;
+			height: 26px;
+			line-height: 3;
+			text-align: center;
+			-webkit-transition: all .35s;
+			-o-transition: all .35s;
+			transition: all .35s;
+		}
+	}
+
+	input[type=checkbox] {
+		+ {
+			label {
+				&::after {
+					content: "";
+					background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6 13h-5v5a1 1 0 11-2 0v-5H6a1 1 0 110-2h5V6a1 1 0 112 0v5h5a1 1 0 110 2z' fill='%23000' fill-rule='nonzero'/%3E%3C/svg%3E%0A");
+					background-repeat: no-repeat;
+					background-position: center center;
+				}
+			}
+		}
+
+		&:checked {
+			+ {
+				label {
+					&::after {
+						background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zM6 11h12a1 1 0 010 2H6a1 1 0 010-2z' fill='%23000' fill-rule='nonzero'/%3E%3C/svg%3E ");
+					}
+				}
+			}
+		}
+	}
+
+	input[type=radio] {
+		+ {
+			label {
+				&::after {
+					content: "\25BC";
+				}
+			}
+		}
+
+		&:checked {
+			+ {
+				label {
+					&::after {
+						transform: rotateX(180deg);
+					}
+				}
+			}
+		}
+	}
+}
+
+.so-accordion-wrapper {
+	.so-tab {
+		label {
+			position: relative;
+			display: block;
+			padding: 24px 40px 24px 0;
+			font-family: "ridley_groteskmedium", sans-serif;
+			margin-bottom: 0;
+			font-size: 20px;
+			line-height: 34px;
+			font-weight: normal;
+			color: #000;
+			cursor: pointer;
+		}
+	}
+}
+
+.so-tab-content {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height .35s;
+
+	p {
+		color: #262626;
+		font-size: 18px;
+		margin: 0 0 14px 0;
+	}
+}
+
+.faq-sec {
+	.wayfx-block__heading {
+		margin: 0 0 40px 0;
+	}
+
+	padding: 4em 0em;
+}
+
+
+.lion-tier-benefits-compare__benefit-status-circle {
+	background-color: #000;
+}
+
+
+
+
+@media (min-width:1200px) and (max-width:1480px) {
+	.main-banner.wayfx-block.wayfx-block--hero-with-image {
+		.grid {
+			min-height: 480px;
+		}
+	}
+}
+
+
+
+@media (min-width:992px) and (max-width:1199px) {
+	.steps-numbers-text {
+		h5 {
+			font-size: 22px;
+		}
+
+		p {
+			font-size: 13px;
+		}
+	}
+
+	.earnpoints-sec {
+		#loyaltylion {
+			.lion-rules-list {
+				.lion-rule-item__content {
+					.lion-rule-item__title {
+						font-size: 18px;
+					}
+				}
+			}
+		}
+	}
+
+	.h2--primary {
+		font-size: 32px;
+	}
+
+	.main-banner.wayfx-block.wayfx-block--hero-with-image {
+		.grid {
+			min-height: 440px;
+		}
+
+		padding-bottom:4em;
+	}
+}
+
+
+
+
+@media (min-width:768px) and (max-width:991px) {
+	.steps-numbers-text {
+		h5 {
+			margin: 0 0 15px 0;
+			font-size: 18px;
+		}
+	}
+
+	.spendmore-inner {
+		tr {
+			th {
+				font-size: 19px;
+				padding: 15px 10px !important;
+			}
+		}
+	}
+
+	.earnpoints-col-text {
+		h5 {
+			font-size: 17px;
+		}
+	}
+
+	.earnpoints-sec {
+		#loyaltylion {
+			.lion-rules-list {
+				.lion-rule-item__content {
+					.lion-rule-item__title {
+						font-size: 16px;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+@media (max-width:767px) {
+	.steps-blocks {
+		width: 100%;
+		padding: 13px 0;
+	}
+
+	.how-it-works {
+		.wayfx-block__heading {
+			margin: 0 0 20px 0;
+		}
+
+		padding: 45px 0 40px 0;
+	}
+
+	.steps-numbers-text {
+		h5 {
+			margin: 0 0 11px 0;
+			font-size: 18px;
+		}
+	}
+
+	.spendmore-inner {
+		tr {
+			th {
+				font-size: 14px;
+				padding: 15px 8px !important;
+			}
+
+			td {
+				font-size: 13px;
+				padding: 6px 8px !important;
+			}
+		}
+	}
+
+	.earnpoints-col {
+		width: 100%;
+		padding: 0 20px 36px;
+	}
+
+	.block-para-head {
+		p {
+			font-size: 14px;
+		}
+	}
+
+	.earnpoints-col-text {
+		h5 {
+			margin: 3px 0 8px 0;
+			font-size: 18px;
+			text-transform: uppercase;
+			font-weight: normal;
+		}
+	}
+
+	.h2--primary {
+		font-size: 24px;
+	}
+
+	.earnpoints-sec {
+		#loyaltylion {
+			.lion-rules-list {
+				-ms-grid-columns: 1fr 1fr;
+				grid-template-columns: 1fr 1fr;
+
+				.lion-rule-item__content {
+					.lion-rule-item__title {
+						font-size: 17px;
+					}
+
+					.lion-rule-item__points {
+						span {
+							font-size: 14px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.so-accordion-wrapper {
+		.so-tab {
+			label {
+				padding: 16px 40px 16px 0;
+				font-size: 17px;
+				line-height: 29px;
+			}
+		}
+	}
+
+	.so-tab {
+		label {
+			&::after {
+				top: 20px;
+			}
+		}
+	}
+}
+
+.hero-media p {
+	margin: 0 auto;
+	max-width: inherit !important;
+	font-size: inherit !important;
+}
+
+.lion-tier-benefits-compare__benefit-status-circle {
+	background-color: black !important;
+}
+
+// .spendmore-inner tr td {
+// 	font-size: 13px;
+// }
+
+.spendmore-inner tbody tr:last-child td {
+	padding-bottom: 34px !important;
+}
+
+
+.reward-block-wrapper {
+	padding: 4em 0em;
+}

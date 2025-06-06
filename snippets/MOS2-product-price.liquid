@@ -1,0 +1,57 @@
+{%- if variant_overlay -%}
+	{%- assign product_id = product.id -%}
+	{%- assign product_title = variant.title -%}
+	{%- assign product_size = variant.metafields.sf_settings.size -%}
+	{%- assign product_overlay_id = variant.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = variant.price -%}
+{%- else -%}
+	{%- assign product_id = product.id -%}
+	{%- assign product_title = product.title -%}
+  {%- assign product_size = product.metafields.sf_product_hero.size -%}
+	{%- assign product_overlay_id = product.variants.first.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = product.price -%}
+{%- endif -%}
+
+<p class="wayfx-product__grid-price">
+{% if discount != nil %}
+  {% assign value_discounted = product_price | times: discount | divided_by: 100 %}
+  {% assign final_price =  product_price | minus: value_discounted %}
+  <span {% unless value_discounted == 0 %}class="slashed-price"{% endunless %}>{{ product_price | money_without_trailing_zeros }}</span>
+  {% unless value_discounted == 0 %}
+    <span class="new_price">
+    {% if final_price == 0 %}
+      Free
+    {% else %}
+      {{ final_price | money_without_trailing_zeros }}
+    {% endif %}
+    </span>
+  {% endunless %}
+
+{% else %}
+  {% if product_size != blank %}
+    {% unless show_weight == false %}
+      {{ product_size }} /
+    {% endunless %}
+  {% endif %}
+  {% comment %} TODO: To be reviewed below {% endcomment %}
+  {% if on_sale and site_wide_crossed_out_pricing_enabled %}
+      <span style="margin-right: 5px;">
+        {%- if product.compare_at_price -%}
+          <s>{{ variant.compare_at_price | money_without_trailing_zeros }}</s>
+        {%- else -%}
+          <s>{{ variant.price | money_without_trailing_zeros }}</s>
+        {%- endif -%}
+      </span>
+  {%- endif -%} 
+  {% if on_sale and site_wide_crossed_out_pricing_enabled %}
+      <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
+  {%- else -%}
+    <span>{{ product_price | money_without_trailing_zeros }}</span>
+  {%- endif -%}
+{% endif %}
+</p>
+
+
+  

@@ -1,0 +1,55 @@
+<div id="product_{{ product.id }}_ingredients" class="wayfx-product__full-ingredients" style="display: none;">
+  <div class="js-modal-ingredients__title wayfx-product__title h1--primary">{{ product.title }}</div>
+  {%- if product_subtitle -%}
+  <div class="js-modal-ingredients__subtitle wayfx-product__subtitle">{{ product_subtitle }}</div>
+  {%- endif -%}
+  <div class="js-modal-ingredients__content wayfx-product__ingredient-list"><p>{{ full_ingredient_list }}</p></div>
+  {%- if full_ingredient_disclaimer -%}{{ full_ingredient_disclaimer }}{%- endif -%}
+</div>
+
+<script type="text/javascript">
+  
+  const variantLevelIngredientsData = [] 
+  {% for variant in product.variants %}
+    {% if variant.metafields.MOS2.ingredients %}
+      variantLevelIngredientsData.push({
+        variantId:{{ variant.id | json }},
+        title:{{ variant.title | json  }},
+        subtitle:{{ product_subtitle | json  }},
+        content:{{ variant.metafields.MOS2.ingredients | metafield_tag | json  }},
+      })
+    {% endif %}
+  {% endfor %}
+
+  if(variantLevelIngredientsData.length){
+    
+    const productLevelIngredientsData = {
+      title:{{ product.title | json  }},
+      subtitle:{{ product_subtitle | json }},
+      content:`<p>{{ full_ingredient_list }}</p>`
+    }
+
+    function updateIngredientsData(id){
+      const title = document.querySelector('.js-modal-ingredients__title')
+      const subTitle  = document.querySelector('.js-modal-ingredients__subtitle')
+      const content = document.querySelector('.js-modal-ingredients__content')
+      let data = !id ? false : variantLevelIngredientsData.filter(({variantId}) =>  variantId == id)
+      data = data && data.length ? data[0] : productLevelIngredientsData
+      if(title && data.title){
+        title.innerHTML = data.title
+      }
+      if(subTitle && data.subtitle){
+        subTitle.innerHTML = data.subtitle
+      }
+      if(content && data.content){
+        content.innerHTML = data.content
+      }
+    }
+
+    document.querySelector('#productSelect')?.addEventListener('change',(event) => {
+      updateIngredientsData(event.target.value)
+    })
+
+    document.querySelector('#productSelect')?.dispatchEvent(new Event('change'))
+  }
+</script>

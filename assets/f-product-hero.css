@@ -1,0 +1,87 @@
+.f-product-wrapper {
+    zoom: 1;
+    max-width: 78rem;
+    padding: 0 1.5rem;
+  }
+
+  @media screen and (min-width: 480px) {
+    .f-product-wrapper {
+      padding: 0 1.5rem;
+    }
+  }
+
+  .f-product__section {
+    padding: 0;
+  }
+
+.f-product-hero__wrapper .f-product-hero__details .product-form__input {
+  display: flex;
+  gap: calc(var(--gutter-unit) - 0.563rem);
+  /* added so value can be read in Variant script */
+  --variants-selector-gap-diff: 0.563rem;
+  padding:1px 0;
+  border: 0;
+  margin:0;
+}
+
+.f-product-hero__wrapper .f-product-hero__details .product-form__input label.variant_label {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  line-height: normal;
+  text-transform: uppercase;
+  margin: 0;
+  background-color: var(--color-grey);
+  color: var(--color-black);
+  border-color: transparent;
+  border-radius: 5px;
+  padding:12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.f-product-hero__wrapper .f-product-hero__details .product-form__input label.variant_label small{
+  font-size: 0.6rem;
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.f-product-hero__wrapper .f-product-hero__details .product-form__input label.variant_label.selected {
+  background-color: transparent;
+  border: 1px solid var(--color-black);
+}
+
+.f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__title {
+  margin-bottom: 12px;
+}
+
+
+.f-product-hero__wrapper .f-product-hero__details .form-vertical{
+  margin-top: 24px;
+}
+
+@media (max-width: 1023px) {
+  .f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__item-wrapper {
+    width: calc(100% + 48px);
+    position: relative;
+    left: -24px;
+    padding: 0 24px;
+  }
+}
+
+.f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__item-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__label,
+.f-product-hero__wrapper .f-product-hero__atc {
+  font-size: var(--t-xxs);
+  letter-spacing: 0.075rem;
+}
+
+.f-product-hero__wrapper .f-product-hero__details .f-product-variant-quiz_label {
+  font-size: var(--t-xxs);
+}

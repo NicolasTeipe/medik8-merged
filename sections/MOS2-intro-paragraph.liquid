@@ -1,0 +1,34 @@
+{%- assign title = section.settings.title -%}
+{%- assign paragraph = section.settings.paragraph -%}
+{% if paragraph != blank %}
+    <section class="wayfx-block wayfx-block--intro-paragraph">
+        <div class="wayfx-wrapper text-center">
+          <h2>{{ title }}</h2>
+          {{ paragraph }}
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Intro Paragraph",
+    "presets": [
+      {
+        "name": "Intro Paragraph"
+      }
+    ],
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Intro Paragraph"
+        },
+        {
+            "id": "paragraph",
+            "type": "richtext",
+            "label": "Text"
+        }
+    ]
+}
+{% endschema %}

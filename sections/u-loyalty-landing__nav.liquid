@@ -1,0 +1,106 @@
+
+<loyaltylion-nav class="cell-l cell-r cell-l cell-r d-iblock block-c"></loyaltylion-nav>
+
+<script type="text/javascript">    
+
+  class LoyaltyLionNav extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      if(!this.mounted){
+        DomReadyPromise().then( async () => {
+          this.util = await new LoyaltyLionUtil()
+          this.render()
+          this.util.subscribe( () => {
+            this.render()
+          })
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    }
+
+    updateActiveLink(){
+      this.buttons = Array.from(this.querySelectorAll('button'))
+      let current = this.items.filter( el => {
+        const {top,height} = el.getBoundingClientRect()
+        return top + height > 0
+      })
+      current = current.length ? current[0] : this.items[this.items.length - 1]
+      let anchor = this.buttons.filter( el => el.dataset.anchorLink == current.dataset.anchor)
+      anchor = anchor.length ? anchor[0] : false
+
+      this.buttons.forEach(el => delete el.dataset.active)
+      if(anchor){
+        anchor.dataset.active = true
+      }
+    }
+
+    render(){
+      this.items = Array.from(document.querySelectorAll('[data-anchor]'))
+      this.innerHTML = `
+        <nice-scroll class="ct cb--d2">
+          <div class="ll-nav__container flex-grid">
+            ${this.items.map( elem => {
+              const anchor = elem.dataset.anchor
+              return `<button data-anchor-link="${anchor}" class="ll-nav__item btn-reset t-ucase">${anchor}</button>`
+            }).join('')}
+          </div>
+        </nice-scroll>
+      `
+
+      // TEMP fix for nicescroll patch (https://medik8.atlassian.net/browse/MED-1426)
+      this.addEventListener('click',(e) => {
+        const {anchorLink} = e.target.dataset
+        const nicescroll = e.target.closest('nice-scroll')
+        if(nicescroll.moving || !anchorLink){
+          return
+        }
+        const target = document.querySelector(`[data-anchor="${anchorLink}"]`)
+        const announcementBarHeight = document.querySelector('#shopify-section-announcement-bar')?.getBoundingClientRect().height || 0
+        const headerHeight = document.querySelector('#shopify-section-header')?.getBoundingClientRect().height || 0
+        const postHeaderBarHeight = document.querySelector('#shopify-section-header-below')?.getBoundingClientRect().height || 0
+        window.scrollBy({
+          top: target.getBoundingClientRect().top - (announcementBarHeight + headerHeight + postHeaderBarHeight),
+          behavior: 'smooth'
+        })
+      })
+
+      Array.from(['resize','scroll']).forEach(event => window.addEventListener(event,() => this.updateActiveLink() ))
+      this.updateActiveLink()
+
+      /* TEMP removal for nicescroll patch (https://medik8.atlassian.net/browse/MED-1426)
+      this.buttons = Array.from(this.querySelectorAll('button'))
+      this.buttons.forEach( elem => elem.addEventListener('click',(e) => {
+        const nicescroll = elem.closest('nice-scroll')
+        if(nicescroll.moving){
+          return
+        }
+        e.preventDefault()
+        const target = document.querySelector(`[data-anchor="${elem.dataset.anchorLink}"]`)
+        const announcementBarHeight = document.querySelector('#shopify-section-announcement-bar')?.getBoundingClientRect().height || 0
+        const headerHeight = document.querySelector('#shopify-section-header')?.getBoundingClientRect().height || 0
+        const postHeaderBarHeight = document.querySelector('#shopify-section-header-below')?.getBoundingClientRect().height || 0
+        window.scrollBy({
+          top: target.getBoundingClientRect().top - (announcementBarHeight + headerHeight + postHeaderBarHeight),
+          behavior: 'smooth'
+        })
+      }))
+      */
+    }
+    
+  }
+  customElements.define('loyaltylion-nav', LoyaltyLionNav)
+</script>
+
+
+
+
+{% schema %}
+{
+  "name":"u/loyalty/nav",
+  "class":"tac ll-nav-section"
+}
+{% endschema %}

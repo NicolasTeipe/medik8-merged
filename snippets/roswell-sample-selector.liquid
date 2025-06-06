@@ -1,0 +1,114 @@
+{% assign max_sample = 0 %}
+{%- if customer -%}
+  {% assign tier = "" %}
+  {% for tag in customer.tags %}
+    {% assign lowercase_tag = tag | downcase %}
+    {%- if lowercase_tag contains "tier: " -%}
+      {% assign tier = lowercase_tag | remove_first: "tier: " %}
+      {% case tier %}
+        {% when "crystal" %}
+          {% assign max_sample = settings.sample_limit_1 %}
+        {% when "crystal plus" %}
+          {% assign max_sample = settings.sample_limit_2 %}
+        {% when "crystal deluxe"%}
+          {% assign max_sample = settings.sample_limit_3 %}
+        {% else %}
+          {%- if settings.sample_limit > settings.sample_collection.products.size -%}
+            {% assign max_sample = settings.sample_collection.products.size %}
+          {%- else -%}
+            {% assign max_sample = settings.sample_limit %}
+          {%- endif -%}
+      {% endcase %}
+      {% break %}
+    {%- endif -%}
+  {% endfor %}
+{%- else -%}
+  {%- if settings.sample_limit > settings.sample_collection.products.size -%}
+    {% assign max_sample = settings.sample_collection.products.size %}
+  {%- else -%}
+    {% assign max_sample = settings.sample_limit %}
+  {%- endif -%}
+{%- endif -%}
+<roswell-sampler>
+  <template>
+    {
+      "section_id": {{ section.id | json }},
+      "threshold": {{ settings.sample_threshold | times: 100 | json }},
+      "max_sample": {{ max_sample| json }}
+    }
+  </template>
+  {% assign sample_threshold = settings.sample_threshold | times: 100 %}
+  <div class="sample-selector accordion-item--open">
+    <div class="sample-selector-title">
+      Elige {{ max_sample }} Muestra Gratis
+    </div>
+    {% if settings.sample_collection != blank %}
+      <div class="sample-selector-container">
+        <div class="sample-remain">
+          {% assign sample_added = 0 %}
+          {% for item in cart.items %}
+            {% if item.product.type == "Sample" %}
+              {% assign sample_added = sample_added | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+          {% assign remain_sample = max_sample | minus: sample_added %}
+          {% if remain_sample > 0 %}
+            Elige {{ remain_sample }} Muestra{%- if remain_sample > 1 -%}s{%- endif -%} Gratis
+          {% endif %}
+        </div>
+        <div class="sample-selector-inner-container">
+          {%- for product in settings.sample_collection.products -%}
+            {% if product.available %}
+              {%- assign product_size = product.metafields.sf_product_hero.size -%}
+              {%- assign in_cart = false -%}
+              {%- assign sample_quantity = 0 -%}
+  
+              {%- assign key = "" -%}
+              {%- assign line = "" -%}
+              {% for cart_product in cart.items %}
+                {%- if product.selected_or_first_available_variant.id == cart_product.variant_id -%}
+                  {%- assign in_cart = true -%}
+                  {%- assign key = cart_product.key -%}
+                  {%- assign line = forloop.index -%}
+                {%- endif -%}
+                {%- if cart_product.product.type == 'Sample' -%}
+                  {%- assign sample_quantity = sample_quantity | plus: 1 -%}
+                {%- endif -%}
+              {% endfor %}
+    
+              <div class="sample-product" data-id="{{ product.selected_or_first_available_variant.id }}">
+                
+                  <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url }}" alt="{{ product.featured_image.alt | escape }}">
+                  <p class="sample-title">
+                    {{ product.title }}
+                  </p>
+                
+                {% if product_size %}
+                  <p class="sample-size">
+                    {{ product_size }}
+                  </p>
+                {% endif %}
+                <form action="/cart/add" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" />
+                  <input min="1" type="hidden" name="quantity" value="1" />
+                  <input type="hidden" name="properties[_RoswellSample]" value="true" />
+                  <button class="js-roswell__addToCart btn--full btn--outline {% if in_cart %}hide{% endif %}"
+                          onClick="GlobalCartMain.addProductFromButton(event)">
+                    <span class="text">Añadir</span>
+                  </button>
+                  {% if template == 'cart' %}
+                    <a class="js-roswell__removeFromCart btn--full btn--outline ajaxcart__qty--remove icon-fallback-text {% unless in_cart %}hide{% endunless %}" href="/cart/change?line={{line}}&amp;quantity=0">
+                      <span class="text">Quitar</span>
+                    </a>
+                  {% else %}
+                    <button class="js-roswell__removeFromCart btn--full btn--outline ajaxcart__qty--remove icon-fallback-text {% unless in_cart %}hide{% endunless %}" data-id="{{key}}" data-qty="1" data-line="{{line}}" onClick="return false;"><span class="text">Quitar</span></button>
+                  {% endif %}
+                </form>
+              </div>
+            {% endif %}
+          {%- endfor -%}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</roswell-sampler>

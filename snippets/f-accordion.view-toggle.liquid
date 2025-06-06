@@ -1,0 +1,8 @@
+{%- comment -%} Only render 'View All' if more content to show {%- endcomment -%}
+
+{%- if section.blocks.size > section.settings.initial-show-count -%}
+  <button class="js-toggle view-toggle">
+    <span class="js-toggle-copy">{{ section.settings.view_all | upcase }}</span>
+    {%- render 'svg_chevron-circular' -%}
+  </button>
+{%- endif -%}

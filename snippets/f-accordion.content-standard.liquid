@@ -1,0 +1,212 @@
+{% liquid
+  if section.settings.video or section.settings.image
+    assign has_media = true
+  endif
+%}
+
+<{{ customElementName }}>
+  <details class="wrapper {% if has_media %}accordion--has-media{% endif %}" {{ section.settings.start_state }}>
+    {% render 'f-accordion.summary' %}
+    <div class="content">
+      {% if section.settings.video %}
+        {% liquid
+          comment
+            Get thumbnail for video
+          endcomment
+
+          assign videoThumb = section.settings.video.preview_image
+          if section.settings.image
+            assign videoThumb = section.settings.image
+          endif
+
+          unless section.settings.hide_video_controls
+            assign videoControls = 'controls'
+          endunless
+        -%}
+        <div class="js-vid vid-wrapper">
+          <video {{ videoControls }} loop poster="{{ videoThumb | image_url: width: 400}}">
+            {% for video in section.settings.video.sources %}
+              <source src="{{ video.url }}" type="video/{{ video.format }}">
+            {% endfor %}
+            Sorry, your broswer cannot display this video.
+          </video>
+          {% liquid
+            if section.settings.hide_video_controls
+              render 'svg_play-triangle'
+            endif
+          %}
+        </div>
+      {% elsif section.settings.image %}
+        <div class="js-pz-{{ section.id }} img-wrapper">
+          <img src="{{ section.settings.image | image_url: width: 800 }}"
+            alt="{{ customElementName | replace: '-', ' ' }}"
+            width="400"
+            height="400"
+            class="js-img can-zoom"
+            loading="lazy">
+          {% render 'svg_zoom-in' %}
+        </div>
+      {% endif %}
+      <div class="text-wrapper">
+        {{ section.settings.text }}
+      </div>
+    </div>
+  </details>
+</{{ customElementName }}>
+
+<script type="module">
+  import PinchZoom from {{ 'pinch-zoom.js' | asset_url | json }}
+
+  class {{ jsObjectName }} extends HTMLElement {
+    constructor() {
+      super();
+
+      this.image = this.querySelector('.js-img');
+      this.video = this.querySelector('.js-vid');
+
+      this.mobileWidthBp = 768
+      this.viewportWidth =
+        document.documentElement.clientWidth ||
+        document.body.clientWidth;
+    }
+
+    connectedCallback() {
+      this.localName == 'how-to-use' && this.patchTestModal();
+      this.localName == 'strength-ladder' && this.strengthQuiz();
+
+      // stop if section contains no video or image
+      if (!this.image && !this.video) return
+
+      this.image
+      ? this.viewportWidth < this.mobileWidthBp
+        ? this.initPinchZoom()
+        : this.handleImageClick()
+      : this.initVideoContols()
+    }
+
+    initVideoContols() {
+      // when hiding default video controls, add our own
+      if ({{ section.settings.hide_video_controls }}) {
+        const currentVideo = this.querySelector('video')
+        const videoPlayIcon = this.querySelector('.js-vid svg')
+
+        currentVideo.addEventListener('click', function () {
+          if (currentVideo.paused) {
+            currentVideo.play()
+            videoPlayIcon.style.display = 'none'
+          } else {
+            currentVideo.pause()
+            videoPlayIcon.style.display = 'block'
+          }
+        });
+      }
+    }
+
+    initPinchZoom() {
+      const pzImg = document.querySelector('.js-pz-{{ section.id }}');
+      const pz = new PinchZoom(pzImg, {
+        minZoom: 1,
+        draggableUnzoomed: false
+      });
+      pz.enable();
+    }
+
+    handleImageClick() {
+      this.image.addEventListener('click', () => {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        // add overlay & lock window
+        const overlay = document.createElement('div');
+        overlay.classList.add('accordion-overlay');
+        overlay.style.zIndex = 9000;
+        overlay.addEventListener('click', removeZoom);
+        document.body.appendChild(overlay);
+        document.body.classList.add('body-scroll-lock')
+        document.body.style.top = `-${scrollPosition}px`;
+
+        // build zoomed image
+        const clonedImg = this.image.cloneNode();
+        clonedImg.classList.add('is-expanded');
+        clonedImg.addEventListener('click', removeZoom);
+
+        function removeZoom() {
+          document.body.classList.remove('body-scroll-lock');
+          window.scrollTo(0, scrollPosition);
+          overlay.remove();
+          clonedImg.remove();
+        }
+
+        this.image.parentNode.appendChild(clonedImg);
+      })
+    }
+
+    // Intercept any links to the patch test page and render
+    // the page content in a modal
+    patchTestModal() {
+      DomReadyPromise()
+        .then(() => {
+          let patchTestModal = false;
+          const patchTestLinks = this.querySelectorAll(
+            '[href="https://www.medik8.com/pages/patch-test"]'
+          );
+    
+          patchTestLinks.forEach(n =>
+            n.addEventListener('click', async e => {
+              e.preventDefault();
+    
+              if (!patchTestModal) {
+                try {
+                  const r = await fetch('/pages/patch-test');
+                  const rawHtml = await r.text();
+    
+                  const html = parseHTML(rawHtml);
+                  const content = html.querySelector('#PageContainer main');
+    
+                  patchTestModal = new ModalBox({
+                    content: content.outerHTML,
+                    settings: {
+                      containerCloseButton: true,
+                    },
+                  });
+                } catch (error) {
+                  console.error('Error fetching / processing data:', error);
+                }
+              }
+              patchTestModal.open();
+            })
+          );
+        })
+        .catch(error => console.error('DomReadyPromise Error', error));
+    }
+
+    strengthQuiz() {
+      async function fetchQuizPage() {
+        try {
+          const r = await fetch("/pages/find-your-crystal-match?view=blank-quiz");
+          if (!r.ok) throw new Error(`HTTP error! status: ${r.status}`);
+  
+          const quizPageContent = await r.text();
+  
+          const fancyboxOptions = {
+            touch: false,
+            src: quizPageContent,
+            type: 'html'
+          };
+          
+          $.fancybox.open(fancyboxOptions);
+        } catch (error) {
+          console.error('Failed to fetch or load content:', error);
+        }
+      }
+
+      document
+      .querySelector('a[href="/pages/find-your-crystal-match"]')
+      ?.addEventListener('click', e => {
+        e.preventDefault();
+        fetchQuizPage();
+      });
+    }
+  }
+
+  customElements.define('{{ customElementName }}', {{ jsObjectName }})
+</script>

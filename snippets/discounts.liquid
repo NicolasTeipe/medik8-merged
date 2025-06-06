@@ -1,0 +1,493 @@
+<style type="text/css">
+  {% if settings.site_wide__enabled and settings.site_wide__label != blank %}
+  :root{
+    --site-wide--label-text-color: {{ settings.site_wide__label_text_color }};
+    --site-wide--label-background-color: {{ settings.site_wide__label_background_color }};
+  }
+  {% endif %}
+  {% unless settings.site_wide__label_enabled %}
+    .site-wide--label {
+      display: none;
+    }
+  {% endunless %}
+</style>
+
+
+{% assign showDiscountsAOV = false %}
+{% if settings.show_roswell_sampler and settings.sample_collection.products != blank  %}
+  {% assign showDiscountsAOV = true %}
+{% endif %}
+{% if settings.progress_discount__enabled != 'none '%}
+  {% assign discountTiers = 'one,two,three,four' | split:',' %}
+  {% for tier in discountTiers %}
+    {% capture visible %}progress_discount__tier_{{ tier }}_visible{% endcapture %}
+    {% capture percentage %}progress_discount__tier_{{ tier }}_percentage{% endcapture %}
+    {% capture requirement %}progress_discount__tier_{{ tier }}_requirement{% endcapture %}
+    {% capture product %}progress_discount__tier_{{ tier }}_product{% endcapture %}
+    {% liquid 
+      if settings[visible] 
+        if settings[percentage] > 0 or settings[product] != blank
+          assign showDiscountsAOV = true 
+          break
+        endif 
+      endif
+     %}
+  {% endfor %}
+{% endif %}
+
+{% if showDiscountsAOV %}
+  {% render 'discounts.aov-bar' %}
+{% endif %}
+    
+  {%- if settings.progress_discount__original_price == true -%}
+    {%- assign cart_total = cart.total_price | plus: checkout.discounts_amount | divided_by: 100.00 -%}
+  {%- else -%}
+    {%- assign cart_total = cart.total_price | divided_by: 100.00 -%}
+  {%- endif -%}
+  
+  <script id="discouts" type="text/javascript">
+  
+    (async function discounts($, open, send, GlobalCart) {
+  
+      let cart;
+      let storage;
+      let mechanics;
+      let settingInProgress;
+      let removeFreeGifts;
+  
+      function money(number) {
+        return parseFloat(number).toFixed(2);
+      }
+  
+      function resolve(path, obj) {
+          return !path ? obj : path.split('.').reduce(function(prev, curr) {
+              return prev ? prev[curr] : null;
+          }, obj || self);
+      }
+  
+      function forLoop(array, callback) {
+        for(const index in array) {
+          callback(array[index], index, array);
+        }
+      }
+  
+      function addCart(items, callback, lastCart, cartUpdated = false) {
+        if($.isEmptyObject(items)) {
+          return callback(lastCart, cartUpdated);
+        }
+  
+        let itemsArray = Object.keys(items).map(function(id) { return items[id]; });
+  
+        $.post('/cart/add.js', { items: itemsArray }, function(data) {
+          forLoop(data.items, function(item) {
+            lastCart.items.unshift(item);
+          })
+          callback(lastCart, true);
+        }, 'json');
+      }
+  
+      function updateCart(updates, callback, lastCart, cartUpdated = false) {
+        if($.isEmptyObject(updates)) {
+          return callback(lastCart, cartUpdated);
+        }
+        $.post('/cart/update.js', { updates }, function(cart) {
+          callback(cart, true);
+        }, 'json');
+      }
+  
+      async function getUnlockedGifts(mechanics, callback) {
+        let products = [];
+        for(const key in mechanics) {
+          const mechanic = mechanics[key];
+          if(mechanic.product && mechanic.requirement <= storage.cart_total) {
+            const codes = mechanic.codes || [];
+            const activeDiscountCode = await GlobalCartInstance.getAllDiscountCodes()
+            if(codes.length === 0 || codes.includes(activeDiscountCode)) {
+              products.push(mechanic);
+            }
+          }
+        }
+        return callback(products);
+      }
+  
+      function getGiftedProducts(cart, callback) {
+        let gifted = [];
+        let items = cart.items || [];
+        for(const index in items) {
+          const item = items[index];
+          if(item.properties && item.properties._gift) {
+            gifted.push(item);
+          }
+        }
+        callback(gifted);
+      }
+  
+      async function updateAddItem(updates, mechanic, callback) {
+        const activeDiscountCode = await GlobalCartInstance.getAllDiscountCodes()
+        const lineItemProperties = { 
+          _gift: activeDiscountCode || "Free Product" ,
+        }
+        // if mechanic requires a code, add it as a line item property
+        if(mechanic.codes?.length){
+          lineItemProperties._freeGiftDiscountCodes = mechanic.codes[0]
+        }
+        updates[String(mechanic.product.id)] = {
+          id: mechanic.product.id,
+          quantity: 1,
+          properties: lineItemProperties
+        }
+        
+        if(mechanic.codes.includes(activeDiscountCode)) {
+          updates[String(mechanic.product.id)]["_code"] = activeDiscountCode;
+        }
+        if(typeof(callback) == typeof(Function)) {
+          callback(updates);
+        }
+      }
+  
+      function updateRemoveItem(updates, key, callback) {
+        updateQuantityItem(updates, key, 0, function(updates) {
+          if(typeof(callback) == typeof(Function)) {
+            callback(updates);
+          }
+        });
+      }
+
+  
+      function updateQuantityItem(updates, key, quantity = 1, callback) {
+        updates[String(key)] = quantity;
+        if(typeof(callback) == typeof(Function)) {
+          callback(updates);
+        }
+      }
+  
+    
+      function discountsAssess(storage, callback) {
+  
+        cart = storage.cart;
+        mechanics = storage.mechanics;
+  
+        let updateItems = {
+          "/cart/add.js" : {/* new items */},
+          "/cart/update.js": {/* existing items */}
+        };
+  
+        if($.isEmptyObject(cart)) return;
+  
+        getGiftedProducts(cart, async function  giftedProducts(gifted) {
+          await getUnlockedGifts(mechanics, async function unlockedMechanics(unlocked) {
+            for (const [index, mechanic] of unlocked.entries()) {
+              if (!storage.removeFreeGifts) {
+                await updateAddItem(updateItems["/cart/add.js"], mechanic);
+              }
+            }
+            let addItemsKeys = Object.keys(updateItems["/cart/add.js"]);
+            forLoop(gifted, function giftedProduct(gifted, index) {
+              if(addItemsKeys.includes(String(gifted.variant_id)) && !storage.removeFreeGifts) {
+                let giftedCode = gifted.properties["_code"];
+                let updateItemCode = updateItems["/cart/add.js"][String(gifted.variant_id)]["_code"];
+                delete updateItems["/cart/add.js"][String(gifted.variant_id)];
+                if(giftedCode == updateItemCode) {
+                  if(gifted.quantity > 1) {
+                    updateQuantityItem(updateItems["/cart/update.js"], gifted.key, 1);
+                  }
+                }
+              } else {
+                updateRemoveItem(updateItems["/cart/update.js"], gifted.key);
+              }
+            });
+  
+            addCart(updateItems["/cart/add.js"], function(cart, cartUpdated) {
+              updateCart(updateItems["/cart/update.js"], function(cart, cartUpdated) {
+                if(cartUpdated) {
+                  $(document.body).trigger("discountsRefresh", cartUpdated);
+                  if(typeof(GlobalCartInstance) !== typeof(undefined)) {
+                    {% if request.path contains '/cart' %}
+                      window.location.reload();
+                    {% else %}
+                      GlobalCartInstance.updateData()
+                    {% endif %}
+                  } else {
+                    window.location.reload();
+                  }
+                }
+                $(document.body).trigger('discountsAssest', { gifted, unlocked, cart });
+                if(typeof(callback) === typeof(Function)) {
+                  callback({ gifted, unlocked, cart });
+                }
+              }, cart, cartUpdated);
+            }, storage.cart);
+          });
+        });
+      }
+  
+      function discountCodeGetCookie(storage, callback) {
+        let cookieCode = ('; '+document.cookie).toUpperCase().split(`; DISCOUNT_CODE=`).pop().split(';')[0];
+        callback(cookieCode ? cookieCode : storage["discount_code"]);
+      }
+  
+      window.discountsSet = function(update, assestCallback, callback) {
+
+        if(settingInProgress) return;
+  
+        settingInProgress = true;
+  
+        discountsGet( async function discountsStorageLoaded(storage) {
+  
+          Object.assign(storage, update); 
+  
+          if(!$.isEmptyObject(storage.cart)) {
+            {%- if settings.progress_discount__original_price == true -%}
+              storage.cart_total = money(storage.cart['original_total_price'] / 100);
+            {%- else -%}
+              storage.cart_total = money(storage.cart['total_price'] / 100);
+            {%- endif -%}
+          }
+  
+          discountCodeGetCookie(storage, function cookieCode(code) {
+            storage["discount_code"] = code;
+          });
+  
+          localStorage.setItem('discounts', JSON.stringify(storage));
+  
+          $(document.body).trigger('discountsSet', storage);
+  
+  
+          await discountsAssess(storage, function afterAssest(products) {
+            if(typeof(assestCallback) == typeof(Function)) {
+              assestCallback(products);
+            }
+          });
+  
+          if(typeof(callback) == typeof(Function)) {
+            callback(storage);
+          }
+  
+          settingInProgress = false;
+  
+        });
+      }
+  
+      window.discountsGet = function(key, callback) {
+        storage = JSON.parse(localStorage.getItem("discounts"));
+        storage = storage || {};
+        removeFreeGifts = storage.removeFreeGifts;
+        if(typeof(key) == typeof(Function)) {
+          callback = key;
+          key = "";
+        }
+        if(typeof(callback) == typeof(Function)){
+          return callback(resolve(key, storage));
+        }
+        return resolve(key, storage);
+      }
+  
+      window.discountsToggleGifts = async function() {
+        removeFreeGifts = !removeFreeGifts;
+        await discountsSet({ removeFreeGifts: removeFreeGifts })
+      }
+  
+      window.discountsIsFreeGiftDisabled = function() {
+        return storage.removeFreeGifts;
+      }
+  
+      window.discountsUnlockedProducts = async function() {
+        return await getUnlockedGifts(mechanics, function(unlocked) {
+          return unlocked.length;
+        });
+      }
+
+      // update to listen to new cart events ... we don't load cart in checkout, so we fire a get cart json to trigger the XHR listener
+      const GlobalCartInstance = GlobalCart ? await new GlobalCart() : false
+      if(GlobalCartInstance){
+        GlobalCartInstance.subscribe( async () => {
+          await discountsSet({ cart: GlobalCartInstance.cart });
+        })
+      }else{
+        $.getJSON('/cart.js')
+      }
+  
+      {% if all_products %}
+        await discountsSet({
+          "cart": {{ cart | json }},
+          "cart_total": {{ cart_total }},
+          // "discount_code": "",
+          "vip_access": "{{ settings.discounts__vip_code | strip | upcase }}",
+          "mechanics": {
+            {%- if settings.site_wide__enabled == true -%}
+              "site_wide": {
+                "label": "{{ settings.site_wide__label }}",
+                "percentage": {{ settings.site_wide__percentage | plus: 0 }},
+                "visible": true,
+                "requirement": 0
+              },
+            {%- endif -%}
+            "tier_one": {
+              "visible": {{ settings.progress_discount__tier_one_visible }},
+              {%- if settings.progress_discount__free_shipping_tier == "tier_one" -%}
+                "free_shipping": true,
+              {%- endif -%}
+              {% assign tier_one_codes = settings.progress_discount__tier_one_codes | split: "," %}
+              "codes": [
+                {% for code in tier_one_codes %}
+                  "{{ code | strip | upcase }}",
+                {% endfor %}
+              ],
+              {%- unless settings.progress_discount__tier_one_product == blank -%}
+                {%- assign product = all_products[settings.progress_discount__tier_one_product] -%}
+                {%- if settings.progress_discount__tier_one_product_sku == blank -%}
+                  {%- if product.first_available_variant.available -%}
+                    "product": {{ product.first_available_variant | json }},
+                  {%- endif -%}
+                {%- else -%}
+                  {%- assign tierOneSkuClean = settings.progress_discount__tier_one_product_sku | strip -%}
+                  {%- for variant in product.variants -%}
+                    {%- if variant.sku == tierOneSkuClean -%}
+                      {%- if variant.available -%}
+                        "product": {{ variant | json }},
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endunless -%}
+              "percentage": {{ settings.progress_discount__tier_one_percentage | plus: 0 }},
+              "requirement": {{ settings.progress_discount__tier_one_requirement | plus: 0 }}
+            },
+            "tier_two": {
+              "visible": {{ settings.progress_discount__tier_two_visible }},
+              {%- if settings.progress_discount__free_shipping_tier == "tier_two" -%}
+                "free_shipping": true,
+              {%- endif -%}
+              {% assign tier_two_codes = settings.progress_discount__tier_two_codes | split: "," %}
+              "codes": [
+                {% for code in tier_two_codes %}
+                  "{{ code | strip | upcase }}",
+                {% endfor %}
+              ],
+              {%- unless settings.progress_discount__tier_two_product == blank -%}
+                {%- assign product = all_products[settings.progress_discount__tier_two_product] -%}
+                {%- if settings.progress_discount__tier_two_product_sku == blank -%}
+                  {%- if product.first_available_variant.available -%}
+                    "product": {{ product.first_available_variant | json }},
+                  {%- endif -%}
+                {%- else -%}
+                  {%- assign tierTwoSkuClean = settings.progress_discount__tier_two_product_sku | strip -%}
+                  {%- for variant in product.variants -%}
+                    {%- if variant.sku == tierTwoSkuClean -%}
+                      {%- if variant.available -%}
+                        "product": {{ variant | json }},
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endunless -%}
+              "percentage": {{ settings.progress_discount__tier_two_percentage | plus: 0 }},
+              "requirement": {{ settings.progress_discount__tier_two_requirement | plus: 0 }}
+            },
+            "tier_three": {
+              "visible": {{ settings.progress_discount__tier_three_visible }},
+              {%- if settings.progress_discount__free_shipping_tier == "tier_three" -%}
+                "free_shipping": true,
+              {%- endif -%}
+              {% assign tier_three_codes = settings.progress_discount__tier_three_codes | split: "," %}
+              "codes": [
+                {% for code in tier_three_codes %}
+                  "{{ code | strip | upcase }}",
+                {% endfor %}
+              ],
+              {%- unless settings.progress_discount__tier_three_product == blank -%}
+                {%- assign product = all_products[settings.progress_discount__tier_three_product] -%}
+                {%- if settings.progress_discount__tier_three_product_sku == blank -%}
+                  {%- if product.first_available_variant.available -%}
+                    "product": {{ product.first_available_variant | json }},
+                  {%- endif -%}
+                {%- else -%}
+                  {%- assign tierThreeSkuClean = settings.progress_discount__tier_three_product_sku | strip -%}
+                  {%- for variant in product.variants -%}
+                    {%- if variant.sku == tierThreeSkuClean -%}
+                      {%- if variant.available -%}
+                        "product": {{ variant | json }},
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endunless -%}
+              "percentage": {{ settings.progress_discount__tier_three_percentage | plus: 0 }},
+              "requirement": {{ settings.progress_discount__tier_three_requirement | plus: 0 }}
+            },
+            "tier_four": {
+              "visible": {{ settings.progress_discount__tier_four_visible }},
+              {%- if settings.progress_discount__free_shipping_tier == "tier_four" -%}
+                "free_shipping": true,
+              {%- endif -%}
+              {% assign tier_four_codes = settings.progress_discount__tier_four_codes | split: "," %}
+              "codes": [
+                {% for code in tier_four_codes %}
+                  "{{ code | strip | upcase }}",
+                {% endfor %}
+              ],
+              {%- unless settings.progress_discount__tier_four_product == blank -%}
+                {%- assign product = all_products[settings.progress_discount__tier_four_product] -%}
+                {%- if settings.progress_discount__tier_four_product_sku == blank -%}
+                  {%- if product.first_available_variant.available -%}
+                    "product": {{ product.first_available_variant | json }},
+                  {%- endif -%}
+                {%- else -%}
+                  {%- assign tierFourSkuClean = settings.progress_discount__tier_four_product_sku | strip -%}
+                  {%- for variant in product.variants -%}
+                    {%- if variant.sku == tierFourSkuClean -%}
+                      {%- if variant.available -%}
+                        "product": {{ variant | json }},
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endunless -%}
+              "percentage": {{ settings.progress_discount__tier_four_percentage | plus: 0 }},
+              "requirement": {{ settings.progress_discount__tier_four_requirement | plus: 0 }}
+            },
+            "sample": {
+              "visible": {%- if settings.sample_collection.products != blank -%}true{%- else -%}false{%- endif -%},
+              "requirement": {{ settings.sample_threshold }},
+              "label": "Sample"
+            }
+          }
+        });
+      {% endif %}
+     
+      // Set discounts on cart update.
+      XMLHttpRequest.prototype.open = function(method, url) {
+        this.addEventListener("load", async function(event) {
+          if (url == "/cart.js" && this.readyState == 4 && this.status == 200) {
+            await discountsSet({ cart: JSON.parse(this.responseText) });
+          }
+        });
+        open.apply(this, arguments); // reset/reapply original open method
+      }
+  
+
+      discountsGet(async function vipAccessOnlyCheck(storage) {
+        const activeDiscountCode = await GlobalCartInstance.getAllDiscountCodes()
+        if(!storage.vip_access) {
+          $(".discounts__vip_access_only").removeClass("discounts__vip_access_only");
+          $("body").append(" \
+            <style id=\"vip_access\" type=\"text/css\"> \
+              .wayfx-collection__header { margin-bottom: 30px !important; } \
+            </style> \
+          ");
+        } else {
+          if(storage.vip_access == activeDiscountCode) {
+            $(".discounts__vip_access_only").removeClass("discounts__vip_access_only");
+            $("body").append(" \
+              <style id=\"vip_access\" type=\"text/css\"> \
+                #CartContainer { height: calc(100% - 165px) !important; } \
+                .wayfx-collection__header { margin-bottom: 30px !important; } \
+              </style> \
+            ");
+          }
+        }
+      });  
+    })(jQuery || Checkout.$, XMLHttpRequest.prototype.open, XMLHttpRequest.prototype.send,typeof(GlobalCart) == 'function' ? GlobalCart : false);
+  
+  </script>
+  

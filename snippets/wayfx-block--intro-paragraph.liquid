@@ -1,0 +1,8 @@
+{%- assign paragraph = block.settings.paragraph -%}
+{% if paragraph %}
+    <section class="wayfx-block wayfx-block--intro-paragraph">
+        <div class="wayfx-wrapper text-center">
+            {{ paragraph }}
+        </div>
+    </section>
+{% endif %}

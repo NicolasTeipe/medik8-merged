@@ -1,0 +1,17 @@
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign small = block.settings.small -%}
+{% if heading %}
+    <section class="wayfx-block wayfx-block--hero-with-h1-p">
+        <div class="wayfx-wrapper">
+            <h1 class="h1--secondary">{{ block.settings.heading }}</h1>
+            {% if paragraph %}
+                {{ paragraph }}
+            {% endif %}
+            {% if small %}
+          		<small>{{ small }}</small>
+            {% endif %}
+        </div>
+    </section>
+{% endif %}
+

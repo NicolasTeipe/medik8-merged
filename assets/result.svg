@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="loading-aria" preserveAspectRatio="none" role="img" viewBox="0 0 278 422" xmlns="http://www.w3.org/2000/svg">
+<title>Loading...</title>
+<rect width="100%" height="100%" clip-path="url(#b)" fill="url(#a)"/>
+<defs>
+<clipPath id="b">
+<path d="m0 0h276v276h-276z"/>
+<rect x="22" y="300" width="230" height="20" rx="1" ry="1"/>
+<rect x="86" y="328" width="104" height="20" rx="1" ry="1"/>
+<path d="m47 372h182v49h-182z"/>
+</clipPath>
+<linearGradient id="a">
+<stop stop-color="#f3f3f3" offset=".59996">
+<animate attributeName="offset" dur="2s" keyTimes="0; 0.25; 1" repeatCount="indefinite" values="-2; -2; 1"/>
+</stop>
+<stop stop-color="#ecebeb" offset="1.6">
+<animate attributeName="offset" dur="2s" keyTimes="0; 0.25; 1" repeatCount="indefinite" values="-1; -1; 2"/>
+</stop>
+<stop stop-color="#f3f3f3" offset="2.6">
+<animate attributeName="offset" dur="2s" keyTimes="0; 0.25; 1" repeatCount="indefinite" values="0; 0; 3"/>
+</stop>
+</linearGradient>
+</defs>
+</svg>

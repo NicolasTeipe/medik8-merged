@@ -1,0 +1,27 @@
+{%- if collection.image -%}
+  <section class="wayfx-collection__header-with-image">
+    {% render 'collection.header-with-image' %}
+  </section>
+{%- else -%}
+  <section class="wayfx-collection__header">
+    {% render 'collection.header' %}
+  </section>
+{%- endif -%}
+
+{%- if settings.progress_discount__enabled == "collection" or settings.progress_discount__enabled == "both" -%}
+  <global-aov-bar class="js-collection-aov collection-aov-bar"></global-aov-bar>
+{%- endif -%}
+  
+{% schema %}
+  {
+    "name": "collection/header",
+    "enabled_on":{
+      "templates":["collection"]
+    },
+    "settings": [
+     
+    ],
+    "blocks": [
+    ]    
+}
+{% endschema %}

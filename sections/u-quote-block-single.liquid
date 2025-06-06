@@ -1,0 +1,198 @@
+{%- capture alignment -%}
+  {%- if section.settings.alignment == 'centered' -%}tac{%- endif -%}
+{%- endcapture -%}
+
+<div class="qbs-{{ section.id }} block-grid block-grid--f flex flex-dir-col">
+  <div class="qbs-image flex_1">
+    {%- if section.settings.image -%}
+      {{ section.settings.image | image_url: width: 640 | image_tag: preload: false, loading: 'lazy' }}
+    {%- endif -%}
+  </div>
+  <div class="flex flex_1 flex-dir-col justify-center">
+    <div class="qbs-content qbs-internal-padding {{ alignment }}">
+      {%- if section.settings.show_qm -%}
+        <div class="icon-quote cb">
+          {%- render 'icon-quote-acta' -%}
+        </div>
+      {%- endif -%}
+      <p class="qbs-text cb--x2 f-w300 lh-ml">
+        {{-  section.settings.quote_text -}}
+      </p>
+      <cite class="t-rm lh-reset ls-2">
+        {{-  section.settings.citation -}}
+      </cite>
+      {% comment %} <div class="qbs-cite t-rm lh-reset ls-2">
+        {{-  section.settings.citation -}}
+      </div> {% endcomment %}
+    </div>
+  </div>
+</div>
+
+
+<style>
+  {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+
+  .qbs-{{ section.id }} {  
+    padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 0 {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px 0;
+  }
+
+  .qbs-{{ section.id }} .qbs-internal-padding {
+    padding: 36px 24px 0;
+  }
+
+  .qbs-{{ section.id }} .icon-quote svg {
+    height: 50px;
+  }
+
+  .qbs-{{ section.id }} .qbs-text {
+    font-size: 16px;
+    letter-spacing: -.08px
+    color: #262626;
+    margin: 0;
+  }
+
+  .qbs-{{ section.id }} cite {
+    font-style: normal;
+    color: #262626;
+  }
+
+  .qbs-{{ section.id }} cite strong {
+    font-weight: 600;
+  }
+
+  @media all and (min-width: 768px) {
+    .qbs-{{ section.id }} {  
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    }
+
+    .qbs-{{ section.id }} {
+      flex-direction: row
+    }
+
+    .qbs-{{ section.id }} .qbs-internal-padding {
+      padding: 0 {{ section.settings.padding_internal }}px;
+    }
+
+    .qbs-{{ section.id }} .qbs-text {
+      font-size: 20px;
+      letter-spacing: 1.15px;
+    }
+  }
+
+</style>
+
+{% schema %}
+{
+  "name":"Quote Block - Single",
+  "settings":[
+    {
+      "type": "header",
+      "content": "Positioning"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Bottom",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "mobile-padding",
+      "min": -50,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile Padding Modifier",
+      "info": "Adjust how much bigger or smaller the section padding should be on mobile",
+      "default": -25
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Quote Image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_qm",
+      "label": "Show quotation mark",
+      "default": true
+    },
+    {
+      "type": "radio",
+      "id": "alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "centered",
+          "label": "Centered"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "padding_internal",
+      "min": 0,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "label": "Content Padding - Horizontal",
+      "default": 64,
+      "info": "Applies to Desktop only"
+    },
+    {
+      "type": "header",
+      "content": "Quote Content"
+    },
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "default": "Quote content",
+      "label": "Quote Content",
+      "info": "Accepts HTML"
+    },
+    {
+      "type": "header",
+      "content": "Citation"
+    },
+    {
+      "type": "textarea",
+      "id": "citation",
+      "default": "Citation Text",
+      "label": "Citation",
+      "info": "Accepts HTML"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quote Block - Single"
+    }
+  ]
+}
+{% endschema %}

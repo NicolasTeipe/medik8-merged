@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="{{ 'component-card.css' | asset_url }}" media="print" onload="this.media='all'">
+
+{%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+  {{ 'component-facets.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<div class="wayfx-wrapper">
+  <div class="template-search__header page-width center">
+    {%- if search.performed -%}
+      {%- if search.results_count > 1 -%}
+        <h1 class="h2">{{ 'templates.search.title' | t }} for {{ search.terms }}</h1>
+      {% else %}
+        <h1 class="h2">{{ 'general.search.no_results_found' | t: q: search.terms }}</h1>
+      {% endif %}
+    {%- else -%}
+      <div class="no-results-wrapper"> 
+        <h1 class="h2">{{ 'general.search.search' | t }}</h1>
+        <form action="{{ routes.search_url }}">
+          <input type="text"
+            placeholder="Search"
+            name="q"
+            value="{{ search.terms | escape }}"
+          />
+          <input type="hidden" name="type" value="product,page, article" />
+          <input type="hidden" name="options[unavailable_products]" value="hide" />
+          <input type="hidden" name="options[prefix]" value="last" />
+          <input type="submit" value="Search" />
+        </form>
+      </div>
+    {%- endif -%}
+    <div class="grid search-grid">
+      {% paginate search.results by 24 %}
+        <div class="cards page-width">
+            {%- for item in search.results -%}  
+                {%- case item.object_type -%}
+                  {%- when 'product' -%}
+                    {% unless item.type == "Sample" or item.title contains "Sample" or item.tags contains "algolia-ignore" %}
+                    {%- capture product_settings -%}{%- if section.settings.product_show_vendor -%}vendor,{%- endif -%}title,price{%- endcapture -%}
+                    <div class="block wayfx-product__item wayfx-product__item--grid grid__item">
+                      {% render 'product-grid-item', product: item, product_layout: 'standard' %}
+                    </div>
+                    {% endunless %}
+                  {%- when 'article' -%}
+                    <div class=" block wayfx-product__item wayfx-product__item--grid grid__item">
+                      {% render "component-card", item: item %}
+                    </div>
+                  {%- when 'page' -%}   
+                  {% if item.published_at %}
+                  <div class=" block wayfx-product__item wayfx-product__item--grid grid__item">
+                    {% render "component-card", item: item %}
+                  </div>
+                  {% endif %}
+                {%- endcase -%}              
+            {%- endfor -%}
+          </div>
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate %}
+          {%- endif -%}
+        </div>
+      {% endpaginate %} 
+    </div>  
+  </div> 
+</div>
+  
+
+{% schema %}
+{
+  "name": "Main Search",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product card"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering",
+      "info": "Customize [filters](/admin/menus)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    }
+  ]
+}
+{% endschema %}

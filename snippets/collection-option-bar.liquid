@@ -1,0 +1,71 @@
+<div class="wayfx-collection__option-bar">
+  <div class="wayfx-collection__options">
+    <div class="wayfx-collection__total">
+      {{ collection.products.size }} {% if collection.products.size == 1 %}{{ 'collections.option_bar.product' | t }}{% else %}{{ 'collections.option_bar.product_plural' | t }}{% endif %}
+    </div>
+    <div class="wayfx-collection__option-filters">
+      <button class="btn wayfx-collection__open-filters" type="button">
+        <i class="wayfx-icon wayfx-icon-filter"></i>
+        <span>{{ 'collections.option_bar.filters' | t }}</span>
+        <span class="wayfx-collection__filter-count"></span>
+      </button>
+      <button class="btn btn--outline wayfx-collection__clear-filters" type="button">{{ 'collections.option_bar.clear_all' | t }}</button>
+    </div>
+    <div class="wayfx-collection__option-sort">
+      <div class="form-horizontal">
+        <label for="SortBy">{{ 'collections.sorting.title' | t }}:</label>
+        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+
+        <select name="SortBy" id="SortBy">
+        {%- for option in collection.sort_options %}
+          <option
+            value="{{ option.value }}"
+            {%- if option.value == sort_by %}
+              selected="selected"
+            {%- endif %}
+          >
+            {{ option.name }}
+          </option>
+        {% endfor -%}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Shopify.queryParams = {};
+  if (location.search.length) {
+    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+      aKeyValue = aCouples[i].split('=');
+      if (aKeyValue.length > 1) {
+        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+      }
+    }
+  }
+
+  DomReadyPromise().then(() => {
+    const sortBySelector = document.querySelector('#SortBy')
+    if(sortBySelector){
+      sortBySelector.value = '{{ collection.sort_by | default: collection.default_sort_by }}';
+      sortBySelector.addEventListener('change', () => {
+        if(setQueryString){
+          setQueryString()
+        }
+        setTimeout(() => {
+          window.location.href = window.location.href
+        }, 0)
+      })
+    }
+    const wayfxOpenFilters = document.querySelector('.wayfx-collection__open-filters')
+    const wayfxFilterSidebar = document.querySelector('.wayfx-collection__sidebar')
+    if(wayfxOpenFilters && wayfxFilterSidebar){
+      wayfxOpenFilters.addEventListener('click', () => {
+        wayfxFilterSidebar.classList.add('wayfx-collection__sidebar--active')
+      })
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+
+</script>

@@ -1,0 +1,116 @@
+<div data-anchor="{{ section.settings.nav_title }}" class="block-grid block-grid--f">
+  <loyaltylion-current-tier class="tac flex flex-grid column-wrap align-center justify-center block-12/12">
+    {% if section.settings.pre_title != blank %}
+    <span class="d-block t-m t-ucase">{{ section.settings.pre_title }}</span>
+    {% endif %}
+    <h2 class="js-current-tier__header h-style h-style--accent t-xl lh-s cell-l cell-r"></h2>
+    <div class="js-curent-tier__content block-11/12 flex row-wrap align-top justify-space @mobile__justify-center @desktop__block-12/12"></div>
+  </loyaltylion-current-tier>
+</div>
+
+{% liquid
+  assign amount_html = '<span class="f-w600">${amount}</span>'
+  assign date_html = '<span class="f-w600">${date}</span>'
+  assign tier_html = '${tier}'
+  assign nextTierText = 'apps.loyalty_lion.next_tier_hint_html' | t : amount:amount_html ,  date:date_html ,  tier:tier_html 
+%}
+
+<script type="text/javascript">    
+  class LoyaltyLionCurrentTier extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( async () => {
+        if(!this.mounted){
+          this.mounted = true
+          this.util = await new LoyaltyLionUtil()
+          this.render()
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    render(){
+      const {_customer} = this.util.loyaltylion
+      if(!_customer){
+        return
+      }
+    
+      const nextTierText = {{ nextTierText | json }}
+      const crystalIconSrc = {{ 'loyalty-landing.medals.standard.jpg' | asset_img_url : '256x'| json }}
+      const plusIconSrc = {{ 'loyalty-landing.medals.plus.jpg'  | asset_img_url : '256x' |  json }}
+      const deluxeIconSrc = {{ 'loyalty-landing.medals.deluxe.jpg' | asset_img_url : '256x'| json }}
+
+      let {loyaltyTiers} = this.util.loyaltylion.program
+      loyaltyTiers = loyaltyTiers.filter(({hidden}) => !hidden)
+      loyaltyTiers = loyaltyTiers.map( (tier,index) => {
+        tier.icon = tier.name == 'Crystal' ? crystalIconSrc : tier.name == 'Crystal Plus' ? plusIconSrc : deluxeIconSrc
+        tier.active = _customer.loyaltyTierMembership?.loyaltyTierId == tier.id ? _customer.loyaltyTierMembership : false
+        if(tier.active && index < loyaltyTiers.length - 1 ){
+          tier.next = {
+            amount:`${this.util.settings.currencySymbol}${((tier.bounds.upper + 1) - _customer.loyaltyTierEligibleSpend)/100}`,
+            tier:loyaltyTiers[index + 1].name,
+            date:_customer.loyaltyTierMembership?.expiresAt?.replace(/^(\d{4})-(\d{2})-(\d{2}).*$/, '$3/$2/$1') || this.util.addOneYearToDate(_customer.loyaltyTierMembership.startedAt),
+          }
+        }
+        return tier
+      })
+      if(!loyaltyTiers.find(({active}) => active)){
+        loyaltyTiers[0].active = true
+      }
+      
+      const activeTier = loyaltyTiers.find(({active}) => active)
+      this.header = this.querySelector('.js-current-tier__header')
+      this.content = this.querySelector('.js-curent-tier__content')
+      this.header.innerHTML = activeTier.name
+      this.content.innerHTML = `
+        ${loyaltyTiers.map( tier => {
+          return `
+            <div class="ll-current-tier-item ${tier.active ? 'll-current-tier-item--active' : '' } 
+                        cell-l cell-r block-4/12 tac flex flex-grid--d2 column-wrap align-center justify-center @mobile__block-12/12 ">
+              <img src="${tier.icon}" width="256" height="256" loading="lazy" alt="${tier.name}">
+              <h2 class="h-style t-m f-w600 row">${tier.name}</h2>
+            </div>
+          `
+        }).join('')}
+        ${ activeTier.next ? `
+          <p class="block-12/12 t-m cell-l cell-r ct--x2">${nextTierText.replace(/\${(.*?)}/g, (match, key) =>  activeTier.next[key.trim()] || match)}</span>
+        ` : ''}
+      `
+    }
+    
+  }
+  customElements.define('loyaltylion-current-tier', LoyaltyLionCurrentTier);
+</script>
+
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/current-tier",
+  "limit":1,
+  "class":"ct--x3 cb--x3",
+  "settings":[
+
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Resumen"
+    },
+    { 
+      "type":"textarea",
+      "id":"pre_title",
+      "label":"Pre-heading",
+      "default":"Tu Nivel Actual"
+    }
+  ]
+}
+{% endschema %}

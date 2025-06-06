@@ -1,0 +1,17 @@
+<section class="wayfx-block wayfx-block--hero-with-video">
+    <div class="wayfx-wrapper">
+        <div class="grid">
+            <div class="grid__item one-whole large--two-quarters">
+                {% if block.settings.heading %}
+                    <h1 class="h1--secondary">{{ block.settings.heading }}</h1>
+                {% endif %}
+                {{ block.settings.paragraph }}
+            </div>
+            {% if block.settings.video %}
+            <div class="grid__item one-whole large--two-quarters">
+                {{ block.settings.video }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

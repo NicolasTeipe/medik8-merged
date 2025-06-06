@@ -1,0 +1,110 @@
+{% if section.blocks.size > 0 %}
+  <faqs-x>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+      <ul class="js-faq-list content">
+        {%- for block in section.blocks -%}
+          <li class="js-faq faq hidden block-noselect block-rel">
+            <h6>{{ block.settings.question }}</h6>
+            <div class="faq-toggle-icon" data-state="plus">+</div>
+            {{ block.settings.answer }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </details>
+  </faqs-x>
+{% endif %}
+<script>
+  class Faqs extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.addFaqToggles()
+    }
+
+    addFaqToggles() {
+      const allFaqs = this.querySelectorAll('.js-faq-list .js-faq')
+
+      allFaqs.forEach(targetFaq => {
+        targetFaq.addEventListener('click', () => {
+          const isVisible = !targetFaq.classList.contains('hidden');
+          if (isVisible) return faqToggle(targetFaq, 'hide');
+
+          allFaqs.forEach(faq => faqToggle(faq, 'hide'));
+          faqToggle(targetFaq, 'show');
+        });
+      });
+
+      function faqToggle(faq, state) {
+        const { classList } = faq;
+        const toggleIcon = faq.querySelector('.faq-toggle-icon');
+        const isShow = state === 'show';
+      
+        isShow ? classList.remove('hidden') : classList.add('hidden');
+        toggleIcon.setAttribute('data-state', isShow ? 'minus' : 'plus');
+        toggleIcon.textContent = isShow ? '-' : '+';
+      }
+    }
+  }
+
+  customElements.define('faqs-x', Faqs)
+</script>
+
+{% schema %}
+    {
+        "name": "Accordion - FAQs",
+        "presets": [
+          {
+            "name": "Accordion - FAQs"
+          }
+        ],
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-faqs",
+        "settings": [
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": ""
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "FAQS"
+          }
+        ],
+        "blocks": [
+          {
+            "type": "faqs",
+            "name": "FAQs",
+            "settings": [
+              {
+                "type": "text",
+                "id": "question",
+                "label": "Question"
+              },
+              {
+                "type": "richtext",
+                "id": "answer",
+                "label": "Answer"
+              }
+            ]
+          }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,116 @@
+{%- if product.metafields.sf_product_layout_a.step_1_title -%}
+
+{{ "n-product-how-to-use.css" | asset_url | stylesheet_tag }}
+
+
+{%- assign heading = 'How to use it' -%}
+{%- assign image_1 = product.metafields.sf_product_layout_a.step_1_image -%}
+{%- assign title_1 = product.metafields.sf_product_layout_a.step_1_title -%}
+{%- assign paragraph_1 = product.metafields.sf_product_layout_a.step_1_description -%}
+
+{%- assign image_2 =  product.metafields.sf_product_layout_a.step_2_image -%}
+{%- assign title_2 = product.metafields.sf_product_layout_a.step_2_title -%}
+{%- assign paragraph_2 = product.metafields.sf_product_layout_a.step_2_description -%}
+
+{%- assign image_3 =  product.metafields.sf_product_layout_a.step_3_image -%}
+{%- assign title_3 = product.metafields.sf_product_layout_a.step_3_title -%}
+{%- assign paragraph_3 = product.metafields.sf_product_layout_a.step_3_description -%}
+
+{%- assign image_4 =  product.metafields.sf_product_layout_a.step_4_image -%}
+{%- assign title_4 = product.metafields.sf_product_layout_a.step_4_title -%}
+{%- assign paragraph_4 = product.metafields.sf_product_layout_a.step_4_description -%}
+
+
+<div class="wayfx-wrapper">
+  {%- if heading -%}
+    <h2 class="h1--primary">{{ heading }}</h2>
+  {%- endif -%}
+  <ul>
+    {%- if title_1 -%}
+      <li>
+        <div class="icon">
+          {%- if image_1 -%}
+            <img width="43" height="56" loading="lazy" src="https://cdn.medik8.com/{{ image_1 }}/" alt="" />
+          {%- endif -%}
+        </div>
+        <div class="text">
+          <h4>{{ title_1 }}</h4>
+          {%- if paragraph_1 -%}
+            <p>{{ paragraph_1 }}</p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+    {%- if title_2 -%}
+      <li>
+        <div class="icon">
+          {%- if image_2 -%}
+             <img width="43" height="54"  loading="lazy" src="https://cdn.medik8.com/{{ image_2 }}/" alt="" />
+          {%- endif -%}
+        </div>
+        <div class="text">
+          <h4>{{ title_2 }}</h4>
+          {%- if paragraph_2 -%}
+            <p>{{ paragraph_2 }}</p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+    {%- if title_3 -%}
+      <li>
+        <div class="icon">
+          {%- if image_3 -%}
+             <img width="43" height="56" loading="lazy" src="https://cdn.medik8.com/{{ image_3 }}/" alt="" />
+          {%- endif -%}
+        </div>
+        <div class="text">
+          <h4>{{ title_3 }}</h4>
+          {%- if paragraph_3 -%}
+            <p>{{ paragraph_3 }}</p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+    {%- if title_4 -%}
+      <li>
+        <div class="icon">
+          {%- if image_4 -%}
+             <img width="43" height="56" loading="lazy" src="https://cdn.medik8.com/{{ image_4 }}/" alt="" />
+          {%- endif -%}
+        </div>
+        <div class="text">
+          <h4>{{ title_4}}</h4>
+          {%- if paragraph_4 -%}
+            <p>{{ paragraph_4 }}</p>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+  </ul>
+</div>
+
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "How To Use",
+        "presets": [
+          {
+            "name": "How To Use"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__section wayfx-product__how-to-use",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Nothing Displayed?"
+          },
+          {
+            "type": "paragraph",
+            "content": "Make sure the product metafield 'sf_product_layout_a.step_1_title' has a value."
+          }
+        ]
+    }
+{% endschema %}

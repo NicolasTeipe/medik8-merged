@@ -1,0 +1,18 @@
+{%- if section.settings.afterpay -%}
+  {%- render 'afterpay' -%}
+
+{%- elsif section.settings.klarna -%}
+  <style>
+    .bnpl-klarna {
+      margin: 16px 0;
+    }
+
+    .bnpl-klarna__url {
+      padding-left: 6px;
+      text-decoration: underline;
+    }
+  </style>
+
+  <p class="bnpl-klarna lh-reset">Buy Now. Pay Later with Klarna.<a href="/blogs/lab-notes/buy-now-pay-later-with-klarna" target="_blank" class="bnpl-klarna__url">Read More</a></p>
+
+{%- endif -%}

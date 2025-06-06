@@ -1,0 +1,135 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  - update_url: {Boolean} whether or not to update url when changing variants. If false, the url isn't updated. Default: true (optional).
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+
+{%- liquid 
+  assign update_variant_param = false
+  if section.settings.update_variant_id_url_param
+    assign update_variant_param = true
+  endif
+-%}
+
+<variant-radios
+  id="variant-radios-{{ section.id }}"
+  class="no-js-hidden js-product-main-variant-selector"
+  data-section="{{ section.id }}"
+  data-url="{{ product.url }}"
+  data-update-url="{{ update_variant_param }}"
+>
+
+  {%- for option in product.options_with_values -%}
+    {%- assign option_name = option.name -%}
+    {%- if product.has_only_default_variant or option_name == 'Title' -%}
+      {%- assign option_name = 'Tamaño' -%}
+    {%- endif -%}
+
+
+    <div class="f-product-variant-picker__title flex justify-space align-center"> 
+      <span class="form__label f-product-variant-picker__label f-w600 t-ucase">
+        {{- option_name -}}
+        {%- if product.variants.size == 1 -%}: <span class="f-w400">{{ product.metafields.sf_product_hero.size }}</span>{%- endif -%}
+      </span>
+      {%- render 'f-strength-finder-quiz' -%}
+    </div>
+
+    {%- render 'f-variant-additional-info' -%}
+
+    {%- unless product.variants.size == 1 -%}
+      <nice-scroll slideTarget="[data-option-size]" hideScrollBar showControls> 
+        <fieldset class="js product-form__input">
+          <legend class="form__label visually-hidden">{{ option_name }}</legend>
+          {% render 'd-product-variant-options', product: product, option: option, picker_type: 'button', current_variant: current_variant %}
+        </fieldset>
+      </nice-scroll>
+    {%- endunless -%}
+
+  {%- endfor -%}
+  <script type="application/json">
+    {{ product.variants | json }}
+  </script>
+</variant-radios>
+
+<script>
+  // On load, and where necessary, center the selected variant within the container.
+  (async () => {
+    await DomReadyPromise();
+    const target = document.querySelector(
+      'variant-radios fieldset label input[checked]'
+    ).parentElement;
+    const scrollContainer = target.closest('.nice-scroll__content');
+  
+    if (!target || !scrollContainer) return;
+  
+    const centerPosition =
+      target.offsetLeft -
+      scrollContainer.offsetLeft +
+      target.offsetWidth / 2 -
+      scrollContainer.clientWidth / 2;
+  
+    scrollContainer.scrollTo({
+      left: centerPosition,
+      behavior: 'smooth',
+    });
+  })();
+</script>
+
+<noscript class="product-form__noscript-wrapper-{{ section.id }}">
+	<div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+		<label class="form__label" for="Variants-{{ section.id }}">
+			{{- 'products.product.product_variants' | t -}}
+		</label>
+		<div class="select">
+			<select
+				name="id"
+				id="Variants-{{ section.id }}"
+				class="select__select"
+				form="{{ product_form_id }}"
+			>
+				{%- for variant in product.variants -%}
+					<option
+						{% if variant == product.selected_or_first_available_variant %}
+							selected="selected"
+						{% endif %}
+						{% if variant.available == false %}
+							disabled
+						{% endif %}
+						value="{{ variant.id }}"
+					>
+						{%- liquid
+							echo variant.title
+							echo variant.price | money | strip_html | prepend: ' - '
+							if variant.available == false
+								echo 'products.product.sold_out' | t | prepend: ' - '
+							endif
+							if variant.quantity_rule.increment > 1
+								echo 'products.product.quantity.multiples_of' | t: quantity: variant.quantity_rule.increment | prepend: ' - '
+							endif
+							if variant.quantity_rule.min > 1
+								echo 'products.product.quantity.minimum_of' | t: quantity: variant.quantity_rule.min | prepend: ' - '
+							endif
+							if variant.quantity_rule.max != null
+								echo 'products.product.quantity.maximum_of' | t: quantity: variant.quantity_rule.max | prepend: ' - '
+							endif
+                # TODO: enable theme-check once `item_count_for_variant` is accepted as valid filter
+                # theme-check-disable
+							assign cart_quantity = cart | item_count_for_variant: variant.id
+                # theme-check-enable
+							if cart_quantity > 0
+								echo 'products.product.quantity.in_cart_html' | t: quantity: cart_quantity | prepend: ' - '
+							endif
+						-%}
+					</option>
+				{%- endfor -%}
+			</select>
+			{% render 'icon-caret' %}
+		</div>
+	</div>
+</noscript>

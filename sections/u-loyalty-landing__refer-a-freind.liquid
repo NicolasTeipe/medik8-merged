@@ -1,0 +1,151 @@
+<div class="block-grid block-grid--f flex row-wrap align-center justify-center cell-l cell-r @tablet__cell-r--none @tablet__cell-l--none" 
+     data-anchor="{{ section.settings.nav_title }}">
+  {% liquid 
+    assign imageClass = 'block-6/12  @tablet__block-12/12 @tablet__row--x2'
+    if section.settings.reverse_order 
+      assign imageClass = imageClass | append: ' order-2 @tablet__no-order'
+    endif 
+  %}
+  {% if section.settings.image %}
+  {{ section.settings.image | 
+    image_url: width: 1024 | 
+    image_tag: preload: false, loading: 'lazy', class: imageClass   
+  }}
+  {% endif %}
+    <div class="block-6/12 block-mfrh flex flex-grid column-wrap align-top justify-left tal
+       {% if section.settings.reverse_order %}
+        order-1 @tablet__no-order  cell-r--x2  
+       {% else %}
+       cell-l--x2
+       {% endif %}
+       @tablet__block-12/12 @tablet__cell-r @tablet__cell-l @tablet__align-center @tablet__tac">
+    <h2 class="h-style h-style--accent t-xl lh-s">{{ section.settings.title }}</h2>
+    {% if section.settings.text != blank %}
+    <div class="rte-content t-m lh-rm">{{ section.settings.text }}</div>
+    {% endif %}
+
+    {% if customer %}
+    <button class="js-ll-refer__cta btn btn--large btn--outline">{{ section.settings.button_label__customer }}</button>
+    {% elsif section.settings.button_label != blank and section.settings.button_url %}
+    <a class="btn btn--large btn--outline" href="{{ section.settings.button_url }}">{{ section.settings.button_label }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+    {% if section.settings.padding-top %}
+      padding-top:var(--gutter-unit-x3);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% if customer %}
+  <script type="text/javascript">   
+    DomReadyPromise().then( async () => {
+      const util = await new LoyaltyLionUtil()
+      document.querySelector('.js-ll-refer__cta').addEventListener('click',(e) => {
+        e.preventDefault()
+        const referalLLButton = document.querySelector('.lion-rule-item--referral button')
+        referalLLButton.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          })
+        )
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  </script>
+  {% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/refer-a-freind",
+  "limit":1,
+  "settings":[
+   
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"padding-top",
+      "label":"padding-top"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin"
+    },
+    { 
+      "type":"header",
+      "content":"layout/order"
+    },
+    { 
+      "type":"paragraph",
+      "content":"Default layout = image left / text right. Use the checkbox below to reverse the order @desktop"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_order",
+      "label": "reverse order?"
+    },
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Refer A friend"
+    },
+    { 
+      "type":"image_picker",
+      "id":"image",
+      "label":"Image"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Share the love"
+    },
+    { 
+      "type":"richtext",
+      "id":"text",
+      "label":"text",
+      "default":"<p>Tell your friends and family about Medik8 - we'll give them 20% off their first order, you'll receive 200 Me&Medik8 points as a thank you.</p>"
+    },
+    { 
+      "type":"text",
+      "id":"button_label",
+      "label":"Button:label (none customer)",
+      "default":"Sign Up"
+    },
+    { 
+      "type":"url",
+      "id":"button_url",
+      "label":"button:url (none customer)",
+      "default":"/"
+    },
+    { 
+      "type":"text",
+      "id":"button_label__customer",
+      "label":"Button:label (customer)",
+      "default":"Refer A friend"
+    }
+    
+  ]
+}
+{% endschema %}

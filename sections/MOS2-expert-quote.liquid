@@ -1,0 +1,251 @@
+<div class="expert-quotes_wrapper{% unless section.settings.show_video_bg %} set-bg{% endunless %}">
+  {%- if section.settings.show_video_bg -%}
+    <video playsinline autoplay muted loop role="presentation">
+      <source src="https://ucarecdn.com/d3a2344d-a1cc-418d-bdd7-e74c9d1995c6/Crystal_Background_compressed.webm" type="video/webm">
+      <source src="https://ucarecdn.com/00c8d90d-e63b-4028-b247-5fd579dc53c3/Crystal_Background_compressed.mp4" type="video/mp4">
+    </video>
+  {%- endif -%}
+
+  {% for block in section.blocks %}
+    <div class="wayfx-wrapper expert-quote">
+      <div class="grid__item three-quarters medium-down--one-whole expert-content" >
+        <h5 class="expert-heading">{{block.settings.expert_heading}}</h5>
+        <h1 class="expert-name">{{block.settings.expert_name}}</h1>
+        <h4 class="expert-position">{{block.settings.expert_position}}</h4>
+        <div class="expert-quote-wrapper">
+          <p class="quotemarks">&ldquo;</p>
+          <p class="quote">{{block.settings.expert_quote}}</p>
+        </div>
+      </div>
+      <div class="grid__item one-quarter medium-down--one-whole expert-image">
+        {% if block.settings.expert_image == blank %}
+          {{ 'product-3' | placeholder_svg_tag }}
+        {% else %}
+          <img loading="lazy" height="{{block.settings.expert_image.height}}" width="{{block.settings.expert_image.width }}" src="{{ block.settings.expert_image | image_url }}" alt="{{block.settings.expert_image.alt}}">
+        {% endif %}
+      </div> 
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  .expert-quotes_wrapper.set-bg {
+    background-color: {{ section.settings.bg_color }}
+  }
+</style>
+
+
+{% schema %}
+  {
+    "name": "Expert Quote",
+    "class": "expert-quote",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Background Config"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_video_bg",
+        "label": "Use video for background",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Colour",
+        "info": "Only applies if the video background is turned off",
+        "default": "#F6F6F6"
+      }
+    ],
+    "max_blocks": 1,
+    "blocks": [
+      {
+        "name": "Expert Quotes",
+        "type": "quote",
+        "settings": [
+          {
+            "type": "inline_richtext",
+            "id": "expert_heading",
+            "default": "<b>APPROVED BY DERMATOLOGISTS</b>",
+            "label": "Expert Quote"
+          },
+          {
+            "type": "image_picker",
+            "id": "expert_image",
+            "label": "Expert Image"
+          },
+          {
+            "type": "text",
+            "id": "expert_name",
+            "label": "Expert Name",
+            "default": "Dr Name Surname"
+          },
+          {
+            "type": "inline_richtext",
+            "id": "expert_quote",
+            "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+            "label": "Expert Quote"
+          },
+          {
+            "type": "text",
+            "id": "expert_position",
+            "label": "Expert Position",
+            "default": "Doctor, Engineer etc"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Expert Quotes",
+        "blocks": [
+          {
+            "type": "quote"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+
+{% stylesheet %}
+  .expert-quote {
+    position:relative;
+    overflow:hidden;
+    min-height:50vh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .expert-quotes_wrapper {
+    padding:4em 0em;
+    overflow:visible; 
+    width:100%;
+  }
+  .expert-quotes_wrapper video {
+    object-fit: cover;
+    width:100vw;
+    height:100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .expert-quote .wayfx-wrapper {
+    position: relative;
+    overflow:visible; 
+    height: 100%;
+    text-align: center;
+    left: 2%;
+  }
+  .expert-content{
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 30px rgb(0 0 0 / 10%);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    min-height:200px;
+    margin-left: -30%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 2em 0em 2em 4em;
+  }
+  .expert-heading {
+    margin: 0;
+    margin-top: 2em;
+    font-weight: 700;
+  }
+  .expert-position {
+    margin:0 0 1em 0;
+    font-weight: 300;
+  }
+  .expert-position:after {
+    content: "";
+    border-bottom: 1px solid #000;
+    display:block;
+    width: 200px;
+    margin-top:1em;
+  }
+  .expert-quote-wrapper {
+    display:flex;
+    max-width: 60%;
+    padding: 1em 0em;
+  }
+  .expert-name {
+    padding: 0.2em 0;
+  }
+  .expert-name, .expert-quote-wrapper .quotemarks {
+    font-family: "acta_displaymedium", sans-serif;
+    line-height:normal;
+    font-size:3em;
+    margin: 0;
+    font-weight: 200;
+    max-width: 400px;
+  }
+  .expert-quote-wrapper .quotemarks {
+    padding-right:10px;
+    margin-top: -0.4em;
+    font-size: 4em;
+  }
+  .expert-image {
+    width: calc(20% + 15vw);
+    right:4vw;
+    padding:0;
+    position: absolute;
+    display:flex;
+  }
+
+
+  @media all and (max-width: 960px) {
+      .expert-image {
+        top: -2em;
+        right:unset;
+        justify-content: center;
+      }
+      .expert-content {
+        padding: calc(5em + 15vw) 0 0 0;
+        margin: 5em 0 0 0;
+        text-align: center;
+      }
+      .expert-heading {
+        margin: 3em 0 1em;
+      }
+      .expert-position:after {
+        width:100px;
+        margin-left: calc(50% - 50px);
+      }
+      .expert-quote .wayfx-wrapper {
+        left: 0;
+      }
+      .expert-quote-wrapper {
+        padding: 1em;
+        max-width:100%;
+        flex-direction: column;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .expert-quote-wrapper .quotemarks {
+        padding: 0;
+        font-size: 5em;
+        margin-bottom: -0.4em;
+      }
+      .expert-name {
+        font-size: calc(1em + 5vw);
+      }
+      .expert-name, .expert-quote-wrapper .quotemarks {
+        max-width: 100%;
+      }
+    }
+
+    @media all and (max-width: 450px) {
+    .expert-image {
+       width:50%; 
+    }
+    .expert-content {
+      padding: calc(5em + 5vw) 0 0 0;
+    }
+  }
+    
+  
+{% endstylesheet %}

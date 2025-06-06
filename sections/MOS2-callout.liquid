@@ -1,0 +1,355 @@
+
+{% case section.settings.column_layout %}
+{% when 'half' %}
+  {% assign column_layout = "half" %}
+{% when 'third' %}
+  {% assign column_layout = "third" %}
+{% when 'quarter' %}
+  {% assign column_layout = "quarter" %}
+{% endcase %}
+
+{% case section.settings.image_height %}
+  {% when 'natural' %}
+    {% assign image_height = "natural" %}
+  {% when 'small' %}
+    {% assign image_height = "landscape" %}
+  {% when 'medium' %}
+    {% assign image_height = "square" %}
+  {% when 'large' %}
+    {% assign image_height = "portrait" %}
+{% endcase %}
+
+{% assign wishlist = section.settings.show_wishlist %}
+{% assign quickview = section.settings.show_quickview %}
+
+
+<section class="wayfx-block wayfx-block--callout-3column callout callout-3column-{{ section.id }}  mos2-callout">
+  <div class="wayfx-wrapper">
+    {%- if section.settings.heading != blank or section.settings.paragraph != blank -%}
+    <div class="wayfx-block__heading">
+      {% if section.settings.heading != empty %} <h2 class="h2--primary text-center">{{ section.settings.heading }}</h2>{% endif %}
+      {% if section.settings.paragraph != blank %}<p class="p--lg text-center">{{ section.settings.paragraph }}</p>{%endif%}
+    </div>
+    {%- endif -%}
+    <div class="grid grid--flex callout-template callout-{{section.id}} keen-slider" data-keen-slider-disabled>
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'content' %}
+            <div class="grid__item large--one-{{column_layout}} flex column-wrap justify-left keen-slider__slide">
+              {%- if block.settings.image != blank -%}
+                <div class="{% if block.settings.shadow %}image-shadow{% endif %} block-12/12 row {% unless image_height == 'natural' %}ar-image ar--image--{{ image_height }}{% endunless%}">
+                  {% assign alt = block.settings.image.alt %}
+                  {% if alt == blank %}
+                    {% assign alt = block.settings.heading %}
+                  {% endif %}
+                  {% assign title = block.settings.image.alt %}
+                  {% if title == blank %}
+                    {% assign title = block.settings.heading %}
+                  {% endif %}
+                  {% render 'global.lazy-image', 
+                    image_desktop:block.settings.image,
+                    image_class:'d-block',
+                    alt:alt,
+                    title:title
+                  %}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.heading != blank -%}
+                <h4 class="h4--primary text-center">{{ block.settings.heading }}</h4>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <p class="p--md text-center">{{ block.settings.text }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.cta_url != blank -%}
+                <div class="block-bottom">
+                  <a href="{{ block.settings.cta_url }}" class="btn--outline btn--xlarge block-top">{{ block.settings.cta_text }}</a>
+                </div>
+              {%- endif -%}
+            </div>
+          {% when 'product' %}
+            {% liquid 
+              assign product = block.settings.product
+              assign current_variant = product.first_available_variant
+              if product.variants.size > 1 and block.settings.variant_sku != blank
+                for variant in product.variants
+                  if variant.sku == block.settings.variant_sku
+                    assign current_variant = variant
+                    break
+                  endif
+                endfor
+              endif
+           %}
+
+            <div class="callout-product mos2-callout__product grid__item large--one-{{column_layout}} keen-slider__slide">
+              {% render 'MOS2-product-grid-item',
+                 product_layout: "standard", 
+                 product: product, 
+                 variant: current_variant,
+                 wishlist: wishlist, 
+                 quickview: quickview, 
+                 block_id: block.id,
+              %}
+            </div>
+          {% when "animated_text" %}
+            {% assign count = count | plus: 1 %}
+            {% assign delay = count | times: 100 %}
+            <div class="grid__item large--one-{{column_layout}} animated-text keen-slider__slide" data-aos="fade-up" data-aos-delay="{{delay}}" data-aos-offset="300">
+              {%- if block.settings.heading != blank -%}
+                <h4 id="{{block.id}}" class="h4--primary text-center">{{block.settings.heading}}%</h4>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <p class="p--md text-center">{{ block.settings.text }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.cta_url != blank -%}
+                <a href="{{ block.settings.cta_url }}" class="btn--outline btn--xlarge">{{ block.settings.cta_text }}</a>
+              {%- endif -%}
+            </div>
+        {% endcase %}  
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style type="text/css">
+
+  .callout-3column-{{ section.id }} { 
+    background-color: {{ section.settings.bg_color }};
+  } 
+
+</style>
+
+<script type="module"> 
+
+  import {MOS2Callout} from {{ 'scripts.sections.mos2callout.js' | asset_url | json }};
+
+  let initMOS2Callout = () => {
+    let mos2Callout = new MOS2Callout({
+      sliderElement:document.querySelector('.callout-{{ section.id }}'),
+      showArrows:{{ section.settings.show_arrows | json }},
+      perView:{{ section.settings.slides_view | json }},
+      autoplaySpeed:{{ section.settings.slider_speed | times: 1000 }},
+      useSliderAtDesktop:{{ section.settings.is_slider | json }},
+      useSliderAtMobile:{{ section.settings.is_slider__mobile | json }}
+    })
+  }
+
+  initMOS2Callout()
+
+  {% if request.design_mode %}
+  document.addEventListener('shopify:section:load', (data) => {
+    initMOS2Callout()
+  })
+ {% endif %}
+    
+</script> 
+
+{% schema %}
+{
+  "name": "MOS2-Callout",
+  "templates": ["index", "article", "page", "product"],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "id": "bg_color",
+      "type": "color",
+      "label": "Background Color",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Image Height",
+      "options": [
+          { "value": "natural", "label": "Natural"},
+          { "value": "small", "label": "Landscape"},
+          { "value": "medium", "label": "Square"},
+          { "value": "large", "label": "Portrait"}
+      ]
+    },
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Main Heading"
+    },
+    {
+        "id": "paragraph",
+        "type": "textarea",
+        "label": "Main Paragraph"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show Wishlist",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quickview",
+      "label": "Show Quick View",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+
+    {
+      "type": "select",
+      "id": "column_layout",
+      "label": "Column Layout (for none-slider layouts)",
+      "options": [
+          { "value": "half", "label": "2 Column"},
+          { "value": "third", "label": "3 Column"},
+          { "value": "quarter", "label": "4 Column"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "is_slider",
+      "label": "Slider @desktop?",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "is_slider__mobile",
+      "label": "Slider @tablet?",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Slider Arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slider_speed",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "s",
+      "label": "Slider Speed",
+      "info": "Speed in seconds",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "slides_view",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "pcs",
+      "label": "Items per slide (mobile)",
+      "info": "Desktop views is increased by 2, Tablet increased by 1",
+      "default": 2
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Content",
+      "type": "content",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Callout Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "shadow",
+          "label": "Callout Image > Shadow",
+          "default":true
+        },
+        {
+          "id": "heading",
+          "type": "text",
+          "label": "Callout Heading"
+        },
+        {
+         "type": "textarea",
+         "id": "text",
+         "label": "Callout Text"
+        },
+        {
+          "id": "cta_text",
+          "type": "text",
+          "label": "Callout CTA Text"
+        },
+        {
+            "id": "cta_url",
+            "type": "url",
+            "label": "Callout CTA url"
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "type": "product",
+      "settings": [
+        {
+          "id": "product",
+          "type": "product",
+          "label": "Product"
+        },
+        {
+          "id": "variant_sku",
+          "type": "text",
+          "label": "Variant SKU"
+        }
+      ]
+    },
+    {
+      "name": "Animated Text",
+      "type": "animated_text",
+      "settings": [
+        {
+          "type": "range",
+          "id": "heading",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Animated heading",
+          "default": 16
+        },
+        {
+         "type": "textarea",
+         "id": "text",
+         "label": "Callout Text",
+         "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        },
+
+        {
+          "type": "textarea",
+          "id": "text_html",
+          "label": "Callout Text"
+         }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Callout",
+      "blocks": [
+        { 
+        "type": "animated_text"
+        },
+        { 
+          "type": "animated_text"
+        },
+        { 
+          "type": "animated_text"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

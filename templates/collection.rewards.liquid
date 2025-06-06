@@ -1,0 +1,276 @@
+{% assign dob = customer.metafields.loyaltylion.birthday | date: '%Y-%m-%d' %}
+
+{% assign nowYear = 'now' | date: '%Y'%}
+{% assign nowEpoch = 'now' | date: '%s'%}
+{% assign nowTimestamp = 'now' | date: '%Y-%m-%d' %}
+
+
+{% assign birthYear = dob | date: '%Y'%}
+{% assign birthEpoch = dob | date: '%s' %}
+{% assign birthTimestanp = dob | date: '%Y-%m-%d' %}
+
+{% comment %} Assign the first claim to previous year DOB  and avoid having an empty "claimed" variable {% endcomment %}
+{% if claimed == blank %}
+  {% assign initial_claim = dob | replace: birthYear, nowYear | date: '%s' | minus: 31536000 %}
+  {% assign  claimed = initial_claim | date: '%Y-%m-%d' %}
+{% endif %}
+
+{% assign claimedEpoch = claimed | date: '%s' %}
+{% assign claimedTimestamp = claimed | date: '%Y-%m-%d' %}
+
+{% assign birthDateEpoch = dob | replace: birthYear, nowYear | date: '%s' %}
+{% assign BirthDateTimestamp = birthDateEpoch | date: '%d/%m/%Y' %}
+
+{% assign since_claimed = nowEpoch | minus: claimedEpoch | divided_by: 3600 | divided_by: 24 %}
+{% assign since_birthday = nowEpoch | minus: birthDateEpoch | divided_by: 3600 | divided_by: 24 %}
+
+{%- assign date_minus_31_days = 'now' | date: "%s" | minus: 2678400 -%}
+{%- assign claimed_date = customer.metafields.custom.birthday_gift_claimed | date: "%s" | times: 1 -%}
+
+{%- assign has_claimed = false -%}
+{% if claimed_date >= date_minus_31_days %}
+  {%- assign has_claimed = true -%}
+{% endif %}
+
+{% comment %} Add 30 days claiming period from birth date {% endcomment %}
+{% assign claimEpoch = birthDateEpoch | plus: 2592000  %}
+{% comment %} display date in different format for US {% endcomment %}
+{% if shop.url contains "us.medik8" %}
+  {% assign claim_period = claimEpoch | date: '%B-%d-%Y' %}
+{% else %}
+  {% assign claim_period = claimEpoch | date: '%d/%m/%Y' %}
+{% endif %}
+
+{%- comment -%} Identify correct LL tier {%- endcomment -%}
+{%- for tag in customer.tags -%}
+  {%- if tag contains 'Tier: Crystal' -%}
+    {%- assign tiersStr = tiersStr | append: tag | replace: 'Tier: ', '' -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if tiersStr contains 'Deluxe' -%}
+  {%- assign currentTier = 'Crystal Deluxe' -%}
+{%- elsif tiersStr contains 'Plus' -%}
+    {%- assign currentTier = 'Crystal Plus' -%}
+{%- elsif tiersStr contains 'Crystal' -%}
+  {%- assign currentTier = 'Crystal' -%}
+{%- endif -%}
+
+{% capture birthday_content %}
+  <section class="wayfx-collection__header">
+
+    <div class="wayfx-wrapper">
+
+      <div class="text-center birthday-content">
+        <h1 class="h2--secondary">Happy Birthday {{customer.name}}</h1>
+        <p class="p--lg">To celebrate and as a thank you for being a loyal customer, you can choose one free full-size product from this range.</p>
+        <p class="p--lg">Make sure to add your chosen product to your basket from this page. If you navigate away from this page before adding your free gift to your basket, you can simply click-through from the email at any time to find this page again.</p>
+        <br>
+        <small>You have until {{claim_period}} to claim your free product, see <a style="text-decoration:underline" href="/pages/rewards-terms-conditions">Terms & Conditions</a> for more details.  </small> 
+      </div>
+      <div class="grid">
+        <div class="grid__item large--four-quarters">
+          {%- paginate collection.products by 150 -%}
+          {% comment %} TODO - Not sure this is rendered on storefront as there is no rule to remove the display property below {% endcomment %}
+          <div class="collection-no-results" style="display: none">
+            <b>{{'general.search.filters' | t }}</b>
+            <small>{{'general.search.filters_aditional' | t }}</small>
+          </div>
+          <div class="wayfx-products">
+
+            {% for product in collection.products %}
+
+            {% render 'product-grid-item', product: product, product_layout: 'related', product_gift: "reward" %}
+
+            {% else %}
+            <div class="grid__item">
+              <p>{{ 'collections.general.no_matches' | t }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+    .wayfx-collection__header .birthday-content {
+    padding:0 0 40px;
+  }
+  </style>
+{% endcapture %}
+
+{% capture claimed_content %}
+  <section class="wayfx-block wayfx-block--404">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-block--404__heading text-center">
+        <h1 class="h2--primary">Sorry, it appears that you have already claimed your birthday gift or your claiming period expired</h1>
+        <p class="p--lg">Keep an eye on your inbox for your birthday gift next year. <br>View your points balance and available rewards <a href="/pages/my-medik8-rewards">here</a>.</p>
+      </div>
+    </div>
+    <div class="wayfx-block--404__products">
+      <div class="wayfx-wrapper">
+        <h2 class="h2--primary text-center">Our Best Sellers</h2>
+        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
+          {%- paginate collections['best-sellers'].products by 8 -%}
+          {%- for product in collections['best-sellers'].products -%}
+          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
+          {%- endfor -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endcapture %}
+
+{% capture claim_expired %}
+  <section class="wayfx-block wayfx-block--404">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-block--404__heading text-center">
+        <h1 class="h2--primary">Sorry, it appears that your claiming period expired</h1>
+        <p class="p--lg">Keep an eye on your inbox for your birthday gift next year. <br>View your points balance and available rewards <a href="/pages/my-medik8-rewards">here</a>.</p> 
+      </div>
+    </div>
+    <div class="wayfx-block--404__products">
+      <div class="wayfx-wrapper">
+        <h2 class="h2--primary text-center">Our Best Sellers</h2>
+        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
+          {%- paginate collections['best-sellers'].products by 8 -%}
+          {%- for product in collections['best-sellers'].products -%}
+          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
+          {%- endfor -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endcapture %}
+
+{% capture birthday_required %}
+  <section class="wayfx-block wayfx-block--404">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-block--404__heading text-center">
+        <h1 class="h2--primary">Sorry, We can't find your Date of Birth</h1>
+        <p class="p--lg">Please register your date of birth below or check our  <a href="/pages/my-medik8-rewards">rewards page</a></p>
+        <div data-lion-rules-list></div>
+        <small class="tc">Please see our <a style="text-decoration:underline" href="/pages/rewards-terms-conditions">Terms & Conditions</a> for more details.</small>
+      </div>
+    </div>
+    <div class="wayfx-block--404__products">
+      <div class="wayfx-wrapper">
+        <h2 class="h2--primary text-center">Our Best Sellers</h2>
+        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
+          {%- paginate collections['best-sellers'].products by 8 -%}
+          {%- for product in collections['best-sellers'].products -%}
+          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
+          {%- endfor -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+  .lion-rule-item:not(.lion-rule-item--birthday) {
+    display:none !important;
+  }
+  .lion-rules-list {
+  display:flex !important;
+  }
+  .lion-rule-item--birthday {
+    width:100% !important;
+  }
+  .lion-rules-list {
+  margin-bottom:3em !important;
+  }
+  #loyaltylion .lion-rule-item__icon {
+  background-color:#000;
+  }
+  </style>
+{% endcapture %}
+
+{% capture tier_required %}
+  <section class="wayfx-block wayfx-block--404">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-block--404__heading text-center">
+        <h1 class="h2--primary">Sorry, Your current Tier is: {{ currentTier }}</h1>
+        <p class="p--lg">Please use the activities below to advance to Crystal Deluxe or visit our <a href="/pages/my-medik8-rewards">rewards page</a>. </p>
+        <div data-lion-rules-list></div>
+      </div>
+    </div>
+    <div class="wayfx-block--404__products">
+      <div class="wayfx-wrapper">
+        <h2 class="h2--primary text-center">Our Best Sellers</h2>
+        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
+          {%- paginate collections['best-sellers'].products by 8 -%}
+          {%- for product in collections['best-sellers'].products -%}
+          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
+          {%- endfor -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+    .lion-tier-overview {
+      display: flex !important;
+      margin: 0 auto;
+      justify-content: center;
+      {% comment %} background-color: #fff !important; {% endcomment %}
+    }
+    .lion-tier-box:not(.lion-tier-box--current) {
+      display:none !important;
+    }
+    .lion-tier-box__position {
+    display:none;
+    }
+  </style>
+{% endcapture %}
+
+{% capture guest_content %}
+  <section class="wayfx-block wayfx-block--login" id="login-form">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-block__tabs">
+        <div data-tab="login" class="wayfx-block__tab selected">Customer Login</div>
+      </div>
+      <div class="grid">
+        <div class="wayfx-block__login-form grid__item large--one-quarter">
+        </div>
+        <div class="wayfx-block__login-form grid__item large--one-half">
+          <div class="wayfx-block__left">
+            {% render 'login-form' %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style type="text/css">
+    @media all and (max-width: 1023px) {
+      .wayfx-block__register-form {
+        display: none;
+      }
+    }
+  </style>
+{% endcapture %}
+
+{% if customer %}
+  {% if dob == blank %}
+    {{birthday_required}}
+  {% else %}
+    {% if since_claimed >= 365 and has_claimed == false %}
+      {% if since_birthday >= 0 and since_birthday <= 30 %}
+        {%- if currentTier contains 'Deluxe' -%}
+          {{ birthday_content }}
+        {%- elsif currentTier -%}
+          {{tier_required}}
+        {%- endif -%}
+      {% else %}
+        {{claim_expired}}
+      {% endif %}
+    {% else %}
+      {{claimed_content}} 
+    {% endif %} 
+  {% endif%}
+{% else %}
+  {{ guest_content }}
+{% endif %}

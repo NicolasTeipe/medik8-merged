@@ -1,0 +1,1081 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Medik8 Online Store",
+    "theme_version": "2.1.1",
+    "theme_author": "Medik8",
+    "theme_documentation_url": "https:\/\/github.com\/pangaea-laboratories\/MOS2.0",
+    "theme_support_url": "https:\/\/github.com\/pangaea-laboratories\/MOS2.0\/issues"
+  },
+  {
+    "name": "Feature Toggles",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Temporary"
+      },
+      {
+        "type": "header",
+        "content": "Permanent"
+      },
+      {
+        "type": "checkbox",
+        "id": "ff_temp_provenance",
+        "label": "Provenance",
+        "info": "Show Provenance content on the v2 PDP template",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Medik8 Cart Sidebar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_sidebarcart",
+        "label": "Use sidebar cart",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sidebarcart_upsells",
+        "label": "Show upsells UI in cart",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Cart Messaging"
+      },
+      {
+        "type": "textarea",
+        "id": "cart_empty_message",
+        "label": "Cart Empty Message",
+        "default": "Fill your bag with some amazing anti-ageing skincare products."
+      }
+    ]
+  },
+  {
+    "name": "ROSWELL Sample Selector",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_roswell_sampler",
+        "label": "Show Roswell in cart UI?",
+        "default": false
+      },
+      {
+        "type": "collection",
+        "id": "sample_collection",
+        "label": "Sample Collection"
+      },
+      {
+        "type": "number",
+        "id": "sample_threshold",
+        "label": "Sample Threshold",
+        "info": "100 = $100, no decimals",
+        "default": 100
+      },
+      {
+        "type": "number",
+        "id": "sample_limit",
+        "label": "Sample Limit Default",
+        "default": 2
+      },
+      {
+        "type": "number",
+        "id": "sample_limit_1",
+        "label": "Sample Limit: Crystal",
+        "default": 2
+      },
+      {
+        "type": "number",
+        "id": "sample_limit_2",
+        "label": "Sample Limit: Crystal Plus",
+        "default": 2
+      },
+      {
+        "type": "number",
+        "id": "sample_limit_3",
+        "label": "Sample Limit: Crystal Deluxe",
+        "default": 2
+      },
+      {
+        "type": "text",
+        "id": "sample_progress_text",
+        "label": "Progress Bar Text",
+        "default": "Free Samples"
+      }
+    ]
+  },
+  {
+    "name": "Symplify",
+    "settings": [
+      {
+        "type": "text",
+        "id": "symplify_sitegainer_id",
+        "label": "Symplify sitegainer ID"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "default": "#204a80",
+        "info": "Used for text links, and primary buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary",
+        "default": "#dcdcdc",
+        "info": "Used for secondary buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_borders",
+        "label": "Borders",
+        "default": "#e5e5e5"
+      },
+      {
+        "type": "header",
+        "content": "Body"
+      },
+      {
+        "type": "color",
+        "id": "color_body_bg",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_body_text",
+        "label": "Text",
+        "default": "#333333"
+      },
+      {
+        "type": "header",
+        "content": "Footer"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bg",
+        "label": "Background",
+        "default": "#f2f2f2"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_text",
+        "label": "Text",
+        "default": "#636363"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_social_link",
+        "label": "Social media icons",
+        "default": "#bbbbbb"
+      }
+    ]
+  },
+  {
+    "name": "Country Selector",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "country_selector_enabled",
+        "label": "Enable Country Selector"
+      },
+      {
+        "type": "checkbox",
+        "id": "country_selector_modal_enabled",
+        "label": "Enable Country Selector Popop"
+      },
+      {
+        "type": "text",
+        "id": "country_selector_heading",
+        "label": "Country Selector Heading",
+        "placeholder": "Insert your text here"
+      },
+      {
+        "type": "text",
+        "id": "country_selector_footer_text",
+        "label": "Country Selector Footer Text",
+        "placeholder": "Insert your text here"
+      },
+      {
+        "type": "url",
+        "id": "country_selector_footer_url",
+        "label": "Country Selector Footer URL"
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Note: 'Algolia [New]' is configured from within its section. The remaining options are configured the same as before, and are being kept only for the transition."
+      },
+      {
+        "type": "radio",
+        "id": "search_provider",
+        "label": "Search Provider",
+        "options": [
+          {
+            "value": "algolia",
+            "label": "Algolia [New]"
+          },
+          {
+            "value": "algolia_legacy",
+            "label": "Algolia [Legacy]"
+          },
+          {
+            "value": "shopify",
+            "label": "Shopify"
+          }
+        ],
+        "default": "shopify"
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Enable Predictive Search",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "search_placeholder_image",
+        "label": "Search Result Placeholder Image",
+        "info": "Shown when search result item has no image"
+      }
+    ]
+  },
+  {
+    "name": "Collection",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Collection Sidebar Filters"
+      },
+      {
+        "type": "text",
+        "id": "filter_categories",
+        "label": "Filter Filter Categories",
+        "info": "Define Filter Categories"
+      },
+      {
+        "type": "text",
+        "id": "filter_type",
+        "label": "Filter Product Type",
+        "info": "Use comma separated values only"
+      },
+      {
+        "type": "text",
+        "id": "filter_concern",
+        "label": "Filter By Concern",
+        "info": "Use comma separated values only"
+      },
+      {
+        "type": "text",
+        "id": "filter_ingredients",
+        "label": "Filter By Ingredients",
+        "info": "Use comma separated values only"
+      },
+      {
+        "type": "text",
+        "id": "filter_csa",
+        "label": "Filter CSA",
+        "info": "Use comma separated values only"
+      },
+      {
+        "type": "header",
+        "content": "Super Size Exclusions"
+      },
+      {
+        "type": "collection_list",
+        "id": "super_size_exclusions",
+        "label": "Hide Super Size variants from these collections",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "Legal",
+    "settings": [
+      {
+        "type": "text",
+        "id": "legal__agree_to_legal_checkbox_title",
+        "label": "Title Confirm Payment",
+        "default": "Confirm Payment"
+      },
+      {
+        "type": "html",
+        "id": "legal__agree_to_legal_checkbox_label",
+        "label": "Label Confirm Payment",
+        "default": "I agree to the <a aria-haspopup=\"dialog\" data-modal=\"policy-terms-of-service\" data-title-text=\"Terms of service\" data-close-text=\"Close\" data-iframe=\"true\" href=\"\/policies\/terms-of-service.html\">Terms of service<\/a> and <a aria-haspopup=\"dialog\" data-modal=\"policy-refund-policy\" data-title-text=\"Refund policy\" data-close-text=\"Close\" data-iframe=\"true\" href=\"\/policies\/refund-policy.html\">Refund policy<\/a>."
+      },
+      {
+        "type": "checkbox",
+        "id": "legal__agree_to_legal_checkbox_enabled",
+        "label": "Enable Confirm Payment",
+        "info": "Enable checkbox at checkout so customers cannot complete order without agreeing to the legal agreements first.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Modules",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header Scripts"
+      },
+      {
+        "type": "text",
+        "id": "optimize_id",
+        "label": "Optimize ID",
+        "info": "e.g. OPT-W2WL69B"
+      },
+      {
+        "type": "text",
+        "id": "clarity_id",
+        "label": "MS Clarity ID",
+        "info": "e.g. kqwzk4m8l3"
+      },
+      {
+        "type": "text",
+        "id": "hotjar_id",
+        "label": "Hotjar ID",
+        "info": "e.g. 318218"
+      },
+      {
+        "type": "text",
+        "id": "gorgias_app_id",
+        "label": "Gorgias App ID",
+        "info": "e.g. 12432"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_swym",
+        "label": "Use Swym Wishlist",
+        "info": "Note: App must be installed."
+      },
+      {
+        "type": "header",
+        "content": "Octane AI"
+      },
+      {
+        "type": "text",
+        "id": "octaneai_script_id",
+        "label": "Script ID"
+      },
+      {
+        "type": "text",
+        "id": "octaneai_findyourmatch_id",
+        "label": "Strength Finder Quiz ID"
+      },
+      {
+        "type": "header",
+        "content": "Yotpo Reviews"
+      },
+      {
+        "type": "text",
+        "id": "yotpo_api_key",
+        "label": "Yotpo API Key"
+      },
+      {
+        "type": "header",
+        "content": "Algolia Search"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_algolia",
+        "label": "Use Algolia Search",
+        "info": "Note: App must be installed."
+      },
+      {
+        "type": "text",
+        "id": "algolia_app_id",
+        "label": "Algolia App ID"
+      },
+      {
+        "type": "text",
+        "id": "algolia_search_id",
+        "label": "Algolia Search ID"
+      },
+      {
+        "type": "text",
+        "id": "algolia_index_prefix",
+        "label": "Algolia Index Prefix"
+      },
+      {
+        "type": "header",
+        "content": "Klavyio"
+      },
+      {
+        "type": "text",
+        "id": "klaviyo_api",
+        "label": "Klaviyo Public API",
+        "info": "e.g. T2XCDk"
+      },
+      {
+        "type": "text",
+        "id": "klaviyo_list_id",
+        "label": "Klaviyo List ID",
+        "info": "e.g. TLKku3"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_title",
+        "label": "Newsletter Title"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_subtitle",
+        "label": "Newsletter Subtitle"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_discount_code",
+        "label": "Newsletter Discount Code"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_small_print",
+        "label": "Newsletter Small Print"
+      },
+      {
+        "type": "text",
+        "id": "footer_extra_terms",
+        "label": "Footer Exra Terms"
+      },
+      {
+        "type": "header",
+        "content": "Trustpilot"
+      },
+      {
+        "type": "checkbox",
+        "id": "trustpilot_toggle",
+        "label": "Enable Trustpilot script",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Hreflang App"
+      },
+      {
+        "type": "paragraph",
+        "content": "If the Hreflang app installation screen says 'It seems you haven't added the code of our app to the theme (Step 2)...', this option should be checked."
+      },
+      {
+        "type": "checkbox",
+        "id": "hreflang_snippet",
+        "label": "Enable Hreflang app code snippet",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Adverts",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Collection Page Advert"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_advert_enabled",
+        "label": "Enable Collection Page Advert"
+      },
+      {
+        "type": "image_picker",
+        "id": "ad_image",
+        "label": "Background Image"
+      },
+      {
+        "type": "range",
+        "id": "ad_image_opacity",
+        "min": 0,
+        "max": 9,
+        "step": 1,
+        "unit": "%",
+        "label": "Image Opacity ",
+        "default": 5
+      },
+      {
+        "type": "text",
+        "id": "ad_title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "ad_subtitle",
+        "label": "Subtitle"
+      },
+      {
+        "type": "richtext",
+        "id": "ad_paragraph",
+        "label": "Paragraph"
+      },
+      {
+        "type": "text",
+        "id": "ad_cta_text",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "ad_cta_link",
+        "label": "Button Link"
+      }
+    ]
+  },
+  {
+    "name": "Discounts",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Special Access"
+      },
+      {
+        "type": "text",
+        "id": "discounts__vip_code",
+        "label": "VIP code",
+        "info": "When this is used, it will limit visability of sitewide and progress bar to only people who have the code applied. Use via link https:\/\/medik8.com\/discount\/VIPCODE"
+      },
+      {
+        "type": "checkbox",
+        "id": "vip-pricing",
+        "label": "Hide slashed pricing",
+        "info": "During VIP access periods, prices should not show a discount to any customer, including customers with a VIP discount code. Checking this ensures no dscounted or original slashed prices are shown.",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Site wide discount"
+      },
+      {
+        "type": "checkbox",
+        "id": "site_wide__enabled",
+        "label": "Enable site wide discount",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "site_wide__label",
+        "label": "Label"
+      },
+      {
+        "type": "color",
+        "id": "site_wide__label_text_color",
+        "label": "Label text color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "site_wide__label_background_color",
+        "label": "Label background color",
+        "default": "#000000"
+      },
+      {
+        "type": "collection",
+        "id": "site_wide__collection",
+        "label": "Collection"
+      },
+      {
+        "type": "range",
+        "id": "site_wide__percentage",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "label": "Site wide discount percentage",
+        "info": "This settings only control the visuals for side wide discounts make sure you have automatic discount or shopify script set also.",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "site_wide__label_enabled",
+        "label": "Enable site wide labels",
+        "info": "When enabled will show labels on the products that are discounted. Note, this no longer applies to the PDP.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "site_wide__crossed_out_pricing_enabled",
+        "label": "Crossed out pricing",
+        "info": "When enabled products matching the collection will show crossed out pricing.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Progress discount"
+      },
+      {
+        "type": "select",
+        "id": "progress_discount__enabled",
+        "label": "AOV Bar Placement",
+        "options": [
+          {
+            "value": "cart",
+            "label": "Cart Drawer"
+          },
+          {
+            "value": "collection",
+            "label": "Collection Page"
+          },
+          {
+            "value": "both",
+            "label": "Both"
+          },
+          {
+            "value": "none",
+            "label": "None"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__remove_free_gifts",
+        "label": "Remove free gifts option",
+        "info": "When enabled will show remove free gift option in cart drawer and cart page.",
+        "default": false
+      },
+      {
+        "type": "text",
+        "label": "Remove free gifts message",
+        "id": "progress_discount__remove_free_gifts_message",
+        "default": "Remove Free Gifts from basket"
+      },
+      {
+        "type": "textarea",
+        "label": "Remove free gifts tooltip",
+        "id": "progress_discount__remove_free_gifts_tooltip",
+        "default": "Only here for discounts? Remove Free Gift items from you basket."
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__original_price",
+        "label": "Calculate on original price",
+        "info": "Base the calculations of this discounts on the original price of the products including free gifts if not enabled items_subtotal_price will be used.",
+        "default": false
+      },
+      {
+        "type": "html",
+        "id": "progress_discount__message_step_zero",
+        "label": "Message zero requirement",
+        "default": "You're getting {{ step.titles }}"
+      },
+      {
+        "type": "html",
+        "id": "progress_discount__message_step_congrats",
+        "label": "Message when step achived",
+        "default": "🎉 Congrats! You've <strong>unlocked<\/strong> {{ step.titles }}"
+      },
+      {
+        "type": "html",
+        "id": "progress_discount__message_step_away",
+        "label": "Message when step away from",
+        "default": "You're only <strong>{{ symbol }}{{ required }}<\/strong> away from {{ step.titles }}"
+      },
+      {
+        "type": "color",
+        "id": "progress_discount__color_primary",
+        "label": "Progress bar primary color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "progress_discount__color_secondary",
+        "label": "Progress bar secondary color",
+        "default": "#6e6e6e"
+      },
+      {
+        "type": "select",
+        "id": "progress_discount__free_shipping_tier",
+        "label": "Free shipping tier",
+        "info": "Select the tier at witch the free shipping will display. Important this is only visual make sure your free shipping is set accoringly.",
+        "default": "tier_one",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "tier_one",
+            "label": "Discount tier one"
+          },
+          {
+            "value": "tier_two",
+            "label": "Discount tier two"
+          },
+          {
+            "value": "tier_three",
+            "label": "Discount tier three"
+          },
+          {
+            "value": "tier_four",
+            "label": "Discount tier four"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Discount tier one"
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__tier_one_visible",
+        "label": "Visible in progress bar",
+        "info": "When disabled mechanic will still apply but will not be visible in the progress bar.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_one_percentage",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_one_requirement",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": ".00",
+        "default": 0
+      },
+      {
+        "type": "product",
+        "label": "Product",
+        "id": "progress_discount__tier_one_product"
+      },
+      {
+        "type": "text",
+        "label": "Variant sku",
+        "id": "progress_discount__tier_one_product_sku"
+      },
+      {
+        "type": "text",
+        "id": "progress_discount__tier_one_codes",
+        "label": "Discount codes",
+        "info": "List all coupon codes comma separated that will apply to this tier. Important when this is used tier will be ingored from the progress bar as coupon codes can only be applied at checkout."
+      },
+      {
+        "type": "header",
+        "content": "Discount tier two"
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__tier_two_visible",
+        "label": "Visible in progress bar",
+        "info": "When disabled mechanic will still apply but will not be visible in the progress bar.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_two_percentage",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_two_requirement",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": ".00",
+        "default": 0
+      },
+      {
+        "type": "product",
+        "label": "Product",
+        "id": "progress_discount__tier_two_product"
+      },
+      {
+        "type": "text",
+        "label": "Variant sku",
+        "id": "progress_discount__tier_two_product_sku"
+      },
+      {
+        "type": "text",
+        "id": "progress_discount__tier_two_codes",
+        "label": "Discount codes",
+        "info": "List all coupon codes comma separated that will apply to this tier. Important when this is used tier will be ingored from the progress bar as coupon codes can only be applied at checkout."
+      },
+      {
+        "type": "header",
+        "content": "Discount tier three"
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__tier_three_visible",
+        "label": "Visible in progress bar",
+        "info": "When disabled mechanic will still apply but will not be visible in the progress bar.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_three_percentage",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_three_requirement",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": ".00",
+        "default": 0
+      },
+      {
+        "type": "product",
+        "label": "Product",
+        "id": "progress_discount__tier_three_product"
+      },
+      {
+        "type": "text",
+        "label": "Variant sku",
+        "id": "progress_discount__tier_three_product_sku"
+      },
+      {
+        "type": "text",
+        "id": "progress_discount__tier_three_codes",
+        "label": "Discount codes",
+        "info": "List all coupon codes comma separated that will apply to this tier. Important when this is used tier will be ingored from the progress bar as coupon codes can only be applied at checkout."
+      },
+      {
+        "type": "header",
+        "content": "Discount tier four"
+      },
+      {
+        "type": "checkbox",
+        "id": "progress_discount__tier_four_visible",
+        "label": "Visible in progress bar",
+        "info": "When disabled mechanic will still apply but will not be visible in the progress bar.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_four_percentage",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "progress_discount__tier_four_requirement",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": ".00",
+        "default": 0
+      },
+      {
+        "type": "product",
+        "label": "Product",
+        "id": "progress_discount__tier_four_product"
+      },
+      {
+        "type": "text",
+        "label": "Variant sku",
+        "id": "progress_discount__tier_four_product_sku"
+      },
+      {
+        "type": "text",
+        "id": "progress_discount__tier_four_codes",
+        "label": "Discount codes",
+        "info": "List all coupon codes comma separated that will apply to this tier. Important when this is used tier will be ingored from the progress bar as coupon codes can only be applied at checkout."
+      }
+    ]
+  },
+  {
+    "name": "Shipping",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Shipping Delivery Information",
+        "info": "Content displayed on PDP dropdown"
+      },
+      {
+        "type": "text",
+        "id": "shipping_title_1",
+        "label": "Delivery Title 1"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "shipping_desc_1",
+        "label": "Delivery Description 1"
+      },
+      {
+        "type": "text",
+        "id": "shipping_title_2",
+        "label": "Delivery Title 2"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "shipping_desc_2",
+        "label": "Delivery Description 2"
+      }
+    ]
+  },
+  {
+    "name": "Loyalty Lion",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Hidden Activity Rules",
+        "info": "Add the IDs for the activity rules you'd like to hide from the Activity UI. This will only hide the rule from the UI, the rule will still be active. The ID can be found in the URL when viewing the activtry rule in the Loyalty Lion admin e.g '...\/rules\/176688\/edit' - the ID here is 176688"
+      },
+      {
+        "type": "textarea",
+        "id": "ll__hidden_rules",
+        "label": "IDs, comma seperted e.g. 12345,67890"
+      },
+      {
+        "type": "header",
+        "content": "Handle Errors",
+        "info": "If Loyalty Lion is experiencing issues, show a message on the rewards page to keep customers updated."
+      },
+      {
+        "type": "checkbox",
+        "id": "loyalty_lion-error",
+        "label": "Display Error Message",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "loyalty_lion-error-para",
+        "label": "Error Message Text",
+        "default": "<p>We are currently experiencing some technical difficulty with Me&Medik8 Rewards, which means you may not be able to view and redeem your points.<\/p><p>We are working on fixing this as quickly as possible. In the meantime if you have problems viewing your membership details it may help to try again later, clearing your cache or opening the website in an incognito browser when you do.<\/p><p>We are really sorry for any inconvenience caused, we will update this message once the issue is fully fixed.<\/p>"
+      }
+    ]
+  },
+  {
+    "name": "Badges",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "When adding a badge to a product, you can override the default the colours by specifying one of 3 colour schemes to use."
+      },
+      {
+        "type": "header",
+        "content": "Badge Colour Scheme One"
+      },
+      {
+        "type": "paragraph",
+        "content": "To use, append your badge tag with ':cs1'"
+      },
+      {
+        "type": "color",
+        "id": "badge_one_color_bg",
+        "label": "Background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "badge_one_color_text",
+        "label": "Text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "header",
+        "content": "Badge Colour Scheme Two"
+      },
+      {
+        "type": "paragraph",
+        "content": "To use, append your badge tag with ':cs2'"
+      },
+      {
+        "type": "color",
+        "id": "badge_two_color_bg",
+        "label": "Background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "badge_two_color_text",
+        "label": "Text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "header",
+        "content": "Badge Colour Scheme Three"
+      },
+      {
+        "type": "paragraph",
+        "content": "To use, append your badge tag with ':cs3'"
+      },
+      {
+        "type": "color",
+        "id": "badge_three_color_bg",
+        "label": "Background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "badge_three_color_text",
+        "label": "Text",
+        "default": "#FFFFFF"
+      }
+    ]
+  },
+  {
+    "name": "Dev",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Developer Settings",
+        "info": "Please do not change."
+      },
+      {
+        "type": "text",
+        "id": "storefront-api-version",
+        "label": "Storefront API Version",
+        "default": "2023-04"
+      }
+    ]
+  },
+  {
+    "name": "breakpoints",
+    "settings": [
+      {
+        "id": "bp_desktop",
+        "label": "desktop",
+        "type": "number",
+        "default": 1380
+      },
+      {
+        "id": "bp_tablet",
+        "label": "tablet",
+        "type": "number",
+        "default": 1024
+      },
+      {
+        "id": "bp_mobile",
+        "label": "mobile",
+        "type": "number",
+        "default": 767
+      }
+    ]
+  }
+]

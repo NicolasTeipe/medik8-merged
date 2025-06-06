@@ -1,0 +1,185 @@
+{%- comment -%} Get the Yotpo UGC ID {%- endcomment -%}
+{%- assign ugc_id = section.settings.yotpo_gallery_id_fallback -%}
+{%- if section.settings.yotpo_gallery_id != blank -%}
+  {%- assign ugc_id = section.settings.yotpo_gallery_id -%}
+{%- endif -%}
+
+{%- comment -%} Display section only if there is a gallery to display {%- endcomment -%}
+{%- if ugc_id != blank -%}
+  <div class="ugc-wrapper--{{ section.id }} adjust-width">
+    {%- if section.settings.show_header -%}
+      <div class="ugc-header flex justify-space">
+      <span class="ugc-header__title f-w600 lh-reset">{{ section.settings.title | upcase }}</span>
+      {% assign social_url = section.settings.social_url %}
+      {% assign social_tag = section.settings.social_tag %}
+      {% if social_url != blank and social_tag != blank %}
+        <a href="{{ social_url }}"
+          target="_blank"
+          class="ugc-header__social flex align-center t-xxs t-ul f-w400 lh-reset">{{ social_tag }}</a>
+        {% endif %}
+      </div>
+    {%- endif -%}
+    <div class="yotpo yotpo-pictures-widget" data-gallery-id="{{ ugc_id }}"></div>
+  </div>
+
+  <style>
+    .ugc-wrapper--{{ section.id }}.adjust-width {
+      max-width: {{ section.settings.max_width }}px;
+      margin: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .ugc-wrapper--{{ section.id }} .yotpo-pictures-widget {
+      margin-top: 0;
+    }
+
+    .ugc-wrapper--{{ section.id }} .yotpo-single-image-container [role=button] {
+      border-radius: 5px;
+    }
+
+    .ugc-wrapper--{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    .ugc-wrapper--{{ section.id }} .ugc-header__title {
+      font-family: "ridley_groteskmedium";
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 1.6px;
+    }
+
+    .ugc-wrapper--{{ section.id }} .yotpo .yotpo-hover-cta {
+      background: var(--color-black) !important;
+      cursor: pointer;
+    }
+
+    {%- if section.settings.hide_video_icon -%}
+      .ugc-wrapper--{{ section.id }} .yotpo-icon-video {
+        display:none
+      }
+    {%- endif -%}
+
+    @media all and (min-width: 768px) {
+      .ugc-wrapper--{{ section.id }}.adjust-width {
+        padding-left: 48px;
+        padding-right: 48px;
+      }
+
+      .ugc-wrapper--{{ section.id }} .yotpo-pictures-widget {
+        margin-top: 5px;
+      }
+
+      .ugc-wrapper--{{ section.id }} .ugc-header__title {
+        font-size: 20px;
+        letter-spacing: 2px;
+      }
+    }
+
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Yotpo UGC",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Yotpo Config"
+    },
+    {
+      "type": "text",
+      "id": "yotpo_gallery_id",
+      "label": "Gallery Id",
+      "info": "See: https://visual.yotpo.com/#/galleries"
+    },
+    {
+      "type": "text",
+      "id": "yotpo_gallery_id_fallback",
+      "label": "Fallback Gallery Id",
+      "info": "If no ID is specified within the product metafield, use this as a fallback."
+    },
+    {
+      "type": "header",
+      "content": "Section Width"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1440,
+      "label": "Max Width - Desktop",
+      "info": "Only applies if 'Display Full Width' is unchecked"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show Header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Follow Us"
+    },
+    {
+      "type": "text",
+      "id": "social_tag",
+      "label": "Social Tag"
+    },
+    {
+      "type": "url",
+      "id": "social_url",
+      "label": "Social Url"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Misc Styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_video_icon",
+      "label": "Hide Video Icon",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Yotpo UGC"
+    }
+  ]
+}
+{% endschema %}

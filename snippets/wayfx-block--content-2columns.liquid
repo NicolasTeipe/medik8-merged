@@ -1,0 +1,132 @@
+{%- assign scheme = block.settings.scheme -%}
+{%- assign main_heading = block.settings.main_heading -%}
+{%- assign main_paragraph = block.settings.main_paragraph -%}
+
+{%- assign block1_image = block.settings.block1_image | image_url: width: 560 -%}
+
+{%- assign block1_heading_1 = block.settings.block1_heading_1 -%}
+{%- assign block1_paragraph_1 = block.settings.block1_paragraph_1 -%}
+
+{%- assign block1_heading_2 = block.settings.block1_heading_2 -%}
+{%- assign block1_paragraph_2 = block.settings.block1_paragraph_2 -%}
+
+{%- assign block1_heading_3 = block.settings.block1_heading_3 -%}
+{%- assign block1_paragraph_3 = block.settings.block1_paragraph_3 -%}
+
+{%- assign block1_heading_4 = block.settings.block1_heading_4 -%}
+{%- assign block1_paragraph_4 = block.settings.block1_paragraph_4 -%}
+
+{%- assign block1_heading_5 = block.settings.block1_heading_5 -%}
+{%- assign block1_paragraph_5 = block.settings.block1_paragraph_5 -%}
+
+{%- assign block2_image = block.settings.block2_image | image_url: width: 560 -%}
+
+{%- assign block2_heading_1 = block.settings.block2_heading_1 -%}
+{%- assign block2_paragraph_1 = block.settings.block2_paragraph_1 -%}
+{%- assign block2_heading_2 = block.settings.block2_heading_2 -%}
+{%- assign block2_paragraph_2 = block.settings.block2_paragraph_2 -%}
+{%- assign block2_heading_3 = block.settings.block2_heading_3 -%}
+{%- assign block2_paragraph_3 = block.settings.block2_paragraph_3 -%}
+{%- assign block2_heading_4 = block.settings.block2_heading_4 -%}
+{%- assign block2_paragraph_4 = block.settings.block2_paragraph_4 -%}
+{%- assign block2_heading_5 = block.settings.block2_heading_5 -%}
+{%- assign block2_paragraph_5 = block.settings.block2_paragraph_5 -%}
+
+<section class="wayfx-block wayfx-block--content-2columns wayfx-block--content-2columns--{% if scheme == 'light' %}light{% else %}dark{% endif %}">
+    <div class="wayfx-wrapper">
+        {% if main_heading or main_description %}
+            <div class="wayfx-block__heading">
+                {% if main_heading %}
+                    <h2 class="h2--primary text-center">{{ main_heading }}</h2>
+                {% endif %}
+                {% if main_paragraph %}
+                    <p class="p--lg text-center">{{ main_paragraph }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="grid">
+            {% if block1_heading_1 %}
+                <div class="grid__item one-whole large--one-half">
+                    {% if block.settings.block1_image %}
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ block1_image }}" alt="" />
+                        </div>
+                    {% endif %}
+                    {% if block1_heading_1 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block1_heading_1 }}</h3>
+                            {% if block1_paragraph_1 %}{{ block1_paragraph_1 }}{% endif %}
+                        </div>
+                    {% endif %}
+                    {% if block1_heading_2 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block1_heading_2 }}</h3>
+                            {% if block1_paragraph_2 %}{{ block1_paragraph_2 }}{% endif %}
+                        </div>
+                    {% endif %}
+                    {% if block1_heading_3 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block1_heading_3 }}</h3>
+                            {% if block1_paragraph_3 %}{{ block1_paragraph_3 }}{% endif %}
+                        </div>
+                    {% endif %}
+                    {% if block1_heading_4 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block1_heading_4 }}</h3>
+                            {% if block1_paragraph_4 %}{{ block1_paragraph_4 }}{% endif %}
+                        </div>
+                    {% endif %}
+                    {% if block1_heading_5 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block1_heading_5 }}</h3>
+                            {% if block1_paragraph_5 %}{{ block1_paragraph_5 }}{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if block2_heading_1 %}
+                <div class="grid__item one-whole large--one-half">
+                    {% if block.settings.block2_image %}
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ block2_image }}" alt="" />
+                        </div>
+                    {% endif %}
+                    {% if block2_heading_1 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block2_heading_1 }}</h3>
+                            {% if block2_paragraph_1 %}{{ block2_paragraph_1 }}{% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if block2_heading_2 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block2_heading_2 }}</h3>
+                            {% if block2_paragraph_2 %}{{ block2_paragraph_2 }}{% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if block2_heading_3 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block2_heading_3 }}</h3>
+                            {% if block2_paragraph_3 %}{{ block2_paragraph_3 }}{% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if block2_heading_4 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block2_heading_4 }}</h3>
+                            {% if block2_paragraph_4 %}{{ block2_paragraph_4 }}{% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if block2_heading_5 %}
+                        <div class="wayfx-block__item">
+                            <h3 class="h3--primary">{{ block2_heading_5 }}</h3>
+                            {% if block2_paragraph_5 %}{{ block2_paragraph_5 }}{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

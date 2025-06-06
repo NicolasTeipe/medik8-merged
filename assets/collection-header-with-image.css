@@ -1,0 +1,55 @@
+.wayfx-collection__header-with-image {
+  background: #FFF6E1;
+  overflow: hidden;
+  position: relative; }
+  .wayfx-collection__header-with-image .wayfx-breadcrumb {
+    margin-bottom: 16px; }
+    @media all and (max-width: 1023px) {
+      .wayfx-collection__header-with-image .wayfx-breadcrumb {
+        margin-bottom: 8px; } }
+  @media all and (max-width: 1023px) {
+    .wayfx-collection__header-with-image .grid {
+      margin-left: 0; } }
+  .wayfx-collection__header-with-image .wayfx-block__left {
+    padding-top: 88px;
+    padding-right: 24px;
+    padding-bottom: 88px; }
+    @media all and (max-width: 1023px) {
+      .wayfx-collection__header-with-image .wayfx-block__left {
+        padding: 24px 0;
+        text-align: center; } }
+  .wayfx-collection__header-with-image .wayfx-block__right img {
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    width: 50%; }
+  @media all and (max-width: 1023px) {
+    .wayfx-collection__header-with-image .wayfx-block__right {
+      display: none; } }
+  .wayfx-collection__header-with-image h1 {
+    color: #000;
+    font-size: 64px;
+    line-height: 62px;
+    margin: 0 0 0 -3px;
+    max-width: 800px; }
+    @media all and (max-width: 1023px) {
+      .wayfx-collection__header-with-image h1 {
+        margin-left: auto;
+        margin-right: auto; } }
+    @media all and (max-width: 767px) {
+      .wayfx-collection__header-with-image h1 {
+        font-size: 32px;
+        line-height: 42px; } }
+  .wayfx-collection__header-with-image p {
+    color: #262626;
+    font-size: 18px;
+    line-height: 30px;
+    margin: 24px 0 0;
+    max-width: 800px; }
+    @media all and (max-width: 1023px) {
+      .wayfx-collection__header-with-image p {
+        font-size: 14px;
+        line-height: 21px;
+        margin-top: 12px;
+        margin-left: auto;
+        margin-right: auto; } }

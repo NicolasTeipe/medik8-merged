@@ -1,0 +1,110 @@
+{%- assign heading = section.settings.heading -%}
+
+<div class="wayfx-wrapper">
+  {%- if heading -%}<h2 class="h2--primary text-center">{{ heading }}</h2>{%- endif -%}
+  <div class="wayfx-block--category__slides js-category-slider--{{ section.settings.id }} keen-slider flex" 
+       style="opacity:0;"
+       data-keen-slider-disabled>
+    {% for block in section.blocks %}
+      {% liquid 
+        assign alt = 'Click to view ' | append: block.settings.title
+        if block.settings.image.alt != blank
+          assign alt = block.settings.image.alt
+        endif
+      %}
+      <div class="wayfx-category__slide keen-slider__slide">
+        <a href="{{ block.settings.link }}">
+          <div class="wayfx-image">
+            <img loading="lazy" 
+                 src="{{ block.settings.image | image_url: width: 256 }}" 
+                 width="256" 
+                 height="{{ 256 | divided_by: block.settings.image.aspect_ratio | floor }}" 
+                 alt="{{ alt }}" />
+          </div>
+          <div class="wayfx-text">{{ block.settings.title }}</div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script type="module">
+  import { KSnavigation,KScenterSlides } from {{ 'scripts.keenSlider.plugins.js' | asset_url | json }};
+
+  document.addEventListener('DOMContentLoaded', () => {
+  
+    const sliderSettings = {
+      loop: true,
+      slides: { 
+        perView:2, 
+        spacing:0
+      },
+      defaultAnimation:{
+        duration:1000,
+      },
+      breakpoints: {
+        '(min-width: 640px)': {
+          slides: { 
+            perView: 4
+          }
+        },
+        '(min-width: 1024px)': {
+          slides: { 
+            perView:6
+          }
+        },
+      }
+    }
+
+    let sliderElement = document.querySelector('.js-category-slider--{{ section.settings.id }}')
+    sliderElement.classList.remove('flex')
+    sliderElement.removeAttribute('data-keen-slider-disabled')
+    sliderElement.style.opacity = 1
+    sliderElement = new KeenSlider(sliderElement,sliderSettings, [KSnavigation,KScenterSlides])
+
+  })
+</script>
+
+
+{% schema %}
+    {
+      "name": "Categories",
+      "presets": [
+        {
+          "name": "Categories"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--categories",
+      "settings": [
+      {
+        "id": "heading",
+        "type": "text",
+        "label": "Heading"
+      }
+      ],
+      "blocks": [
+        {
+            "type": "categories",
+            "name": "Category",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Category Image"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title"
+                },
+                {
+                    "id": "link",
+                    "type": "url",
+                    "label": "Link"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}

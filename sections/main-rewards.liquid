@@ -1,0 +1,314 @@
+<style>
+.h1--secondary {
+  /* font-family: 'ridley_groteskregular' !important; */
+  font-size: 4em;
+}
+
+.wayfx-block.wayfx-block--hero-with-h1-p h1 {
+  font-family: 'ridley_groteskregular' !important;
+}
+
+@media all and (max-width: 1023px) {
+  .h1--secondary {
+    font-size: 3em;
+  }
+}
+
+.fancybox-content {
+  padding: 11px;
+}
+
+#loyaltylion .lion-referral-widget-modal {
+  font-family: 'ridley_groteskregular' !important;
+}
+
+#loyaltylion .lion-referral-widget-modal {
+  font-family: 'ridley_groteskregular' !important;
+}
+
+#loyaltylion .lion-header,
+#loyaltylion .lion-rules-list,
+#loyaltylion .lion-redeem {
+  opacity: 0;
+}
+
+#loyaltylion .lion-referral-widget-modal {
+  font-family: 'ridley_groteskregular';
+}
+
+#loyaltylion .lion-header,
+#loyaltylion  .lion-rewards-list {
+  background: none !important;
+}
+
+#loyaltylion .lion-reward-item__title {
+  padding: 10px 0 !important;
+}
+
+#loyaltylion .lion-header__your-points {
+  font-size: 1.25rem;
+  color: #202020;
+}
+
+#loyaltylion .lion-reward-item__cost::before,
+#loyaltylion .lion-reward-item__percent-off,
+#loyaltylion .lion-reward-item__meta,
+#loyaltylion .lion-rule-item__points,
+#loyaltylion .lion-header,
+#loyaltylion .lion-header__nav-link,
+#loyaltylion .lion-available-rewards,
+#loyaltylion .lion-account-history,
+#loyaltylion .lion-earn__heading,
+#loyaltylion .lion-icon__rule--referral {
+  display: none !important;
+}
+
+#loyaltylion .lion-rule-item__actions:not(:empty) {
+  flex-grow: unset !important;
+}
+
+@media only screen and (max-width: 1023px) {
+  .wayfx-block--callout-3column .wayfx-wrapper .grid__item {
+    margin-bottom: 0 !important;
+  }
+
+  .wayfx-block--callout-3column {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .wayfx-block--callout-3column .wayfx-block__heading {
+    margin-bottom: 0px;
+  }
+}
+
+#loyaltylion .lion-integrated-page-section__heading-text {
+  color: black;
+}
+
+#loyaltylion .lion-rule-item__title {
+  padding: 0;
+}
+
+#loyaltylion .lion-rules-list,
+#loyaltylion .lion-rewards-list {
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+}
+
+#loyaltylion .lion-rewards-list {
+  padding: 0;
+}
+
+#loyaltylion .lion-rewards-item {
+
+}
+
+.lion-rewards-list .slick-next:before,
+.lion-rewards-list .slick-prev:before {
+  color: #fff;
+  background: #000;
+  font-size: 1rem;
+  padding: 1rem .75rem;
+  border-radius: 0.25rem;
+  transition: var(--trans);
+    }
+
+.lion-rewards-list .slick-prev {
+  left: 0px;
+}
+.lion-rewards-list .slick-next {
+  right: 0px;
+}
+
+.slick-slide {
+  width: calc(100vw - 42px);
+}
+
+#loyaltylion .lion-reward-item__icon {
+  width: auto;
+  height: auto;
+  mask: none;
+  -webkit-mask: none;
+  background-color: transparent;
+}
+
+@media only screen and (max-width: 768px) {
+  #loyaltylion .lion-reward-item__icon {
+    width: calc(100vw - 42px);
+  }
+
+  #loyaltylion .lion-reward-item__icon img {
+    margin: 0 auto;
+  }
+}
+
+#loyaltylion .lion-reward-item__more-info-url--external-link a {
+  margin-bottom: .5rem;
+  display: inline-block;
+}
+
+#loader {
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 1;
+}
+
+#loader img {
+  width: 4rem;
+}
+</style>
+
+{% if customer %}
+
+<style>
+.wayfx-blocks {
+  display: none;
+}
+</style>
+
+<div class="grid" style="max-width: 1200px; padding: 0 20px; margin: 2rem auto;">
+<div class="grid__item" style="padding: 0;">
+  <header class="section-header text-center">
+
+    <h1>
+      {% if customer %}
+      {% if customer.first_name %}
+      Welcome Back {{ customer.first_name }}!
+      {% else %}
+      Welcome!
+      {% endif %}
+      {% endif %}
+    </h1>
+
+    <hr class="hr--small">
+
+  </header>
+
+
+
+  <div class="grid">
+    <div class="grid__item" style="min-height: 80vh">
+
+      <div id="loader">
+        <img loading="eager" style="filter: invert(.5)" src="https://cdn.medik8.com/dd7aab93-06ca-45e0-939c-af4b7956bcb8/loader.svg" width="44" height="44">
+      </div>
+
+      <div class="rte rte--nomargin rte--indented-images">
+        {{ page.content }}
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+<script>
+
+window.onload = function() {
+  setTimeout(function() {
+    $('.lion-redeem__heading h3').html('Claim Your Free Gift');
+    $('.lion-redeem__heading').append('<p style="margin: 24px 0; padding: 0 10px; font-size: 1.1rem;">Once your friend has successfully ordered using your link, you can pick your free gift from a choice of best selling travel size products.<p>');
+
+    // Slick
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      $('.lion-rewards-list').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true,
+        draggable: true,
+        infinite: false,
+        dots: false,
+        variableWidth: true,
+        touchThreshold: 100,
+      }).show();
+    }
+
+    // Quick View Item Script
+    $('.quick-view-item').click(function(e) {
+      e.preventDefault();
+
+      var productHref = $(this).attr('href'),
+          productInQuestion = productHref.substring(productHref.lastIndexOf("/") + 1);
+
+      $.fancybox.open({
+        src  : "/products/" + productInQuestion + "?view=quick-view-item",
+        type : 'ajax',
+        opts : {
+          afterLoad : function( instance, current ) {
+          }
+        }
+      });
+
+    });
+
+    $('.lion-reward-item__more-info-url--external-link a').addClass('quick-view-item');
+
+$('.lion-action-button--tile').click(function() {
+  setTimeout(function() {
+      $('.lion-referral-widget-main__heading').html('Refer a Friend');
+      $('.lion-referral-widget-main__intro span').html('Gift your friends and family 15% off their first order, and receive a free travel size gift as a thank you.');
+  })
+})
+
+    $('#loader').fadeOut();
+    $('#loyaltylion .lion-header').animate({opacity: 1}, 400);
+    $('#loyaltylion .lion-rules-list').animate({opacity: 1}, 400);
+    $('#loyaltylion .lion-redeem').animate({opacity: 1}, 400);
+
+    let rewards = $('.lion-icon__reward--product-cart');
+    rewards.map(function(i) {
+      if (i == 0) {
+        $(this).append('<img src="https://cdn.shopify.com/s/files/1/0493/2802/9846/products/SurfaceRadianceCleanseTryMe-GreyBackground-2000x2000_1_989d7ab2-5b9a-41b6-b29e-a7a6e198eeb7_large.jpg?v=1652883976">');
+      }
+      if (i == 1) {
+        $(this).append('<img src="https://cdn.shopify.com/s/files/1/0493/2802/9846/products/C-TetraTryMe-WithCarton-GreyBackground-2000x2000_1_large.jpg?v=1652884072">');
+      }
+          if (i == 2) {
+        $(this).append('<img src="https://cdn.shopify.com/s/files/1/0493/2802/9846/products/Liquid_Peptides_Try_Me_-_With_Carton_-_Grey_Background_-_2000_x_2000_large.jpg?v=1652883997">');
+      }
+      if (i == 3) {
+        $(this).append('<img src="https://cdn.shopify.com/s/files/1/0493/2802/9846/products/Advanced_Night_Restore_Try_Me_-_With_Carton_-_Grey_Background_-_2000_x_2000_large.jpg?v=1652884006">');
+      }
+    });
+
+
+
+  }, 1000);
+}
+
+$(document).ready(function () {
+
+  $('a[href="#login-form"]').addClass('login-form-popup');
+
+  $('.login-form-popup').click(function(e) {
+    e.preventDefault();
+
+    $.fancybox.open({
+      src  : "/account/login?view=blank-login",
+      type : 'ajax',
+      opts : {
+        touch: false,
+        afterLoad : function( instance, current ) {
+        }
+      }
+    });
+
+  });
+
+});
+
+</script>
+
+
+{% schema %}
+{
+"name": "Rewards Main Section",
+"settings": []
+}
+{% endschema %}

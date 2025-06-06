@@ -1,0 +1,104 @@
+<div class="wayfx-wrapper" id="reviews">
+  <h2 class="h2--primary">
+    {{ section.settings.heading }}
+  </h2>
+  <div class="wayfx-block__slider" style="display: none;">
+    {% for block in section.blocks %}
+    {% case block.type %}
+    {% when 'testimonials' %}
+      {%- assign quote = block.settings.quote -%}
+      {%- assign image = block.settings.image -%}
+      {%- assign person = block.settings.person -%}
+      {%- assign title = block.settings.title -%}
+      <div class="wayfx-block__slide">
+        <blockquote>
+          <p>{{ quote }}</p>
+          <cite>
+            <div class="wayfx-image">
+              <img loading="lazy" data-blink-src="{{ image | image_url: width: 160 }}" alt="" />
+            </div>
+            <span class="wayfx-block__slider-person">{{ person }}</span>
+            <span class="wayfx-block__slider-title">{{ title }}</span>
+          </cite>
+        </blockquote>
+      </div>
+    {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+
+{% schema %}
+    {
+      "name": "What Experts Say",
+      "presets": [
+        {
+          "name": "What Experts Say",
+          "category": "Text"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--home-what-experts-say slider--dot-alt",
+      "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "testimonials",
+            "name": "Testimonials",
+            "settings": [
+                {
+                    "id": "quote",
+                    "type": "textarea",
+                    "label": "Quote"
+                },
+				{
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Photo"
+                },
+                {
+                    "id": "person",
+                    "type": "text",
+                    "label": "Person"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}
+
+{% javascript %}
+   $(document).ready(function() {
+        $('.wayfx-block--home-what-experts-say .wayfx-block__slider').slick({
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false,
+              draggable: true,
+              infinite: true,
+              dots: true,
+              adaptiveHeight: false,
+              mobileFirst: true,
+              responsive: [{
+                  breakpoint: 768,
+                  settings: {
+                      adaptiveHeight: false,
+                      arrows: true,
+                      draggable: false,
+                      dots: false,
+                      slidesToShow: 2,
+                      slidesToScroll: 1
+                  }
+              }]
+        }).show();
+   });
+{% endjavascript %}

@@ -1,0 +1,41 @@
+{%- if product.available -%}
+  <button 
+    class="btn--full btn--outline btn-add-bundle_{{product.id }}">
+    <span>
+      {{ 'products.product.add_to_cart' | t }}
+    </span>
+  </button>
+
+  <script type="text/javascript">
+    document
+    .querySelector('.btn-add-bundle_{{product.id }}')
+    .addEventListener('click', function (e) {
+      const variantData = {
+        items: [
+          {% for b in product.metafields.custom.bundle_items.value reversed %}
+            {
+              id:{{ b.variant.value.id }},
+              quantity: 1,  
+              properties: {
+                _bundle_id: 'bundle_{{ product.id }}',
+                _bundle: '{{ product.title }}',  
+                _bundle_discount: {{ b.discount | divided_by: 100.00 | minus: 1 | abs }},
+                _bundle_prod_count: {{ product.metafields.custom.bundle_items | split: ',' | size }}
+              }
+            },
+          {% endfor %}
+        ]
+      }
+      GlobalCartMain.addProductFromButton(e, variantData);
+    });
+  </script>
+
+{%- else -%}
+  {% if product.tags contains 'Find out More' %}
+    <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.find_out_more' | t }}</a>
+    {% elsif product.tags contains "Coming Soon" %}
+    <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.coming_soon' | t }}</a>
+    {%- else -%}
+    <button class="btn--full btn--outline btn--sold-out" onClick="return false;">{{ 'products.product.sold_out' | t }}</button>
+  {%- endif -%}
+{%- endif -%}

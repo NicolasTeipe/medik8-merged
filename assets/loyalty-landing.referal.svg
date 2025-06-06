@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Referral Icon</title>
+    <g id="Hi-Fi" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Me&amp;Medik8-Guest-Landing-Page---Desktop" transform="translate(-916.000000, -3238.000000)" stroke="#161616" stroke-width="1.5">
+            <g id="Ways-To-Earn-Points" transform="translate(0.000000, 2929.000000)">
+                <g id="Grid" transform="translate(240.287458, 247.437578)">
+                    <g id="Referral" transform="translate(572.000000, 0.000000)">
+                        <g id="Referral-Icon" transform="translate(105.000000, 63.000000)">
+                            <line x1="45" y1="2" x2="45" y2="14" id="Stroke-3"></line>
+                            <path d="M47.7145391,10.6167368 C47.7843604,10.7098884 47.8535056,10.803378 47.9221435,10.8973748 C51.1154992,15.2743126 53,20.667126 53,26.5 C53,41.1356077 41.1356077,53 26.5,53 C11.8645614,53 0,41.1356077 0,26.5 C0,11.8643923 11.8645614,0 26.5,0 C32.0554482,0 37.2115789,1.70952472 41.4711898,4.63103349" id="Stroke-5"></path>
+                            <path d="M36,22 C36,26.9705714 31.9705714,31 27,31 C22.0294286,31 18,26.9705714 18,22 C18,17.0294286 22.0294286,13 27,13 C31.9705714,13 36,17.0294286 36,22 Z" id="Stroke-7"></path>
+                            <path d="M8,45 C8,45 8.58763786,37.8940286 19.1567125,35.1413532 C19.1567125,35.1413532 25.6799131,41.3763386 33.8399247,35.00327 C33.8399247,35.00327 40.0978056,34.5395067 45,44.6578152" id="Stroke-9"></path>
+                            <line x1="39" y1="8" x2="51" y2="8" id="Stroke-11"></line>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

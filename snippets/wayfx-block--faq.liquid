@@ -1,0 +1,145 @@
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+
+{%- assign faq_title_1 = block.settings.faq_title_1 -%}
+{%- assign faq_title_2 = block.settings.faq_title_2 -%}
+{%- assign faq_title_3 = block.settings.faq_title_3 -%}
+{%- assign faq_title_4 = block.settings.faq_title_4 -%}
+{%- assign faq_title_5 = block.settings.faq_title_5 -%}
+{%- assign faq_title_6 = block.settings.faq_title_6 -%}
+{%- assign faq_title_7 = block.settings.faq_title_7 -%}
+{%- assign faq_title_8 = block.settings.faq_title_8 -%}
+{%- assign faq_title_9 = block.settings.faq_title_9 -%}
+{%- assign faq_title_10 = block.settings.faq_title_10 -%}
+
+{%- assign faq_description_1 = block.settings.faq_description_1 -%}
+{%- assign faq_description_2 = block.settings.faq_description_2 -%}
+{%- assign faq_description_3 = block.settings.faq_description_3 -%}
+{%- assign faq_description_4 = block.settings.faq_description_4 -%}
+{%- assign faq_description_5 = block.settings.faq_description_5 -%}
+{%- assign faq_description_6 = block.settings.faq_description_6 -%}
+{%- assign faq_description_7 = block.settings.faq_description_7 -%}
+{%- assign faq_description_8 = block.settings.faq_description_8 -%}
+{%- assign faq_description_9 = block.settings.faq_description_9 -%}
+{%- assign faq_description_10 = block.settings.faq_description_10 -%}
+
+<section class="wayfx-block wayfx-block--faqs">
+    <div class="wayfx-wrapper">
+        {%- if faq_title_1 and block.settings.toc -%}
+            <div class="wayfx-block--faq__toc">
+                <h5>{{ 'layout.wayfx_block.categories' | t }}</h5>
+                <ul>
+                    {%- for faq_title in faq_titles -%}
+                        <li>
+                            <a href="#{{ faq_title | handleize }}">{{ faq_title }}</a>
+                        </li>
+                    {%- endfor -%}
+                </ul>
+            </div>
+        {%- endif -%}
+      	<div class="wayfx-block--faqs__header">
+          {% if heading != blank %}<h2 class="h2--primary" id="{{ heading | handleize }}">{{ heading }}</h2>{% endif %}
+          {% if paragraph != blank %}{{ paragraph }}{% endif %}
+      	</div>
+      	{% if faq_title_1 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_1 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_1 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_1 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_2 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_2 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_2 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_2 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_3 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_3 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_3 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_3 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_4 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_4 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_4 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_4 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_5 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_5 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_5 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_5 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_6 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_6 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_6 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_6 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_7 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_7 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_7 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_7 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_8 != blank  %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_8 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_8 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_8 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_9 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_9 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_9 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_9 }}
+            </div>
+          </div>
+		{% endif %}
+      	{% if faq_title_10 != blank %}
+          <div class="wayfx-block--faq">
+            <div id="{{ faq_title_10 | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+              {{ faq_title_10 }}
+            </div>
+            <div class="wayfx-block--faq__content">
+              {{ faq_description_10 }}
+            </div>
+          </div>
+		{% endif %}
+    </div>
+</section>

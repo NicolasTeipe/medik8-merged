@@ -1,0 +1,200 @@
+
+<div data-anchor="{{ section.settings.nav_title }}" class="block-grid block-grid--f block-rel tac flex flex-grid--x2 column-nowrap align-center justify-left">
+
+  {% if section.settings.title != blank %}
+  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  
+  <loyaltylion-activity-table class="d-block block-12/12 cell-l cell-r"></loyaltylion-activity-table>
+</div>
+
+<script type="text/javascript">    
+  class LoyaltyLionActivityTable extends HTMLElement {
+    constructor() {
+      super();
+      this.currentPage = 0
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( async () => {
+        if(!this.mounted){
+          this.mounted = true
+          this.util = await new LoyaltyLionUtil({
+            currencySymbol:{{ cart.currency.symbol | json }},
+          })
+          this.render()
+          this.util.subscribe( () => {
+            this.render()
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    bind(){
+      this.querySelectorAll('.js-ll-tablenation-btn').forEach(element => element.addEventListener('click',(e) => {
+        e.preventDefault()
+        const type = element.dataset.paginate
+        if(type == 'next' && this.currentPage + 1 <= this.pages.length){
+          this.currentPage++
+        }
+        if(type == 'prev' && this.currentPage - 1 >= 0){
+          this.currentPage--
+        }
+        this.render(true)
+      }))
+    }
+
+    render(scrollToTop){
+      const {_customer} = this.util.loyaltylion
+      if(!_customer){
+        return
+      }
+
+      if(scrollToTop){
+        const top = this.closest('[data-anchor]').parentNode.getBoundingClientRect().top 
+        window.scrollBy({
+          top: top,
+          behavior: 'smooth'
+        })
+      }
+
+      const rules = this.util.loyaltylion.program.rules
+      let actions = _customer.actions.map( item => {
+        const data = {
+          date:item.date.replace(/^(\d{4})-(\d{2})-(\d{2}).*$/, '$3/$2/$1'),
+          type:item.type,
+          state:item.state
+        }
+
+        if(item.type == 'reward'){
+          const claimedReward = _customer.claimedRewards.find( ({id}) => id == item.claimedRewardId )
+          data.action = claimedReward.reward.title
+          data.points = 0 - claimedReward.point_cost
+        }
+
+        if(item.type == 'rule'){
+          const rule = rules.find( ({id}) => id == item.ruleId )
+          data.action = rule.title
+          data.points = item.points
+        }
+
+        if(item.type == 'add'){
+          data.action = '--'
+          data.points = item.points
+        }
+
+        if(item.type == 'remove'){
+          data.action = '--'
+          data.points = 0 - item.points
+        }
+
+        return data
+      })
+      
+
+      const pages = this.pages = new Array(Math.ceil(actions.length / 10)).fill(0).map( (item,index) => {
+        return {
+          index:index,
+          active:this.currentPage == index,
+          actions:actions.slice((index * 10),((index + 1) * 10))
+        }
+      })
+
+      this.innerHTML = !pages.length ? `
+        <p>{{ 'apps.loyalty_lion.activity_table_empty' | t }}</p>
+        `:` 
+        <table class="ll-table bg-white row">
+          <thead>
+            <tr>
+              <th>{{ 'apps.loyalty_lion.date' | t }}</th>
+              <th class="@mobile__hide">{{ 'apps.loyalty_lion.type' | t }}</th>
+              <th>{{ 'apps.loyalty_lion.action' | t }}</th>
+              <th>{{ 'apps.loyalty_lion.points' | t }}</th>
+              <th>{{ 'apps.loyalty_lion.status' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pages.find(({index}) => index == this.currentPage).actions.map( item => {
+              return `
+                <tr>
+                  <td>${item.date}</td>
+                  <td class="t-capitalize @mobile__hide">${item.type}</td>
+                  <td>${item.action}</td>
+                  <td>${item.points}</td>
+                  <td class="t-capitalize f-w600">${item.state}</td>
+                </tr>
+              `
+            }).join('')}
+          </tbody>
+        </table>
+        <div class="flex flex-grid--d2 row-wrap align-center justify-right @mobile__justify-space">
+          <button class="js-ll-tablenation-btn ll-tablenation__btn btn-reset @mobile__block-4/12 @mobile__tal" 
+                  data-paginate="prev"
+                  ${this.currentPage == 0 ? 'disabled' : ''}>{{ 'apps.loyalty_lion.previous' | t }}</button>
+          <span class="flex row-wrap align-center justify-center">
+            <span class="ll-tablenation__current">${this.currentPage + 1}</span> of ${pages.length}
+          </span>
+          <button class="js-ll-tablenation-btn ll-tablenation__btn btn-reset @mobile__block-4/12 @mobile__tar" 
+                  data-paginate="next"
+                  ${this.currentPage == pages.length - 1 ? 'disabled' : ''}>{{ 'apps.loyalty_lion.next' | t }}</button>
+        </div>
+      `
+      this.bind()
+    }
+    
+  }
+  customElements.define('loyaltylion-activity-table', LoyaltyLionActivityTable);
+</script>
+
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/activity-list",
+  "limit":1,
+  "class":"ct--x3 cb--x3 bg-grey-1",
+  "settings":[
+   
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin",
+      "default":true
+    },
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Actividad Reciente"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Tu Actividad Reciente"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,140 @@
+{% assign showcase_title = section.settings.heading %}
+{% assign showcase_paragraph = section.settings.top_paragraph %}
+
+{% if showcase_title != blank %}
+  <div class="showcase-text">
+    <h2 class="showcase-title">{{ showcase_title }}</h2>
+    <span class="showcase-paragraph">{{ showcase_paragraph }}</span>
+    <!-- <span class="sc-yotpo-stars">
+      <span class="sc-yotpo-icon yotpo-icon-star rating-star pull-left"></span>
+      <span class="sc-yotpo-icon yotpo-icon-star rating-star pull-left"></span>
+      <span class="sc-yotpo-icon yotpo-icon-star rating-star pull-left"></span>
+      <span class="sc-yotpo-icon yotpo-icon-star rating-star pull-left"></span>
+      <span class="sc-yotpo-icon yotpo-icon-half-star rating-star pull-left"></span>
+    </span> -->
+    <!-- Start -->
+    <a href="#reviews" class="text-center-reviews" style="display: inline-flex;">
+      <div onclick="window.location.href = '#reviews'" class="yotpo bottomLine" style="pointer-events: none !important; display:inline-block;"
+        data-product-id="5849959104664">
+      </div>
+    </a>
+    <!-- End -->
+  </div>
+{% endif %}
+
+<div class="showcase-product-grid" id="buy-now">
+    {% for block in section.blocks %}
+
+      {% assign product = block.settings.product %}
+      {% assign variant_sku = block.settings.variant_sku %}
+      {% assign showcase_product_image = block.settings.showcase_product_image %}
+      {% assign showcase_subtitle = block.settings.showcase_subtitle %}
+      {% assign showcase_description = block.settings.showcase_description %}
+      {% assign index = forloop.index %}
+
+      <div class="showcase-product-grid-card">
+        {% if product.variants.size > 1 %}
+          {% for variant in product.variants %}
+            {%- if variant.sku == variant_sku and variant_sku != blank -%}
+              {% render 'product-grid-item', 
+                         index: index, 
+                         showcase_subtitle: showcase_subtitle, 
+                         showcase_description: showcase_description, 
+                         variant_sku: variant_sku, 
+                         showcase_product_image: showcase_product_image, 
+                         variant: variant, 
+                         product: product, 
+                         product_layout: 'showcase' 
+              %}
+            {% endif %}
+          {% endfor%}
+        {% else %}
+          {% render 'product-grid-item', 
+                     showcase_subtitle: showcase_subtitle, 
+                     showcase_description: showcase_description, 
+                     variant_sku: variant_sku, 
+                     showcase_product_image: showcase_product_image, 
+                     variant: product.selected_or_first_available_variant, 
+                     product: product, 
+                     product_layout: 'showcase' 
+          %}
+        {% endif %}
+      </div>
+
+    {% endfor %}
+</div>
+
+{% javascript %}
+
+ $(document).ready(function() {
+      $('.showcase-product-grid').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            draggable: true,
+            infinite: false,
+            dots: false,
+            variableWidth: true,
+            touchThreshold: 100,
+      }).show();
+ });
+
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MOS2.0 Showcase Product",
+  "class": "mos2--section dark mos2--showcase-product",
+  "tag": "section",
+  "presets": [
+    {
+      "name": "MOS2.0 Showcase Product"
+    }
+  ],
+  "settings": [
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading"
+    },
+    {
+      "id": "top_paragraph",
+      "type": "richtext",
+      "label": "Top Paragraph"
+    }
+  ],
+  "blocks": [
+  {
+     "name": "Block",
+     "type": "comparison",
+     "settings": [
+      {
+       "id": "product",
+       "type": "product",
+       "label": "Product"
+     },
+     {
+      "id": "variant_sku",
+      "type": "text",
+      "label": "Variant SKU"
+    },
+      {
+       "id": "showcase_product_image",
+       "type": "image_picker",
+       "label": "Image"
+     },
+     {
+      "id": "showcase_subtitle",
+      "type": "text",
+      "label": "Subtitle"
+    },
+     {
+      "id": "showcase_description",
+      "type": "richtext",
+      "label": "Description"
+     }
+     ]
+    }
+   ]
+ }
+{% endschema %}

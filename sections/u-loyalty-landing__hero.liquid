@@ -1,0 +1,130 @@
+<div class="{% if section.settings.row %}row--x3{% endif %}">
+   
+  {% liquid 
+    assign loading = 'eager'
+    assign preload = true
+    assign desktopImageClass = 'block-12/12 block-fh block-abc block-objc'
+  %}
+
+  <div class="block-rel d-block">
+    {% if section.settings.image_desktop %}
+    {{ section.settings.image_desktop | 
+       image_url: width: 2048 | 
+       image_tag: preload: preload, loading: loading, class: desktopImageClass 
+    }}
+    {% endif %}
+  
+    <div class="hero-item__content cell-l cell-r ct--x4 cb--x4 block-rel block-grid block-grid--f flex flex-grid column-wrap justify-center align-center tac">
+
+      {% liquid 
+        assign title = section.settings.title 
+        if customer 
+          assign pointsHtml = '<span class="js-ll-landing-hero__points"></span>'
+          assign title = 'apps.loyalty_lion.landing_hero_logged_in_heading_html' | t: html: pointsHtml
+        endif 
+      %}
+
+      {% if customer %}
+      <span class="d-block t-m t-ucase">{{ 'apps.loyalty_lion.landing_hero_logged_in_pre_heading' | t: name: customer.first_name }}</span>
+      {% endif %}
+
+      {% if section.settings.hero %}
+      <h1 class="h-style h-style--accent t-xxl lh-s">{{ title }}</h1>
+      {% else %}
+      <h2 class="h-style h-style--accent t-xxl lh-s">{{ title }}</h2>
+      {% endif %}
+  
+      {% unless customer %}
+      {% if section.settings.text != blank %}
+      <div class="t-m lh-ml rte-content block-c block-9/12  @mobile__block-12/12">{{ section.settings.text }}</div>
+      {% endif %}
+    
+      {% if section.settings.button_1_label != blank %}
+      <div class="block-c block-min-5/12 flex flex-grid--d2 row-wrap align-center justify-center @mobile__block-12/12 @mobile__column-nowrap">
+          <button class="btn btn--large block-min-5/12 @mobile__block-min-8/12" account-modal>{{ section.settings.button_1_label }}</button>
+      </div>
+      {% endif %}
+      {% endunless %}
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">   
+ {% if customer %}
+  DomReadyPromise().then( async () => {
+    const util = await new LoyaltyLionUtil()
+    const point = {{ 'apps.loyalty_lion.point' | t | json }}
+    const points = {{ 'apps.loyalty_lion.points' | t | json }}
+    const updatePoints = () => {
+      const {_customer} =  util.loyaltylion
+      const elem = document.querySelector('.js-ll-landing-hero__points')
+      elem.innerText = `${_customer.pointsRedeemable} ${_customer.pointsRedeemable > 1 ? points : point}`
+    }
+    updatePoints()
+    util.subscribe( () => {
+      updatePoints()
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+{% endif %}
+</script>
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/hero",
+  "limit":1,
+  "settings":[
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin"
+    },
+    {
+      "type":"header",
+      "content":"content"
+    },
+    
+    {
+      "type": "checkbox",
+      "id": "hero",
+      "label": "is hero / first block on page?",
+      "default":true,
+      "info":"if value:true, we won't lazyload this image and we'll use a h1 element for the heading"
+    }, 
+    { 
+      "type":"image_picker",
+      "id":"image_desktop",
+      "label":"image@desktop"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Heading (logged out only)",
+      "default":"Me&Medik8"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text (logged out only)",
+      "default":"<p>Join our rewards programme, Me&Medik8, where you earn points every time you shop on Medik8.com, to redeem and make savings on future purchases. You can also enjoy exclusive benefits, from secret offers and free shipping, to a gift on your birthday.</p>"
+    },
+    {
+      "type":"header",
+      "content":"Buttons (logged out only)"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Button #1 label",
+      "default":"Join Now"
+    }
+  ]
+}
+{% endschema %}

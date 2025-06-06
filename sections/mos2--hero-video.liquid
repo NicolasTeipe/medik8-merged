@@ -1,0 +1,82 @@
+<div class="background-video-wrapper mob-hide">
+  <video playsinline muted autoplay loop preload="auto">
+    <source src="https://ucarecdn.com/{{ section.settings.desk_video_id}}/"  type="video/mp4">
+      {{ 'general.errors.html_video' | t }}
+  </video>
+</div>
+
+<div class="background-video-wrapper desk-hide">
+  <video playsinline webkit-playsinline muted autoplay loop preload="auto">
+    <source src="https://ucarecdn.com/{{ section.settings.mob_video_id}}/"  type="video/mp4">
+      {{ 'general.errors.html_video' | t }}
+  </video>
+</div>
+
+
+<span class="wrapper">
+  <p class="quotes">
+    <b>{{ section.settings.header_text }}</b>
+  </p>
+  <small>{{ section.settings.header_small_text }}</small>
+  {% if section.settings.title != blank %}
+    <h1>{{ section.settings.title }}</h1>
+  {% endif %}
+  <a href="{{ section.settings.pop_out_video_url }}" data-fancybox="">
+    {{ section.settings.button_title }}
+    <i class="fa-solid fa-play-circle" style="font-family: fontAwesome !important; font-style: normal;"></i>
+  </a>
+</span>
+
+{% comment %}
+  <iframe src="{{ section.settings.video_url }}" width="500" height="281" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="allowfullscreen"></iframe>
+{% endcomment %}
+
+{% schema %}
+  {
+    "name": "MOS2.0 Hero Video",
+    "class": "mos2--section dark mos2--hero-video",
+    "tag": "section",
+    "presets": [
+      {
+        "name": "MOS2.0 Hero Video"
+      }
+    ],
+    "settings": [
+      {
+        "id": "header_text",
+        "type": "text",
+        "label": "Header Text"
+      },
+      {
+        "id": "header_small_text",
+        "type": "text",
+        "label": "Header Small Text"
+      },
+      {
+        "id": "title",
+        "type": "text",
+        "label": "Title"
+      },
+      {
+        "id": "button_title",
+        "type": "text",
+        "label": "Button Title"
+      },
+      {
+        "id": "desk_video_id",
+        "type": "text",
+        "label": "Desktop Video ID"
+      },
+      {
+        "id": "mob_video_id",
+        "type": "text",
+        "label": "Mobile Video ID"
+      },
+      {
+        "id": "pop_out_video_url",
+        "type": "text",
+        "label": "Pop Out Video URL"
+      }
+    ]
+  }
+{% endschema %}

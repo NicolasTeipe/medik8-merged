@@ -1,0 +1,169 @@
+{% assign showcase_title = section.settings.heading %}
+{% assign showcase_paragraph = section.settings.top_paragraph %}
+
+<div class="wayfx-wrapper">
+  {%- if showcase_title != blank or showcase_paragraph != blank -%}
+    <div class="wayfx-block__heading">
+      <h2 class="h2--primary text-center">{{ showcase_title }}</h2>
+      <p class="p--lg text-center">{{ showcase_paragraph }}</p>
+    </div>
+  {%- endif -%}
+
+  <div class="showcase-product-grid product-showcase-{{section.id}}" id="buy-now">
+    {% for block in section.blocks %}
+      {% assign product = block.settings.product %}
+      {% assign variant_sku = block.settings.variant_sku %}
+      {% assign showcase_product_image = block.settings.showcase_product_image %}
+      {% assign showcase_subtitle = block.settings.showcase_subtitle %}
+      {% assign showcase_description = block.settings.showcase_description %}
+      {% assign index = forloop.index %}
+
+      <div class="showcase-product-grid-card">
+        {% if product.variants.size > 1 and variant_sku != blank %}
+  
+          {% for variant in product.variants %}
+            {%- if variant.sku == variant_sku -%}
+              {% render 'product-grid-item',
+                index: index,
+                showcase_subtitle: showcase_subtitle,
+                showcase_description: showcase_description,
+                showcase_product_image: variant.featured_image,
+                variant: variant,
+                product: product,
+                product_layout: 'showcase'
+              %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% render 'product-grid-item',
+            showcase_subtitle: showcase_subtitle,
+            showcase_description: showcase_description,
+            showcase_product_image: product.selected_or_first_available_variant.image,
+            variant: product.selected_or_first_available_variant,
+            product: product,
+            product_layout: 'showcase'
+          %}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('.product-showcase-{{section.id}}').slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      mobileFirst: true,
+      dots: true,
+      autoplay: true,
+      autoplaySpeed: {{ section.settings.slider_speed | times: 1000 }},
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            draggable: false,
+            arrows: {{ section.settings.show_arrows }},
+            dots: false,
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 640,
+          settings: {
+            draggable: false,
+            arrows: {{ section.settings.show_arrows }},
+            dots: false,
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        }
+      ]
+    }).show();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Showcase",
+  "class": "product-showcase",
+  "tag": "section",
+  "presets": [
+    {
+      "name": "Product Showcase"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading"
+    },
+    {
+      "id": "top_paragraph",
+      "type": "text",
+      "label": "Top Paragraph"
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Slider Arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slider_speed",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "s",
+      "label": "Slider Speed",
+      "info": "Speed in seconds",
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Product",
+      "type": "comparison",
+      "settings": [
+        {
+          "id": "product",
+          "type": "product",
+          "label": "Product"
+        },
+        {
+          "id": "variant_sku",
+          "type": "text",
+          "label": "Variant SKU"
+        },
+        {
+          "id": "showcase_product_image",
+          "type": "image_picker",
+          "label": "Image"
+        },
+        {
+          "id": "showcase_subtitle",
+          "type": "text",
+          "label": "Subtitle"
+        },
+        {
+          "id": "showcase_description",
+          "type": "richtext",
+          "label": "Description"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

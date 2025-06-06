@@ -1,0 +1,10 @@
+<!-- /snippets/pagination.liquid -->
+{% capture previous_label %}
+    <span class="wayfx-text">{{ 'layout.pagination.previous' | t }}</span>
+{% endcapture %}
+{% capture next_label %}
+    <span class="wayfx-text">{{ 'layout.pagination.next' | t }}</span>
+{% endcapture %}
+<div class="pagination">
+    {{ paginate | default_pagination: previous: previous_label, next: next_label }}
+</div>

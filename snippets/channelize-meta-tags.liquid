@@ -1,0 +1,16 @@
+{%- if request.path contains "/pages/streams/"  -%}
+            {%- assign ChannelizeShowId = request.path | split: "/" | last -%}
+              
+            {%- if ChannelizeShowId and page.metafields[ChannelizeShowId].title_tag -%}
+              {%- assign page_title = page.metafields[ChannelizeShowId].title_tag -%}
+            {%- endif -%}
+          
+            {%- if ChannelizeShowId and page.metafields[ChannelizeShowId].description_tag -%}
+              {%- assign page_description = page.metafields[ChannelizeShowId].description_tag -%}
+            {%- endif -%}
+          
+            {%- if ChannelizeShowId and page.metafields[ChannelizeShowId].image_tag -%}
+              {%- assign page_image = nil -%}
+              <meta property="og:image" content="{{page.metafields[ChannelizeShowId].image_tag}}">
+            {%- endif -%}
+          {%- endif -%}

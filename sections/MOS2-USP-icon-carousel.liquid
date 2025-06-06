@@ -1,0 +1,227 @@
+{% if section.blocks %}
+  {{ "stylesheets.sections.usp-icon-carousel.css" | asset_url | stylesheet_tag }}
+
+  <div class="js-usp-icon-carousel--{{ section.id }} block-c keen-slider flex"
+       style="opacity:0;"
+       data-keen-slider-disabled>
+    {% for block in section.blocks %}
+      {% if block.settings.image and block.settings.title != blank %}
+        <div class="keen-slider__slide usp-icon-carousel__slide flex row-wrap align-center justify-center">
+          <style type="text/css">
+            .usp-icon-carousel__image--{{ block.id }}{
+              width:{{ block.settings.icon_width }}px;
+            }
+          </style>
+          <img  alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.title | strip_html }}{% endif %}"
+            loading="lazy" 
+            class="usp-icon-carousel__image usp-icon-carousel__image--{{ block.id }}"
+            src="{{ block.settings.image | image_url:width:128 }}" 
+            width="64" 
+            height="64">
+          <div class="usp-icon-carousel__content">
+            <span class="d-block heading">{{ block.settings.title }}</span>
+            {{ block.settings.content }}
+          </div>
+        </div>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+
+  <style>
+    {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+
+    .usp-icon-carousel{
+      padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 0 {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px;
+    }
+
+    @media all and (min-width: 768px) {
+      .usp-icon-carousel{
+        padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+      }
+    }
+
+    {%- comment -%}
+      Fix for usp icon slider styles - used on index & pdp (v2).
+      See commit msg for more detail.
+    {%- endcomment -%}
+    .usp-icon-carousel .navigation-wrapper {
+      padding: 0;
+    }
+  </style>
+  
+  <script type="module"> 
+
+    import { KScenterSlides,KSnavigation,KSautoPlay } from {{ 'scripts.keenSlider.plugins.js' | asset_url | json }};
+
+    let initCarousel = () => {
+      let sliderElement = document.querySelector('.js-usp-icon-carousel--{{ section.id }}')
+
+      let slideTotal = `{{ section.blocks.size }}`,
+      slidesView465 = 2,
+      slidesView767 = 3,
+      slidesView1024 = 4,
+      slidesView1280 = 5
+
+      if (slideTotal <= slidesView1280){ slidesView1280 = slideTotal }
+      if (slideTotal <= slidesView1024){ slidesView1024 = slideTotal }
+      if (slideTotal <= slidesView767){ slidesView767 = slideTotal }
+      if (slideTotal <= slidesView465){ slidesView465 = slideTotal }
+
+      const enableAutoPlay = '{{ template.name }}' == 'product';
+      const ksPlugins = [KScenterSlides, KSnavigation]
+      if (enableAutoPlay) ksPlugins.push(KSautoPlay)
+
+      sliderElement.classList.remove('flex')
+      sliderElement.removeAttribute('data-keen-slider-disabled')
+      sliderElement.style.opacity = 1
+      sliderElement = new KeenSlider(sliderElement,{
+        loop: true,
+        renderMode: "performance",
+        slides: { 
+          perView:1, 
+          spacing:0
+        },
+        defaultAnimation:{
+          duration:1000,
+        },
+        breakpoints: {
+          '(min-width: 465px)': {
+            slides: { 
+              perView: slidesView465
+            }
+          },
+          '(min-width: 767px)': {
+            slides: { 
+              perView: slidesView767
+            }
+          },
+          '(min-width: 1024px)': {
+            slides: { 
+              perView: slidesView1024
+            }
+          },
+          '(min-width: 1280px)': {
+            loop: false,
+            slides: { 
+              perView: slidesView1280
+            }
+          },
+        }
+      },
+      ksPlugins)
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initCarousel()
+    })
+
+    {% if request.design_mode %}
+      document.addEventListener('shopify:section:load', (data) => {
+        initCarousel()
+      })
+    {% endif %}
+
+  </script>
+
+  <style>
+    .usp-icon-carousel {
+      width: {{ section.settings.max_width }}px;
+    }
+  </style>
+
+{% endif %}
+  
+  {% schema %}
+      {
+          "name": "USP icon carousel",
+          "class": "usp-icon-carousel",
+          "presets": [
+            {
+              "name": "USP icon carousel"
+            }
+          ],
+          "tag": "section",
+          "max_blocks":10,
+          "settings": [
+            {
+              "type": "header",
+              "content": "Positioning"
+            },
+            {
+              "type": "range",
+              "id": "max_width",
+              "min": 1000,
+              "max": 1800,
+              "step": 20,
+              "unit": "px",
+              "label": "Section Max Width - Desktop",
+              "default": 1580
+            },
+            {
+              "type": "range",
+              "id": "padding_top",
+              "min": 0,
+              "max": 100,
+              "step": 4,
+              "unit": "px",
+              "label": "Section Padding Top",
+              "default": 32
+            },
+            {
+              "type": "range",
+              "id": "padding_bottom",
+              "min": 0,
+              "max": 100,
+              "step": 4,
+              "unit": "px",
+              "label": "Section Padding Bottom",
+              "default": 32
+            },
+            {
+              "type": "range",
+              "id": "mobile-padding",
+              "min": -50,
+              "max": 50,
+              "step": 5,
+              "unit": "%",
+              "label": "Mobile Padding Modifier",
+              "info": "Adjust how much bigger or smaller the section padding should be on mobile",
+              "default": -25
+            }
+          ],
+          "blocks": [
+            {
+                "type": "block",
+                "name": "block",
+                "settings": [
+                    {
+                      "type": "image_picker",
+                      "id": "image",
+                      "label": "Icon"
+                    },   
+                    {
+                      "type": "range",
+                      "id": "icon_width",
+                      "label": "Icon width",
+                      "default":32,
+                      "step":1,
+                      "min":5,
+                      "max":64
+                    },
+                   
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "text"
+                    },
+                    {
+                      "type": "richtext",
+                      "id": "content",
+                      "label": "content"
+                  }
+                ]
+              }
+      ]
+      }
+  {% endschema %}

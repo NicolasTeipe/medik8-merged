@@ -1,0 +1,78 @@
+{%- comment -%}
+  Check bundle availability - Only 'available' if both below are true
+  - Bundle Product Object is available
+  - All bundle line items are available
+{%- endcomment -%}
+{% liquid 
+  assign bundleIsAvailable = true
+  unless product.available
+    assign bundleIsAvailable = false
+  endunless
+  for b in product.metafields.custom.bundle_items.value
+    unless b.variant.value.available
+      assign bundleIsAvailable = false
+      break
+    endunless
+  endfor
+%}
+
+{%- if product.type == 'Bundles' and bundleIsAvailable -%}
+  {%- render 'bundle-atc-btn', product: product -%}
+{%- else -%}
+
+  {% case form %}
+    {% when 'with_form' %}
+      <product-form>
+        {%- assign product_form_id = 'product-'| append: block_id | append: product.id -%}
+        {%- form 'product',
+          product,
+          id: product_form_id,
+          class: 'form',
+          novalidate: 'novalidate',
+          data-type: 'add-to-cart-form'
+        -%}
+          <input type="hidden" name="id" value="{{ variant_id }}" />
+          <input min="1" type="hidden" name="quantity" value="1" />
+          {% comment %} TODO: improve button states to not use tags anymore {% endcomment %}
+          {%- if sold_out or bundleIsAvailable == false -%}
+
+            {% if product.tags contains 'Find out More' %}
+              <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.find_out_more' | t }}</a>
+            {% elsif product.tags contains "Coming Soon" %}
+              <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.coming_soon' | t }}</a>
+            {%- else -%}
+              <button class="btn--full btn--outline btn--sold-out" onClick="return false;">{{ 'products.product.sold_out' | t }}</button>
+            {%- endif -%}
+
+        {%- else -%}
+          <button class="btn--full btn--outline" onClick="GlobalCartMain.addProductFromButton(event)">
+            <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        {%- endif -%}
+      {%- endform -%}
+    </product-form>
+
+    {% when 'no_form' %}
+      <input min="1" type="hidden" name="quantity" value="1" />
+      {% comment %} TODO: improve button states to not use tags anymore {% endcomment %}
+      {%- if sold_out or bundleIsAvailable == false -%}
+
+        {% if product.tags contains 'Find out More' %}
+          <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.find_out_more' | t }}</a>
+        {% elsif product.tags contains "Coming Soon" %}
+          <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.coming_soon' | t }}</a>
+        {%- else -%}
+          <button class="btn--full btn--outline btn--sold-out" onClick="return false;">{{ 'products.product.sold_out' | t }}</button>
+        {%- endif -%}
+
+    {%- else -%}
+      <button class="btn btn--full" onClick="GlobalCartMain.addProductFromButton(event)">
+        <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+      </button>
+    {%- endif -%}
+
+  {% endcase %}
+
+{%- endif -%}
+
+

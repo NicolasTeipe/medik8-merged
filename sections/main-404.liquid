@@ -1,0 +1,69 @@
+<section class="wayfx-block wayfx-block--404">
+  <div class="wayfx-wrapper">
+    <div class="wayfx-block--404__heading text-center">
+      <h1 class="h2--primary">{{ 'general.404.title' | t }}</h1>
+      <p class="p--lg">{{ 'general.404.subtext_html' | t }}</p>
+      <p class="p--lg">{{ 'general.404.subtext_aditional' | t }}</p>
+    </div>
+  </div>
+  <div class="wayfx-block--404__products">
+    <div class="wayfx-wrapper">
+      <h2 class="h2--primary text-center">{{ 'general.404.best_sellers' | t }}</h2>
+      <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
+        {%- paginate collections['productos-mas-vendidos'].products by 8 -%}
+        {%- for product in collections['productos-mas-vendidos'].products -%}
+        {% render 'product-grid-item', product: product, product_layout: 'standard' %}
+        {%- endfor -%}
+        {%- endpaginate -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+    $(document).ready(function() {
+        var settings = {
+            arrows: false,
+            draggable: true,
+            infinite: true,
+            dots: true,
+            adaptiveHeight: false,
+            mobileFirst: true,
+            slidesToShow: 2,
+            slidesToScroll: 2,
+            variableWidth: true,
+            responsive: [{
+                breakpoint: 768,
+                settings: {
+                    settings: "unslick"
+                }
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 3
+                }
+            }]
+        }
+
+        var $slides = $('.wayfx-products--best-sellers');
+
+        $(window).on('load resize orientationchange', function () {
+            if ($(window).width() > 1023) {
+                if ($slides.hasClass('slick-initialized')) {
+                    $slides.slick('unslick');
+                }
+                $slides.show();
+                return
+            }
+            if (!$slides.hasClass('slick-initialized')) {
+                return $slides.each(function() {
+                    $(this).slick(settings).show();
+                });
+            }
+        });
+
+    });
+
+</script>

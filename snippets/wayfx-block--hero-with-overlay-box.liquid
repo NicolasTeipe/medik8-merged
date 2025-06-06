@@ -1,0 +1,43 @@
+{%- if block.settings.alignment == 'top_left' -%}
+    {%- assign alignment = 'wayfx-block--align-top-left' -%}
+{%- elsif block.settings.alignment == 'top_center' -%}
+    {%- assign alignment = 'wayfx-block--align-top-center' -%}
+{%- elsif block.settings.alignment == 'top_right' -%}
+    {%- assign alignment = 'wayfx-block--align-top-right' -%}
+{%- elsif block.settings.alignment == 'bottom_left' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-left' -%}
+{%- elsif block.settings.alignment == 'bottom_center' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-center' -%}
+{%- elsif block.settings.alignment == 'bottom_right' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-right' -%}
+{%- endif -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign image = block.settings.image | image_url: width: 1600 -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign cta_link = block.settings.cta_link -%}
+{%- assign cta_text = block.settings.cta_text -%}
+{% if block.settings.image %}
+    <style type="text/css">
+        .wayfx-block.wayfx-block--hero-with-overlay-box {
+            background: #F4F4F4 url('{{ image }}') no-repeat center center / cover;
+        }
+        @media all and (max-width: 768px) {
+            .wayfx-block.wayfx-block--hero-with-overlay-box {
+                background: #fff url('{{ image }}') no-repeat center top / auto 421px;
+            }
+        }
+    </style>
+{% endif %}
+{% if heading %}
+    <section class="wayfx-block wayfx-block--hero-with-overlay-box {{ alignment }}">
+        <div class="wayfx-wrapper">
+            <div class="wayfx-block__text">
+                <h3>{{ heading }}</h3>
+                {% if paragraph %}{{ paragraph }}{% endif %}
+                {% if cta_link and cta_text %}
+                    <a href="{{ cta_link }}" class="btn btn--medium">{{ cta_text }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}

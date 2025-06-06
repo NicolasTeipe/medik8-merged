@@ -1,0 +1,175 @@
+{%- assign heading = section.settings.heading -%}
+
+{%- assign block_one_image = section.settings.block_one_image -%}
+{%- assign block_one_heading = section.settings.block_one_heading -%}
+{%- assign block_one_paragraph = section.settings.block_one_paragraph -%}
+{%- assign block_one_link = section.settings.block_one_link -%}
+{%- assign block_one_cta_text = section.settings.block_one_cta_text %}
+
+{%- assign block_two_image = section.settings.block_two_image -%}
+{%- assign block_two_heading = section.settings.block_two_heading -%}
+{%- assign block_two_paragraph = section.settings.block_two_paragraph -%}
+{%- assign block_two_link = section.settings.block_two_link -%}
+{%- assign block_two_cta_text = section.settings.block_two_cta_text %}
+
+{%- assign block_three_image = section.settings.block_three_image -%}
+{%- assign block_three_heading = section.settings.block_three_heading -%}
+{%- assign block_three_paragraph = section.settings.block_three_paragraph -%}
+{%- assign block_three_link = section.settings.block_three_link -%}
+{%- assign block_three_cta_text = section.settings.block_three_cta_text %}
+
+<style type="text/css">
+    .wayfx-block--trending-grid .wayfx-block__one.lazyloaded {background-image: url('{{ block_one_image | image_url: width: 1000 }}');}
+    .wayfx-block--trending-grid .wayfx-block__two.lazyloaded {background-image: url('{{ block_two_image | image_url: width: 1000 }}');}
+    .wayfx-block--trending-grid .wayfx-block__three.lazyloaded {background-image: url('{{ block_three_image | image_url: width: 1000 }}');}
+</style>
+
+<div class="wayfx-wrapper">
+    <h2 class="h2--primary text-center">{{ heading }}</h2>
+    <div class="grid">
+        <div class="grid__item large--one-half">
+            <a href="{{ block_one_link }}" class="wayfx-block__one lazyload">
+                <div class="wayfx-block__content">
+                    {%- if block_one_heading -%}
+                        <h3 class="h3--secondary">{{ block_one_heading }}</h3>
+                    {%- endif -%}
+                    {%- if block_one_paragraph -%}
+                        <p class="p--sm">{{ block_one_paragraph }}</p>
+                    {%- endif -%}
+                    {%- if block_one_link and block_one_cta_text -%}
+                        <div class="wayfx-button">
+                            <div class="btn--outline btn--medium">{{ block_one_cta_text }}</div>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+        <div class="grid__item large--one-half">
+            <a href="{{ block_two_link }}" class="wayfx-block__two lazyload">
+                <div class="wayfx-block__content">
+                    {%- if block_two_heading -%}
+                        <h3 class="h3--secondary">{{ block_two_heading }}</h3>
+                    {%- endif -%}
+                    {%- if block_two_paragraph -%}
+                        <p>{{ block_two_paragraph }}</p>
+                    {%- endif -%}
+                    {%- if block_two_link and block_two_cta_text -%}
+                        <div class="wayfx-button">
+                            <div class="btn--outline btn--medium">{{ block_two_cta_text }}</div>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+            <a href="{{ block_three_link }}" class="wayfx-block__three lazyload">
+                <div class="wayfx-block__content">
+                    {%- if block_three_heading -%}
+                        <h3 class="h3--secondary">{{ block_three_heading }}</h3>
+                    {%- endif -%}
+                    {%- if block_three_paragraph -%}
+                        <p>{{ block_three_paragraph }}</p>
+                    {%- endif -%}
+                    {%- if block_three_link and block_three_cta_text -%}
+                        <div class="wayfx-button">
+                            <div class="btn--outline btn--medium">{{ block_three_cta_text }}</div>
+                        </div>
+                    {%- endif -%}
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+    {
+      "name": "Trending Grid",
+      "presets": [
+        {
+          "name": "Trending Grid"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--trending-grid",
+      "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "block_one_heading",
+            "type": "text",
+            "label": "Block 1 Heading"
+        },
+        {
+            "id": "block_one_paragraph",
+            "type": "textarea",
+            "label": "Block 1 Paragraph"
+        },
+        {
+            "id": "block_one_image",
+            "type": "image_picker",
+            "label": "Block 1 Background"
+        },
+        {
+            "id": "block_one_link",
+            "type": "url",
+            "label": "Block 1 Link"
+        },
+        {
+            "id": "block_one_cta_text",
+            "type": "text",
+            "label": "Block 1 CTA Text"
+        },
+        {
+            "id": "block_two_heading",
+            "type": "text",
+            "label": "Block 2 Heading"
+        },
+        {
+            "id": "block_two_paragraph",
+            "type": "textarea",
+            "label": "Block 2 Paragraph"
+        },
+        {
+            "id": "block_two_image",
+            "type": "image_picker",
+            "label": "Block 2 Background"
+        },
+        {
+            "id": "block_two_link",
+            "type": "url",
+            "label": "Block 2 Link"
+        },
+        {
+            "id": "block_two_cta_text",
+            "type": "text",
+            "label": "Block 2 CTA Text"
+        },
+        {
+            "id": "block_three_heading",
+            "type": "text",
+            "label": "Block 3 Heading"
+        },
+        {
+            "id": "block_three_paragraph",
+            "type": "textarea",
+            "label": "Block 3 Paragraph"
+        },
+        {
+            "id": "block_three_image",
+            "type": "image_picker",
+            "label": "Block 3 Background"
+        },
+        {
+            "id": "block_three_link",
+            "type": "url",
+            "label": "Block 3 Link"
+        },
+        {
+            "id": "block_three_cta_text",
+            "type": "text",
+            "label": "Block 3 CTA Text"
+        }
+      ]
+    }
+{% endschema %}

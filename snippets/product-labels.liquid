@@ -1,0 +1,71 @@
+{%- assign site_wide_label = settings.site_wide__label -%}
+{%- assign site_wide_label_enabled = settings.site_wide__label_enabled -%}
+{%- assign site_wide_percentage = settings.site_wide__percentage -%}
+
+{%- comment -%}
+  Badge display priority
+  - low_stock
+  - site_wide / site_wide_label_enabled
+  - custom_badge
+  - on_sale
+{%- endcomment -%}
+
+{%- comment -%} If a variant has been passed in, get the product of the variant instead {%- endcomment -%}
+{%- if product.sku -%}
+  {%- assign product = product.product -%}
+{%- endif -%}
+
+
+{%- comment -%} Build custom badge {%- endcomment -%}
+{%- for tag in product.tags -%}
+  {%- if tag contains 'badge:' -%}
+    {%- assign badgeArray = tag | split: ':' -%}
+    {%- assign badgeStyle = badgeArray[2] -%}
+
+    {%- if badgeStyle -%}
+      {%- assign badgeStyle = badgeStyle | append: ' custom-badge-styles'-%}
+    {%- else -%}
+      {%- comment -%} If no styles specified, default to original discount styling {% endcomment -%}
+      {%- assign badgeStyle = 'discount' -%}
+    {%- endif -%}
+    {%- break -%}
+
+  {%- endif -%}
+{%- endfor -%}
+
+
+{%- if low_stock -%}
+  <div class="wayfx-badge wayfx-badge--low-stock">{{ 'products.product.low_stock' | t }}</div>
+{%- elsif on_sale and site_wide -%}
+    <div class="wayfx-badge wayfx-badge--discount site-wide--label discounts__vip_access_only">
+      {%- if site_wide_label_enabled -%}
+        {{ site_wide_label }}
+      {%- endif -%}
+    </div>
+{% elsif on_sale and site_wide_label_enabled%}
+    <div class="wayfx-badge wayfx-badge--discount site-wide--label discounts__vip_access_only">
+      {{site_wide_label}}
+    </div >
+{%- elsif badgeArray -%}
+    <div class="wayfx-badge wayfx-badge--{{ badgeStyle }}">{{ badgeArray[1] | upcase }}</div>
+{%- elsif on_sale -%}
+    <div class="wayfx-badge wayfx-badge--discount">{{ 'products.product.on_sale' | t }}</div>
+{%- endif -%}
+
+    
+<style>
+  .wayfx-badge--cs1 {
+    background: {{ settings.badge_one_color_bg }};
+    color: {{ settings.badge_one_color_text }};
+  }
+
+  .wayfx-badge--cs2 {
+    background: {{ settings.badge_two_color_bg }};
+    color: {{ settings.badge_two_color_text }};
+  }
+
+  .wayfx-badge--cs3 {
+    background: {{ settings.badge_three_color_bg }};
+    color: {{ settings.badge_three_color_text }};
+  }
+</style>

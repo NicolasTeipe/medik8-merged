@@ -1,0 +1,38 @@
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 16px; }
+
+.block .wayfx-product__item--standard {
+  width: 100%; }
+
+.card__title {
+  font-size: 1rem;
+  font-weight: 200;
+  text-transform: uppercase; }
+
+.card__image {
+  position: relative;
+  overflow: hidden; }
+
+.card__image:after {
+  content: '';
+  padding-top: 100%;
+  display: block; }
+
+.card__image img {
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+.card__btn {
+  min-height: 0;
+  padding: var(--gutter-unit-d2);
+  max-width: 100%; }
+
+@media (max-width: 1200px) {
+  .wayfx-product__item .wayfx-product__grid-image {
+    height: auto; } }

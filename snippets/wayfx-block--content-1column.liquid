@@ -1,0 +1,120 @@
+{%- assign block_image = block.settings.block_image | image_url: width: 560 -%}
+
+{%- assign block_heading_1 = block.settings.block_heading_1 -%}
+{%- assign block_paragraph_1 = block.settings.block_paragraph_1 -%}
+{%- assign block_cta_link_1 = block.settings.block_cta_link_1 -%}
+{%- assign block_cta_text_1 = block.settings.block_cta_text_1 -%}
+
+{%- assign block_heading_2 = block.settings.block_heading_2 -%}
+{%- assign block_paragraph_2 = block.settings.block_paragraph_2 -%}
+{%- assign block_cta_link_2 = block.settings.block_cta_link_2 -%}
+{%- assign block_cta_text_2 = block.settings.block_cta_text_2 -%}
+
+{%- assign block_heading_3 = block.settings.block_heading_3 -%}
+{%- assign block_paragraph_3 = block.settings.block_paragraph_3 -%}
+{%- assign block_cta_link_3 = block.settings.block_cta_link_3 -%}
+{%- assign block_cta_text_3 = block.settings.block_cta_text_3 -%}
+
+{%- assign block_heading_4 = block.settings.block_heading_4 -%}
+{%- assign block_paragraph_4 = block.settings.block_paragraph_4 -%}
+{%- assign block_cta_link_4 = block.settings.block_cta_link_4 -%}
+{%- assign block_cta_text_4 = block.settings.block_cta_text_4 -%}
+
+{%- assign block_heading_5 = block.settings.block_heading_5 -%}
+{%- assign block_paragraph_5 = block.settings.block_paragraph_5 -%}
+{%- assign block_cta_link_5 = block.settings.block_cta_link_5 -%}
+{%- assign block_cta_text_5 = block.settings.block_cta_text_5 -%}
+
+{%- assign block_heading_6 = block.settings.block_heading_6 -%}
+{%- assign block_paragraph_6 = block.settings.block_paragraph_6 -%}
+{%- assign block_cta_link_6 = block.settings.block_cta_link_6 -%}
+{%- assign block_cta_text_6 = block.settings.block_cta_text_6 -%}
+
+{%- assign block_heading_7 = block.settings.block_heading_7 -%}
+{%- assign block_paragraph_7 = block.settings.block_paragraph_7 -%}
+{%- assign block_cta_link_7 = block.settings.block_cta_link_7 -%}
+{%- assign block_cta_text_7 = block.settings.block_cta_text_7 -%}
+
+<section class="wayfx-block wayfx-block--content-1column">
+    <div class="wayfx-wrapper" id="{{block.settings.title}}">
+        <div class="grid">
+          <div class="grid__item one-whole large--six-tenths">
+            {% if block_heading_1 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_1 != blank %}
+              <h3 class="h3--primary">{{ block_heading_1 }}</h3>
+              {% endif %}
+              {% if block_paragraph_1 %}{{ block_paragraph_1 }}{% endif %}
+              {% if block_cta_text_1 != '' %}<a href="{{ block_cta_link_1 }}" class="btn--outline btn--large">{{ block_cta_text_1 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_2 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_2 != blank %}
+              <h3 class="h3--primary">{{ block_heading_2 }}</h3>
+              {% endif %}
+              {% if block_paragraph_2 %}{{ block_paragraph_2 }}{% endif %}
+              {% if block_cta_text_2 != '' %}<a href="{{ block_cta_link_2 }}" class="btn--outline btn--large">{{ block_cta_text_2 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_3 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_3 != blank %}
+              <h3 class="h3--primary">{{ block_heading_3 }}</h3>
+              {% endif %}
+              {% if block_paragraph_3 %}{{ block_paragraph_3 }}{% endif %}
+              {% if block_cta_text_3 != '' %}<a href="{{ block_cta_link_3 }}" class="btn--outline btn--large">{{ block_cta_text_3 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_4 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_4 != blank %}
+              <h3 class="h3--primary">{{ block_heading_4 }}</h3>
+              {% endif %}
+              {% if block_paragraph_4 %}{{ block_paragraph_4 }}{% endif %}
+              {% if block_cta_text_4 != '' %}<a href="{{ block_cta_link_4 }}" class="btn--outline btn--large">{{ block_cta_text_4 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_5 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_5 != blank %}
+              <h3 class="h3--primary">{{ block_heading_5 }}</h3>
+              {% endif %}
+              {% if block_paragraph_5 %}{{ block_paragraph_5 }}{% endif %}
+              {% if block_cta_text_5 != '' %}<a href="{{ block_cta_link_5 }}" class="btn--outline btn--large">{{ block_cta_text_5 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_6 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_6 != blank %}
+              <h3 class="h3--primary">{{ block_heading_6 }}</h3>
+              {% endif %}
+              {% if block_paragraph_6 %}{{ block_paragraph_6 }}{% endif %}
+              {% if block_cta_text_6 != '' %}<a href="{{ block_cta_link_6 }}" class="btn--outline btn--large">{{ block_cta_text_6 }}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% if block_heading_7 %}
+            <div class="wayfx-block__item">
+              {% if block_heading_7 != blank %}
+              <h3 class="h3--primary">{{ block_heading_7 }}</h3>
+              {% endif %}
+              {% if block_paragraph_7 %}{{ block_paragraph_7 }}{% endif %}
+              {% if block_cta_text_7 != '' %}<a href="{{ block_cta_link_7 }}" class="btn--outline btn--large">{{ block_cta_text_7 }}</a>{% endif %}
+            </div>
+            {% endif %}
+          </div>
+          {% unless block_image contains 'no-image' %}
+            <div class="grid__item one-whole large--four-tenths">
+              <div class="wayfx-block__image">
+                <a href="{{ block_image_link }}">
+                	<img loading="lazy" 
+                       data-blink-src="{{ block_image }}" 
+                       alt="{% if block.settings.block_image.alt != blank %}{{ block.settings.block_image.alt }}{% else %}{{ page.title }}{% endif %}" />
+                </a>
+              </div>
+            </div>
+          {% endunless %}
+            
+        </div>
+    </div>
+</section>

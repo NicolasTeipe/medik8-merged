@@ -1,0 +1,124 @@
+{%- assign scheme = block.settings.scheme -%}
+{%- assign main_heading = block.settings.main_heading -%}
+{%- assign main_paragraph = block.settings.main_paragraph -%}
+
+{%- assign image_1 = block.settings.image_1 | image_url: width: 560 -%}
+{%- assign heading_1 = block.settings.heading_1 -%}
+{%- assign paragraph_1 = block.settings.paragraph_1 -%}
+{%- assign link_1 = block.settings.link_1 -%}
+{%- assign video_link_1 = block.settings.video_link_1 -%}
+{%- assign image_1_alt_text = block.settings.image_1.alt -%}
+
+{%- assign image_2 = block.settings.image_2 | image_url: width: 560 -%}
+{%- assign heading_2 = block.settings.heading_2 -%}
+{%- assign paragraph_2 = block.settings.paragraph_2 -%}
+{%- assign link_2 = block.settings.link_2 -%}
+{%- assign video_link_2 = block.settings.video_link_2 -%}
+{%- assign image_2_alt_text = block.settings.image_2.alt -%}
+
+{%- assign image_3 = block.settings.image_3 | image_url: width: 560 -%}
+{%- assign heading_3 = block.settings.heading_3 -%}
+{%- assign paragraph_3 = block.settings.paragraph_3 -%}
+{%- assign link_3 = block.settings.link_3 -%}
+{%- assign video_link_3 = block.settings.video_link_3 -%}
+{%- assign image_3_alt_text = block.settings.image_3.alt -%}
+
+{%- assign image_4 = block.settings.image_4 | image_url: width: 560 -%}
+{%- assign heading_4 = block.settings.heading_4 -%}
+{%- assign paragraph_4 = block.settings.paragraph_4 -%}
+{%- assign link_4 = block.settings.link_4 -%}
+{%- assign video_link_4 = block.settings.video_link_4 -%}
+{%- assign image_4_alt_text = block.settings.image_4.alt -%}
+
+<section class="wayfx-block wayfx-block--content-4columns wayfx-block--content-4columns--{% if scheme == 'light' %}light{% else %}light{% endif %}">
+    <div class="wayfx-wrapper">
+        {% if main_heading or main_description %}
+            <div class="wayfx-block__heading">
+                {% if main_heading %}
+                    <h2 class="h2--primary text-center">{{ main_heading }}</h2>
+                {% endif %}
+                {% if main_paragraph %}
+                    <p class="p--lg text-center">{{ main_paragraph }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="grid">
+            {% if heading_1 %}
+                <div class="grid__item one-whole large--one-quarter">
+                    {% if link_1 or video_link_1 %}
+                  		<a{% if video_link_1 %} data-fancybox href="{{ video_link_1 }}"{% else %} href="{{ link_1 }}"{% endif %}>
+                    {% endif %}
+                    {% unless image_1 contains 'no-image' %}
+                      <div class="wayfx-block__image">
+                        <img loading="lazy" 
+                             data-blink-src="{{ image_1 }}" 
+                             alt="{% if image_1_alt_text != blank %}{{ image_1_alt_text }}{% else %}{{ heading_1 | escape  }}{% endif %}" />
+                      </div>
+                    {% endunless %}
+                  	{% if link_1 or video_link_1 %}
+                  		</a>
+                  	{% endif %}
+                  {% if heading_1 %}<h4 class="h4--primary">{% if link_1 %}<a href="{{ link_1 }}">{% endif %}{{ heading_1 }}{% if link_1 %}</a>{% endif %}</h4>{% endif %}
+                  {% if paragraph_1 %}<p class="p--md">{{ paragraph_1 }}</p>{% endif %}
+                </div>
+            {% endif %}
+            {% if heading_2 %}
+                <div class="grid__item one-whole large--one-quarter">
+                    {% if link_2 or video_link_2 %}
+                  		<a{% if video_link_2 %} data-fancybox href="{{ video_link_2 }}"{% else %} href="{{ link_2 }}"{% endif %}>
+                    {% endif %}
+                    {% unless image_2 contains 'no-image' %}
+                      <div class="wayfx-block__image">
+                        <img loading="lazy" 
+                             data-blink-src="{{ image_2 }}" 
+                             alt="{% if image_2_alt_text != blank %}{{ image_2_alt_text }}{% else %}{{ heading_2 | escape  }}{% endif %}" />
+                      </div>
+                    {% endunless %}
+                  	{% if link_2 or video_link_2 %}
+                  		</a>
+                  	{% endif %}
+                  {% if heading_2 %}<h4 class="h4--primary">{% if link_2 %}<a href="{{ link_2 }}">{% endif %}{{ heading_2 }}{% if link_2 %}</a>{% endif %}</h4>{% endif %}
+                  {% if paragraph_2 %}<p class="p--md">{{ paragraph_2 }}</p>{% endif %}
+                </div>
+            {% endif %}
+            {% if heading_3 %}
+                <div class="grid__item one-whole large--one-quarter">
+                    {% if link_3 or video_link_3 %}
+                  		<a{% if video_link_3 %} data-fancybox href="{{ video_link_3 }}"{% else %} href="{{ link_3 }}"{% endif %}>
+                    {% endif %}
+                    {% unless image_3 contains 'no-image' %}
+                      <div class="wayfx-block__image">
+                        <img loading="lazy" 
+                             data-blink-src="{{ image_3 }}" 
+                             alt="{% if image_3_alt_text != blank %}{{ image_3_alt_text }}{% else %}{{ heading_3 | escape  }}{% endif %}" />
+                      </div>
+                    {% endunless %}
+                  	{% if link_3 or video_link_3 %}
+                  		</a>
+                  	{% endif %}
+                  {% if heading_3 %}<h4 class="h4--primary">{% if link_3 %}<a href="{{ link_3 }}">{% endif %}{{ heading_3 }}{% if link_3 %}</a>{% endif %}</h4>{% endif %}
+                  {% if paragraph_3 %}<p class="p--md">{{ paragraph_3 }}</p>{% endif %}
+                </div>
+            {% endif %}
+            {% if heading_4 %}
+                <div class="grid__item one-whole large--one-quarter">
+                    {% if link_4 or video_link_4 %}
+                  		<a{% if video_link_4 %} data-fancybox href="{{ video_link_4 }}"{% else %} href="{{ link_4 }}"{% endif %}>
+                    {% endif %}
+                    {% unless image_4 contains 'no-image' %}
+                       <div class="wayfx-block__image">
+                         <img loading="lazy" 
+                              data-blink-src="{{ image_4 }}" 
+                              alt="{% if image_4_alt_text != blank %}{{ image_4_alt_text }}{% else %}{{ heading_4 | escape  }}{% endif %}" />
+                       </div>
+                    {% endunless %}
+                  	{% if link_4 or video_link_4 %}
+                  		</a>
+                  	{% endif %}
+                  {% if heading_4 %}<h4 class="h4--primary">{% if link_4 %}<a href="{{ link_4 }}">{% endif %}{{ heading_4 }}{% if link_4 %}</a>{% endif %}</h4>{% endif %}
+                  {% if paragraph_4 %}<p class="p--md">{{ paragraph_4 }}</p>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

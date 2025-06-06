@@ -1,0 +1,124 @@
+{% if section.settings.hide_section  == false %}
+<section class="wayfx-block wayfx-block--global-3column-cta">
+  <div class="wayfx-wrapper">
+      <div class="grid slider--dot-alt" style="display: none;">
+          {% for block in section.blocks %}
+              {% case block.type %}
+              {% when 'blocks' %}
+                  {%- assign image = block.settings.image -%}
+                  {%- assign heading = block.settings.heading -%}
+                  {%- assign paragraph = block.settings.paragraph -%}
+                  {%- assign link = block.settings.link -%}
+                  {%- assign cta_text = block.settings.cta_text -%}
+              <div class="grid__item large--one-third">
+                  <div class="wayfx-image">
+                      <a href="{{ link }}">
+                          <img width="358" height="230" loading="lazy" src="{{ image | image_url: width: 720 }}" alt="" />
+                      </a>
+                  </div>
+                  <h4 class="h4--secondary">
+                      <a href="{{ link }}">
+                          {{ heading }}
+                      </a>
+                  </h4>
+                  <p>{{ paragraph }}</p>
+                  <a href="{{ link }}" class="btn--outline btn--medium">{{ cta_text }}</a>
+              </div>
+          {% endcase %}
+          {% endfor %}
+      </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+    {
+      "name": "Global 3 Column Block",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "hide_section",
+          "label": "Hide Section",
+          "default": false
+        }
+      ],
+      "max_blocks": 3,
+      "blocks": [
+        {
+            "type": "blocks",
+            "name": "Block",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "textarea",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "link",
+                    "type": "url",
+                    "label": "Link"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}
+
+ {% javascript %}
+
+    $(document).ready(function() {
+        var settings = {
+            arrows: false,
+            draggable: true,
+            infinite: true,
+            dots: true,
+            adaptiveHeight: false,
+            mobileFirst: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            variableWidth: true,
+            responsive: [{
+                breakpoint: 1024,
+                settings: "unslick"
+            },
+            {
+             breakpoint: 600,
+             settings: {
+                slidesToShow: 2,
+             }
+            }]
+        }
+
+        var $slides = $('.wayfx-block--global-3column-cta .grid');
+
+        $(window).on('load resize orientationchange', function () {
+            if ($(window).width() > 1023) {
+                if ($slides.hasClass('slick-initialized')) {
+                    $slides.slick('unslick');
+                }
+                $slides.show();
+                return
+            }
+            if (!$slides.hasClass('slick-initialized')) {
+                return $slides.slick(settings).show();
+            }
+        });
+
+    });
+
+{% endjavascript %}

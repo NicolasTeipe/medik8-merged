@@ -1,0 +1,360 @@
+{%- if product.gift_card? -%}
+  {%- assign is_gift_card = true -%}
+  <script>window.isGiftCard = true</script>
+{%- endif -%}
+
+{% assign selected_variant_price = product.selected_or_first_available_variant.price | money %}
+
+{% capture hintTextPointsHtml %}
+  <span class="js-loyalty-hint__price" data-lion-price-for-product-id="{{ product.id }}" style="display:none">{{ selected_variant_price }}</span>
+  <span data-lion-points-for-product-id="{{ product.id }}"></span>
+{% endcapture %}
+
+{% assign point_target = "{{ points }}" %}
+{% capture hintTextHtml %}
+  {{ 'products.product.loyalty_points_hint_html' | t | replace: point_target, hintTextPointsHtml }}
+{% endcapture %}
+
+
+{%- unless is_gift_card -%}
+  <product-loyalty-points-hint-v2 style="display:none" hint_popup_text="{{ 'products.product.loyalty_lion__hint_text' | t | replace: '**cart.currency.symbol**', cart.currency.symbol }}" hint_button_text='{{ hintTextHtml }}'></product-loyalty-points-hint-v2>
+{%- endunless -%}
+
+<div id="full-details-anchor"></div>
+
+<current-loyalty-points style="display:none">
+  {% if customer %}
+    <p>{{ 'products.product.loyalty_lion__have_before_text' | t }}<span data-lion-points="approved"></span>{{ 'products.product.loyalty_lion__have_after_text' | t }}&nbsp;&nbsp;<button class="btn-reset" type="button"><u>Convert Points</u></button></p>
+  {% else %}
+    <p id="p-join-loyalty" class="join-loyalty">{{ 'products.product.loyalty_lion__signup_html' | t }}<p>
+  {% endif %}
+</current-loyalty-points>
+
+
+<style type="text/css">
+  .medk8-product--price-box{
+    position:relative;
+  }
+
+  product-loyalty-points-hint-v2 {
+    cursor: pointer;
+    font-family: ridley_groteskmedium;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: normal;
+    color: #000;
+    text-transform: uppercase;
+    align-items: center;
+    column-gap: 4px;
+  }
+
+  product-loyalty-points-hint-v2::before {
+    content: "";
+    display: inline-block;
+    background-image: url('{{ "icon-loyalty-stars.svg" | asset_url }}');
+    background-repeat: no-repeat;
+    background-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+  }
+
+  product-loyalty-points-hint-v2::after {
+    content: "";
+    display: inline-block;
+    background-image: url('{{ "icon-loyalty-info.svg" | asset_url }}');
+    background-repeat: no-repeat;
+    background-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin-left: 10px;
+  }
+
+  .loyaltyHintModal__title {
+    text-transform: uppercase;
+  }
+
+  .loyalty-hint__text {
+    background: #f7f7f7;
+    box-shadow: 0 8px 12px rgb(0 0 0 / 25%);
+    color: #000;
+    text-align: left;
+    border-radius: 6px;
+    padding: 15px 35px 15px 15px;
+    position: absolute;
+    z-index: 1;
+    width: 530px;
+    max-width:100%;
+    left:0px;
+    top: 100%;
+    font-size: 12px;
+    line-height: 18px;
+    text-transform: none;
+  }
+
+  @media (max-width: 767px) {
+
+    body.template-product.loyalty--isActive #gorgias-chat-container{
+      display:none;
+      z-index: -1;
+      pointer-events:none;
+    }
+
+  }
+
+  @media (max-width: 1023px) {
+    .loyalty-hint__text {
+      position: fixed;
+      top: auto;
+      left: var(--gutter-unit);
+      bottom:var(--gutter-unit);
+      max-height:80vw;
+      max-width:calc(100% - var(--gutter-unit-x2));
+      z-index: 9999;
+    }
+  }
+
+  .loyalty-hint__close-btn,
+  .loyalty-convert__close-btn {
+    position:absolute;
+    top:0;
+    right:0;
+    padding:15px;
+  }
+
+  .loyalty-hint__close-btn i,
+  .loyalty-convert__close-btn i {
+    font-size:10px;
+    display:block;
+  }
+
+  current-loyalty-points p,
+  current-loyalty-points a {
+    display: inline-block;
+    font-size: 12px;
+  }
+
+  current-loyalty-points p {
+    margin-top: 15px;
+    margin-left: 33px;
+  }
+
+  current-loyalty-points a {
+    text-decoration: underline;
+  }
+
+  current-loyalty-points p span {
+    padding: 0 5px;
+  }
+
+
+  .join-loyalty {
+    margin-top: 15px;
+    font-size: 12px;
+    margin-left: 33px;
+  }
+
+  .join-loyalty a {
+    text-decoration: underline;
+  }
+
+  body.template-product.ll--Active #gorgias-chat-container{
+    display:none;
+    pointer-events:none;
+    z-index:-1;
+  }
+
+</style>
+
+<script type="text/javascript">
+
+  class ProductLoyaltyPointsHintV2 extends HTMLElement {
+
+    constructor() {
+      super()
+      // bind value to the toggleHintTextDisplay for when it is called inside document click event
+      this.toggleHintTextDisplay = this.toggleHintTextDisplay.bind(this)
+    }
+  
+    loyaltylionIsReady(){
+      return new Promise( (resolve,reject) => {
+        if(window.loyaltylion.ui){
+          resolve()
+        }else{
+          window.loyaltylion.on('ready', () => {
+            resolve()
+          })
+        }
+      })
+    }
+
+    connectedCallback(){
+      this.id =  Math.floor(Math.random()*999999999999999)
+      this.hint_popup_text = this.attributes.hint_popup_text ? this.attributes.hint_popup_text.value : false
+      this.hint_button_text = this.attributes.hint_button_text ? this.attributes.hint_button_text.value : false
+      if(this.hint_popup_text && this.hint_button_text){
+        // wait for dom + loyalty lion to load
+        DomReadyPromise().then( () => {
+          this.loyaltylionIsReady().then( () => {
+            if (!window.isGiftCard) this.render()
+          }).catch(err => {
+            console.log('loyality lion not detected')
+          })
+        })
+      }
+    }
+
+    renderHintText(){
+      this.hintTextRendered = true
+      this.hintText = document.createElement('div')
+      this.hintText.classList.add('loyalty-hint__text')
+      this.hintText.style.display = 'none'
+      this.hintText.innerHTML = this.hint_popup_text
+
+      this.hintTextToggle = document.createElement('button')
+      this.hintTextToggle.innerHTML = `<i class="wayfx-icon wayfx-icon-close" aria-hidden="true"></i>
+                                       <span class="fallback-text">"Close"</span>`
+
+      this.hintTextToggle.classList.add('loyalty-hint__close-btn','icon-fallback-text')
+      this.hintText.appendChild(this.hintTextToggle)
+      this.appendChild(this.hintText)
+
+      this.hintTextToggle.addEventListener('click',(e) => {
+        this.toggleHintTextDisplay(e)
+      })
+    }
+
+
+    toggleHintTextDisplay(e){
+      const {hintText} = this
+      const show = hintText.style.display == 'none'
+      if(show){
+        hintText.style.display = 'block'
+        document.addEventListener('click',this.toggleHintTextDisplay,true)
+     
+      }else{
+        hintText.style.display = 'none'
+        document.removeEventListener('click',this.toggleHintTextDisplay,true)
+      }
+      e.stopPropagation()
+
+      this.updateLoyaltyHintPosition()
+    }
+
+    // reposition hint text if it is off screen
+    updateLoyaltyHintPosition() {
+      const loyaltyHintElem = this.querySelector('.loyalty-hint__text')
+
+      if (!loyaltyHintElem) return;
+
+      const loyaltyHintPos = loyaltyHintElem.getBoundingClientRect()
+      const windowHeight = window.innerHeight;
+      const mobileWidthThreshold = 1024;
+      const offsetPx = 20;
+
+      if (window.innerWidth < mobileWidthThreshold) {
+        loyaltyHintElem.style.top = 'auto';
+        return;
+      }
+      
+      if (loyaltyHintPos.bottom > windowHeight) {
+        const diff = loyaltyHintPos.bottom - windowHeight;
+        loyaltyHintElem.style.top = `calc(100% - (${diff}px + ${offsetPx}px))`;
+        return;
+      }
+      
+      loyaltyHintElem.style.top = '100%';
+    }
+
+    update(price){
+      if(price){
+        this.productPointsPrice =  this.productPointsPrice || this.querySelector('.js-loyalty-hint__price')
+        this.productPointsPrice.innerHTML = price
+      }
+      window.loyaltylion.ui.refresh()
+    }
+
+    bind(){
+      //@to do, maybe replace this with an attr input for selector
+      this.variantSelector = document.querySelector('#productSelect')
+      this.variantSelector.addEventListener('change',(event) => {
+        // 0ms timeout used to push this to the back of the event loop
+        setTimeout(()=> {
+          const selectedOption = event.target.querySelector('option:checked')         
+          var selectOptionPrice;
+
+          if (window.rechargeWidgetLoaded) {
+            selectOptionPrice = document.querySelector('#ProductPrice').textContent
+          } else {
+            selectOptionPrice = selectedOption.dataset.discountedPrice
+            ? selectedOption.dataset.discountedPrice
+            : selectedOption.dataset.price;
+          }
+          this.update(selectOptionPrice)
+        }, 0)
+      })
+
+      // force change event to display correct points on load
+      this.variantSelector.dispatchEvent(
+        new Event('change')
+      );
+
+      this.addEventListener('click',(e) => {
+        if(!this.hintTextRendered){
+          this.renderHintText()
+        }
+        this.toggleHintTextDisplay(e)
+      })
+
+      window.addEventListener('resize', () => {
+        this.updateLoyaltyHintPosition()
+      })
+    }
+
+    render(){
+      this.innerHTML = this.hint_button_text
+      this.bind()
+      this.style.display = 'flex'
+    }
+  }
+
+  customElements.define('product-loyalty-points-hint-v2', ProductLoyaltyPointsHintV2);
+
+
+
+  class convertLoyalty extends HTMLElement {
+
+    constructor() {
+      super()
+    }
+
+    loyaltylionIsReady(){
+      return new Promise( (resolve,reject) => {
+        if(window.loyaltylion.ui){
+          resolve()
+        }else{
+          window.loyaltylion.on('ready', () => {
+            resolve()
+          })
+        }
+      })
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( () => {
+        this.convertTrigger = this.querySelector('button');
+        this.loyaltylionIsReady().then( () => {
+          this.style.display = 'block'
+          this.convertTrigger?.addEventListener('click',(e) => {
+            window.loyaltylion.dev.addRedemptionNotification()
+          })
+        }).catch(err => {
+          console.log('loyality lion not detected...')
+        })
+      })
+    }
+  }
+
+  customElements.define('current-loyalty-points', convertLoyalty);
+</script>

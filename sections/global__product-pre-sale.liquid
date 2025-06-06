@@ -1,0 +1,223 @@
+{% if section.settings.active and section.blocks.size %}
+<script type="text/javascript">
+
+  
+  class productPreSaleUtil{
+    constructor(settings){
+      this.elementToHide = {
+        selector:settings.elementToHide
+      }
+      this.sectionData = settings.sectionData
+    }
+    
+    getPresaleElement(variantId){
+      const block = this.sectionData.find(({variantIdsToRestrict}) => variantIdsToRestrict.indexOf(variantId) >= 0)
+      return !block ? '<span class="js-presale-element" hidden></span>' : 
+      `
+        <div class="js-presale-element presale-element flex-grid--d3 flex column-nowrap ct cb cell-l cell-r">
+          <h2 class="h-style t-xxs t-ucase f-w600">${block.settings.message.heading}</h2>
+          <div class="rte-content">${block.settings.message.text}</div>
+        </div>
+      `
+    }
+
+    async update(variantId){
+      await DomReadyPromise()
+      const restrict = this.sectionData.variantIdsToRestrict.indexOf(variantId) >= 0
+      this.elementToHide.node = this.elementToHide.node || document.querySelector(this.elementToHide.selector)
+      if(restrict){
+        this.elementToHide.clone = this.elementToHide.node.cloneNode(true)
+        this.preSaleElement = parseHTML(this.getPresaleElement(variantId))
+        this.elementToHide.node.replaceWith(this.preSaleElement)
+        this.preSaleElement = document.querySelector(`.js-presale-element`)
+      }else{
+        if(this.preSaleElement){
+          this.preSaleElement.replaceWith(this.elementToHide.clone)
+          this.elementToHide.node = document.querySelector(this.elementToHide.selector)
+        }
+        this.elementToHide.node.style.display = 'block'
+      }
+    }
+  }
+
+  ( async () => {
+    const customer_tags = {{  customer.tags | json }}
+    // get the raw sectionData
+    let sectionData = []
+    {% for block in section.blocks %}
+      sectionData.push({
+        "product":{{ all_products[block.settings.product] | json  }},
+        "skus":{{  block.settings.skus | json }},
+        "settings": {{ block.settings | json }}
+      })
+    {% endfor %}
+    // parse the sectionData
+    sectionData = sectionData.map( item => {
+      const {product,skus,settings} = item
+      settings.show_customer_tags = settings.show_customer_tags.split(',').map( tag => tag.trim()).filter(tag => tag.length)
+      let customerHasTagsToShowProduct = customer_tags?.some(tag => settings.show_customer_tags.indexOf(tag) >= 0) || false
+
+      settings.messages_tagged__tags = settings.messages_tagged__tags.split(',')
+      let customerHasTagsForMessage = customer_tags?.some(tag => settings.messages_tagged__tags.indexOf(tag) >= 0) || false
+      settings.message = {
+        heading:customerHasTagsForMessage && settings.messages_tagged__heading.length ? settings.messages_tagged__heading : settings.messages_default__heading,
+        text:customerHasTagsForMessage && settings.messages_tagged__heading.length && settings.messages_tagged__text.length ? 
+          settings.messages_tagged__text :
+          settings.messages_default__text
+      }
+      let skusToShow = skus.split(',').map( sku => sku.trim()).filter(sku => sku.length)
+      skusToShow = skusToShow.length ? skusToShow : false
+      return {
+        product,
+        skus,
+        settings,
+        variantIdsToRestrict: product?.variants?.filter(
+          variant => {
+            let restrict = !skusToShow ? true : skusToShow && skusToShow.indexOf(variant.sku) >= 0
+            restrict = !restrict ? false : restrict && !settings.show_customer_tags.length || restrict && !customerHasTagsToShowProduct
+            return restrict
+          }
+        )
+        .map( ({id}) => id ) || []
+      }
+    })
+  
+    sectionData.variantIdsToRestrict = sectionData.map( ({variantIdsToRestrict}) => variantIdsToRestrict).flat()
+
+    if(!sectionData.variantIdsToRestrict.length){
+      return
+    }
+
+    {% if product and template == 'product.v2' %}
+    document.body.append(parseHTML(
+      `
+        <style>
+          .presale-element{
+            border:1px solid #ddd;
+            margin:var(--gutter-unit) auto;
+          }
+
+          #AddToCartForm{
+            display:none;
+          }
+        </style>
+      `
+    ))
+
+    const util = new productPreSaleUtil({
+      elementToHide:'#AddToCartForm',
+      sectionData:sectionData,
+      customer_tags: customer_tags
+    })
+
+    const currentVariantId = {{ product.selected_or_first_available_variant.id | json }}
+    util.update(currentVariantId)
+    await DomReadyPromise()
+    const productMainVariantSelector = document.querySelector('.js-product-main-variant-selector')
+    productMainVariantSelector?.subscribe( () => {
+      util.update(productMainVariantSelector.currentVariant.id)
+    })
+
+    {% endif %}
+  })()
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "gbl/product-presale",
+  "presets": [
+    {
+      "name": "gbl/product-presale"
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "active",
+      "label": "Active",
+      "default":true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "product",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Product/Variants"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "textarea",
+          "id": "skus",
+          "label": "Skus",
+          "info": "Leave this blank to apply to whole product"
+        },
+        {
+          "type": "header",
+          "content": "Customer"
+        },
+        {
+          "type": "textarea",
+          "id": "show_customer_tags",
+          "label": "Customer tags",
+          "info": "Customers tagged with this will be able to purchase. Leave blank to hide from all customers"
+        },
+        {
+          "type": "header",
+          "content": "Messages:Default"
+        },
+        {
+          "type": "paragraph",
+          "content": "This will be shown to all visitors that are not logged in AND visitors that are logged in, but do not have a customer tag specific message"
+        },
+        {
+          "type": "text",
+          "id": "messages_default__heading",
+          "label": "heading",
+          "default": "Coming Soon!"
+        },
+        {
+          "type": "richtext",
+          "id": "messages_default__text",
+          "label": "text",
+          "default": "<p>Lorum ipsum dolumn et amet</p>"
+        },
+        {
+          "type": "header",
+          "content": "Messages:Tagged Customer"
+        },
+        {
+          "type": "paragraph",
+          "content": "This will be shown to all visitors that are logged in AND have a customer tag defined below"
+        },
+        {
+          "type": "textarea",
+          "id": "messages_tagged__tags",
+          "label": "Customer tags",
+          "info": "Customers tagged with this will be see the below message"
+        },
+        {
+          "type": "text",
+          "id": "messages_tagged__heading",
+          "label": "heading",
+          "default": "Coming Soon!"
+        },
+        {
+          "type": "richtext",
+          "id": "messages_tagged__text",
+          "label": "text",
+          "default": "<p>Lorum ipsum dolumn et amet</p>"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

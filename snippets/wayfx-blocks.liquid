@@ -1,0 +1,238 @@
+{% comment %}theme-check-disable{% endcomment %}
+{%- assign sidebar = section.settings.sidebar_menu -%}
+{%- assign sidebar_color_scheme = section.settings.sidebar_color_scheme %}
+
+<div class="wayfx-blocks">
+
+    {% if sidebar != blank %}
+
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'breadcrumb' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% render 'wayfx-block--breadcrumb' %}
+                    </div>
+                {% when 'hero-with-full-image' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-full-image' %}
+                    </div>
+                {% when 'hero-with-video-bg' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-video-bg' %}
+                    </div>
+                {% when 'hero-with-image' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-image' %}
+                    </div>
+                {% when 'hero-with-media' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-media' %}
+                    </div>
+                {% when 'hero-with-title-paragraph' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-title-paragraph' %}
+                    </div>
+                {% when 'hero-with-video' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-video' %}
+                    </div>
+                {% when 'hero-with-overlay-box' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-overlay-box' %}
+                    </div>
+                {% endcase %}
+        {% endfor %}
+
+        <div class="wayfx-wrapper">
+            <div class="wayfx-content-with-sidebar">
+                <div class="wayfx-sidebar wayfx-sidebar--{{ sidebar_color_scheme }}">
+                    {% include 'wayfx-block--sidebar' %}
+                </div>
+                <div class="wayfx-content">
+                    {% for block in section.blocks %}
+                        {% case block.type %}
+                            {% when 'careers' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--jobs' %}
+                                </div>
+                            {% when 'page-content' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--content-body' %}
+                                </div>
+                            {% when 'faq' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--faq' %}
+                                </div>
+                                <style type="text/css">
+                                  {%- assign space = '68' -%}
+                                    .wayfx-space--{{ block.id }} {height: {{ space }}px;}
+                                    @media all and (max-width: 767px) {.wayfx-space--{{ block.id }} {height: {{ space | divided_by: 2 }}px;}
+                                </style>
+                                <div class="wayfx-space--{{ block.id }}"></div>
+                            {% when 'content-standard' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--content' %}
+                                </div>
+                            {% when 'spacer' %}
+                              <style type="text/css">
+                                  .wayfx-space--{{ block.id }} {height: {{ block.settings.space }}px;}
+                                  @media all and (max-width: 767px) {.wayfx-space--{{ block.id }} {height: {{ block.settings.space | divided_by: 2 }}px;}
+                              </style>
+                              <div {{ block.shopify_attributes }} class="wayfx-space--{{ block.id }}"></div>
+                            {% when 'image-block' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--image' %}
+                                </div>
+                            {% when 'contact-form' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--contact-form' %}
+                                </div>
+                            {% when 'cta-block-footer' %}
+                                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                                    {% include 'wayfx-block--cta-footer' %}
+                                </div>
+                        {% endcase %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+  {% comment %}
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'spacer' %}
+                    <style type="text/css">
+                        .wayfx-space--{{ block.id }} {height: {{ block.settings.space }}px;}
+                        @media all and (max-width: 767px) {.wayfx-space--{{ block.id }} {height: {{ block.settings.space | divided_by: 2 }}px;}
+                    </style>
+                    <div {{ block.shopify_attributes }} class="wayfx-space--{{ block.id }}"></div>
+                {% endcase %}
+        {% endfor %}
+  {% endcomment %}
+  {% comment %}theme-check-disable{% endcomment %}
+    {% else %}
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'breadcrumb' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--breadcrumb' %}
+                    </div>
+                {% when 'before-after-slider' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--before-after-slider' %}
+                    </div>
+                {% when 'hero-with-full-image' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-full-image' %}
+                    </div>
+                {% when 'hero-with-video-bg' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-video-bg' %}
+                    </div>
+                {% when 'hero-with-image' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-image' %}
+                    </div>
+                {% when 'hero-with-media' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-media' %}
+                    </div>
+                {% when 'hero-with-title-paragraph' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-title-paragraph' %}
+                    </div>
+                {% when 'hero-with-video' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-video' %}
+                    </div>
+                {% when 'hero-with-overlay-box' %}
+                    <div {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--hero-with-overlay-box' %}
+                    </div>
+                {% when 'faq' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--faq' %}
+                    </div>
+                {% when 'careers' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                      {% include 'wayfx-block--jobs' %}
+                    </div>
+                {% when 'content-standard' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                      {% include 'wayfx-block--content' %}
+                    </div>
+                {% when 'content-feature' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--content-feature' %}
+                    </div>
+                {% when 'content-1column' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--content-1column' %}
+                    </div>
+                {% when 'content-2columns' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--content-2columns' %}
+                    </div>
+                {% when 'content-4columns' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--content-4columns' %}
+                    </div>
+                {% when 'editorial-block' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--editorial-2columns' %}
+                    </div>
+                {% when 'footer-social' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--footer-social' %}
+                    </div>
+                {% when 'image-block' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--image' %}
+                    </div>
+                {% when 'social-proof' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--social-proof' %}
+                    </div>
+                {% when 'spacer' %}
+                    <style type="text/css">
+                        .wayfx-space--{{ block.id }} {height: {{ block.settings.space }}px;}
+                        @media all and (max-width: 767px) {.wayfx-space--{{ block.id }} {height: {{ block.settings.space | divided_by: 2 }}px;}
+                    </style>
+                    <div {{ block.shopify_attributes }} class="wayfx-space--{{ block.id }}"></div>
+                {% when 'page-content' %}
+                <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                    {% include 'wayfx-block--content-body' %}
+                </div>
+                {% when 'intro-paragraph' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--intro-paragraph' %}
+                    </div>
+                {% when 'callout-3columns'%}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--callout-3columns' %}
+                    </div>
+                {% when 'cta-block-footer' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--cta-footer' %}
+                    </div>
+                {% when 'slider-landing' %}
+                    <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                        {% include 'wayfx-block--slider-landing' %}
+                    </div>
+                {% when 'slider-two-landing' %}
+                   <div class="wayfx-block__wrap" {{ block.shopify_attributes }}>
+                      {% include 'wayfx-block--slider-two-landing' %}
+                  </div>
+            {% endcase %}
+        {% endfor %}
+    {% endif %}
+</div>
+{% comment %}
+  {%- if section.settings.show_footer_social == 'yes' -%}
+      {% include 'block-footer-social' %}
+  {%- endif -%}
+{% endcomment %}
+{%- unless section.settings.show_footer_newsletter == 'yes' or section.settings.show_footer_social == 'yes' -%}
+    <style type="text/css">
+      .wayfx-footer-newsletter {display: none;}
+    </style>
+{%- endunless -%}

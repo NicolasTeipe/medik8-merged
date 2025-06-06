@@ -1,0 +1,94 @@
+{% if section.blocks.size > 0 %}
+<div data-anchor="{{ section.settings.nav_title }}"  class="block-12/12 cell-l cell-r tac flex flex-grid--x2 column-nowrap align-center justify-center">
+  {% if section.settings.title != blank %}
+  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  <div class="so-accordion-wrapper tal block-12/12">  
+    {% for block in section.blocks %}
+    {% assign count = count | plus: 1 %}
+    {% if block.settings.faqtitle != blank %}             
+    <div class="ll-faq">
+      <input id="ll-faq-{{ count }}" type="checkbox" name="tabs" /> 
+      <label for="ll-faq-{{ count }}">{{ block.settings.faqtitle }}</label>
+      <div class="ll-faq-content">{{ block.settings.faqcontent }}</div>
+    </div>       
+    {% endif %}
+    {% endfor %}        
+  </div>
+</div>
+{% endif %}     
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+    {% if customer %}
+      padding-top:var(--gutter-unit-x2);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/faqs",
+  "class":"block-grid block-grid--f",
+  "limit":1,
+ 
+  "settings":[
+   
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+  
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin",
+      "default":true
+    },
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"FAQs"
+    },
+    
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Me&Medik8 FAQs"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Faq",
+      "settings": [
+      {
+          "type": "text",
+          "id": "faqtitle",
+          "label": "Heading",
+          "default": "Faq Title"
+        },
+        {
+          "type": "richtext",
+          "id": "faqcontent",
+          "label": "Faq Content",
+          "default": "<p>There Are Many ways to collections, not only every time you shop</p>"
+          }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,149 @@
+{% if section.blocks.size <= 5 %}
+  {% assign blocks_count = section.blocks.size %}
+{% else %}
+  {% assign blocks_count = 5 %}
+{% endif %}
+
+<div class="wayfx-wrapper" style="text-align: center; margin:auto;">
+  <div class="wayfx-block__text block__text-{{section.id}}">
+      {% if section.settings.heading != blank %} 
+      <h1 class="h1--secondary h1-{{section.id}}">{{ section.settings.heading }}</h1>
+      {% endif %}
+      {% if section.settings.paragraph != blank %}
+        {{ section.settings.paragraph }}
+      {% endif %}
+  </div>
+</div>
+
+<div class="image-slider-wrapper">
+  <div class="image-slider-{{ section.id }} wayfx-hero-slider--normal">
+    {% for block in section.blocks %}     
+      <div class="image-slider-slide">
+        <img width="600" height="600" loading="lazy" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt }}">
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<script> 
+$(document).ready(function() {
+  $('.image-slider-{{ section.id }}').slick({
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    mobileFirst: true,
+    dots: true,
+    autoplay: {{ section.settings.autoplay }},
+    autoplaySpeed: 5000,
+    responsive: [
+      {
+        breakpoint: 0,
+        settings: {
+          dots: true,
+          centerMode: true
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          draggable: false,
+          arrows: true,
+          dots: false,
+          slidesToShow: {{ section.settings.slides_to_show }},
+          slidesToScroll: 1
+        }
+      }
+    ]
+  }).show();
+});
+  
+</script> 
+
+<style> 
+.h1-{{section.id}} {
+  color: {{section.settings.heading_color}}
+}
+.block__text-{{ section.id }} p {
+  color: {{section.settings.paragraph_color}}
+}
+</style>
+
+{% schema %}
+{
+  "name": "Image Slider",
+  "tag": "section",
+  "class": "image-slider wayfx-wrapper",
+  "templates": ["index", "article", "page", "product"],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading"
+    },
+    {
+        "id": "heading_color",
+        "type": "color",
+        "label": "Heading Text Color",
+        "default": "#262626"
+    },
+    {
+        "id": "paragraph",
+        "type": "richtext",
+        "label": "Paragraph"
+    },
+    {
+        "id": "paragraph_color",
+        "type": "color",
+        "label": "Paragraph Text Color",
+        "default": "#262626"
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay Slider",
+      "default": true,
+      "info": "Enable or Disable"
+    },
+    {
+      "type": "select",
+      "id": "slides_to_show",
+      "label": "Slides To Show",
+      "options": [
+          { "value": "1", "label": "One"},
+          { "value": "2", "label": "Two"},
+          { "value": "3", "label": "Three"},
+          { "value": "4", "label": "Four"},
+          { "value": "5", "label": "Five"}
+      ],
+      "info": "Slides To Show on Desktop View"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Slide",
+      "type": "slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Slider"
+    }
+  ]
+}
+{% endschema %}

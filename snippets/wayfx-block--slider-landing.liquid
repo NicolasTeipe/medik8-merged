@@ -1,0 +1,136 @@
+            {%- assign heading = block.settings.heading -%}
+            {%- assign paragraph = block.settings.paragraph -%}
+            {%- assign image1 = block.settings.image1 -%}
+            {%- assign image2 = block.settings.image2 -%}
+            {%- assign image3 = block.settings.image3 -%}
+            {%- assign image4 = block.settings.image4 -%}
+            {%- assign image5 = block.settings.image5 -%}
+        <div class="wayfx-wrapper" style="text-align: center; margin:auto;">
+            <div class="wayfx-block__text">
+                <h1 class="h1--secondary">{{ heading }}</h1>
+                {% if paragraph %}{{ paragraph }}{% endif %}
+            </div>
+        </div>
+<div class="image-slider-wrap">
+  <div class="wayfx-block--hero-slider-one  wayfx-hero-slider--normal wayfx-hero-slider--1">
+      <img width="440" height="440"loading="lazy" src="{{ image1 | image_url: width: 400 }}";>
+      <img width="440" height="440" loading="lazy" src="{{ image2 | image_url: width: 400 }}";>
+      <img width="440" height="440" loading="lazy" src="{{ image3 | image_url: width: 400 }}";>
+      <img width="440" height="440" loading="lazy" src="{{ image4 | image_url: width: 400 }}";>
+      <img width="440" height="440" loading="lazy" src="{{ image5 | image_url: width: 400 }}";>
+    
+  </div>
+</div>
+<style>
+  
+    @media all and (min-width: 767px) {
+  .image-slider-wrap {max-width:1400px;margin:auto;max-height:600px;}
+  .wayfx-block--hero-slider-one .wayfx-hero-slider--1 {
+      background-image: url('{{ image1 | image_url: width: 1400 }}');
+   }
+   .wayfx-block--hero-slider-one .wayfx-hero-slider--2 {
+      background-image: url('{{ image2 | image_url: width: 1400 }}');
+   }
+   .wayfx-block--hero-slider-one  .wayfx-hero-slider--3 {
+      background-image: url('{{ image3 | image_url: width: 1400 }}');
+   }
+   .wayfx-block--hero-slider-one   .wayfx-hero-slider--4 {
+      background-image: url('{{ image3 | image_url: width: 1400 }}');
+   }
+   .wayfx-block--hero-slider-one   .wayfx-hero-slider--5 {
+      background-image: url('{{ image3 | image_url: width: 1400 }}');
+   }
+  }
+  @media all and (max-width: 767px) {
+      #introducing-crystal-retinal-20 .wayfx-block.wayfx-block--hero-with-overlay-box {
+      background: whitesmoke;
+}
+   #introducing-crystal-retinal-20 .wayfx-block--editorial-2columns a {
+    background-size: contain;
+    }
+  .image-slider-wrap {max-width:400px;margin:auto;max-height:400px;margin-bottom: 40px;}
+  .wayfx-block--hero-slider-one  .wayfx-hero-slider--1 {
+      background-image: url('{{ image1 | image_url: width: 400 }}');
+   }
+   .wayfx-block--hero-slider-one  .wayfx-hero-slider--2 {
+      background-image: url('{{ image2 | image_url: width: 400 }}');
+   }
+   .wayfx-block--hero-slider-one  .wayfx-hero-slider--3 {
+      background-image: url('{{ image3 | image_url: width: 400 }}');
+   }
+    .wayfx-block--hero-slider-one  .wayfx-hero-slider--4 {
+      background-image: url('{{ image3 | image_url: width: 400 }}');
+   }
+    .wayfx-block--hero-slider-one  .wayfx-hero-slider--5 {
+      background-image: url('{{ image3 | image_url: width: 400 }}');
+   }
+    .wayfx-block--hero-slider-one  .slick-dots {
+    bottom: -22px !important;
+}
+    
+  }
+  .wayfx-block--hero-slider-one button.slick-prev.slick-arrow {display: none;}
+    #introducing-crystal-retinal-20 .wayfx-block.wayfx-block--hero-with-overlay-box .wayfx-block__text {
+      background: #ffffff38;
+      max-width: 754px;
+  }
+  #introducing-crystal-retinal-20 .wayfx-block--feature .wayfx-block__image img {
+    height: 100%;
+    object-fit: contain;
+  }
+  @media (max-width: 1023px){
+   #introducing-crystal-retinal-20 .wayfx-block--editorial-2columns .wayfx-block__one {
+        margin-bottom: 0px;
+    }
+  #introducing-crystal-retinal-20 .wayfx-block--editorial-2columns.wayfx-block--editorial-2columns-large a {
+     min-height: 450px;}
+  }
+</style>     
+    
+<script>
+  
+
+var heroSliderSettings = {
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: true,
+  draggable: true,
+  infinite: true,
+  adaptiveHeight: false,
+  mobileFirst: true,
+  dots: true,
+  autoplay: true,
+  autoplaySpeed: 5000,
+  responsive: [
+    {
+      breakpoint: 0,
+      settings: {
+        arrows: false,
+         dots: true,
+            centerMode: true
+      }
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        draggable: false,
+        slidesToShow: 5,
+        dots: false
+      }
+    }
+  ]
+};
+
+var $slides = $('.wayfx-block--hero-slider-one');
+
+document.addEventListener("shopify:section:unload", function(event) {
+  $slides.slick('unslick'); 
+});
+
+document.addEventListener("shopify:section:load", function(event) {
+  $slides.slick(heroSliderSettings);
+});
+
+$slides.slick(heroSliderSettings);
+
+</script>

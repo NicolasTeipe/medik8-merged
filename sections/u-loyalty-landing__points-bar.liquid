@@ -1,0 +1,269 @@
+
+{% capture bp-mobile %}{{ settings.bp_mobile }}px{% endcapture %}
+
+
+<div data-anchor="{{ section.settings.nav_title }}" class="block-grid block-grid--f block-rel tac flex flex-grid column-wrap align-center justify-left">
+  {% if section.settings.pre_title != blank %}
+  <span class="d-block t-m t-ucase">{{ section.settings.pre_title }}</span>
+  {% endif %}
+  {% if section.settings.title != blank %}
+  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if customer and section.settings.text__account != blank %}
+  <div class="rte-content t-m lh-ml cell-l cell-r">{{ section.settings.text__account }}</div>
+  {% elsif section.settings.text != blank %}
+  <div class="rte-content t-m lh-ml cell-l cell-r">{{ section.settings.text }}</div>
+  {% endif %}
+  <loyaltylion-points-bar class="d-block block-12/12 cell-l cell-r"></loyaltylion-points-bar>
+</div>
+
+<script type="text/javascript">    
+  class LoyaltyLionPointsBar extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( async () => {
+        if(!this.mounted){
+          this.mounted = true
+          this.util = await new LoyaltyLionUtil({
+            currencySymbol:{{ cart.currency.symbol | json }}
+          })
+          this.render()
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    bind(){
+      this.querySelector('.js-ll-reward-action')?.addEventListener('click',(e) => {
+        e.preventDefault()
+        const reward_id = this.querySelector('.js-ll-reward-selector').value
+        this.lastClaimedReward = reward_id
+        this.util.claimReward(reward_id)
+        .then( (claimedReward) => {
+          this.render()
+          this.util.showReward(claimedReward.id)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      })
+    }
+
+
+    getLoggedInHtml(){
+      const {program,_customer} = this.util.loyaltylion
+      const activeRewards = this.util.rewards.filter(({active,point_cost}) => active && point_cost) 
+      return `
+        <div class="flex column-nowrap align-center">
+          <span class="t-m d-block row--d3"><b>{{ 'apps.loyalty_lion.points_to_spend' | t }}</b>: ${_customer.pointsRedeemable}</span>
+          <span class="t-m d-block row"><b>{{ 'apps.loyalty_lion.points_pending' | t }}</b>: ${_customer.pointsPending}</span>
+          ${activeRewards.length ? `
+            <select class="js-ll-reward-selector ll-reward-selector  row--d2" name="reward_id">
+              ${activeRewards.map( reward => {
+                return `<option value="${reward.id}" ${reward.id == this.lastClaimedReward ? 'selected' : false}>${reward.title}</option>`
+              }).join('')}
+            </select>
+            <button class="js-ll-reward-action btn btn--large">{{ 'apps.loyalty_lion.swap_points' | t }}</button>
+          ` : ''}
+        </div>
+      `
+    }
+
+    render(){
+      const currencySymbol = this.util.settings.currencySymbol
+      const {_customer} = this.util.loyaltylion
+      const rewards = this.util.rewards
+      const loggedOutHTML = `
+        <a href="/account" class="btn btn--large">{{ 'apps.loyalty_lion.join_now' | t }}</a>
+      `
+      // Uncomment this line to manually test with a predefined value
+// _customer.pointsRedeemable = 350; 
+
+// Log customer points
+console.log('Customer Points Redeemable:', _customer.pointsRedeemable);
+
+// Find the current reward index
+const currentIndex = rewards.findIndex(({current}) => current);
+console.log('Current Reward Index:', currentIndex);
+
+// Initialize barSize
+let barSize = 0;
+
+if (_customer) {
+  // Log rewards structure
+  console.log('Rewards:', rewards);
+
+  // If the current index is not the last reward tier
+  if (currentIndex < rewards.length - 1) {
+    // Calculate base bar size up to the current index
+    barSize = (100 / rewards.length) * currentIndex;
+    console.log('Base Bar Size (up to current tier):', barSize);
+
+    // Get current and next rewards
+    const current = rewards[currentIndex];
+    const next = rewards[currentIndex + 1];
+    console.log('Current Reward:', current);
+    console.log('Next Reward:', next);
+
+    // Calculate the points needed for the next tier
+    const points_to_next_tier = next.point_cost - _customer.pointsRedeemable;
+    console.log('Points to Next Tier:', points_to_next_tier);
+
+    // Calculate the tier difference
+    const tier_diff = next.point_cost - current.point_cost;
+    console.log('Tier Difference (Next - Current):', tier_diff);
+
+    // Calculate progress towards the next tier
+    const progress_towards_next_tier = tier_diff - points_to_next_tier;
+    const progress_towards_next_tier_as_percentage = (progress_towards_next_tier / tier_diff) * 100;
+    console.log('Progress Towards Next Tier:', progress_towards_next_tier);
+    console.log('Progress Towards Next Tier as Percentage:', progress_towards_next_tier_as_percentage);
+
+    // Calculate relative difference to adjust bar size
+    const relative_diff = ((100 / rewards.length) / 100) * progress_towards_next_tier_as_percentage;
+    console.log('Relative Difference for Bar Size:', relative_diff);
+
+    // Add the calculated progress to the bar size
+    barSize = (barSize + relative_diff) + (50 / rewards.length);
+    console.log('Final Bar Size:', barSize);
+  } else {
+    // If customer is at the highest tier, set bar size to 100%
+    barSize = 100;
+    console.log('Customer is at the highest tier. Bar Size:', barSize);
+  }
+}
+
+// Log the final calculated bar size
+console.log('Final Calculated Bar Size:', barSize);
+
+
+      barSize = `calc(${barSize}%)`
+      this.innerHTML = `
+        <style>
+          @media screen and (min-width:{{ bp-mobile }}) {
+            .ll-points-bar__block{
+              width:calc(100% / ${rewards.length});
+            }
+            
+            .ll-points-counter__count{
+              width:${barSize};
+            }
+          }
+
+          @media screen and (max-width:{{ bp-mobile }}) {
+          
+       
+            .ll-points-counter__count{
+              height:${barSize};
+            }
+          }
+          
+        </style>
+        <div class="ct ll-points-bar-wrapper row--x2 block-rel row-wrap align-stretch justify-center block-12/12 @mobile__flex @mobile__ct--none">
+          <div class="ll-points-bar">
+            ${rewards.map(({discount_amount,point_cost,active,current},index) => {
+              return `
+                <div class="ll-points-bar__block ll-points-bar__block--amount">
+                  <span class="h-style h-style--accent t-ml">${currencySymbol}${discount_amount}</span>
+                </div>
+              `
+            }).join('')}
+          </div>
+          <span class="ll-points-counter">
+            <span class="ll-points-counter__count"></span>
+          </span>
+          <div class="ll-points-bar">
+            ${rewards.map(({discount_amount,point_cost,active,current},index) => {
+              return `
+                <div class="ll-points-bar__block ll-points-bar__block--points">     
+                  ${point_cost} {{ 'apps.loyalty_lion.points' | t }}
+                </div>
+              `
+            }).join('')}
+          </div>
+        </div>
+
+        ${_customer ? 
+          this.getLoggedInHtml() : 
+          loggedOutHTML
+        }
+      `
+      this.bind()
+    }
+    
+  }
+  customElements.define('loyaltylion-points-bar', LoyaltyLionPointsBar);
+</script>
+
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/points-bar",
+  "limit":1,
+  "class":"ct--x3 cb--x3 bg-grey-1",
+  "settings":[
+   
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin",
+      "default":true
+    },
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Points"
+    },
+    { 
+      "type":"textarea",
+      "id":"pre_title",
+      "label":"Pre-heading",
+      "default":"SAVE ON YOUR NEXT ORDER"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Spending Points"
+    },
+    { 
+      "type":"richtext",
+      "id":"text",
+      "label":"text (none user)",
+      "default":"<p>Start swapping your points for reward vouchers as soon as you have earned 50 points.</p>"
+    },
+    { 
+      "type":"richtext",
+      "id":"text__account",
+      "label":"text (logged in user)",
+      "default":"<p>Start swapping your points for reward vouchers as soon as you have earned 50 points. Choose how much you wish to save on your next order.  Only one reward voucher can be used per order and cann't be used in conjunction with any other discount code.</p>"
+    }
+  ]
+}
+{% endschema %}

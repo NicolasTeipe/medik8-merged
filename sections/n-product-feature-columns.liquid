@@ -1,0 +1,137 @@
+{%- if product.metafields.sf_product_layout_a.feature_1_heading -%}
+
+{{ "n-product-feature-columns.css" | asset_url | stylesheet_tag }}
+
+
+{%- assign heading = product.metafields.sf_product_layout_a.features_main_heading -%}
+{%- assign feature_image_1 = product.metafields.sf_product_layout_a.feature_1_image -%}
+{%- assign feature_heading_1 = product.metafields.sf_product_layout_a.feature_1_heading -%}
+{%- assign feature_paragraph_1 = product.metafields.sf_product_layout_a.feature_1_description -%}
+
+{%- assign feature_image_2 = product.metafields.sf_product_layout_a.feature_2_image -%}
+{%- assign feature_heading_2 = product.metafields.sf_product_layout_a.feature_2_heading -%}
+{%- assign feature_paragraph_2 = product.metafields.sf_product_layout_a.feature_2_description -%}
+
+{%- assign feature_heading_3 = product.metafields.sf_product_layout_a.feature_3_heading -%}
+{%- assign feature_paragraph_3 = product.metafields.sf_product_layout_a.feature_3_description -%}
+{%- assign feature_image_3_1 = product.metafields.sf_product_layout_a.feature_3_image_slide1 -%}
+{%- assign feature_image_3_2 = product.metafields.sf_product_layout_a.feature_3_image_slide2 -%}
+{%- assign feature_image_3_3 = product.metafields.sf_product_layout_a.feature_3_image_slide3 -%}
+{%- assign feature_image_3_4 = product.metafields.sf_product_layout_a.feature_3_image_slide4 -%}
+
+<div class="wayfx-wrapper">
+  <h2 class="h1--primary">{{ heading }}</h2>
+  {%- if feature_image_1 -%}
+    <div class="grid-flex grid-flex--left-image grid-flex--centered">
+      <div class="grid-flex__image large--one-half">
+        <img width="560" height="560" loading="lazy" src="https://cdn.medik8.com/{{ feature_image_1 }}/" alt="{{ product.title }}" />
+      </div>
+      <div class="grid-flex__text large--one-half">
+        {%- if feature_heading_1 -%}
+          <h3 class="h2--primary">{{ feature_heading_1 }}</h3>
+        {%- endif -%}
+        {%- if feature_paragraph_1 -%}
+          <p class="p--lg">{{ feature_paragraph_1 }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+  {%- if feature_image_2 -%}
+    <div class="grid-flex grid-flex--right-image grid-flex--centered">
+      <div class="grid-flex__text large--one-half">
+        {%- if feature_heading_2 -%}
+          <h3 class="h2--primary">{{ feature_heading_2 }}</h3>
+        {%- endif -%}
+        {%- if feature_paragraph_2 -%}
+          <p class="p--lg">{{ feature_paragraph_2 }}</p>
+        {%- endif -%}
+      </div>
+      <div class="grid-flex__image large--one-half">
+        <img width="560" height="560" loading="lazy" src="https://cdn.medik8.com/{{ feature_image_2 }}/" alt="{{ product.title }}" />
+      </div>
+    </div>
+  {%- endif -%}
+  {% assign slideshowImages = '' %}
+  {% for i in (1..3) %}
+    {% capture feature_image %}feature_3_image_slide{{ i }}{% endcapture %}
+    {% if product.metafields.sf_product_layout_a[feature_image] and product.metafields.sf_product_layout_a[feature_image] != blank and product.metafields.sf_product_layout_a[feature_image] != 'NONE' %}
+      {% capture slideshowImages %}{{ slideshowImages }}{{ product.metafields.sf_product_layout_a[feature_image] }},{% endcapture %}
+    {% endif %}
+  {% endfor %}
+  {% assign slideshowImages = slideshowImages | split :','%}
+  {%- if slideshowImages.size > 0 -%}
+    <div class="grid-flex grid-flex--left-image grid-flex--centered">
+      {%- if slideshowImages.size == 1 -%}
+      <div class="grid-flex__image large--one-half">
+        <img width="560" height="560" loading="lazy" src="https://cdn.medik8.com/{{ slideshowImages.first }}/" alt="{{ product.title }}" />
+      </div>
+      {% else %}
+      <div class="grid-flex__slider-image large--one-half">
+        <div class="wayfx-block__slider slider--arrow-alt slider--arrow-sm">
+          {% for image in slideshowImages %}
+          <div>
+            <img width="560" height="560" class="block-c" loading="lazy" src="https://cdn.medik8.com/{{ image }}/" alt="{{ product.title }}" />
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      <div class="grid-flex__text large--one-half">
+        {%- if feature_heading_3 -%}
+          <h3 class="h2--primary">{{ feature_heading_3 }}</h3>
+        {%- endif -%}
+        {%- if feature_paragraph_3 -%}
+          <p class="p--lg">{{ feature_paragraph_3 }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.wayfx-product__feature-columns .wayfx-block__slider').slick({
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: true,
+          draggable: true,
+          infinite: true,
+          dots: true,
+          mobileFirst: true,
+          responsive: [{
+              breakpoint: 768,
+              settings: {
+                  arrows: true,
+                  draggable: false
+              }
+          }]
+    }).show();
+  });
+</script>
+
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "Product Feature Columns",
+        "presets": [
+          {
+            "name": "Product Feature Columns"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__section wayfx-product__feature-columns",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Nothing Displayed?"
+          },
+          {
+            "type": "paragraph",
+            "content": "Make sure the product metafield 'sf_product_layout_a.feature_1_heading' has a value."
+          }
+        ]
+    }
+{% endschema %}
+

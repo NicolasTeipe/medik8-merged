@@ -1,0 +1,72 @@
+{% case layout %}
+
+  {% when 'desktop' %}
+
+    <section class="wayfx-header__extra-links wayfx-header__extra-links--desktop">
+        <div class="wayfx-wrapper">
+          <div class="wayfx-header__extra-links__left">
+            {% if settings.country_selector_enabled %}
+              {% render 'country-selector' %}
+            {% endif %}
+          </div>
+          <div class="wayfx-header__extra-links__right">
+            <div class="wayfx-header__extra-links__links">
+                <ul>
+                  {% for link in section.settings.header_extra_links.links %}
+                    <li>
+                      <a href="{{link.url}}">{{link.title}}
+                      {% if link.title contains "Hiring" %}
+                        <svg height="15" width="15" class="blinking"  role="graphics-symbol" aria-label="Red circle">
+                        	<circle cx="6" cy="11" r="4" fill="red"></circle>
+                        </svg>
+                      {% endif %}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+            </div>
+           </div>
+        </div>
+    </section>
+
+  {% when 'mobile' %}
+
+	<div class="wayfx-header__extra-links wayfx-header__extra-links--mobile">
+      <div class="wayfx-header__row">
+        <div class="wayfx-header__left">
+          {% if settings.country_selector_enabled %}
+            {% render 'country-selector' %}
+          {% endif %}
+        </div>
+        <div class="wayfx-header__right">
+          <ul>
+            {% if settings.use_swym %}
+            <li>
+              <a aria-label="Wishlist" href="#swym-wishlist" class="swym-wishlist wishlist-mobile wayfx-header__icon">
+                <i class="wayfx-icon wayfx-icon-heart"></i>
+                Wishlist
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+
+      </div>
+      <div class="wayfx-header__row">
+        <ul>
+          {% for link in section.settings.header_extra_links.links %}
+            <li>
+              <a href="{{link.url}}">{{link.title}}
+              {% if link.title contains "Hiring" %}
+                <svg height="15" width="15" class="blinking" role="graphics-symbol" aria-label="Red circle">
+                  <circle cx="6" cy="11" r="4" fill="red"></circle>
+                </svg>
+              {% endif %}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+	</div>
+
+{% endcase %}

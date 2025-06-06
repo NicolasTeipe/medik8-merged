@@ -1,0 +1,82 @@
+$(() => {
+  function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split("=");
+      if (pair[0] == variable) {
+        return pair[1];
+      }
+    }
+    return false;
+  }
+
+  if (getQueryVariable("chosen_country")) {
+    localStorage.setItem("chosen_country", "true");
+  }
+
+  chosenCountry = localStorage.getItem("chosen_country");
+
+  if (chosenCountry) return;
+
+  const success = (position) => {
+    var domain;
+    if (window.location.href.indexOf("www.medik8") > -1) {
+      domain = "UK";
+    } else if (window.location.href.indexOf("us.medik8") > -1) {
+      domain = "US";
+    } else if (window.location.href.indexOf("de.medik8") > -1) {
+      domain = "DE";
+    } else if (window.location.href.indexOf("eu.medik8") > -1) {
+      domain = "EU";
+    } else {
+      domain = "INT";
+    }
+
+    let latitude = position.coords.latitude,
+      longitude = position.coords.longitude,
+      geoAPI =
+        "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" +
+        latitude +
+        "&longitude=" +
+        longitude +
+        "&localityLanguage=en",
+      currentISOalpha2 = "",
+      targetStore = "",
+      countryZone = "";
+
+    fetch(geoAPI)
+      .then((result) => result.json())
+      .then((data) => {
+        let countryCode = data.countryCode,
+          principalSubdivision = data.principalSubdivision;
+        currentISOalpha2 = countryCode;
+
+        if (domain != countryCode) {
+          $.getJSON("{{ 'countries.json' | asset_url }}", function (data) {
+            $.each(data, function (id, country) {
+              if (currentISOalpha2 == country.isoAlpha2) {
+                countryZone = country.zone;
+                if (domain != countryZone) {
+                  let path = window.location.pathname.substring(1),
+                    url =
+                      country.website.split("?")[0] +
+                      path +
+                      "?chosen_country=true";
+                  window.location.href = url;
+                } else {
+                  return;
+                }
+              }
+            });
+          });
+        }
+      });
+  };
+
+  const error = (position) => {
+    console.warn("User did not allow location access");
+  };
+
+  navigator.geolocation.getCurrentPosition(success, error);
+});

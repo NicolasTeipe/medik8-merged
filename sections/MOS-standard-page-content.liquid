@@ -1,0 +1,31 @@
+<style>
+  .wayfx-wrapper iframe {
+  height: 634px !important;
+  }
+  </style>
+  <section class="wayfx-block wayfx-block--page-content wayfx-block--page-content--condensed rte">
+      <div class="wayfx-wrapper">
+          {{ page.content }}
+      </div>
+  </section>
+  
+  {% schema %}
+  {
+      "name": "Standard Page Content",
+      "presets": [
+        {
+          "name": "Page Content"
+        }
+      ],
+      "settings": [
+          {
+              "type": "text",
+              "id": "title",
+              "label": "Block Name Indentifier",
+              "default": "Standard Page Content",
+              "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+          }
+      ]
+  }
+  {% endschema %}
+  

@@ -1,0 +1,41 @@
+{% if section.settings.title != blank %}
+  {{ section.settings.title }}
+{% endif %}
+
+<div class="mob-hide">
+  <img loading="lazy" width="1920" height="500" alt="{{ section.settings.desktop_image.alt }}" src="{{ section.settings.desktop_image | image_url }}">
+</div>
+
+<div class="desk-hide">
+  <img loading="lazy" width="1920" height="500" alt="{{ section.settings.mobile_image.alt }}" src="{{ section.settings.mobile_image | image_url }}">
+</div>
+
+{% schema %}
+  {
+    "name": "MOS2.0 Content Section",
+    "class": "mos2--section dark mos2--content-section",
+    "tag": "section",
+    "presets": [
+      {
+        "name": "MOS2.0 Content Section"
+      }
+    ],
+    "settings": [
+      {
+        "id": "title",
+        "type": "text",
+        "label": "Title"
+      },
+      {
+        "id": "desktop_image",
+        "type": "image_picker",
+        "label": "Desktop Image"
+      },
+      {
+        "id": "mobile_image",
+        "type": "image_picker",
+        "label": "Mobile Image"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,234 @@
+<style>
+
+  .quick-view-item {
+    transition: .33s all ease;
+  }
+
+  .quick-view-item:before {
+    display: inline-block;
+    font-family: "FontAwesome";
+    content: "\f06e";
+    opacity: 0;
+    font-size: 0%;
+    top: -100%;
+    -webkit-backface-visibility: hidden;
+    transition: .33s all ease;
+    text-decoration: none !important;
+  }
+
+  .quick-view-item:hover:before {
+    opacity: 1;
+    font-size: small;
+    margin-right: 4px;
+  }
+
+  global-product-quick-view{
+    display:none;
+    background:#fff;
+    padding:var(--gutter-unit);
+  }
+
+  .wayfx-product__grid-overlay .wayfx-product__size {
+    margin-top: 0 !important;
+    width: fit-content !important;
+  }
+
+  .wayfx-product__grid-overlay .wayfx-product__actions {
+    margin-bottom: 15px;
+  }
+
+  .wayfx-product__grid-overlay .wayfx-product__photos-wrapper {
+    position:relative;
+    padding-right:0;
+  }
+
+  .wayfx-product__grid-overlay .wayfx-badge.custom-badge-styles {
+    z-index: 1;
+    font-size: 11px;
+    height: 23px;
+    line-height: 25px;
+    padding: 0 8px;
+    text-transform: uppercase; 
+    position:absolute;
+    top:0;
+    right:0;
+  }
+    
+  @media all and (max-width: 767px) {
+    .wayfx-product__grid-overlay .wayfx-badge.custom-badge-styles {
+      font-size: 10px;
+      height: 20px;
+      line-height: 21px; 
+    } 
+    
+  }
+
+ 
+  @media only screen and (max-width: 600px) {
+    .quick-view-item::before {
+      opacity: 1;
+      font-size: small;
+      margin-right: 4px;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+
+    .wayfx-product__full-ingredients .fancybox-close-small{
+      padding: 0!important;
+      top: 0px!important;
+      right: 0px!important;
+    }
+
+    .wayfx-product__full-ingredients .fancybox-close-small svg {
+      height: 30px;
+      width: 30px;
+      margin: auto;
+    }
+
+  }
+
+</style>
+
+  
+<script type="text/javascript">
+
+  DomReadyPromise().then( async () => {
+    {% if canonical_url contains 'regime' or canonical_url contains '/orders' %}
+      document.querySelectorAll('table a[href*="/products/"]').forEach( 
+        element => element.classList.add('quick-view-item','js-product-quickview')
+      )
+    {% elsif canonical_url contains 'blogs' or canonical_url contains '/shop-by-ingredient' or canonical_url contains '/refer-a-friend' %}
+      document.querySelectorAll('a[href*="/products/"]').forEach( 
+        element => element.classList.add('quick-view-item','js-product-quickview')
+      )
+    {% endif %}
+
+    // ajax quick view @todo can we move this to collection/product/module specific?
+    let quickViewItems = document.querySelectorAll('.js-product-quickview')
+
+    window.onQuickViewClick = async function(element){
+      let url = element.dataset.product || element.href
+      if(!url){
+        return
+      }
+      window.quickShopModals =  window.quickShopModals || {}
+      let modal = window.quickShopModals[url] || false
+      if(!modal){
+        let content = await fetch(`${url}${url.includes('?') ? '&' : '?'}view=ajax-quickview`)
+        content = content.status == 200 ? content : false
+        content = content ? await content.text() : false
+        if(!content){
+          return
+        }
+
+        modal = window.quickShopModals[url] = new ModalBox({
+          content: content,
+          settings: {
+            containerCloseButton: true,
+          },
+        })
+      }
+
+      modal.open()
+    }
+
+    quickViewItems.forEach(element => element.addEventListener('click',(event) => {
+      event.preventDefault()
+      window.onQuickViewClick(element)
+    }))
+    
+  }).catch(err => {
+    console.log(err)
+  })
+  
+
+
+  class GlobalProductQuickView extends HTMLElement {
+
+    constructor() { 
+      super();
+    }
+
+    connectedCallback(){
+      DomReadyPromise().then( () => {
+        this.init()
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    async init(){     
+      let bundleData = this.querySelector('template[data-bundle]')
+      if(bundleData){
+        try{
+          bundleData = JSON.parse(bundleData.innerHTML)
+        }catch(err){
+          bundleData = false
+          console.log(err)
+        }
+        if(bundleData?.variantData){
+          // todo, error catch?
+          this.querySelector('.js-btn-qv-bundle-atc').addEventListener('click',(e) => {
+            e.preventDefault()
+            GlobalCartMain.addProductFromButton(e, bundleData.variantData);
+          })
+        }
+      }
+      const {YotpoObserver} = await import({{ 'scripts.globalYotpoInstagramFeed.js' | asset_url | json }})
+      const yotpo$ = window.yotpo$ = window.yotpo$ || new YotpoObserver()
+      // todo, replace with .once() pattern when observerv2 rolled out
+      if(yotpo$.yotpoAPI){
+        yotpo$.yotpoAPI.refreshWidgets()
+        this.addReviewClickListener()
+      }else{
+        yotpo$.observer$.subscribe( () => {
+          yotpo$.yotpoAPI$.refreshWidgets()
+          this.addReviewClickListener()
+        })
+      }
+      const select = this.querySelector('.js-prod-qv__select')
+      if(select){
+        select.addEventListener('change',(e) => {
+          const selected = e.currentTarget.selectedOptions[0]
+          this.onVariantChange(selected)
+        })
+        this.onVariantChange(select.selectedOptions[0])
+      }
+    }
+
+    addReviewClickListener(){
+      const reviewsLinkButton = this.querySelector('button[data-href]')
+      if(!reviewsLinkButton) return
+      reviewsLinkButton.addEventListener('click' , (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const {href} = reviewsLinkButton.dataset
+        window.location.href = href
+        return
+      })
+    }
+
+    onVariantChange(option){
+      const prodQv_image = this.querySelector('.js-prod-qv__image'),
+            prodQv_stock = this.querySelector('.js-prod-qv__low-stock'),
+            prodQv_atc = this.querySelector('.js-prod-qv__atc'),
+            prodQv_price = this.querySelector('.js-prod-qv__price')
+
+      const {disabled,lowStock,title,image,price,discountedPrice} = option.dataset
+      prodQv_image.src = image ? image : prodQv_image.src
+      prodQv_price.innerHTML = discountedPrice ? `<s>${price}</s>${discountedPrice}` : `${price}`
+      prodQv_stock.style.display = prodQv_stock == 'true' ? 'block' : 'none'
+      if(disabled == 'true'){
+        prodQv_atc.setAttribute('disabled',true)
+      }else{
+        prodQv_atc.removeAttribute('disabled')
+      }
+      prodQv_atc.innerHTML = disabled != 'true' ? '<span class="text">{{ 'products.product.add_to_cart' | t }}</span>' : '{{ 'products.product.sold_out' | t }}'
+    }
+
+  
+  }
+  
+  customElements.define('global-product-quick-view', GlobalProductQuickView);
+</script>

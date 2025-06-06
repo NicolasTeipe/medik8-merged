@@ -1,0 +1,257 @@
+{% unless product.metafields.accordion.proven_results.value == blank %}
+  <proven-results>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      <div class="content{% unless section.settings.image_1 %} no-img{% endunless %}">
+        {%- if section.settings.image_1 -%}
+          <before-after-compare class="d-block">
+            <div class="js-pz-{{ section.id }} img-wrapper">
+              <img src="{{ section.settings.image_1 | image_url: width: 800 }}"
+                  alt="{{ section.settings.image_1_text }}"
+                  width="800"
+                  height="800"
+                  class="js-img can-zoom"
+                  loading="lazy">
+              {%- render 'svg_zoom-in' -%}
+              <div class="buttons-row">
+                {%- assign button_text_array = 'image_1_text,image_2_text,image_3_text' | split: ',' -%}
+                {%- assign imagesArray = 'image_1,image_2,image_3' | split: ',' -%}
+                {% for t in button_text_array %}
+                  {% assign index = forloop.index0 %}
+                  {% assign image = section.settings[imagesArray[index]] %}
+                  {%- if section.settings[t] != blank and image -%}
+                    <span 
+                      class="js-img-btn {% if forloop.first %}active{% endif %}" 
+                      data-src="{{ image | image_url: width: 800  }}">{{ section.settings[t] }}</span>
+                  {%- endif -%}
+                {% endfor %}
+              </div>
+            </div>
+          </before-after-compare>
+        {%- endif -%}
+        <div class="txt-wrapper">
+          <ul class="stats">
+            {%- comment -%} fix for de locale using ' und ' instead of ', and ' {%- endcomment -%}
+            {%- assign stats_str = section.settings.stats | replace: ' und ', ', and ' -%}
+            {%- assign statistics = stats_str | split: ',' -%}
+
+            {%- for stat in statistics -%}
+              <li>
+                {% liquid
+                  if forloop.last
+                    assign stat_num = stat | slice: 5, stat.size | split: ' ' | first
+                    assign stat_text = stat | replace: '_', ',' | slice: 5, stat.size | replace: stat_num, ''
+                  else
+                    assign stat_num = stat | split: ' ' | first
+                    assign stat_text = stat | replace: '_', ',' | replace: stat_num, ''
+                  endif
+                %}
+                <span>{{ stat_num }}</span>{{ stat_text }}
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          <p>{{ section.settings.smallprint }}</p>
+        </div>
+
+      </div>
+    </details>
+  </proven-results>
+
+  <script type="module">
+    import PinchZoom from {{ 'pinch-zoom.js' | asset_url | json }}
+
+    class ProvenResults extends HTMLElement {
+      constructor() {
+        super();
+
+        this.beforeAfterEl = this.querySelector('before-after-compare');
+
+        this.mobileWidthBp = 768
+        this.viewportWidth =
+          document.documentElement.clientWidth ||
+          document.body.clientWidth;
+      }
+
+      connectedCallback() {
+        this.viewportWidth < this.mobileWidthBp
+          ? this.initPinchZoom()
+          : this.handleImageClick()
+
+      }
+
+      initPinchZoom() {
+        const pzImg = document.querySelector('.js-pz-{{ section.id }}');
+        const pz = new PinchZoom(pzImg, {
+          minZoom: 1,
+          draggableUnzoomed: false
+        });
+        pz.enable();
+      }
+
+      handleImageClick() {
+        this.beforeAfterEl.addEventListener('click', () => {
+
+          const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+          // add overlay & lock window
+          const overlay = document.createElement('div');
+          overlay.classList.add('accordion-overlay');
+          overlay.style.zIndex = 9000;
+          document.body.appendChild(overlay);
+          document.body.classList.add('body-scroll-lock')
+          document.body.style.top = `-${scrollPosition}px`;
+
+          // build zoomed image
+          const clone = this.beforeAfterEl.cloneNode(true);
+          const svg = clone.querySelector('svg')
+          svg.remove()
+          clone.classList.add('is-expanded');
+
+
+          const removeZoom = () => {
+            document.body.classList.remove('body-scroll-lock');
+            window.scrollTo(0, scrollPosition);
+            overlay.remove();
+            clone.ObserverLite.unsubscribe(this.updateSubscriber$)
+            clone.remove();
+          }
+
+          overlay.addEventListener('click', removeZoom);
+          clone.addEventListener('click', removeZoom);
+          
+          this.beforeAfterEl.parentNode.appendChild(clone)
+
+          this.updateSubscriber$ = clone.subscribe( ({src}) => {
+            const button = this.beforeAfterEl.getButtonFromSrc(src)
+            this.beforeAfterEl.update(button)
+          })
+          
+        })
+      }
+    }
+
+    customElements.define('proven-results', ProvenResults)
+
+
+    class BeforeAfterCompare extends HTMLElement {
+      constructor() {
+        super();
+      }
+      
+      subscribe(callback) {
+        return this.ObserverLite.subscribe(callback)
+      }
+    
+      next(data) {
+        this.ObserverLite.next(data)
+      }
+
+      connectedCallback() {
+        this.ObserverLite = new ObserverLite()
+        this.img = this.querySelector('.js-img')
+        const buttons = this.buttons = Array.from(
+          this.querySelectorAll('.js-img-btn')
+        )
+        buttons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.stopPropagation()
+            this.update(button)
+          })
+        })
+      }
+      
+      getButtonFromSrc(src){
+        return this.buttons.find(({dataset}) => dataset.src == src)
+      }
+
+      update(button) {
+        this.img.src = button.dataset.src;
+        this.querySelector('.active')?.classList.remove('active');
+        button.classList.add('active');
+        this.next({src:button.dataset.src})
+      }     
+    }
+
+    customElements.define('before-after-compare', BeforeAfterCompare)
+
+  </script>
+{% endunless %}
+{% schema %}
+    {
+        "name": "Accordion- Proven Results",
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-proven-results",
+        "settings": [
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": "open"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image One"
+          },
+          {
+            "type": "text",
+            "id": "image_1_text",
+            "label": "Heading One Text"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image Two"
+          },
+          {
+            "type": "text",
+            "id": "image_2_text",
+            "label": "Heading Two Text"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image Three"
+          },
+          {
+            "type": "text",
+            "id": "image_3_text",
+            "label": "Heading Three Text"
+          },
+          {
+            "type": "text",
+            "id": "stats",
+            "label": "Statistics"
+          },
+          {
+            "type": "text",
+            "id": "smallprint",
+            "label": "Small print"
+          }
+        ],
+        "presets": [
+          {
+            "name": "Accordion - Proven Results"
+          }
+        ]
+    }
+{% endschema %}

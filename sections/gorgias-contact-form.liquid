@@ -1,0 +1,110 @@
+{%- comment -%}
+  Note, this section only controls the loading and configuration of the contact form(s),
+  and is not responsible for their placement within the page.
+  To add a contact form, you should add the relevant form html (example below) elsewhere
+  within the page, in the place you want it to appear.
+
+  Example:
+  <div data-gorgias-contact-form-uid="xxxxxxxx"></div>
+{%- endcomment -%}
+
+<script>
+  DomReadyPromise().then( () => {
+    // build json obj for countries and form ID's
+    let countryFormMap = {
+      "default": "{{ section.blocks[0].settings.form_id }}"
+    };
+    {% for block in section.blocks offset: 1 %}
+      {%- assign countries_array = block.settings.country_code | split: ',' -%}
+      {%- for country in countries_array reversed limit: number offset: number -%}
+        countryFormMap['{{ country }}'] = '{{ block.settings.form_id }}';
+      {%- endfor -%}
+    {% endfor %}
+
+    const country = getCountryCode().then(cc => {
+      const formId = countryFormMap[cc] ?? countryFormMap.default
+
+      // delete forms for other countries
+      const allGorgiasForms = document.querySelectorAll('div[data-gorgias-contact-form-uid]')
+      allGorgiasForms.forEach(form => {
+        if(form.dataset['gorgiasContactFormUid'] != formId) form.remove()
+      })
+
+      // Dynamically load the Gorgias script
+      const script = document.createElement('script');
+      script.defer = true;
+      script.src = "https://contact.gorgias.help/api/contact-forms/loader.js?v=2";
+      script.setAttribute('data-gorgias-loader-contact-form', '');
+      document.body.appendChild(script);
+    });
+
+    async function getCountryCode () {
+      const r = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client')
+      const json = await r.json()
+      return json.countryCode
+    }
+  })
+</script>
+
+<style>
+/* make the gorgias form sit better within the contact page */
+div[data-gorgias-contact-form-uid] {
+  margin: -60px 0 0;
+}
+
+@media screen and (min-width: 1024px) {
+  div[data-gorgias-contact-form-uid] {
+    margin: -60px 15px 0;
+  }
+}
+</style>
+
+{% schema %}
+  {
+    "name": "Gorgias Contact Form",
+    "presets": [
+      {
+        "name": "Gorgias Contact Form"
+      }
+    ],
+    "settings": [
+      {
+        "type": "header",
+        "content": "Instructions"
+      },
+      {
+        "type": "paragraph",
+        "content": "Add a new block for each contact form that could be displayed. Assign the Country and Gorgias form ID."
+      },
+      {
+        "type": "paragraph",
+        "content": "Assign multiple countries to a single contact form by separating with a ',' - for example: 'GB,US,DE'"
+      },
+      {
+        "type": "paragraph",
+        "content": "IMPORTANT: The first block will be treated as the default, and as such the country should be left blank."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "form",
+        "name": "Form",
+        "limit": 10,
+        "settings": [
+          {
+            "type": "text",
+            "id": "country_code",
+            "label": "Country Code",
+            "info": "Use ISO 3166-1 alpha-2. For multiple countries, separate with ','"
+          },
+          {
+            "type": "text",
+            "id": "form_id",
+            "label": "Gorgias Form ID",
+            "info": "8 chars - ex. 't21m4acr'"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

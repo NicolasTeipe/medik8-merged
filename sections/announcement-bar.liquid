@@ -1,0 +1,277 @@
+{% if section.blocks.size >= 1 %}
+  {{ "announcement-bar.css" | asset_url | stylesheet_tag }}
+
+  {% for block in section.blocks %}
+
+    {%- if block.type == 'message' -%}
+      {%- capture message_block -%}
+        <div class="message-block">
+          <p>{{ block.settings.bar_message }}</p>
+        </div>
+      {%- endcapture -%}
+    {%- endif -%}
+
+    {%- if block.type == 'button' -%}
+      {%- capture button_block -%}
+        {% if block.settings.button_url and block.settings.button != blank  %}
+          <a href="{{ block.settings.button_url }}" class="button-block">{{ block.settings.button }}</a>
+          <style>
+            .button-block {
+              background-color: {{section.settings.color_theme | split: '|' | slice: 1 }};
+              color: {{section.settings.color_theme | split: '|' | slice: 2 }};
+              white-space: nowrap;
+            }
+            .button-block:hover {
+              color: {{section.settings.color_theme | split: '|' | slice: 2 }};
+            }
+          </style>
+        {% endif %}
+      {%- endcapture -%}
+    {%- endif -%}
+
+    {%- if block.type == 'countdown' -%}
+      {%- assign target_time = block.settings.date | append: ',' | append : block.settings.time | replace: '-', ',' | replace: ':', ',' | append: ',0' -%}
+
+      {%- capture countdown_block -%}
+        <div class="countdown-grid">
+          <div class="time grid-item" id="tm-d">&nbsp;</div>
+          <div class="time grid-item" id="tm-h">&nbsp;</div>
+          <div class="time grid-item" id="tm-m">&nbsp;</div>
+          <div class="time grid-item" id="tm-s">&nbsp;</div>
+          <div class="day grid-item">DÍA</div>
+          <div class="day grid-item">HRS</div>
+          <div class="day grid-item">MIN</div>
+          <div class="day grid-item">SEG</div>
+        </div>
+
+        <style>
+          .countdown-grid {
+            color: {{section.settings.color_theme | split: '|' | slice: 1 }};
+          }
+        </style>
+      {%- endcapture -%}
+    {%- endif -%}
+  {% endfor %}
+
+  {%- capture pipe -%}
+    {%- if message_block and button_block -%}
+      {%- unless countdown_block -%}
+        <span class="pipe"></span>
+        <style>
+          .pipe {
+            @media all and (min-width: 768px) {
+              border-left: 1px solid {{section.settings.color_theme | split: '|' | slice: 1 }};
+              height: 16px;
+              margin: 0 3px 0 2px;
+            }
+          }
+        </style>
+      {%- endunless -%}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <div class="announcement-bar">
+    {{ message_block }}
+    {{ countdown_block }}
+    {{ pipe }}
+    {{ button_block }}
+  </div>
+
+{% endif %}
+
+{%- if countdown_block -%}
+  <script>
+    class CountdownTimer {
+      constructor(targetTime) {
+        let args = targetTime.split(',').map(Number);
+        this.endTime = new Date(
+          Date.UTC(args[0], args[1] - 1, args[2], args[3], args[4], args[5])
+        );
+        this.interval = null;
+
+        this.day = document.getElementById('tm-d');
+        this.hour = document.getElementById('tm-h');
+        this.min = document.getElementById('tm-m');
+        this.sec = document.getElementById('tm-s');
+
+        this.update();
+        this.start();
+      }
+
+      update() {
+          let now = new Date().getTime();
+          let timeRemaining = this.endTime - now;
+
+          if (timeRemaining < 0) {
+            clearInterval(this.interval);
+            this.day.innerText = '00';
+            this.hour.innerText = '00';
+            this.min.innerText = '00';
+            this.sec.innerText = '00';
+          } else {
+            this.day.innerText = this.formatTimeUnit(
+              Math.floor(timeRemaining / (1000 * 60 * 60 * 24))
+            );
+
+            this.hour.innerText = this.formatTimeUnit(
+              Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+            );
+
+            this.min.innerText = this.formatTimeUnit(
+              Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60))
+            );
+
+            this.sec.innerText = this.formatTimeUnit(
+              Math.floor((timeRemaining % (1000 * 60)) / 1000)
+            );
+          }
+      }
+
+      start() {
+        this.interval = setInterval(() => this.update(), 1000);
+    }
+
+      formatTimeUnit(value) {
+        return value.toString().padStart(2, '0');
+      }
+    }
+
+    let timer = new CountdownTimer("{{ target_time }}");
+  </script>
+{%- endif -%}
+
+{% style %}
+
+  .announcement-bar {
+    background-color: {{section.settings.color_theme | split: '|' | slice: 0 }};
+  }
+  .message-block {
+    color: {{section.settings.color_theme | split: '|' | slice: 1 }};
+  }
+
+  {%- if countdown_block -%}
+    @media all and (max-width: 767px) {
+      {%- if section.settings.priority == 'msg' -%}
+        .button-block {
+          display: none !important;
+        }
+      {%- else -%}
+        .message-block {
+          display: none !important;
+        }
+        .button-block {
+          margin-top: 5px;
+        }
+      {%- endif -%}
+    }
+  {%- endif -%}
+  
+{% endstyle %}
+
+
+{% schema %}
+  {
+    "name": "Announcement Bar",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Announcement Bar Settings"
+      },
+      {
+        "type": "select",
+        "id": "color_theme",
+        "label": "Colour Theme",
+        "options": [
+          {
+            "value": "#E7E7E7|#000000|#FFFFFF",
+            "label": "Grey"
+          },
+          {
+            "value": "#F77300|#FFFFFF|#F77300",
+            "label": "Orange"
+          },
+          {
+            "value": "#000000|#FFFFFF|#000000",
+            "label": "Black"
+          }
+        ],
+        "default": "#E7E7E7|#000000|#FFFFFF"
+      },
+      {
+        "type": "radio",
+        "id": "priority",
+        "label": "Message / CTA priority",
+        "options": [
+          {
+            "value": "msg",
+            "label": "Message"
+          },
+          {
+            "value": "cta",
+            "label": "CTA"
+          }
+        ],
+        "info": "On smaller screens with a countdown, there is only room for the Message or CTA. Choose which to display.",
+        "default": "msg"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "message",
+        "name": "Message",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "inline_richtext",
+            "id": "bar_message",
+            "label": "Anouncement Bar Message",
+            "default": "Your Message Here"
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "name": "Button",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "button",
+            "label": "Button",
+            "default": "Button"
+          },
+          {
+            "type": "url",
+            "id": "button_url",
+            "label": "Link"
+          }
+        ]
+    },
+    {
+      "type": "countdown",
+      "name": "Countdown",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Enter the date and time the countdown timer should count down to."
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "info": "Use date format YYYY-MM-DD"
+        },
+        {
+          "type": "text",
+          "id": "time",
+          "label": "Time",
+          "default": "00:00",
+          "info": "Use the 24 hour time format HH:MM"
+        }
+
+      ]
+    }
+  ]    
+}
+{% endschema %}

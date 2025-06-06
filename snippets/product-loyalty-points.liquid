@@ -1,0 +1,194 @@
+{%- if product.gift_card? -%}
+  {%- assign is_gift_card = true -%}
+  <script>window.isGiftCard = true</script>
+{%- endif -%}
+
+{%- unless is_gift_card -%}
+  {% assign selected_variant_price = product.selected_or_first_available_variant.price | money %}
+  {% capture hintTextPointsHtml %}<span class="js-loyalty-hint__price" data-lion-price-for-product-id="{{ product.id }}" style="display:none">{{ selected_variant_price }}</span><span data-lion-points-for-product-id="{{ product.id }}"></span>{% endcapture %}
+  {% capture hintTextHtml %}{{ 'products.product.loyalty_points_hint_html' | t:points:hintTextPointsHtml }} {% endcapture %}
+  
+  <product-loyalty-points-hint style="display:none"
+    hint_popup_text='{{ section.settings.loyalty_lion__hint_text }}'
+    hint_button_text='{{ hintTextHtml }}'>
+  </product-loyalty-points-hint>
+{%- endunless -%}
+
+
+<style type="text/css">
+  .medk8-product--price-box{
+    position:relative;
+  }
+
+  product-loyalty-points-hint{
+    cursor: pointer;
+    background: #c8c8c8;
+    border-radius: 4px;
+    font-family: ridley_groteskmedium;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    color: #000;
+    padding: 7px 33px 6px 7px;
+    background-position:calc(100% - 10px) center;
+    background-size:15px;
+    background-repeat:no-repeat;
+    background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAD1SURBVHgBpZONEcFAEIWXUUBK0AEdSAdOBU4HVEAH0kHSASpAB1GBdCAdxG7yjnOWZHgz30xu993ez+aI/lRPiUWMZSbMmCmZgjkwWVuBmNnhO2fO+B4xBoVWzJ4UzZmKSbCLUEPsoIL3LSmJDbVLPDdqjvdQylwV8xKEOoJaEVa3itGEK0EWc+qjxv4gUPQlLnPMgJrzi0rFmMC4COLOG/X9AXWX8xZS4ISBoe5y3twFXm7V06cuSMdSPyA3Lb1dU7vEI/cyDBMWiVRLUnPuLQUtD9+CgUkKyP9+Qdw9LNGMnvemvka3mykKycruYWWkt/t33QHN2jXDZVj4cwAAAABJRU5ErkJggg==')
+  }
+
+  .loyalty-hint__text{
+    background: #f7f7f7;
+    box-shadow: 0 8px 12px rgb(0 0 0 / 25%);
+    color: #000;
+    text-align: left;
+    border-radius: 6px;
+    padding: 15px 35px 15px 15px;
+    position: absolute;
+    z-index: 1;
+    width: 530px;
+    max-width:100%;
+    left:0px;
+    top: 100%;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .loyalty-hint__close-btn{
+    position:absolute;
+    top:0;
+    right:0;
+    padding:15px;
+  }
+
+  .loyalty-hint__close-btn i{
+    font-size:10px;
+    display:block;
+  }
+</style>
+
+<script type="text/javascript">
+  
+  class ProductLoyaltyPointsHint extends HTMLElement {
+
+    constructor() { 
+      super()
+      // bind value to the toggleHintTextDisplay for when it is called inside document click event
+      this.toggleHintTextDisplay = this.toggleHintTextDisplay.bind(this)
+    }
+
+    domIsReady(){
+      return new Promise( (resolve,reject) => {
+        if(document.readyState != 'interactive' ){
+          document.addEventListener('DOMContentLoaded',  () => {
+            resolve()
+          })
+        }else{
+          resolve()
+        }
+      })
+    }
+
+    loyaltylionIsReady(){
+      return new Promise( (resolve,reject) => {
+        if(window.loyaltylion.ui){
+          resolve()
+        }else{
+          window.loyaltylion.on('ready', () => {
+            resolve()
+          })
+        }
+      })
+    }
+
+
+    connectedCallback(){
+      this.id =  Math.floor(Math.random()*999999999999999)
+      this.hint_popup_text = this.attributes.hint_popup_text ? this.attributes.hint_popup_text.value : false
+      this.hint_button_text = this.attributes.hint_button_text ? this.attributes.hint_button_text.value : false
+      if(this.hint_popup_text &&  this.hint_button_text){
+        // wait for dom + loyalty lion to load 
+        this.domIsReady().then( () => {
+          this.loyaltylionIsReady().then( () => {
+            if (!window.isGiftCard) this.render()
+          }).catch(err => {
+            console.log('loyality lion not detected')
+          })
+        })
+      }
+    }
+
+    renderHintText(){
+      this.hintTextRendered = true
+      this.hintText = document.createElement('div')
+      this.hintText.classList.add('loyalty-hint__text')
+      this.hintText.style.display = 'none'
+      this.hintText.innerHTML = this.hint_popup_text 
+      
+      this.hintTextToggle = document.createElement('button')
+      this.hintTextToggle.innerHTML = `<i class="wayfx-icon wayfx-icon-close" aria-hidden="true"></i>
+                                       <span class="fallback-text">"Close"</span>`
+    
+      this.hintTextToggle.classList.add('loyalty-hint__close-btn','icon-fallback-text') 
+      this.hintText.appendChild(this.hintTextToggle)
+      this.appendChild(this.hintText)
+
+      this.hintTextToggle.addEventListener('click',(e) => {
+        this.toggleHintTextDisplay(e)
+      })
+    }
+
+
+    toggleHintTextDisplay(e){
+      const show = this.hintText.style.display == 'none'
+      const {hintText} = this
+      if(show){
+        hintText.style.display = 'block'
+        document.addEventListener('click',this.toggleHintTextDisplay,true)
+      }else{
+        hintText.style.display = 'none'
+        document.removeEventListener('click',this.toggleHintTextDisplay,true)
+      }
+      e.stopPropagation()
+    }
+
+    update(price){
+      if(price){
+        this.productPointsPrice =  this.productPointsPrice || this.querySelector('.js-loyalty-hint__price')
+        this.productPointsPrice.innerHTML = price
+      }
+      window.loyaltylion.ui.refresh()
+    }
+
+    bind(){
+      //@to do, maybe replace this with an attr input for selector
+      this.variantSelector = document.querySelector('#productSelect')
+      this.variantSelector.addEventListener('change',(event) => {
+        const selectedOption = event.target.querySelector('option:checked')
+        const selectOptionPrice = selectedOption.dataset.discountedPrice ? selectedOption.dataset.discountedPrice : selectedOption.dataset.price
+        this.update(selectOptionPrice)  
+      })
+
+      // force change event to display correct points on load
+      this.variantSelector.dispatchEvent(
+        new Event('change')
+      );
+
+      this.addEventListener('click',(e) => {
+        if(!this.hintTextRendered){
+          this.renderHintText()
+        }
+        this.toggleHintTextDisplay(e)
+      })
+      
+    }
+
+    render(){
+      this.innerHTML = this.hint_button_text   
+      this.bind()
+      this.style.display = 'block'
+    }
+  }
+
+  customElements.define('product-loyalty-points-hint', ProductLoyaltyPointsHint);
+</script>

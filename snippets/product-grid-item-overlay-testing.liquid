@@ -1,0 +1,178 @@
+{%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
+{%- assign product_description = product.metafields.sf_product_hero.description -%}
+{%- assign product_size = product.metafields.sf_product_hero.size -%}
+{%- assign product_type = product.type -%}
+{%- assign product_csa = '' -%}
+{%- assign highlight_title_1 = product.metafields.sf_product_hero.highlight_1_heading -%}
+{%- assign highlight_text_1 = product.metafields.sf_product_hero.highlight_1_description -%}
+{%- assign highlight_title_2 = product.metafields.sf_product_hero.highlight_2_heading -%}
+{%- assign highlight_text_2 = product.metafields.sf_product_hero.highlight_2_description -%}
+{%- assign highlight_title_3 = product.metafields.sf_product_hero.highlight_3_heading -%}
+{%- assign highlight_text_3 = product.metafields.sf_product_hero.highlight_3_description -%}
+{%- assign discount_off = product.price | times: builder_discount | divided_by: 100 -%}
+{%- assign discount_price = product.price | minus: discount_off | money_without_trailing_zeros -%}
+{%- assign low_stock = false -%}
+{%- assign on_sale = false -%}
+{%- if product.compare_at_price > product.price -%}
+  {%- assign on_sale = true -%}
+{%- endif -%}
+{%- assign sold_out = true -%}
+{%- if product.available -%}
+  {%- assign sold_out = false -%}
+{%- endif -%}
+{%- if product.type == 'E-Gift Card' -%}
+	{%- assign product_type = 'Gifts' -%}
+{%- endif -%}
+{%- assign filters = "Blemish, Recovery, Pigmentation, Pore Refining, Redness, Skin Ageing, For Men, Eyes & Lips, Body" | split: ', ' -%}
+
+{%- if variant_overlay -%}
+	{%- assign product_id = variant.id -%}
+	{%- assign product_title = variant.title -%}
+  {%- assign product_image = variant.featured_image.src -%}
+	{%- assign product_size = variant.metafields.sf_settings.size -%}
+	{%- assign product_overlay_id = variant.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = variant.price -%}
+  {%  assign variant_id = variant.id %}
+  {%  assign variant_inventory = variant.inventory_quantity %}
+{%- else -%}
+	{%- assign product_id = product.id -%}
+	{%- assign product_title = product.title -%}
+	{%- assign product_image = product.featured_image.src -%}
+	{%- assign product_overlay_id = product.variants.first.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = product.variants.first.price -%}
+  {%  assign variant_id = product.variants.first.id %}
+  {%  assign variant_inventory = product.variants.first.inventory_quantity %}
+{%- endif -%}
+{%- assign on_sale = false -%}
+{%- if product_compare_at_price > product_price -%}
+  {%- assign on_sale = true -%}
+{%- endif -%}
+<div id="product_{{ product_id }}_information" class="wayfx-product__grid-overlay" data-wrapper-id="{{ product_id }}" >
+    <div class="wayfx-product__grid">
+        <div class="wayfx-product__photos-wrapper">
+            <img width="264" height="264" loading="lazy" src="{{ product_image | image_url }}" alt="{{ product.featured_image.alt | escape }}" />
+            <p class="wayfx-product__grid-price">
+              {%- if on_sale -%}
+                <s>{{ product_compare_at_price | money_without_trailing_zeros }}</s>
+              {%- endif -%}
+              <span>{{ product_price | money_without_trailing_zeros }}</span>
+          	</p>
+          	<div class="wayfx-product__grid-add">
+              <form id="wayfx-product-overlay-{{ product_overlay_id }}" action="/cart/add" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="id" value="{{ product_overlay_id }}" />
+                  <input 
+                    type="hidden" 
+                    id="quantity" 
+                    name="quantity" 
+                    value="1"
+                    data-variant-id="{{ variant_id }}"
+                    data-variant-inventory-qty="{{ variant_inventory }}"/>
+               
+                {% unless product.title == 'Liquid Peptides™ (Travel Size)' or product.title == 'Advanced Night Restore™ (Travel Size)' %}
+               
+                  {%- if sold_out -%}
+                    {% if product.tags contains 'Find out More' %}
+                        <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.find_out_more' | t }}</a>
+                    {% elsif product.tags contains "Coming Soon" %}
+                        <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.coming_soon' | t }}</a>
+                    {%- else -%}
+                        <button class="btn--full btn--outline btn--sold-out" onClick="return false;">{{ 'products.product.sold_out' | t }}</button>
+                    {%- endif -%}
+
+                  {%- else -%}
+                    <button class="btn--full btn" onClick="GlobalCartMain.addProductFromButton(event)"><span class="text">Add to Bag</span></button>
+                  {%- endif -%}
+                                
+                {% endunless %}
+                
+              </form>
+          	</div>
+        </div>
+      
+        <div class="wayfx-product__details">
+            <div class="wayfx-product__actions">
+              
+              
+              <a href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews" style="margin: 0; padding: 0;">
+                <div class="yotpo bottomLine" style="pointer-events: none;"
+                     data-product-id="{{ product.id }}">
+                  {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
+              {%- assign time_now = 'now' | date: '%s' %}
+              {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
+              {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
+              {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.catalog_bottomline_update_time | date: '%s' %}
+              {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
+              {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
+                  {%- assign yotpo_bottomline_obsolete = false %}
+              {%- else %}
+                {%- assign yotpo_bottomline_obsolete = true %}
+              {%- endif %}
+              {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
+                  {{ product.metafields.yotpo.catalog_bottomline }}
+                  {%- endif %}
+          </div>
+              </a>
+              
+              
+              {% comment %}
+                <div class="yotpo bottomLine"
+                    data-appkey="{{ settings.yotpo_api_key }}"
+                    data-domain="{{shop.permanent_domain | escape }}"
+                    data-product-id="{{ product.id }}"
+                    data-product-models="{{ product.id }}"
+                    data-name="{{ product.title | escape }}"
+                    data-url="{{ shop.url }}{{ product.url }}"
+                    data-image-url="{{ product.featured_image | product_img_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
+                    data-description="{{ product.description | escape }}"
+                    data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+            
+                  <span style="border: 1px solid purple">
+                    {{ product.metafields.yotpo.richsnippetshtml }} &nbsp;&nbsp;•&nbsp;&nbsp;
+                  </span>
+                  
+                  
+                </div>
+              {% endcomment %}
+              
+                {% if product_size != 0 and product_size != 1 %}
+                    <div class="wayfx-product__size" style="margin-left: 0;">
+                        {{ product_size }}
+                    </div>
+                {% endif %}
+            </div>
+          	{%- if low_stock -%}
+          		<div class="wayfx-product__low-stock-wrap">
+                  <div class="wayfx-product__low-stock">{{ 'products.product.low_stock' | t }}</div>
+          		</div>
+          	{%- endif -%}
+            <h1 class="wayfx-product__title">{{ product_title }}</h1>
+            {%- if product_subtitle -%}
+                <h2 class="wayfx-product__subtitle">{{ product_subtitle }}</h2>
+            {%- endif -%}
+            {%- if product_description -%}
+                <p class="wayfx-product__description">{{ product_description }}</p>
+            {%- endif -%}
+            <dl class="wayfx-product__highlights">
+                {%- if highlight_title_1 -%}
+                    <dt>{{ highlight_title_1 }}</dt>
+                    <dd>{{ highlight_text_1 }}</dd>
+                {%- endif -%}
+                {%- if highlight_title_2 -%}
+                    <dt>{{ highlight_title_2 }}</dt>
+                    <dd>{{ highlight_text_2 }}</dd>
+                {%- endif -%}
+                {%- if highlight_title_3 -%}
+                    <dt>{{ highlight_title_3 }}</dt>
+                    <dd>{{ highlight_text_3 }}</dd>
+                {%- endif -%}
+            </dl>
+          	{%- if show_close_button -%}
+          		<button class="btn--outline btn--large btn--close" onclick="$.fancybox.close()">
+                  <i class="wayfx-icon-close-thin"></i> {{ 'products.general.close' | t }}</button>
+          	{%- endif -%}
+        </div>    
+      
+    </div>
+</div>

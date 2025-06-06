@@ -1,0 +1,85 @@
+{%- assign slider_alignment = block.settings.slider_alignment -%}
+
+{%- assign slide_image_1 = block.settings.slide_image_1 | image_url: width: 960 -%}
+{%- assign slide_image_2 = block.settings.slide_image_2 | image_url: width: 960 -%}
+{%- assign slide_image_3 = block.settings.slide_image_3 | image_url: width: 960 -%}
+
+{%- assign slide_text_1 = block.settings.slide_text_1 -%}
+{%- assign slide_text_2 = block.settings.slide_text_2 -%}
+{%- assign slide_text_3 = block.settings.slide_text_3 -%}
+
+{%- assign disclaimer = block.settings.disclaimer -%}
+
+{%- assign slider_product = block.settings.product -%}
+
+<section class="wayfx-block wayfx-block--before-after-slider wayfx-block--before-after-slider-{{ block.id}}">
+    <div class="wayfx-wrapper">
+        <div class="grid-flex {% if slider_alignment == 'left' %}grid-flex--right-product{% else %}grid-flex--left-product{% endif %}">
+          {% if slider_alignment == 'right' %}
+            <div class="grid-flex__text large--one-half">
+                {% if slider_product %}
+                    {%- assign product = all_products[slider_product] -%}
+                    {% render 'product-grid-item', product: product, product_layout: 'before-after' %}
+                {% endif %}
+                {% if disclaimer %}<small>{{ disclaimer }}</small>{% endif %}
+            </div>
+          {% endif %}
+          <div class="grid-flex__slider-image large--one-half">
+            <div class="wayfx-block__slider slider--arrow-alt slider--arrow-sm">
+              {% unless slide_image_1 contains 'no-image' %}
+              <div>
+                <img loading="lazy" data-blink-src="{{ slide_image_1 }}" alt="" />
+                {% if slide_text_1 != '' %}
+                {{ slide_text_1 }}
+                {% endif %}
+              </div>
+              {% endunless %}
+              {% unless slide_image_2 contains 'no-image' %}
+              <div>
+                <img loading="lazy" data-blink-src="{{ slide_image_2 }}" alt="" />
+                {% if slide_text_2 != '' %}
+                {{ slide_text_2 }}
+                {% endif %}
+              </div>
+              {% endunless %}
+              {% unless slide_image_3 contains 'no-image' %}
+              <div>
+                <img loading="lazy" data-blink-src="{{ slide_image_3 }}" alt="" />
+                {% if slide_text_3 != '' %}
+                {{ slide_text_3 }}
+                {% endif %}
+              </div>
+              {% endunless %}
+            </div>
+          </div>
+          {% if slider_alignment == 'left' %}
+            <div class="grid-flex__text large--one-half">
+                {% if slider_product != '' %}
+                    {%- assign product = all_products[slider_product] -%}
+                    {% render 'product-grid-item', product: product, product_layout: 'before-after' %}
+                {% endif %}
+              	{% if disclaimer != '' %}<div class="wayfx-disclaimer"><small>{{ disclaimer }}</small></div>{% endif %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="wayfx-mobile__actions">
+          <a href="{{ product.url | within: collection }}" class="btn btn--xlarge">{{ 'layout.wayfx_block.shop_now' | t }}</a>
+          {% if disclaimer != '' %}<div class="wayfx-disclaimer"><small>{{ disclaimer }}</small></div>{% endif %}
+        </div>
+    </div>
+</section>
+
+{% unless slide_image_2 contains 'no-image' and slide_image_3 contains 'no-image' %}
+  <script>
+   $(document).ready(function() {
+        $('.wayfx-block--before-after-slider-{{ block.id }} .wayfx-block__slider').slick({
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: true,
+              draggable: false,
+              infinite: true,
+              dots: true
+        }).show();
+   });
+  </script>
+{% endunless %}

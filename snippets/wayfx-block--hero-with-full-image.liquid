@@ -1,0 +1,17 @@
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign image = block.settings.image | image_url: width: 2000 -%}
+
+<section class="wayfx-block wayfx-block--hero-with-full-image-cover lazyload">
+    <div class="wayfx-block__text">
+        {% if heading %}
+            <h1 class="h1--secondary">{{ heading }}</h1>
+        {% endif %}
+        {{ paragraph }}
+    </div>
+    {% if block.settings.image %}
+        <div class="wayfx-block__image">
+            <img loading="lazy" data-blink-src="{{ image }}" alt="" />
+        </div>
+    {% endif %}
+</section>

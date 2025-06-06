@@ -1,0 +1,30 @@
+<section class="wayfx-block wayfx-block--reset-account">
+  <div class="wayfx-wrapper">
+    <div class="form-vertical wayfx-block__left">
+      {% comment %}
+        This form must use 'activate_customer_password'
+      {% endcomment %}
+      <div class="form-vertical">
+        <h2 class="h2--secondary text-center">{{ 'customer.activate_account.title' | t }}</h2>
+        {% form 'activate_customer_password' %}
+
+          {{ form.errors | default_errors }}
+
+          <label for="CustomerPassword" class="hidden-label">{{ 'customer.activate_account.password' | t }}</label>
+          <global-password-input inputId="CustomerPassword"
+                                 inputClass="input-full{% if form.errors contains 'password' %} error{% endif %}"
+                                 inputName="customer[password]"
+                                 inputPlaceholder="{{ 'customer.activate_account.password' | t }}"
+                                 validationHintText="{{ 'customer.password_validation_hint' | t }}">
+          </global-password-input>
+
+          <label for="CustomerPasswordConfirmation" class="hidden-label">{{ 'customer.activate_account.password_confirm' | t }}</label>
+          <input type="password" value="" name="customer[password_confirmation]" id="CustomerPasswordConfirmation" class="input-full" placeholder="{{ 'customer.activate_account.password_confirm' | t }}">
+
+          <button type="submit" class="btn btn--xlarge btn--full">{{ 'customer.activate_account.submit' | t }}</button>
+          <button type="submit" class="btn--outline btn--xlarge btn--full" name="decline">{{ 'customer.activate_account.cancel' | t }}</button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>

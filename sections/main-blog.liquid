@@ -1,0 +1,58 @@
+<div class="wayfx-blocks">
+
+    {% paginate blog.articles by 10 %}
+
+        <section class="wayfx-block wayfx-block--hero-with-full-image-cover lazyload">
+          <div class="wayfx-block__text">
+            {% if current_tags %}
+                <h1 class="h1--secondary">{{ blog.title | link_to: blog.url }} &mdash; {{ current_tags.first }}</h1>
+            {% else %}
+                <h1 class="h1--secondary">{{ blog.title }}</h1>
+            {% endif %}
+          </div>
+        </section>
+
+      {% render 'breadcrumb' %}
+
+        <section class="wayfx-block wayfx-block--feature wayfx-block--image-left">
+            <div class="wayfx-wrapper">
+                  {% for article in blog.articles %}
+                      <div class="grid" style="padding-top: 24px; padding-bottom: 24px;">
+
+                      <div class="grid__item large--one-half">
+                        <div class="wayfx-block__image">
+                           {% if article.image %}
+                            <a href="{{ article.url }}">
+                              <img loading="lazy" 
+                                    src="{{ article | image_url: width: 1200, height: 1200 }}" 
+                                    alt="{% if article.image.alt != blank %}{{ article.image.alt }}{% else %}{{ article.title | escape }}{% endif %}" 
+                                    width="{{ article.image.width }}" 
+                                    height="{{ article.image.height }}"/>
+                            </a>
+                           {% else %}
+                          <div style="background: #eee; max-height: 800px; height: 100%;"></div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      <div class="grid__item large--one-half">
+                          <div class="wayfx-block__text">
+                              <h2 class="h2--primary"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+                              {% if article.excerpt.size > 0 %}
+                                  <p>{{ article.excerpt }}</p>
+                              {% else %}
+                                  <p>{{ article.content | strip_html | truncatewords: 40 }}</p>
+                              {% endif %}
+                              <a href="{{ article.url }}" class="btn--outline btn--xlarge">Read More</a>
+                          </div>
+                      </div>
+              		</div>
+                  {% endfor %}
+            </div>
+        </section>
+  
+  	{% render 'pagination', paginate: paginate  %}
+
+    {% endpaginate %}
+
+</div>

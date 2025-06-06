@@ -1,0 +1,147 @@
+@font-face {
+  font-family: 'wayfx';
+  src:  url('https://cdn.medik8.com/16c91209-382c-46af-8b2c-6a84e92219e1/wayfx.eot?85sq0x');
+  src:  url('https://cdn.medik8.com/16c91209-382c-46af-8b2c-6a84e92219e1/wayfx.eot?85sq0x#iefix') format('embedded-opentype'),
+    url('https://cdn.medik8.com/c6c1ad41-b906-406b-9898-ed0b9ea2b455/wayfx.woff2?85sq0x') format('woff2'),
+    url('https://cdn.medik8.com/4bd75b04-8ebf-45be-9fde-3d596c1a9cd0/wayfx.ttf?85sq0x') format('truetype'),
+    url('https://cdn.medik8.com/3ab94495-02eb-45ad-849b-e4d2d45c81b9/wayfx.woff?85sq0x') format('woff'),
+    url('https://cdn.medik8.com/abc3d46a-71fd-42d4-af56-f6a45f552089/wayfx.svg?85sq0x#wayfx') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.wayfx-icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'wayfx' !important;
+  speak-as: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+.wayfx-icon-shipping:before {
+  content: "\e925";
+}
+.wayfx-icon-map:before {
+  content: "\e924";
+}
+.wayfx-icon-email:before {
+  content: "\e91a";
+}
+.wayfx-icon-circle-minus-filled:before {
+  content: "\e916";
+}
+.wayfx-icon-circle-plus-filled:before {
+  content: "\e918";
+}
+.wayfx-icon-long-arrow-down:before {
+  content: "\e923";
+}
+.wayfx-icon-play:before {
+  content: "\e921";
+}
+.wayfx-icon-long-arrow-right:before {
+  content: "\e922";
+}
+.wayfx-icon-heart-filled:before {
+  content: "\e920";
+}
+.wayfx-icon-chevron-right-thick:before {
+  content: "\e91d";
+}
+.wayfx-icon-long-arrow-left:before {
+  content: "\e914";
+}
+.wayfx-icon-minus-thin:before {
+  content: "\e917";
+}
+.wayfx-icon-plus-thin:before {
+  content: "\e91b";
+}
+.wayfx-icon-menu:before {
+  content: "\e915";
+}
+.wayfx-icon-chevron-left:before {
+  content: "\e912";
+}
+.wayfx-icon-chevron-right:before {
+  content: "\e913";
+}
+.wayfx-icon-filter:before {
+  content: "\e91f";
+}
+.wayfx-icon-close-thin:before {
+  content: "\e91c";
+}
+.wayfx-icon-circle:before {
+  content: "\e91e";
+}
+.wayfx-icon-chevron-down:before {
+  content: "\e90e";
+}
+.wayfx-icon-circle-minus:before {
+  content: "\e90f";
+}
+.wayfx-icon-circle-plus:before {
+  content: "\e910";
+}
+.wayfx-icon-checkmark:before {
+  content: "\e911";
+}
+.wayfx-icon-user:before {
+  content: "\e90a";
+}
+.wayfx-icon-heart:before {
+  content: "\e90b";
+}
+.wayfx-icon-search:before {
+  content: "\e90c";
+}
+.wayfx-icon-bag:before {
+  content: "\e90d";
+}
+.wayfx-icon-tag:before {
+  content: "\e919";
+}
+.wayfx-icon-youtube:before {
+  content: "\e907";
+}
+.wayfx-icon-tiktok:before {
+  content: "\e07b";
+  font-family: fontAwesome !important;
+}
+.wayfx-icon-facebook:before {
+  content: "\e908";
+}
+.wayfx-icon-instagram:before {
+  content: "\e909";
+}
+.wayfx-icon-deal:before {
+  content: "\e900";
+}
+.wayfx-icon-rotate:before {
+  content: "\e901";
+}
+.wayfx-icon-close:before {
+  content: "\e902";
+}
+.wayfx-icon-lock:before {
+  content: "\e903";
+}
+.wayfx-icon-delete:before {
+  content: "\e904";
+}
+.wayfx-icon-plus:before {
+  content: "\e905";
+}
+.wayfx-icon-minus:before {
+  content: "\e906";
+}

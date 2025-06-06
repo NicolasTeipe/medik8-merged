@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="{{ 'customer.css' | asset_url }}">
+
+<section class="wayfx-block wayfx-block--account">
+  <div class="wayfx-wrapper">
+      {% if customer.first_name != blank %}
+      <div class="wayfx-account-hero">
+          <div class="wayfx-container">
+              <h1>{{ 'customer.account.greeting' | t: name: customer.first_name }}</h1>
+          </div>
+      </div>
+      {% endif %}
+      <div class="grid">
+        <div class="grid__item three-quarters medium-down--one-whole">
+            <div class="wayfx-block__left">
+              <h3 class="h3--secondary">{{ 'customer.orders.title' | t }}</h3>
+              {% paginate customer.orders by 20 %}
+                {% if customer.orders.size != 0 %}
+                  <div class="table-wrap">
+                    <table class="full">
+                      <thead class="@tablet__hide">
+                        <tr>
+                          <th>{{ 'customer.orders.order_number' | t }}</th>
+                          <th>{{ 'customer.orders.date' | t }}</th>
+                          <th>{{ 'customer.orders.payment_status' | t | remove: ' Status' }}</th>
+                          <th>{{ 'customer.orders.fulfillment_status' | t | remove: ' Status' }}</th>
+                          <th>{{ 'customer.orders.total' | t }}</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for order in customer.orders %}
+                          <tr style="border-bottom: 1px solid var(--colorBorder) !important;">
+                            <td class="@tablet__cell-l--none @tablet__cell-r--none">
+                              <a href="{{ order.customer_url | remove: shop.url }}"  class="@tablet__flex column-nowrap">
+                                <span>
+                                  <b>{{ 'customer.orders.order_number' | t }}: </b>{{ order.name }}
+                                </span>
+                                <span>
+                                  <b>{{ 'customer.orders.date' | t }}: </b>{{ order.created_at | date: format: 'month_day_year' }}
+                                </span>
+                                <span>
+                                  <b>{{ 'customer.orders.payment_status' | t | remove: ' Status' }}:</b>{{ order.financial_status_label }}
+                                </span>
+                                <span>
+                                  <b>{{ 'customer.orders.fulfillment_status' | t | remove: ' Status' }}: </b>{{ order.fulfillment_status_label }}
+                                </span>
+                                <span>
+                                  <b>{{ 'customer.orders.total' | t }}: </b>{{ order.total_price | money }}
+                                </span>
+                                <span class="f-w700 d-block ct--d2"><u>{{ 'customer.orders.view_order' | t }}</u></span>
+                              </a>
+                              <a href="{{ order.customer_url | remove: shop.url }}" class="order-number @tablet__hide">{{ order.name }}</a>
+                            </td>
+                            <td class="@tablet__hide">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                            <td class="@tablet__hide">{{ order.financial_status_label }}</td>
+                            <td class="@tablet__hide">{{ order.fulfillment_status_label }}</td>
+                            <td class="@tablet__hide">{{ order.total_price | money }}</td>
+                            <td class="@tablet__hide" data-label="Buy again">
+                              <a href="{{ order.customer_url | remove: shop.url }}" class="btn">
+                                View<i class="fas fa-angle-right" style="margin-left: 8px; font-family: 'FontAwesome' !important;"></i>
+                              </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                {% else %}
+                  <p class="p--md">{{ 'customer.orders.none' | t }}</p>
+                  <a href="/collections/all" class="btn btn--large">{{ 'customer.account.shop_now_cta' | t }}</a>
+                {% endif %}
+                {% if paginate.pages > 1 %}
+                  <hr>
+                  <div class="pagination">
+                    {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+                  </div>
+                {% endif %}
+              {% endpaginate %}
+            </div>
+        </div>
+        {% render "account-sidebar" show_address: true %}
+  </div>
+</section>

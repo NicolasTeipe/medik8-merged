@@ -1,0 +1,88 @@
+@font-face {
+  font-family: 'acta_displaylight';
+  src: url("https://cdn.medik8.com/11530328-2eaa-4f70-820c-792060319d98/actadisplaylightwebfont.woff2") format("woff2"), url("https://cdn.medik8.com/7a8766d6-c14a-4907-a4f2-9a42c158f692/actadisplaylightwebfont.woff") format("woff");
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'acta_displaymedium';
+  src: url("https://cdn.medik8.com/02d189c7-c9bb-4aa0-9906-e675476b5bf3/actadisplaymediumwebfont.woff2") format("woff2"), url("https://cdn.medik8.com/1409d0dc-fdf0-4b76-9dbf-3dcce0a0809e/actadisplaymediumwebfont.woff") format("woff");
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'ridley_groteskregular';
+  src: url("https://cdn.medik8.com/c8b72033-fcf3-46b6-936d-3d05b6f8a5a1/ridleygroteskregularwebfont.woff2") format("woff2"), url("https://cdn.medik8.com/49dcbb7e-8fa8-4356-9593-a4685a08f0d0/ridleygroteskregularwebfont.woff") format("woff");
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'ridley_groteskmedium';
+  src: url("https://cdn.medik8.com/9bf21a3c-b8f5-40a1-81d7-924a9a44ac60/ridleygroteskmediumwebfont.woff2") format("woff2"), url("https://cdn.medik8.com/2b002eae-48c7-4558-a569-d3e51b131ae9/ridleygroteskmediumwebfont.woff") format("woff");
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal; }
+
+body {
+  font-family: "ridley_groteskregular",sans-serif; }
+
+.section__title {
+  font-family: "acta_displaymedium",sans-serif;
+  font-size: 34px; }
+
+.product__description__name {
+  color: #000;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  line-height: 19px;
+  margin-bottom: 3px;
+  text-transform: uppercase; }
+
+.product__description .reduction-code__text {
+  font-size: 11px; }
+
+.sidebar .order-summary__emphasis {
+  color: #000; }
+
+.product-table .product td {
+  padding-top: 15px;
+  padding-bottom: 15px; }
+  @media all and (max-width: 419px) {
+    .product-table .product td {
+      padding-top: 25px;
+      padding-bottom: 25px; } }
+
+.total-line__name {
+  color: #202324;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  line-height: 18px;
+  font-weight: 300;
+  text-transform: uppercase; }
+
+.total-line__price {
+  font-family: "ridley_groteskmedium", sans-serif;
+  font-size: 14px;
+  font-weight: 500; }
+
+.field__input {
+  border-radius: 0;
+  border: 1px solid #A7A7A7; }
+
+.field__input-btn {
+  border-radius: 0; }
+
+.main__content .btn {
+  border: 1px solid #000;
+  border-radius: 0;
+  font-size: 15px;
+  padding: 18px 32px;
+  text-transform: uppercase;
+  transition: 0.3s all; }
+  .main__content .btn:hover {
+    background: transparent;
+    color: #000; }

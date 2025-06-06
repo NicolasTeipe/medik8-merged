@@ -1,0 +1,1803 @@
+{% comment %}theme-check-disable ConvertIncludeToRender{% endcomment %}
+{% unless page.title == "Refer a Friend" and customer %}
+	{% include 'wayfx-blocks' %}
+{% endunless %}
+{% schema %}
+    {
+      "name": "Wayfx Blocks",
+        "settings": [
+            {
+                "id": "sidebar_heading",
+                "type": "text",
+                "label": "Sidebar Heading"
+            },
+            {
+                "id": "sidebar_menu",
+                "type": "link_list",
+                "label": "Sidebar Menu"
+            },
+            {
+                "type": "select",
+                "id": "sidebar_color_scheme",
+                "options": [
+                    { "value": "light", "label": "Light"},
+                    { "value": "dark", "label": "Dark"}
+                ],
+                "label": "Sidebar Color Scheme"
+            },
+            {
+              "type": "select",
+              "id": "show_footer_newsletter",
+              "label": "Show Footer Newsletter Block?",
+              "options": [
+                { "value": "no", "label": "No"},
+                { "value": "yes", "label": "Yes"}
+              ]
+            }
+        ],
+      "blocks": [
+        {
+            "type": "spacer",
+            "name": "Blank Space",
+            "settings": [{
+                    "id": "space",
+                    "type": "range",
+                    "min": 8,
+                    "max": 160,
+                    "step": 8,
+                    "unit": "px",
+                    "label": "Blank Space",
+                    "default": 8,
+                    "info": "This component is used to add space between a section"
+            }]
+        },
+        {
+            "type": "before-after-slider",
+            "name": "Before & After Slider",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Before & After Slider",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "type": "select",
+                    "id": "slider_alignment",
+                    "label": "Slider Alignment",
+                    "options": [
+                        { "value": "left", "label": "Left"},
+                        { "value": "right", "label": "Right"}
+                    ]
+                },
+                {
+                    "id": "slide_image_1",
+                    "type": "image_picker",
+                    "label": "Slide 1 Image"
+                },
+                {
+                    "id": "slide_text_1",
+                    "type": "richtext",
+                    "label": "Slide 1 Text"
+                },
+                {
+                    "id": "slide_image_2",
+                    "type": "image_picker",
+                    "label": "Slide 2 Image"
+                },
+                {
+                    "id": "slide_text_2",
+                    "type": "richtext",
+                    "label": "Slide 2 Text"
+                },
+                {
+                    "id": "slide_image_3",
+                    "type": "image_picker",
+                    "label": "Slide 3 Image"
+                },
+                {
+                    "id": "slide_text_3",
+                    "type": "richtext",
+                    "label": "Slide 3 Text"
+                },
+                {
+                    "id": "disclaimer",
+                    "type": "text",
+                    "label": "Disclaimer Text"
+                },
+                {
+                    "id": "product",
+                    "type": "product",
+                    "label": "Product"
+                },
+                {
+                    "id": "product_description",
+                    "type": "text",
+                    "label": "Product Description"
+                }
+            ]
+        },
+        {
+            "type": "breadcrumb",
+            "name": "Breadcrumb"
+        },
+        {
+            "type": "callout-3columns",
+            "name": "Callout w/ 3 Columns",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Callout w/ 3 Columns",
+                    "default": "Hero w/ Content & Imagery",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "background_color",
+                    "type": "color",
+                    "label": "Background Color",
+                    "default": "#F9F9F9"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "increase_image_height",
+                    "label": "Bigger Image Height?",
+                    "default": false,
+                    "info": "Increase the height of the callout images vertically"
+                },
+                {
+                    "id": "main_heading",
+                    "type": "text",
+                    "label": "Main Heading"
+                },
+                {
+                    "id": "main_paragraph",
+                    "type": "textarea",
+                    "label": "Main Paragraph"
+                },
+                {
+                    "id": "heading_1",
+                    "type": "text",
+                    "label": "Callout 1 Heading"
+                },
+                {
+                    "id": "paragraph_1",
+                    "type": "textarea",
+                    "label": "Callout 1 Paragraph"
+                },
+                {
+                    "id": "image_1",
+                    "type": "image_picker",
+                    "label": "Callout 1 Image"
+                },
+                {
+                    "id": "cta_text_1",
+                    "type": "text",
+                    "label": "Callout 1 CTA Text"
+                },
+                {
+                    "id": "cta_link_1",
+                    "type": "url",
+                    "label": "Callout 1 CTA Link"
+                },
+                {
+                    "id": "heading_2",
+                    "type": "text",
+                    "label": "Callout 2 Heading"
+                },
+                {
+                    "id": "paragraph_2",
+                    "type": "textarea",
+                    "label": "Callout 2 Paragraph"
+                },
+                {
+                    "id": "image_2",
+                    "type": "image_picker",
+                    "label": "Callout 2 Image"
+                },
+                {
+                    "id": "cta_text_2",
+                    "type": "text",
+                    "label": "Callout 2 CTA Text"
+                },
+                {
+                    "id": "cta_link_2",
+                    "type": "url",
+                    "label": "Callout 2 CTA Link"
+                },
+                {
+                    "id": "heading_3",
+                    "type": "text",
+                    "label": "Callout 3 Heading"
+                },
+                {
+                    "id": "paragraph_3",
+                    "type": "textarea",
+                    "label": "Callout 3 Paragraph"
+                },
+                {
+                    "id": "image_3",
+                    "type": "image_picker",
+                    "label": "Callout 3 Image"
+                },
+                {
+                    "id": "cta_text_3",
+                    "type": "text",
+                    "label": "Callout 3 CTA Text"
+                },
+                {
+                    "id": "cta_link_3",
+                    "type": "url",
+                    "label": "Callout 3 CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "careers",
+            "name": "Job Listings",
+            "settings": [
+                {
+                    "id": "job_title_1",
+                    "type": "text",
+                    "label": "Job Title 1"
+                },
+                {
+                    "id": "job_category_1",
+                    "type": "text",
+                    "label": "Job Category 1"
+                },
+                {
+                    "id": "job_location_1",
+                    "type": "text",
+                    "label": "Job Location 1"
+                },
+                {
+                    "id": "job_link_1",
+                    "type": "url",
+                    "label": "Job Link 1"
+                },
+                {
+                    "id": "job_title_2",
+                    "type": "text",
+                    "label": "Job Title 2"
+                },
+                {
+                    "id": "job_category_2",
+                    "type": "text",
+                    "label": "Job Category 2"
+                },
+                {
+                    "id": "job_location_2",
+                    "type": "text",
+                    "label": "Job Location 2"
+                },
+                {
+                    "id": "job_link_2",
+                    "type": "url",
+                    "label": "Job Link 2"
+                },
+                {
+                    "id": "job_title_3",
+                    "type": "text",
+                    "label": "Job Title 3"
+                },
+                {
+                    "id": "job_category_3",
+                    "type": "text",
+                    "label": "Job Category 3"
+                },
+                {
+                    "id": "job_location_3",
+                    "type": "text",
+                    "label": "Job Location 3"
+                },
+                {
+                    "id": "job_link_3",
+                    "type": "url",
+                    "label": "Job Link 3"
+                },
+                {
+                    "id": "job_title_4",
+                    "type": "text",
+                    "label": "Job Title 4"
+                },
+                {
+                    "id": "job_category_4",
+                    "type": "text",
+                    "label": "Job Category 4"
+                },
+                {
+                    "id": "job_location_4",
+                    "type": "text",
+                    "label": "Job Location 4"
+                },
+                {
+                    "id": "job_link_4",
+                    "type": "url",
+                    "label": "Job Link 4"
+                },
+                {
+                    "id": "job_title_5",
+                    "type": "text",
+                    "label": "Job Title 5"
+                },
+                {
+                    "id": "job_category_5",
+                    "type": "text",
+                    "label": "Job Category 5"
+                },
+                {
+                    "id": "job_location_5",
+                    "type": "text",
+                    "label": "Job Location 5"
+                },
+                {
+                    "id": "job_link_5",
+                    "type": "url",
+                    "label": "Job Link 5"
+                },
+                {
+                    "id": "job_title_6",
+                    "type": "text",
+                    "label": "Job Title 6"
+                },
+                {
+                    "id": "job_category_6",
+                    "type": "text",
+                    "label": "Job Category 6"
+                },
+                {
+                    "id": "job_location_6",
+                    "type": "text",
+                    "label": "Job Location 6"
+                },
+                {
+                    "id": "job_link_6",
+                    "type": "url",
+                    "label": "Job Link 6"
+                },
+                {
+                    "id": "job_title_7",
+                    "type": "text",
+                    "label": "Job Title 7"
+                },
+                {
+                    "id": "job_category_7",
+                    "type": "text",
+                    "label": "Job Category 7"
+                },
+                {
+                    "id": "job_location_7",
+                    "type": "text",
+                    "label": "Job Location 7"
+                },
+                {
+                    "id": "job_link_7",
+                    "type": "url",
+                    "label": "Job Link 7"
+                },
+                {
+                    "id": "job_title_8",
+                    "type": "text",
+                    "label": "Job Title 8"
+                },
+                {
+                    "id": "job_category_8",
+                    "type": "text",
+                    "label": "Job Category 8"
+                },
+                {
+                    "id": "job_location_8",
+                    "type": "text",
+                    "label": "Job Location 8"
+                },
+                {
+                    "id": "job_link_8",
+                    "type": "url",
+                    "label": "Job Link 8"
+                },
+                {
+                    "id": "job_title_9",
+                    "type": "text",
+                    "label": "Job Title 9"
+                },
+                {
+                    "id": "job_category_9",
+                    "type": "text",
+                    "label": "Job Category 9"
+                },
+                {
+                    "id": "job_location_9",
+                    "type": "text",
+                    "label": "Job Location 9"
+                },
+                {
+                    "id": "job_link_9",
+                    "type": "url",
+                    "label": "Job Link 9"
+                }
+            ]
+        },
+        {
+            "type": "content-feature",
+            "name": "Content - Feature",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Content - Feature",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "type": "select",
+                    "id": "image_alignment",
+                    "label": "Image Alignment",
+                    "options": [
+                        { "value": "left", "label": "Left"},
+                        { "value": "right", "label": "Right"}
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "content_alignment",
+                    "label": "Content Alignment",
+                    "options": [
+                        { "value": "center", "label": "Center"},
+                        { "value": "top", "label": "Top"}
+                    ]
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "textarea",
+                    "label": "Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Feature Image"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "content-standard",
+            "name": "Content - Standard",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Content - Standard",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Feature Image"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "textarea",
+                    "label": "Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "content-1column",
+            "name": "Content w/ Sidebar Image",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Content w/ Sidebar Image",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "block_image",
+                    "type": "image_picker",
+                    "label": "Side Image",
+                    "info": "This image will display on the right side of this content layout"
+                },
+                {
+                    "id": "block_image_link",
+                    "type": "url",
+                    "label": "Side Image Link",
+                    "info": "This controls the cta link for the sidebar image"
+                },
+                {
+                    "id": "block_heading_1",
+                    "type": "text",
+                    "label": "Block 1: Heading"
+                },
+                {
+                    "id": "block_paragraph_1",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block_cta_link_1",
+                    "type": "url",
+                    "label": "Block 1: CTA Link"
+                },
+                {
+                    "id": "block_cta_text_1",
+                    "type": "text",
+                    "label": "Block 1: CTA Text"
+                },
+                {
+                    "id": "block_heading_2",
+                    "type": "text",
+                    "label": "Block 2: Heading"
+                },
+                {
+                    "id": "block_paragraph_2",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block_cta_link_2",
+                    "type": "url",
+                    "label": "Block 2: CTA Link"
+                },
+                {
+                    "id": "block_cta_text_2",
+                    "type": "text",
+                    "label": "Block 2: CTA Text"
+                },
+                {
+                    "id": "block_heading_3",
+                    "type": "text",
+                    "label": "Block 3: Heading"
+                },
+                {
+                    "id": "block_paragraph_3",
+                    "type": "textarea",
+                    "label": "Block 3: Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block_cta_link_3",
+                    "type": "url",
+                    "label": "Block 3: CTA Link"
+                },
+                {
+                    "id": "block_cta_text_3",
+                    "type": "text",
+                    "label": "Block 3: CTA Text"
+                },
+                {
+                    "id": "block_heading_4",
+                    "type": "text",
+                    "label": "Block 4: Heading"
+                },
+                {
+                    "id": "block_paragraph_4",
+                    "type": "textarea",
+                    "label": "Block 4: Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block_cta_link_4",
+                    "type": "url",
+                    "label": "Block 4: CTA Link"
+                },
+                {
+                    "id": "block_cta_text_4",
+                    "type": "text",
+                    "label": "Block 4: CTA Text"
+                },
+                {
+                    "id": "block_heading_5",
+                    "type": "text",
+                    "label": "Block 5: Heading"
+                },
+                {
+                    "id": "block_paragraph_5",
+                    "type": "textarea",
+                    "label": "Block 5: Paragraph",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block_cta_link_5",
+                    "type": "url",
+                    "label": "Block 5: CTA Link"
+                },
+                {
+                    "id": "block_cta_text_5",
+                    "type": "text",
+                    "label": "Block 5: CTA Text"
+                }
+            ]
+        },
+        {
+            "type": "content-2columns",
+            "name": "Content w/ 2 Columns",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Content w/ 2 Columns",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "type": "select",
+                    "id": "scheme",
+                    "options": [
+                        { "value": "light", "label": "Light Scheme"},
+                        { "value": "dark", "label": "Dark Scheme"}
+                    ],
+                    "label": "Color Scheme"
+                },
+                {
+                    "id": "main_heading",
+                    "type": "text",
+                    "label": "Main Heading"
+                },
+                {
+                    "id": "main_paragraph",
+                    "type": "textarea",
+                    "label": "Main Paragraph"
+                },
+                {
+                    "id": "block1_image",
+                    "type": "image_picker",
+                    "label": "Block 1 Image"
+                },
+                {
+                    "id": "block1_heading_1",
+                    "type": "text",
+                    "label": "Block 1: Heading 1"
+                },
+                {
+                    "id": "block1_paragraph_1",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph 1",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block1_heading_2",
+                    "type": "text",
+                    "label": "Block 1: Heading 2"
+                },
+                {
+                    "id": "block1_paragraph_2",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph 2",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block1_heading_3",
+                    "type": "text",
+                    "label": "Block 1: Heading 3"
+                },
+                {
+                    "id": "block1_paragraph_3",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph 3",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block1_heading_4",
+                    "type": "text",
+                    "label": "Block 1: Heading 4"
+                },
+                {
+                    "id": "block1_paragraph_4",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph 4",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block1_heading_5",
+                    "type": "text",
+                    "label": "Block 1: Heading 5"
+                },
+                {
+                    "id": "block1_paragraph_5",
+                    "type": "textarea",
+                    "label": "Block 1: Paragraph 5",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block2_image",
+                    "type": "image_picker",
+                    "label": "Block 2 Image"
+                },
+                {
+                    "id": "block2_heading_1",
+                    "type": "text",
+                    "label": "Block 2: Heading 1"
+                },
+                {
+                    "id": "block2_paragraph_1",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph 1",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block2_heading_2",
+                    "type": "text",
+                    "label": "Block 2: Heading 2"
+                },
+                {
+                    "id": "block2_paragraph_2",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph 2",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block2_heading_3",
+                    "type": "text",
+                    "label": "Block 2: Heading 3"
+                },
+                {
+                    "id": "block2_paragraph_3",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph 3",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block2_heading_4",
+                    "type": "text",
+                    "label": "Block 2: Heading 4"
+                },
+                {
+                    "id": "block2_paragraph_4",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph 4",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "block2_heading_5",
+                    "type": "text",
+                    "label": "Block 2: Heading 5"
+                },
+                {
+                    "id": "block2_paragraph_5",
+                    "type": "textarea",
+                    "label": "Block 2: Paragraph 5",
+                    "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+                },
+                {
+                    "id": "cta_primary_link",
+                    "type": "url",
+                    "label": "Footer Primary CTA Link"
+                },
+                {
+                    "id": "cta_primary_text",
+                    "type": "url",
+                    "label": "Footer Primary CTA Text"
+                },
+                {
+                    "id": "cta_secondary_link",
+                    "type": "url",
+                    "label": "Footer Secondary CTA Link"
+                },
+                {
+                    "id": "cta_secondary_text",
+                    "type": "url",
+                    "label": "Footer Secondary CTA Text"
+                }
+            ]
+        },
+        {
+            "type": "content-4columns",
+            "name": "Content w/ 4 Columns",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Content w/ 4 Columns",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "main_heading",
+                    "type": "text",
+                    "label": "Main Heading"
+                },
+                {
+                    "id": "main_paragraph",
+                    "type": "textarea",
+                    "label": "Main Paragraph"
+                },
+                {
+                    "id": "image_1",
+                    "type": "image_picker",
+                    "label": "Block 1 Image"
+                },
+                {
+                    "id": "heading_1",
+                    "type": "text",
+                    "label": "Block 1 Heading"
+                },
+                {
+                    "id": "paragraph_1",
+                    "type": "textarea",
+                    "label": "Block 1 Paragraph"
+                },
+                {
+                    "id": "link_1",
+                    "type": "url",
+                    "label": "Block 1 Page Link"
+                },
+                {
+                    "id": "video_link_1",
+                    "type": "url",
+                    "label": "Block 1 Video Link",
+                    "info": "If this block has a video thumbnail, enter the video link here to produce a video overlay."
+                },
+                {
+                    "id": "image_2",
+                    "type": "image_picker",
+                    "label": "Block 2 Image"
+                },
+                {
+                    "id": "heading_2",
+                    "type": "text",
+                    "label": "Block 2 Heading"
+                },
+                {
+                    "id": "paragraph_2",
+                    "type": "textarea",
+                    "label": "Block 2 Paragraph"
+                },
+                {
+                    "id": "link_2",
+                    "type": "url",
+                    "label": "Block 2 Page Link"
+                },
+                {
+                    "id": "video_link_2",
+                    "type": "url",
+                    "label": "Block 2 Video Link",
+                    "info": "If this block has a video thumbnail, enter the video link here to produce a video overlay."
+                },
+                {
+                    "id": "image_3",
+                    "type": "image_picker",
+                    "label": "Block 3 Image"
+                },
+                {
+                    "id": "heading_3",
+                    "type": "text",
+                    "label": "Callout 3 Heading"
+                },
+                {
+                    "id": "paragraph_3",
+                    "type": "textarea",
+                    "label": "Block 3 Paragraph"
+                },
+                {
+                    "id": "link_3",
+                    "type": "url",
+                    "label": "Block 3 Page Link"
+                },
+                {
+                    "id": "video_link_3",
+                    "type": "url",
+                    "label": "Block 3 Video Link",
+                    "info": "If this block has a video thumbnail, enter the video link here to produce a video overlay."
+                },
+                {
+                    "id": "image_4",
+                    "type": "image_picker",
+                    "label": "Block 4 Image"
+                },
+                {
+                    "id": "heading_4",
+                    "type": "text",
+                    "label": "Callout 4 Heading"
+                },
+                {
+                    "id": "paragraph_4",
+                    "type": "textarea",
+                    "label": "Block 4 Paragraph"
+                },
+                {
+                    "id": "link_4",
+                    "type": "url",
+                    "label": "Block 4 Link"
+                },
+                {
+                    "id": "video_link_4",
+                    "type": "url",
+                    "label": "Block 4 Video Link",
+                    "info": "If this block has a video thumbnail, enter the video link here to produce a video overlay."
+                }
+            ]
+        },
+        {
+            "type": "cta-block-footer",
+            "name": "CTA - Footer",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "CTA - Footer",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "background_color",
+                    "type": "color",
+                    "label": "Background Color",
+                    "default": "#000"
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Header Image",
+                    "info": "This will take place of the header text"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "editorial-block",
+            "name": "Editorial 2 Column Block",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Editorial 2 Column Block",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "block_height",
+                    "type": "select",
+                    "label": "Block Height Size",
+                    "options": [
+                        { "value": "large", "label": "Large"},
+                        { "value": "medium", "label": "Medium"}
+                    ]
+                },
+                {
+                    "id": "block_1_image",
+                    "type": "image_picker",
+                    "label": "Block 1 - Background Image"
+                },
+                {
+                    "id": "block_1_subheading",
+                    "type": "text",
+                    "label": "Block 1 - Sub Heading"
+                },
+                {
+                    "id": "block_1_title",
+                    "type": "text",
+                    "label": "Block 1 - Heading"
+                },
+                {
+                    "id": "block_1_cta_text",
+                    "type": "text",
+                    "label": "Block 1 - CTA Text"
+                },
+                {
+                    "id": "block_1_cta_link",
+                    "type": "url",
+                    "label": "Block 1 - CTA or Video Link"
+                },
+                {
+                    "id": "block_1_video",
+                    "type": "select",
+                    "label": "Block 1 - Is this a video link?",
+                    "options": [
+                        { "value": "no", "label": "No"},
+                        { "value": "yes", "label": "Yes"}
+                    ]
+                },
+                {
+                    "id": "block_2_image",
+                    "type": "image_picker",
+                    "label": "Block 2 - Background Image"
+                },
+                {
+                    "id": "block_2_subheading",
+                    "type": "text",
+                    "label": "Block 2 - Sub Heading"
+                },
+                {
+                    "id": "block_2_title",
+                    "type": "text",
+                    "label": "Block 2 - Heading"
+                },
+                {
+                    "id": "block_2_cta_text",
+                    "type": "text",
+                    "label": "Block 2 -CTA Text"
+                },
+                {
+                    "id": "block_2_cta_link",
+                    "type": "url",
+                    "label": "Block 2 - CTA or Video Link"
+                },
+                {
+                    "id": "block_2_video",
+                    "type": "select",
+                    "label": "Block 2 - Is this a video link?",
+                    "options": [
+                        { "value": "no", "label": "No"},
+                        { "value": "yes", "label": "Yes"}
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "faq",
+            "name": "FAQ",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "FAQ",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "toc",
+                    "label": "Table of Contents",
+                    "default": false,
+                    "info": "Enable or Disable"
+                },
+                {
+                    "id": "faq_title_1",
+                    "type": "text",
+                    "label": "Faq Title 1"
+                },
+                {
+                    "id": "faq_description_1",
+                    "type": "richtext",
+                    "label": "Faq Description 1"
+                },
+                {
+                    "id": "faq_title_2",
+                    "type": "text",
+                    "label": "Faq Title 2"
+                },
+                {
+                    "id": "faq_description_2",
+                    "type": "richtext",
+                    "label": "Faq Description 2"
+                },
+                {
+                    "id": "faq_title_3",
+                    "type": "text",
+                    "label": "Faq Title 3"
+                },
+                {
+                    "id": "faq_description_3",
+                    "type": "richtext",
+                    "label": "Faq Description 3"
+                },
+                {
+                    "id": "faq_title_4",
+                    "type": "text",
+                    "label": "Faq Title 4"
+                },
+                {
+                    "id": "faq_description_4",
+                    "type": "richtext",
+                    "label": "Faq Description 4"
+                },
+                {
+                    "id": "faq_title_5",
+                    "type": "text",
+                    "label": "Faq Title 5"
+                },
+                {
+                    "id": "faq_description_5",
+                    "type": "richtext",
+                    "label": "Faq Description 5"
+                },
+                {
+                    "id": "faq_title_6",
+                    "type": "text",
+                    "label": "Faq Title 6"
+                },
+                {
+                    "id": "faq_description_6",
+                    "type": "richtext",
+                    "label": "Faq Description 6"
+                },
+                {
+                    "id": "faq_title_7",
+                    "type": "text",
+                    "label": "Faq Title 7"
+                },
+                {
+                    "id": "faq_description_7",
+                    "type": "richtext",
+                    "label": "Faq Description 7"
+                },
+                {
+                    "id": "faq_title_8",
+                    "type": "text",
+                    "label": "Faq Title 8"
+                },
+                {
+                    "id": "faq_description_8",
+                    "type": "richtext",
+                    "label": "Faq Description 8"
+                },
+                {
+                    "id": "faq_title_9",
+                    "type": "text",
+                    "label": "Faq Title 9"
+                },
+                {
+                    "id": "faq_description_9",
+                    "type": "richtext",
+                    "label": "Faq Description 9"
+                },
+                {
+                    "id": "faq_title_10",
+                    "type": "text",
+                    "label": "Faq Title 10"
+                },
+                {
+                    "id": "faq_description_10",
+                    "type": "richtext",
+                    "label": "Faq Description 10"
+                }
+            ]
+        },
+        {
+            "type": "contact-form",
+            "name": "Contact Form"
+        },
+        {
+            "type": "hero-with-full-image",
+            "name": "Hero w/ Full Image Cover",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Full Image Cover",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading",
+                    "default": "Hello world"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-image",
+            "name": "Hero w/ Content & Imagery",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Content & Imagery",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-media",
+            "name": "Hero w/ Media",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Media",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "left_center", "label": "Left Center"},
+                        { "value": "center_center", "label": "Center"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-video-bg",
+            "name": "Hero w/ Video Bg",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Video Bg",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_left", "label": "Top Left"},
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "top_right", "label": "Top Right"},
+                        { "value": "bottom_left", "label": "Bottom Left"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "bottom_right", "label": "Bottom Right"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "video_link",
+                    "type": "url",
+                    "label": "Enter the vimeo link for the video here."
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-overlay-box",
+            "name": "Hero w/ Text Overlay Box",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Text Overlay Box",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "type": "select",
+                    "id": "alignment",
+                    "options": [
+                        { "value": "top_left", "label": "Top Left"},
+                        { "value": "top_center", "label": "Top Center"},
+                        { "value": "top_right", "label": "Top Right"},
+                        { "value": "bottom_left", "label": "Bottom Left"},
+                        { "value": "bottom_center", "label": "Bottom Center"},
+                        { "value": "bottom_right", "label": "Bottom Right"}
+                    ],
+                    "label": "Alignment of Text"
+                },
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "id": "cta_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-title-paragraph",
+            "name": "Hero w/ Title & Paragraph",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Title & Paragraph",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "small",
+                    "type": "html",
+                    "label": "Small Paragraph"
+                }
+            ]
+        },
+        {
+            "type": "hero-with-video",
+            "name": "Hero w/ Video",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Hero w/ Video",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                  "id": "video",
+                  "type": "html",
+                  "label": "Video Embed"
+                }
+            ]
+        },
+        {
+            "type": "image-block",
+            "name": "Image",
+            "settings": [
+                {
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
+                },
+                {
+                    "type": "select",
+                    "id": "size",
+                    "options": [
+                        { "value": "narrow", "label": "Narrow"},
+                        { "value": "full_width", "label": "Full Width"}
+                    ],
+                    "label": "Image Size"
+                }
+            ]
+        },
+        {
+            "type": "intro-paragraph",
+            "name": "Intro Paragraph",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Intro Paragraph",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Text"
+                }
+            ]
+        },
+        {
+            "type": "social-proof",
+            "name": "Social Proof",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Social Proof",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "cta_button_text",
+                    "type": "text",
+                    "label": "CTA Text"
+                },
+                {
+                    "id": "cta_button_link",
+                    "type": "url",
+                    "label": "CTA Link"
+                },
+                {
+                    "id": "person_quote_1",
+                    "type": "richtext",
+                    "label": "Quote 1 Text"
+                },
+                {
+                    "id": "person_name_1",
+                    "type": "text",
+                    "label": "Quote 1 Person's Name"
+                },
+                {
+                    "id": "person_image_1",
+                    "type": "image_picker",
+                    "label": "Quote 1 Person's Photo"
+                },
+                {
+                    "id": "person_title_1",
+                    "type": "text",
+                    "label": "Quote 1 Job Title"
+                },
+                {
+                    "id": "person_company_image_1",
+                    "type": "image_picker",
+                    "label": "Quote 1 Company Logo"
+                },
+                {
+                    "id": "person_quote_2",
+                    "type": "richtext",
+                    "label": "Quote 2 Text"
+                },
+                {
+                    "id": "person_name_2",
+                    "type": "text",
+                    "label": "Quote 2 Person's Name"
+                },
+                {
+                    "id": "person_image_2",
+                    "type": "image_picker",
+                    "label": "Quote 2 Person's Photo"
+                },
+                {
+                    "id": "person_title_2",
+                    "type": "text",
+                    "label": "Quote 2 Job Title"
+                },
+                {
+                    "id": "person_company_image_2",
+                    "type": "image_picker",
+                    "label": "Quote 2 Company Logo"
+                },
+                {
+                    "id": "person_quote_3",
+                    "type": "richtext",
+                    "label": "Quote 3 Text"
+                },
+                {
+                    "id": "person_name_3",
+                    "type": "text",
+                    "label": "Quote 3 Person's Name"
+                },
+                {
+                    "id": "person_image_3",
+                    "type": "image_picker",
+                    "label": "Quote 3 Person's Photo"
+                },
+                {
+                    "id": "person_title_3",
+                    "type": "text",
+                    "label": "Quote 3 Job Title"
+                },
+                {
+                    "id": "person_company_image_3",
+                    "type": "image_picker",
+                    "label": "Quote 3 Company Logo"
+                },
+                {
+                    "id": "person_quote_4",
+                    "type": "richtext",
+                    "label": "Quote 4 Text"
+                },
+                {
+                    "id": "person_name_4",
+                    "type": "text",
+                    "label": "Quote 4 Person's Name"
+                },
+                {
+                    "id": "person_image_4",
+                    "type": "image_picker",
+                    "label": "Quote 4 Person's Photo"
+                },
+                {
+                    "id": "person_title_4",
+                    "type": "text",
+                    "label": "Quote 4 Job Title"
+                },
+                {
+                    "id": "person_company_image_4",
+                    "type": "image_picker",
+                    "label": "Quote 4 Company Logo"
+                },
+                {
+                    "id": "person_quote_5",
+                    "type": "richtext",
+                    "label": "Quote 5 Text"
+                },
+                {
+                    "id": "person_name_5",
+                    "type": "text",
+                    "label": "Quote 5 Person's Name"
+                },
+                {
+                    "id": "person_image_5",
+                    "type": "image_picker",
+                    "label": "Quote 5 Person's Photo"
+                },
+                {
+                    "id": "person_title_5",
+                    "type": "text",
+                    "label": "Quote 5 Job Title"
+                },
+                {
+                    "id": "person_company_image_5",
+                    "type": "image_picker",
+                    "label": "Quote 5 Company Logo"
+                }
+            ]
+        },
+        {
+            "type": "page-content",
+            "name": "Standard Page Content",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Block Name Indentifier",
+                    "default": "Standard Page Content",
+                    "info": "This field is used to display the title of the block for easier managing. Leave this setting as-is."
+                },
+                {
+                    "type": "select",
+                    "id": "width",
+                    "options": [
+                        { "value": "narrow", "label": "Narrow"},
+                        { "value": "wide", "label": "Wide"}
+                    ],
+                    "label": "Content Width"
+                }
+            ]
+        },
+        {
+            "type": "slider-landing",
+            "name": "Image Slider",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "heading_color",
+                    "type": "color",
+                    "label": "Heading Text Color"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "paragraph_color",
+                    "type": "color",
+                    "label": "Paragraph Text Color"
+                },
+                {
+                    "id": "image1",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image2",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image3",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image4",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image5",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                }
+            ]
+         },
+        {
+            "type": "slider-two-landing",
+            "name": "Image Two Slider",
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "heading_color",
+                    "type": "color",
+                    "label": "Heading Text Color"
+                },
+                {
+                    "id": "paragraph",
+                    "type": "richtext",
+                    "label": "Paragraph"
+                },
+                {
+                    "id": "paragraph_color",
+                    "type": "color",
+                    "label": "Paragraph Text Color"
+                },
+                {
+                    "id": "image1",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image2",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image3",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                },
+                {
+                    "id": "image4",
+                    "type": "image_picker",
+                    "label": "Desktop Background Image"
+                }
+            ]
+         }
+      ]
+    }
+{% endschema %}
+
+{% comment %} <style>
+  @media (max-width: 1023px){
+    a.btn--outline.btn--xlarge {
+      display: grid;
+      text-align: center;
+      margin: auto;
+      max-width: 66%;
+   }
+  }
+</style> {% endcomment %}

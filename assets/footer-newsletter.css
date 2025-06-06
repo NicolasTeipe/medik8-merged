@@ -1,0 +1,203 @@
+.wayfx-footer-newsletter .wayfx-wrapper {
+  line-height: 1; }
+  @media all and (min-width: 769px) {
+    .wayfx-footer-newsletter .wayfx-wrapper {
+      padding-top: 136px;
+      padding-bottom: 136px; } }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter .wayfx-wrapper {
+      padding: 0; } }
+
+.wayfx-footer-newsletter .wayfx-footer-newsletter__sub-heading {
+  color: #262626;
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  line-height: 28px;
+  margin-bottom: 24px;
+  max-width: 466px;
+  text-transform: uppercase; }
+  @media all and (max-width: 767px) {
+    .wayfx-footer-newsletter .wayfx-footer-newsletter__sub-heading {
+      font-size: 16px;
+      letter-spacing: 0.73px;
+      line-height: 21px;
+      margin-left: auto;
+      margin-bottom: 64px;
+      margin-right: auto;
+      text-align: center; } }
+
+.wayfx-footer-newsletter h2 {
+  color: #000;
+  font-size: 48px;
+  letter-spacing: -0.15px;
+  line-height: 50px;
+  margin-top: 0;
+  margin-bottom: 16px; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter h2 {
+      font-size: 40px;
+      letter-spacing: -0.42px;
+      margin-bottom: 8px;
+      max-width: 190px; } }
+
+.wayfx-footer-newsletter p {
+  color: #262626;
+  font-size: 20px;
+  letter-spacing: -0.1px;
+  line-height: 34px;
+  margin-bottom: 32px; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter p {
+      font-size: 18px;
+      letter-spacing: -0.09px;
+      line-height: 26px;
+      margin-bottom: 0;
+      max-width: 151px; } }
+
+.wayfx-footer-newsletter form .wayfx-footer-newsletter__fields {
+  align-items: center;
+  display: flex; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter form .wayfx-footer-newsletter__fields {
+      flex-flow: column; } }
+
+.wayfx-footer-newsletter form input[type="email"] {
+  background: #FFF;
+  border: 0;
+  border-radius: 0;
+  color: #666;
+  font-family: 'ridley_groteskregular', sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.09px;
+  height: 62px;
+  min-width: 432px;
+  padding: 20px;
+  -webkit-appearance: none; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter form input[type="email"] {
+      border: 1px solid #C1C1C1;
+      font-size: 16px;
+      height: 52px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 16px;
+      min-width: unset;
+      max-width: 432px;
+      width: 100%; } }
+
+.wayfx-footer-newsletter form button {
+  background: #000;
+  border: 1px solid #000;
+  color: #fff;
+  font-size: 18px;
+  height: 61px;
+  letter-spacing: 1.12px;
+  line-height: 61px;
+  margin-left: 16px;
+  padding: 0 38px;
+  text-transform: uppercase;
+  transition: all 0.2s; }
+  .wayfx-footer-newsletter form button:hover {
+    background: transparent;
+    color: #000; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter form button {
+      font-size: 16px;
+      height: 52px;
+      line-height: 52px;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 432px;
+      width: 100%; } }
+
+.wayfx-footer-newsletter .wayfx-footer-newsletter__terms {
+  margin-top: 14px; }
+  .wayfx-footer-newsletter .wayfx-footer-newsletter__terms a {
+    text-decoration: underline; }
+    .wayfx-footer-newsletter .wayfx-footer-newsletter__terms a:hover {
+      text-decoration: none; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter .wayfx-footer-newsletter__terms {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 432px; } }
+
+@media all and (max-width: 768px) {
+  .wayfx-footer-newsletter .klaviyo_field_group,
+  .wayfx-footer-newsletter .klaviyo_form_actions {
+    text-align: center;
+    width: 100%; } }
+
+@media all and (max-width: 768px) {
+  .wayfx-footer-newsletter .wayfx-footer-newsletter__success {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding: 80px 24px; }
+    .wayfx-footer-newsletter .wayfx-footer-newsletter__success h2 {
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 8px;
+      max-width: 360px;
+      text-align: center; }
+    .wayfx-footer-newsletter .wayfx-footer-newsletter__success p {
+      font-size: 18px;
+      letter-spacing: -0.09px;
+      text-align: center;
+      line-height: 28px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 32px;
+      max-width: 300px; } }
+
+.wayfx-footer-newsletter .newsletter-discount {
+  align-items: center;
+  display: flex;
+  justify-content: center; }
+
+.wayfx-footer-newsletter .newsletter-discount__code {
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px dashed #000;
+  border-right: 0;
+  border-radius: 3px 0 0 3px;
+  color: #000;
+  font-size: 18px;
+  letter-spacing: 1px;
+  line-height: 57px;
+  height: 57px;
+  min-width: 100px;
+  padding-left: 0;
+  padding-right: 0;
+  outline: none;
+  text-transform: uppercase;
+  text-align: center;
+  -webkit-appearance: none; }
+  @media all and (max-width: 1023px) {
+    .wayfx-footer-newsletter .newsletter-discount__code {
+      font-size: 14px; } }
+
+.wayfx-footer-newsletter .newsletter-discount__button {
+  background: #000;
+  border: 1px solid #000;
+  color: #fff;
+  font-size: 14px;
+  height: 57px;
+  letter-spacing: 1.05px;
+  line-height: 57px;
+  padding-left: 51px;
+  padding-right: 51px;
+  text-transform: uppercase;
+  transition: all 0.3s; }
+  .wayfx-footer-newsletter .newsletter-discount__button:hover {
+    background: transparent;
+    color: #000; }
+  @media all and (max-width: 768px) {
+    .wayfx-footer-newsletter .newsletter-discount__button {
+      min-width: 163px;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: center; } }
+
+@media all and (max-width: 768px) {
+  .wayfx-footer-newsletter .wayfx-footer-newsletter__form {
+    background: #fff;
+    padding: 24px 24px 56px; } }

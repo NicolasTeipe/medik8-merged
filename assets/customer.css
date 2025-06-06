@@ -1,0 +1,134 @@
+.main-addresses {
+  display: flow-root; }
+  .main-addresses .grid__item {
+    padding: 0; }
+  .main-addresses .btn--primary {
+    white-space: inherit; }
+  .main-addresses .one-quarter {
+    display: flex;
+    flex-direction: column; }
+  .main-addresses hr {
+    border: none; }
+
+.address-card-inner {
+  border: 1px solid var(--colorBorder);
+  border-radius: 0.6em;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 13px 0 rgba(31, 38, 135, 0.17);
+  padding: 2em 1em;
+  margin: 1em 0em; }
+  .address-card-inner h3 {
+    position: absolute;
+    top: 1.5em;
+    right: 0.5em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    margin: 0 auto;
+    text-transform: uppercase; }
+  .address-card-inner button {
+    padding: 0.3em 0.5em; }
+
+.address-card {
+  position: relative; }
+
+.default-address .address-card-inner {
+  background: #ededed;
+  background: linear-gradient(145deg, #ededed 0%, white 100%);
+  background: -moz-linear-gradient(145deg, #ededed 0%, white 100%);
+  background: -webkit-linear-gradient(145deg, #ededed 0%, white 100%); }
+
+.default-address .default-title {
+  margin: 0;
+  opacity: 0.5;
+  cursor: default; }
+
+.field {
+  padding-left: 0;
+  position: relative; }
+  .field input {
+    background-color: #fff; }
+
+.field:not(.field-checkbox) input {
+  margin: 0.875em 0em;
+  font-size: 1em;
+  width: calc(100% - 1vw); }
+
+.field .select select {
+  font-size: 1em;
+  width: calc(100% - 1vw); }
+
+.field label,
+.field div label {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  background-color: #fff;
+  padding: 0px 5px;
+  font-size: smaller; }
+
+.field:not(.one-half):not(.field-checkbox) label {
+  top: -7px; }
+
+.field-checkbox label {
+  top: 0;
+  left: 20px; }
+
+.action-buttons {
+  padding-top: 1em;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0; }
+  .action-buttons button {
+    white-space: pre-wrap;
+    margin-right: 1vw; }
+
+.default-btn {
+  position: absolute;
+  top: 1.5em;
+  right: 1em;
+  font-style: italic;
+  font-size: 0.875em; }
+  .default-btn:hover {
+    text-decoration: underline; }
+
+.fa-address-card {
+  font-size: 5em;
+  position: absolute;
+  right: 1px;
+  bottom: 11px;
+  opacity: 0.2; }
+
+.fancybox-content {
+  max-width: calc(300px + 20vw);
+  padding: 2em 2em 2em calc(2em + 1vw); }
+
+@media all and (max-width: 767px) {
+  .fancybox-content {
+    max-width: 100%; }
+  .fancybox-slide--html {
+    padding: 1em !important; } }
+
+.recharge-heading-h1 {
+  font-size: inherit;
+  text-transform: uppercase; }
+
+.recharge-heading-h2 {
+  font-size: inherit;
+  text-transform: uppercase; }
+
+.recharge-text {
+  font-size: inherit; }
+
+.recharge-button {
+  font-size: inherit;
+  text-transform: uppercase;
+  border-radius: 0.25rem; }
+  .recharge-button:hover {
+    background-color: inherit;
+    color: inherit; }
+  .recharge-button-secondary {
+    background-color: inherit;
+    border: 1px solid; }
+    .recharge-button-secondary:hover {
+      background-color: #000000;
+      color: #ffffff; }

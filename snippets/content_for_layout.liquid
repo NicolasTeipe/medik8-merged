@@ -1,0 +1,18 @@
+{%- comment -%}
+
+Used to wrap {{ content_for_layout }} inside an outer element
+
+@param: cfl (required) | type={{ content_for_layout }}
+    The {{ content_layout }} object
+
+{%- endcomment -%}
+
+{%- assign product_templates = 'product,product.alternate,product.mix' | split: ',' -%}
+
+{%- if template.name == 'product' and product_templates contains template -%}
+  <div class="wayfx-product">
+    {{ cfl }}
+  </div>
+{%- else -%}
+  {{ cfl }}
+{%- endif -%}

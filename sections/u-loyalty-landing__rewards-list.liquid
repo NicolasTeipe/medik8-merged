@@ -1,0 +1,109 @@
+
+<loyaltylion-rewards-table></table>
+
+<script type="text/javascript">    
+  class LoyaltyLionRewardsTable extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( async () => {
+        if(!this.mounted){
+          this.mounted = true
+          this.util = await new LoyaltyLionUtil()
+          this.render()
+          this.util.subscribe( () => {
+            this.render()
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    bind(){
+      this.querySelectorAll('.js-ll-reward-action').forEach(element => element.addEventListener('click',(e) => {
+        e.preventDefault()
+        const claimedReward_id = element.dataset.id
+        this.util.showReward(claimedReward_id)
+      }))
+    }
+
+    render(){
+      const {_customer} = this.util.loyaltylion
+      const rewards = _customer?.claimedRewards?.filter(({state,redeemable}) => state == 'approved' && redeemable.usage_count < redeemable.usage_limit)
+      if(!_customer || !rewards.length ){
+        return
+      }
+      
+      this.innerHTML = ` 
+        <div data-anchor="{{ section.settings.nav_title }}" class="ct--x3 cb--x3">
+          <div class="block-grid block-grid--f block-rel tac flex flex-grid--x2 column-nowrap align-center justify-left">
+            {% if section.settings.title != blank %}
+            <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+            {% endif %}
+            <div class="d-block block-12/12 cell-l cell-r">
+              <table class="ll-table">
+                <thead>
+                  <tr>
+                    <th>{{ 'apps.loyalty_lion.date' | t }}</th>
+                    <th>{{ 'apps.loyalty_lion.reward' | t }}</th>
+                    <th class="@mobile__hide" colspan="2">{{ 'apps.loyalty_lion.status' | t }}</th>
+                    <th class="@mobile__show">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rewards.map( item => {
+                    return `
+                      <tr>
+                        <td>${item.claimed_at.replace(/^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}.\d{3}Z$/, '$3/$2/$1')}</td>
+                        <td>${item.reward.title}</td>
+                        <td class="@mobile__hide" class="t-capitalize f-w600">${item.state}</td>
+                        <td class="tac">
+                        <button data-id="${item.id}" class="js-ll-reward-action btn-reset t-ucase"><u>{{ 'apps.loyalty_lion.get_code' | t }}</u></button>
+                      </td>
+                    </tr>
+                    `
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `
+      this.bind()
+    }
+    
+  }
+  customElements.define('loyaltylion-rewards-table', LoyaltyLionRewardsTable);
+</script>
+
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/rewards-list",
+  "limit":1,
+  "settings":[
+   
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Premios"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Tus Premios Disponibles"
+    }
+  ]
+}
+{% endschema %}

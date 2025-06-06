@@ -1,0 +1,45 @@
+<div class="wayfx-blocks">
+<article itemscope itemtype="http://schema.org/Article">
+  <section class="wayfx-block wayfx-block--hero-with-full-image-cover lazyload">
+    <div class="wayfx-block__text">
+      <header>
+        <h1 class="h1--secondary">{{ article.title }}</h1>
+        {% capture author %}<strong>{{ article.author }}</strong>{% endcapture %}
+        {% capture date %}<time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+        <p>{{ 'blogs.article.author_on_date_html' | t: author: author, date: date }}</p>
+        <ul class="inline-list wayfx-tags">
+          {% render 'tags-article' %}
+        </ul>
+      </header>
+    </div>
+    {% if article.image %}
+    <div class="wayfx-block__image">
+      {{ article | image_url: width: 2000, height: 2000 | image_tag }}
+    </div>
+    {% endif %}
+  </section>
+  {% render 'breadcrumb' %}
+  <section class="rte wayfx-block--page-content wayfx-block--page-content--condensed" itemprop="articleBody">
+    <div class="wayfx-wrapper">
+      {{ article.content }}
+
+      {% if blog.next_article or blog.previous_article %}
+      <hr>
+      <p class="clearfix">
+        {% if blog.previous_article %}
+        <span class="left">
+          &larr; {{ 'blogs.article.older_post' | t | link_to: blog.previous_article }}
+        </span>
+        {% endif %}
+        {% if blog.next_article %}
+        <span class="right">
+          {{ 'blogs.article.newer_post' | t | link_to: blog.next_article }} &rarr;
+        </span>
+        {% endif %}
+      </p>
+      {% endif %}
+
+    </div>
+  </section>
+</article>
+</div>

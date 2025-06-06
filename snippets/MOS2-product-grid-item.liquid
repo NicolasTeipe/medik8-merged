@@ -1,0 +1,245 @@
+{% comment %} 
+Renders a list of product cards with different views: Full, Standard, Minimal
+
+    Accepts:
+    - product_layout: {String} Specifies the render view (Full, Standard, Minimal) (mandatory)
+    - product: {Object} Product Liquid object (optional)
+    - variant: {Object} Variant Liquid object (optional)
+    - quickview: {Boolean} renders quickiew feature (optional)
+    - wishlist: {Boolean} renders wishlist feature (optional)
+    - block_id: {String} Block Identifier (optional)
+
+    Usage:
+    {% render 'price', product: product %}
+
+{% endcomment %}
+
+
+{%- liquid 
+if product.media.size >= 3
+  assign hover_image = product.images[2]
+else
+  assign hover_image = product.images[1]
+endif 
+
+if product.has_only_default_variant
+  assign variant_overlay = false
+  assign product_id = product.id
+  assign variant_id = product.selected_or_first_available_variant.id
+  assign product_title = product.title
+else
+  assign variant_overlay = true
+  assign product_id = variant.id
+  assign variant_id = variant.id
+  assign product_title = variant.title
+endif
+-%}
+
+{% comment %} TODO: Refactor metafields {% endcomment %}
+{%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
+
+
+{% if quickview == true and product_layout != "standard" %}
+  {%- render 'product-grid-item-overlay', variant_overlay: variant_overlay, variant: variant, product: product -%} 
+{% endif %}
+
+{% case product_layout %}
+  {% when "full" %}
+    <div class="product__grid-wrapper product-full">
+      <form id="product-{{ product.id }}" action="/cart/add" method="post" enctype="multipart/form-data">
+        <a href="{{ product.url }}">
+          {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product  %}
+          <div class="reveal">
+            <img loading="lazy" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" alt="{{ product.featured_image.alt | escape }}">
+            <img loading="lazy" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" width="{{hover_image.width}}" height="{{hover_image.height}}" alt="{{ hover_image.alt | escape }}" />
+          </div>
+        </a>
+        <div class="product-reviews">
+          <button data-href="{{ product.url }}#shopify-section-product-reviews">
+            <div class="yotpo bottomLine" style="pointer-events: none;"
+                data-product-id="{{ product.id }}"
+                data-product-models="{{ product.id }}"
+                data-name="{{ product.title | escape }}"
+                data-url="{{ shop.url }}{{ product.url }}"
+                data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
+                data-description="{{ product.description | escape }}"
+                data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+            </div>
+          </button>
+        </div>
+        <p class="product__grid-title"><a href="{{ product.url }}">{{ product.title }}</a></p>
+        <p class="product__grid-subtitle">{{ product_subtitle }}</p>
+        {%- if product.variants.size > 1 -%}
+          <div class="wayfx-product__grid-variant product__grid-variant">
+            <label for="id" class="hidden-label">{{product.variants}}</label>
+            <select name="id" id="id">
+              {%- for variant in product.variants -%}
+                {%- if variant.available == true -%}
+                  <option value="{{ variant.id }}" data-price="{{ variant.price | money_without_trailing_zeros }}">{{ variant.title | escape }}</option>
+                {%- endif -%}
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- else -%}
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+      	{%- endif -%}
+{% comment %} TODO: remove wayfx and see why is not workigin in productsion {% endcomment %}
+        <p class="wayfx-product__grid-price product__grid-price">
+          {% if on_sale and site_wide_crossed_out_pricing_enabled %}
+              <span style="margin-right: 5px;">
+                {%- if product.compare_at_price -%}
+                  <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+                {%- else -%}
+                  <s>{{ product.selected_or_first_available_variant.price | money_without_trailing_zeros }}</s>
+                {%- endif -%}
+              </span>
+          {%- endif -%}
+          {% if on_sale and site_wide_crossed_out_pricing_enabled %}
+              <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
+          {%- else -%}
+              <span>{{ product.selected_or_first_available_variant.price | money_without_trailing_zeros }}</span>
+          {%- endif -%}
+        </p>
+
+        {% comment %} TODO: make prices work with snippet - currently price not shows on initial load, only when variant changes {% endcomment %}
+        {% comment %} {% render 'MOS2-product-price', product: product, variant: variant, variant_overlay: variant_overlay %} {% endcomment %}
+
+        {% render 'MOS2-add-to-cart' product: product, form: 'no_form' %}
+
+      </form>
+  </div>
+
+
+  {% when "standard" %}
+    {% liquid 
+  
+      assign site_wide_enabled = settings.site_wide__enabled
+      assign site_wide_percentage = settings.site_wide__percentage | divided_by: 100.0
+      assign site_wide_label = settings.site_wide__label
+      assign site_wide_label_enabled = settings.site_wide__label_enabled
+      assign site_wide_collection = settings.site_wide__collection
+      assign vip_pricing = settings.vip-pricing
+    
+      if settings.discounts__vip_code == blank
+        assign site_wide_crossed_out_pricing_enabled = settings.site_wide__crossed_out_pricing_enabled
+      endif
+    
+      if site_wide_enabled
+        for collection in product.collections
+          if collection.handle == site_wide_collection
+            assign site_wide_product = true
+            assign on_sale = true
+          endif
+        endfor
+      endif
+      unless current_variant.title contains "travel" or current_variant.title contains "Travel"
+        assign site_wide_product = true
+      endunless
+
+      if site_wide_product == true and site_wide_enabled == true
+        if site_wide_crossed_out_pricing_enabled
+          assign discount_off = variant.price | times: site_wide_percentage
+          assign discount_price = variant.price | minus: discount_off
+        endif
+      endif
+    %}
+
+    <div class="product__grid-wrapper product-standard wayfx-product__item">
+      <div class="reveal">
+        {% liquid
+           assign image = variant.featured_image 
+           unless image
+           assign image = product.featured_image 
+           endunless
+        %}
+        <img loading="lazy" width="581" height="581" src="{{ image.src | image_url: width: 581, height: 581 }}" alt="{{ image.alt | escape }}">
+        {% if hover_image %}
+        <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ hover_image.alt | escape }}" />
+        {% endif %}
+        {% if quickview == true %}
+          {% if quickview == true %}
+            <div class="js-product-quickview  product__grid-quick-view quick-view-hidden"
+                 data-product="{{ variant.url }}">{{ 'products.general.quickview' | t }}</div>
+          {% endif %}
+        {% endif %} 
+        <div class="product-thumb__labels">
+          {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+        </div>
+      </div>
+      <p class="product__grid-title">
+        <a href="{{ product.url | within: collection }}">{{ product_title }}</a>
+      </p>
+      <p class="product__grid-subtitle">
+        {{ product_subtitle }}
+      </p>
+      {% if wishlist == true %}
+        <div class="product__wishlist wishlist-hidden">
+          <button data-with-epi="true" 
+                  class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}" 
+                  data-swaction="addToWishlist" 
+                  data-product-id="{{product.id | json}}" 
+                  data-variant-id="{{variant_id}}" 
+                  data-product-url="{{ shop.url }}{{ product.url }}">
+          </button>
+        </div>
+      {% endif %} 
+
+      <p class="wayfx-product__grid-price">
+        {% if variant.metafields.sf_product_hero.size != blank %}
+          {% unless show_weight == false %}
+            {{ product.metafields.sf_product_hero.size }} /
+          {% endunless %}
+        {% endif %}
+
+        {% if variant.compare_at_price >= variant.price  %}
+          <span aria-label="original price" class="slashed-price">
+            {% if discount_price > 0 %}
+              {{ discount_price | money_without_trailing_zeros }}
+            {% else %}
+              {{ variant.compare_at_price | money_without_trailing_zeros }}
+            {% endif %}
+          </span>
+          <span  aria-label="discounted price" style="display:initial;">
+            {{ variant.price | money_without_trailing_zeros }}
+          </span>
+        {% else %}
+          <span aria-label="original price" {%- if site_wide_product == true and site_wide_enabled == true and vip_pricing != true -%}class="slashed-price"{%- endif-%}>
+            {{ variant.price | money_without_trailing_zeros }}
+          </span>
+          {% if site_wide_product == true and site_wide_enabled == true %}
+            <span aria-label="discounted price" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
+              {% liquid
+                if site_wide_crossed_out_pricing_enabled
+                  assign discount_off = variant.price | times: site_wide_percentage
+                  assign discount_price = variant.price | minus: discount_off
+                endif
+              %}
+              {{ discount_price | money_without_trailing_zeros }}
+            </span>
+          {% endif %}
+        {% endif %}
+      </p>
+     
+      {% render 'MOS2-add-to-cart' form: 'with_form', product: product, variant_id: variant_id, block_id: block_id %}
+    </div>
+
+
+
+  {% when "minimal"%}
+    <div class="product__grid-wrapper product-minimal">
+      <div class="reveal">
+        <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" alt="{{ product.featured_image.alt | escape }}">
+        <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ hover_image.alt | escape }}" />
+      </div>
+      <p class="product__grid-title">
+        <a href="{{ product.url | within: collection }}">{{ product_title }}</a>
+      </p>
+      <p class="product__grid-subtitle">
+        {{ product_subtitle }}
+      </p>
+      
+      {% render 'MOS2-product-price', product: product, variant: variant, variant_overlay: variant_overlay, discount: discount %}
+
+      {{final_price}}
+    </div>
+{% endcase %}

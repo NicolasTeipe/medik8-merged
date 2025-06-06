@@ -1,0 +1,29 @@
+{%- if block.settings.alignment == 'center_center' -%}
+    {%- assign alignment = 'wayfx-block--align-center' -%}
+{%- elsif block.settings.alignment == 'top_center' -%}
+    {%- assign alignment = 'wayfx-block--align-top' -%}
+{%- elsif block.settings.alignment == 'bottom_center' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom' -%}
+{%- elsif block.settings.alignment == 'left_center' -%}
+    {%- assign alignment = 'wayfx-block--align-left' -%}
+{%- endif -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign image = block.settings.image | image_url: width: 1600 -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{% if block.settings.image %}
+    <style type="text/css">
+        .wayfx-block.wayfx-block--hero-with-media {
+            background: #F4F4F4 url('{{ image }}') no-repeat center center / cover;
+        }
+    </style>
+{% endif %}
+{% if heading %}
+    <section class="wayfx-block wayfx-block--hero-with-media {{ alignment }}">
+        <div class="wayfx-wrapper">
+            <div class="wayfx-block__text">
+                <h1 class="h1--secondary">{{ heading }}</h1>
+                {% if paragraph %}{{ paragraph }}{% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}

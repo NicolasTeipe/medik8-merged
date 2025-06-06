@@ -1,0 +1,25 @@
+{% layout none %}
+{% assign selected_variant = product.selected_variant %}
+{% if selected_variant %}
+{% assign variant_overlay  = true %}
+{% endif %}
+
+{% assign variant = product.selected_or_first_available_variant %}
+{%- assign on_sale = false -%}
+{%- assign low_stock = false -%}
+{%- assign sold_out = true -%}
+{%- if variant.available -%}
+  {%- assign sold_out = false -%}
+{%- endif -%}
+{%- if variant.inventory_quantity > 0 and variant.inventory_quantity < 20 -%}
+  {%- assign low_stock = true -%}
+{%- endif -%}
+
+{%- if variant.featured_image.src == blank -%}
+  {%- assign product_image = product.featured_image.src -%}
+{%- else -%}
+  {%- assign product_image = variant.featured_image.src -%}
+{%- endif -%}
+
+
+{%- render 'product-grid-item-overlay', showOnIt:true, variant_overlay: variant_overlay, variant: variant, product: product , low_stock:low_stock,sold_out:sold_out  -%}

@@ -1,0 +1,62 @@
+{%- comment -%} See MED-1647 for what this does & how to use. {%- endcomment -%}
+
+<variant-additional-info></variant-additional-info>
+
+<script type=module>
+  class VariantAdditionalInfo extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.buildDataObject();
+      if(Object.keys(this.additionalInfoMap).length) this.addListener();
+    }
+
+    buildDataObject() {
+      this.additionalInfoMap = {
+        {%- for variant in product.variants -%}
+          {%- if variant.metafields.custom.additional_information -%}
+            {{ variant.sku }}: "{{ variant.metafields.custom.additional_information }}",
+          {%- endif -%}
+        {%- endfor -%}
+      }
+    }
+
+    addListener() {
+      const variantSelect = document.querySelector('select#productSelect')
+      variantSelect?.addEventListener('change', (e) => {
+        this.activeSku =
+          e.target.options[e.target.selectedIndex].getAttribute('data-sku');
+        this.buildElement();
+      })
+    }
+
+    buildElement() {
+      this.innerHTML = '';
+      if (!this.additionalInfoMap[this.activeSku]) return
+
+      let infoElement = document.createElement('p');
+      infoElement.className = 'variant-additional-info';
+      infoElement.innerHTML = this.additionalInfoMap[this.activeSku]
+      this.appendChild(infoElement);
+    }
+  }
+
+  customElements.define('variant-additional-info', VariantAdditionalInfo)
+</script>
+
+<style>
+  .variant-additional-info {
+    font-size: 15px;
+    line-height: normal;
+    padding: 14px 19px;
+    border: 1px solid rgba(0,0,0,.06);
+    color: #262626;
+    margin: 24px 0;
+  }
+
+  .variant-additional-info span {
+    font-weight: 600;
+  }
+</style>

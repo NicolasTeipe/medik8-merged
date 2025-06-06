@@ -1,0 +1,135 @@
+{% if section.blocks.size > 0 %}
+  <key-ingredients>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      {% liquid 
+        if section.blocks.size <= section.settings.initial-show-count
+          assign force_padding = 'force_padding'
+          assign reset_height = 'reset_height'
+          assign open_state = 'open'
+        endif
+      %}
+
+      <ul class="js-list-item {{ force_padding }} {{ reset_height }} {{ open_state }} content">
+        {%- for block in section.blocks -%}
+          {%- if forloop.index > section.settings.initial-show-count -%}
+            {%- assign isHidden = ' hide__list-item' -%}
+          {%- endif -%}
+
+          <li class="list-item{{ isHidden }}">
+            <img src="{{ block.settings.icon | image_url: width: 50 }}" alt="Ingredient Icon {{ forloop.index }}" class="list-item-icon" width="50" height="auto" loading="lazy">
+            <div class="copy">
+              <div class="ki-title">{{ block.settings.title }}</div>
+              {{ block.settings.paragraph }}
+            </div>
+          </li>
+
+        {%- endfor -%}
+        {%- unless section.settings.full-ingredients == blank -%}
+          <li id="full-ingredients-list">{{ 'products.ingredients.full_ingredients' | t }} y PRECAUCIONES</li>
+          <template id="ingredients-template">
+            <div class="title">{{ product.title }}</div>
+            <div class="subtitle">{{ product.metafields.sf_product_hero.sub_heading.value }}</div>
+            <div class="ingredient-list">{{ section.settings.full-ingredients }}</div>
+            <div class="ingredient-disclaimer">{{ 'products.hero.ingredients_disclaimer' | t }}</div>
+          </template>
+        {%- endunless -%}
+      </ul>
+
+      {%- render 'f-accordion.view-toggle' -%}
+    </details>
+  </key-ingredients>
+
+  {%- comment -%} Script to configure custom element {%- endcomment -%}
+  {%- render 'f-accordion.content-list'
+    jsObjectName:'KeyIngredients',
+    customElementName:'key-ingredients' -%}
+{% endif %}
+{% schema %}
+    {
+        "name": "Accordion - Key Ingred",
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-list",
+        "settings": [
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": "open"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Key Ingredients"
+          },
+          {
+            "type": "richtext",
+            "id": "full-ingredients",
+            "label": "Full Ingredients List"
+          },
+          {
+            "type": "text",
+            "id": "view_all",
+            "label": "View All Text",
+            "default": "View All"
+          },
+          {
+            "type": "text",
+            "id": "view_less",
+            "label": "View Less Text",
+            "default": "View Less"
+          },
+          {
+            "type": "range",
+            "id": "initial-show-count",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "label": "Initial Show Count",
+            "default": 2
+          }
+        ],
+        "blocks": [
+          {
+            "type": "key-ingredients",
+            "name": "Key Ingredients",
+            "settings": [
+              {
+                "type": "text",
+                "id": "title",
+                "label": "Title"
+              },
+              {
+                "type": "richtext",
+                "id": "paragraph",
+                "label": "Paragraph"
+              },
+              {
+                "type": "image_picker",
+                "id": "icon",
+                "label": "Icon"
+              }
+            ]
+          }
+        ],
+        "presets": [
+          {
+            "name": "Accordion - Key Ingredients"
+          }
+        ]
+    }
+{% endschema %}

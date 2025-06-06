@@ -1,0 +1,92 @@
+{%- if product -%}
+
+  <button 
+    class="js-swym-wishlist-toggle swym-add-to-wishlist product_{{product.id}}" 
+    aria-label="Add to Wishlist" 
+    data-swaction="addToWishlist" 
+    data-product-id="{{ product.id | json }}"
+    data-product-url="{{ shop.url}}{{product.url }}">
+    <i class="wayfx-icon wayfx-icon-heart"></i>
+    {% unless disable_text %}
+      <span class="swym-wishlist-cta"></span>
+    {% endunless %}
+  </button>
+  
+
+    <script type="text/javascript" class="swym-product-view-snippet">
+        ['SwymViewProducts', 'SwymWatchProducts', 'SwymProductVariants'].forEach(function(k){
+            if(!window[k]) window[k] = {};
+        });
+        (function(et){
+            var collections = {{product.type | json}};
+            var o={}, empi={{ product.id | json }},
+                piu = {{ product.featured_image | image_url: width: 620, height: 620 | json }};
+            {% assign currentVariant = product.variants[0] %}
+            {% for variant in product.variants %}
+            {% if variant.selected %}
+            {% assign currentVariant = variant %}
+            {% endif %}
+            SwymProductVariants[{{variant.id|json}}] = {
+                empi:empi,epi:{{variant.id|json}},
+                du:"{{ shop.url }}{{ product.url }}",
+                dt:{{ product.title | json }},
+                ct: collections,
+                iu: {% if variant.image %} {{ variant | image_url: width: 620, height: 620 | json }} {% else %} piu {% endif %},
+                stk: {{variant.inventory_quantity}},
+                pr: {{ variant.price }}/100,
+                {% if variant.compare_at_price %} op: {{variant.compare_at_price}}/100, {% endif %}
+                variants: [{ {{ variant.title | json }} : {{variant.id|json}}}]
+        };
+            SwymWatchProducts[{{variant.id | json}}] = o[{{variant.id | json}}] = {"id": {{variant.id | json}}, "available": {{variant.available | json}},"inventory_management": {{variant.inventory_management | json}},"inventory_quantity": {{variant.inventory_quantity | json}},"title": {{variant.title | json}}, "inventory_policy": {{variant.inventory_policy | json}}};
+            {% endfor %}
+            var product_data = {
+                empi:empi, epi:{{ currentVariant.id }},
+                dt	:{{ product.title | json }},du:"{{ shop.url }}{{ product.url }}",
+                ct 	:collections,pr:{{ currentVariant.price }}/100,stk:{{ currentVariant.inventory_quantity }},
+                iu	:{% if currentVariant.image %} {{ currentVariant | image_url: width: 620, height: 620 | json }} {% else %} piu {% endif %},variants:[{ {{currentVariant.title | json}} : {{currentVariant.id | json}} }]
+            {% if currentVariant.compare_at_price %} ,op:{{currentVariant.compare_at_price}}/100 {% endif %}
+        };
+            SwymViewProducts[{{product.handle | json}}] = SwymViewProducts[{{product.id | json}}] = product_data;
+            SwymWatchProducts[{{product.handle | json}}] = SwymWatchProducts[{{product.id | json}}] = o;
+        })();
+
+
+
+        // remove item from wishlist
+        window.SwymCallbacks = window.SwymCallbacks || []
+        // wait for swym to load before binding, so we can access swat object
+        window.SwymCallbacks.push( (swat) => {
+          const removeWishListButtons = document.querySelectorAll('.js-swym-wishlist-toggle')
+          removeWishListButtons.forEach(elem => elem.addEventListener('click',async (e) => {
+            e.preventDefault()
+            if(!elem.classList.contains('disabled')){
+              return
+            }
+            // arguments on their own (https://api-docs.swym.it/v3/index.html#remove-from-wishlist-removefromwishlist) don't remove, we have to remove what is actually added
+            const {empi,epi,du} = Object.values(window.SwymProductVariants)[0]
+            // wrap swat fetch in promise and get current wishlist, resolve with empty array if error
+            const wishListProducts = await new Promise((resolve,reject) => swat.fetch((products) => resolve(products)))
+            if(!wishListProducts || !wishListProducts.length){
+              return 
+            }
+            // get the items to remove and wrap the remove request in a promise. ATM there will only be one, since add to wishlist is not connected to variant selector
+            let itemsToRemove = wishListProducts.filter(product => product.epi == epi && product.empi == empi).map( product => {
+              return new Promise((resolve,reject) => {
+                swat.removeFromWishList(product, (response) =>{
+                  resolve(response)
+                }, (error) => {
+                  reject(error);
+                });
+              })
+            })
+            // wait for all promises to resolve, do something with a .then() if needed, or catch error
+            Promise.all(itemsToRemove).catch(err => {
+              console.log(err)
+            })
+          }))
+        })
+  
+        
+        
+    </script>
+{%- endif -%}

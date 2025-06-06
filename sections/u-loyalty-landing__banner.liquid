@@ -1,0 +1,127 @@
+<div class="{% if section.settings.row %}row--x2{% endif %}">
+   
+  {% liquid 
+    if section.settings.hero 
+    assign loading = 'eager'
+    assign preload = true
+    else
+    assign loading = 'lazy'
+    assign preload = false
+    endif
+    assign hasMobileImage = section.settings.image_mobile
+    assign desktopImageClass = 'block-12/12 block-fh block-abc block-objc'
+    if hasMobileImage
+    assign desktopImageClass = 'block-12/12 block-fh block-abc block-objc @mobile__hide'
+    endif
+  %}
+
+  <div class="hero-item--{{ section.id }} block-rel d-block">
+    {% if section.settings.image_desktop %}
+    {{ section.settings.image_desktop | 
+       image_url: width: 2048 | 
+       image_tag: preload: preload, loading: loading, class: desktopImageClass 
+    }}
+    {% endif %}
+    {% if hasMobileImage %}
+      {{ section.settings.image_mobile | 
+         image_url: width: 767 | 
+         image_tag: preload: preload , loading: loading , class: 'block-12/12 block-fh block-abc block-objc @mobile__show' 
+      }}
+    {% endif %}
+    <div class="hero-item__content cell-l cell-r ct--x3 cb--x3 block-rel block-grid block-grid--f flex flex-grid--x2 column-wrap justify-center align-center tac">
+      {% if section.settings.hero %}
+        <h1 class="h-style h-style--accent t-xxl lh-s">{{ section.settings.title }}</h1>
+      {% else %}
+        <h2 class="h-style h-style--accent t-xxl lh-s">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.text != blank %}
+      <div class="t-m lh-ml rte-content block-c block-9/12 @mobile__block-12/12">{{ section.settings.text }}</div>
+      {% endif %}
+      {% if section.settings.button_1_label != blank and section.settings.button_1_url %}
+      <a class="btn btn--large @mobile__block-11/12" href="{{ section.settings.button_1_url }}">{{ section.settings.button_1_label }}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style type="text/css">
+  {% capture bp-mobile %}{{ settings.bp_mobile }}px{% endcapture %}
+  {% capture bp-tablet %}{{ settings.bp_tablet }}px{% endcapture %}
+  {% capture bp-desktop %}{{ settings.bp_desktop }}px{% endcapture %}
+  .hero-item--{{ section.id }} .hero-item__content{
+    min-height:calc(100vw / {{ section.settings.image_desktop.aspect_ratio }})
+  }
+
+  {% if hasMobileImage %}
+  @media screen and (max-width: {{bp-mobile}}){  
+    .hero-item--{{ section.id }} .hero-item__content{
+      min-height:calc(100vw / {{ section.settings.image_mobile.aspect_ratio }})
+    }
+  }
+ {% endif %}
+</style>
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/banner",
+
+  "settings":[
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin"
+    },
+    {
+      "type":"header",
+      "content":"content"
+    },
+    
+    {
+      "type": "checkbox",
+      "id": "hero",
+      "label": "is hero / first block on page?",
+      "default":true,
+      "info":"if value:true, we won't lazyload this image and we'll use a h1 element for the heading"
+    }, 
+    { 
+      "type":"image_picker",
+      "id":"image_desktop",
+      "label":"image@desktop"
+    },
+    { 
+      "type":"image_picker",
+      "id":"image_mobile",
+      "label":"image@mobile"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type":"header",
+      "content":"Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Button #1 label"
+    },
+    {
+      "type": "url",
+      "id": "button_1_url",
+      "label": "Button #1 url"
+    }
+  ]
+}
+{% endschema %}

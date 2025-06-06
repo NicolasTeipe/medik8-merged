@@ -1,0 +1,43 @@
+
+<template class="section--{{ section.id }}">
+  {{ section.settings.html_section }}
+</template>
+
+<script type="module">
+  import {DynanicRenderSection,YotpoObserver} from {{ 'scripts.globalYotpoInstagramFeed.js' | asset_url | json }};
+
+  let renderSection = new DynanicRenderSection({
+    element:document.querySelector(`#shopify-section-{{ section.id }}`),
+    content:document.querySelector(`.section--{{ section.id }}`)
+  })
+
+  let yotpo$ = window.yotpo$ = window.yotpo$ || new YotpoObserver()
+  renderSection.observer$.subscribe(() => {
+    if(yotpo$.yotpoAPI){
+      yotpo$.yotpoAPI.refreshWidgets()
+    }else{
+      yotpo$.observer$.subscribe( () => {
+        yotpo$.yotpoAPI$.refreshWidgets()
+      })
+    }
+  })
+</script>
+
+
+{% schema %}
+{
+  "name": "global/yotpo-insta-feed",
+  "settings": [
+    {
+      "type": "html",
+      "id": "html_section",
+      "label": "HTML Section"
+    }
+  ],
+  "presets": [
+    {
+      "name": "global/yotpo-insta-feed"
+    }
+  ]
+}
+{% endschema %}

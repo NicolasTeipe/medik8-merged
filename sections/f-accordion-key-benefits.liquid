@@ -1,0 +1,115 @@
+{% if section.blocks.size > 0 %}
+  <key-benefits>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      {% liquid 
+        if section.blocks.size <= section.settings.initial-show-count
+          assign is_fade = 'hide__fade'
+          assign reset_height = 'reset_height'
+        endif
+      %}
+
+      <ul class="js-list-item {{ is_fade }} {{ reset_height }} content">
+        {%- for block in section.blocks -%}
+          {%- if forloop.index > section.settings.initial-show-count -%}
+            {%- assign isHidden = ' hide__list-item' -%}
+          {%- endif -%}
+
+          <li class="list-item{{ isHidden }}">
+            {%- render 'svg_check-circular' -%}
+            <div class="copy">
+              <h6>{{ block.settings.title }}</h6>
+              {{ block.settings.paragraph }}
+            </div>
+          </li>
+
+        {%- endfor -%}
+      </ul>
+
+      {%- render 'f-accordion.view-toggle' -%}
+    </details>
+  </key-benefits>
+
+  {%- comment -%} Script to configure custom element {%- endcomment -%}
+  {%- render 'f-accordion.content-list'
+    jsObjectName:'KeyBenefits',
+    customElementName:'key-benefits' -%}
+{% endif %}
+{% schema %}
+    {
+        "name": "Accordion - Key Benefits",
+        "presets": [
+          {
+            "name": "Accordion - Key Benefits"
+          }
+        ],
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-list",
+        "settings": [
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": "open"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Key Benefits"
+          },
+          {
+            "type": "text",
+            "id": "view_all",
+            "label": "View All Text",
+            "default": "View All"
+          },
+          {
+            "type": "text",
+            "id": "view_less",
+            "label": "View Less Text",
+            "default": "View Less"
+          },
+          {
+            "type": "range",
+            "id": "initial-show-count",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "label": "Initial Show Count",
+            "default": 2
+          }
+        ],
+        "blocks": [
+          {
+            "type": "key-benefits",
+            "name": "Key Benefits",
+            "settings": [
+              {
+                "type": "text",
+                "id": "title",
+                "label": "Title"
+              },
+              {
+                "type": "richtext",
+                "id": "paragraph",
+                "label": "Paragraph"
+              }
+            ]
+          }
+        ]
+    }
+{% endschema %}

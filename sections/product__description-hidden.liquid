@@ -1,0 +1,25 @@
+<div style="display:none;">
+  {{ product.description }}
+</div>
+
+{% schema %}
+    {
+        "name": "Product Desc - Hidden",
+        "presets": [
+          {
+            "name": "Product Desc - Hidden"
+          }
+        ],
+        "tag": "section",
+        "settings": [
+          {
+            "type": "header",
+            "content": "What does this do?"
+          },
+          {
+            "type": "paragraph",
+            "content": "This section inserts the value of product.description, and then hides it."
+          }
+        ]
+    }
+{% endschema %}

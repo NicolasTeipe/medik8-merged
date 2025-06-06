@@ -1,0 +1,670 @@
+<style type="text/css">
+
+  :root{
+    --show-tag-awards:inline-flex;
+  }
+
+  .product-tag {
+    display:var(--show-tag-awards);
+    color: black;
+    background-color: #f5f5f5;
+    z-index: 99;
+    padding: 0.3rem 1rem;
+    border-radius: 0.3rem;
+    line-height:1.1;
+    font-size:12px;
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    max-width:calc(100% - 120px)
+  }
+
+  .product-award {
+    display:var(--show-tag-awards);
+    font-size:12px;
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width:100%;
+    height: auto;
+    max-width:70px;
+    z-index: 98;
+  }
+
+  #product-gallery-mobile-popover .f-popover-content {
+    transform: inherit !important;
+  }
+
+  .f-popover-content img,
+  .f-popover-content video {
+    width: 100%;
+    height:auto;
+  }
+
+  .product-image-container {
+    display: grid;
+    gap: 1px;
+    position: relative;
+    grid-template-columns:100%;
+  }
+
+  .product-image-container img,
+  .product-image-container video,
+  .product-image-container iframe {
+    cursor: pointer;
+    aspect-ratio:1;
+    object-fit:cover;
+    width:100%;
+    height:100%;
+  }
+
+  .product-image-carousel-wrapper .dots,
+  .product-image-carousel-wrapper .arrow {
+    display: none !important;
+  }
+
+  .product-image-gallery {
+    margin:0;
+    position: relative;
+  }
+
+  .product-gallery-zoom-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 5;
+    background: transparent;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  .product-gallery-zoom-button img{
+    background: #f5f5f5;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.7rem;
+    border-radius: 0.313rem;
+  }
+
+  .product-gallery-close-button {
+    padding: 1rem;
+  }
+
+  .product-image-carousel__active-slide {
+    position:relative;
+  }
+
+  .product-image-carousel__active-slide:after{
+    content:'';
+    position:absolute;
+    bottom:12px;
+    width:100%;
+    left:0;
+    border-bottom: 2px solid black;
+    display:block;
+  }
+
+  .product-image-carousel {
+    gap: 1px;
+    display:flex;
+    margin:0;
+    height:100%;
+    overflow:hidden;
+  }
+
+  .product-image-carousel__nav {
+    position: absolute;
+    z-index: 1;
+    width:100%;
+    left:0;
+    background:#ffffff80;
+    height:20px;
+  }
+
+  .product-image-carousel__nav img{
+    width:auto;
+    height:8px;
+  }
+
+  .product-image-carousel__nav[direction="up"] {
+    top: 0;
+    transform: rotate(180deg);
+  }
+
+  .product-image-carousel__nav[direction="down"] {
+    bottom: 0;
+  }
+
+  .product-image-carousel__slide {
+    margin-bottom: 0;
+  }
+
+
+  @media screen and (max-width: 1023px) {
+
+    .product-image-carousel__active-slide:after{
+      bottom:0;
+    }
+  }
+
+  @media screen and (min-width:1024px) {
+
+
+    .product-gallery-zoom-button {
+      display: none;
+    }
+  
+    .product-image-container {
+      grid-template-columns:100%;
+      padding-left:calc(6.9445vw + 12px);
+      max-height: 100%;
+    }
+
+    .product-image-gallery {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+
+    .product-image-carousel{
+      flex-wrap: wrap
+   }
+
+
+    .product-image-gallery.is-expanded img {
+      width: 100%;
+    }
+
+    .product-image-gallery.is-expanded ~ .product-image-carousel-wrapper {
+      display: none;
+    }
+
+    .product-image-gallery.is-expanded {
+      grid-column: span 2;
+      width: 100%;
+    }
+ 
+    .product-image-carousel-wrapper {
+      margin: 0;
+      max-width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow: hidden;
+      width:6.9445vw;
+
+    }
+
+    .product-image-carousel li {
+      margin: 0;
+    }
+
+    .product-image-gallery{
+      margin:0;
+    }
+
+    .product-image-gallery__slide{
+      margin:0;
+    }
+
+
+    .product-image-carousel__slide {
+      padding-bottom:12px;
+      position:relative;
+    }
+  }
+
+
+  @media screen and (min-width: 768px) {
+    .product-tag {
+      top: 25px;
+      left: 25px;
+      max-width:calc(100% - 170px)
+    }
+
+    .product-award {
+      top: 25px;
+      right: 25px;
+      width:100%;
+      max-width:70px;
+      z-index: 98;
+    }
+  }
+</style>
+{% assign variant = product.selected_or_first_available_variant %}
+{% capture mediaForVariantImages %}{{ product.variants | map: 'featured_media' | map: 'id' }}{% endcapture %}
+
+{% for media in product.media %}
+  {% liquid
+    assign showMediaBasedOnSkuAltText = false
+    if media.alt contains '|' 
+      if media.alt contains variant.sku
+        unless mediaForVariantImages contains media.id
+          assign showMediaBasedOnSkuAltText = true
+        endunless
+      endif
+    else
+      unless mediaForVariantImages contains media.id
+        assign showMediaBasedOnSkuAltText = true
+      endunless
+    endif
+  %}
+  {% if showMediaBasedOnSkuAltText %}
+    {% capture mediaForSelectedVariant %}{{ mediaForSelectedVariant }},{{ media.id }}{% endcapture %}
+  {% endif %}
+{% endfor %}
+
+<div class="product-image-container">
+        
+  <div class="block-rel block-oh">
+    {% if tag %}
+    <div class="product-tag">
+      {{ tag }}
+    </div>
+    {% endif %}
+    {% if award %}
+    <div class="product-award">
+      {{ award | img_url | img_tag }}
+    </div>
+    {% endif %}
+  
+    <ul class="js-product-image-gallery keen-slider product-image-gallery">
+      {% if variant.featured_media %}
+        {% render 'f-product.gallery.main-slide' , 
+           media: variant.featured_media
+        %}
+      {% endif %}
+      {% for media in product.media %}
+        {% if mediaForSelectedVariant contains media.id %}
+          {% render 'f-product.gallery.main-slide' , 
+                     media: media
+          %}
+        {% endif %}
+      {% endfor %}
+      <button class="product-gallery-zoom-button f-popover-trigger" data-target="#product-gallery-mobile-popover">
+        <img alt="Zoom" width="20" height="20" src="{{ 'Zoom.svg' | asset_url }}">
+      </button>
+    </ul>
+    <button data-product-gallery-nav="prev" class="arrow arrow--left arrow--left-pls-gutter arrow--white-bg arrow--square" aria-label="Previous item"></button>
+    <button data-product-gallery-nav="next" class="arrow arrow--right arrow--right-pls-gutter arrow--white-bg arrow--square" aria-label="Next item"></button>
+  </div>
+
+  <div class="product-image-carousel-wrapper">
+    <button class="js-product-image-carousel__nav product-image-carousel__nav" style="display: none;" direction="up">
+      <img src="{{ 'icon-down-chevron.svg' | asset_url }}" alt="Scroll up" width="15" height="8" loading="lazy"/>
+    </button>
+    <ul class="js-product-image-carousel keen-slider product-image-carousel" data-keen-slider-disabled>
+      {% assign index = 0 %}
+      {% if variant.featured_media %}
+        {% render 'f-product.gallery.carousel-slide' , 
+           media: variant.featured_media
+           index:index
+        %} 
+        {% assign index = index | plus: 1 %}
+      {% endif %}
+      {% for media in product.media %}
+      
+        {% if mediaForSelectedVariant contains media.id %}
+          {% render 'f-product.gallery.carousel-slide' , 
+                    media: media
+                    index:index
+          %}
+          {% assign index = index | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <button class="js-product-image-carousel__nav product-image-carousel__nav" style="display: none;" direction="down">
+      <img src="{{ 'icon-down-chevron.svg' | asset_url }}" alt="Scroll down" width="15" height="8" loading="lazy"/>
+    </button>
+  </div>
+</div>
+
+<script type="text/javascript">
+  DomReadyPromise().then( () => {
+
+    let popoverNeedsUpdate = true
+    let selectedSku = {{ variant.sku | json }}
+    // get all images grouped by SKUs
+    const variants = {{ product.variants | json }}
+    let media = {{  product.media | json }}
+
+    media = media.map(item => {
+      let mediaUsedForVariant = variants.find(({featured_media}) => featured_media?.id == item.id) 
+      mediaUsedForVariant = mediaUsedForVariant ? [mediaUsedForVariant.sku] : []
+      const altTextSkus = item.alt?.split('|')[1]?.trim().split(',') || []
+      item.skus = mediaUsedForVariant.concat(altTextSkus)
+      item.alt = item.alt?.split('|')[0].trim() || false
+      item.position = mediaUsedForVariant.length ? 0 :  item.position
+      return item
+    })
+    .sort( (a,b) => a.position - b.position )
+
+    let variantSkus = [...new Set(
+      variants.map(({sku}) => sku)
+    )]
+
+    variantSkus = variantSkus.map( sku => {
+      return {
+        sku:sku,
+        media:media.filter((media) => media.skus.includes(sku))
+      }
+    })
+
+    // GALLERIES //
+    let productGallery, productCarousel
+
+    const productGalleryParams = {
+      loop: true,
+      vertical: false,
+      slides: { perView: 1 },
+    }
+
+    const productCarouselParams = {
+      loop: true,
+      vertical: false,
+      slides: { perView: 4 },
+      breakpoints: {
+        '(min-width: 767px)': { slides: { perView: 6 } },
+        '(min-width: 1024px)': { vertical: true, slides: { perView: 'auto' } }
+      }
+    }
+
+    // init the main gallery
+    function updateInlineVideo(){
+      const {slides,track} = productGallery
+      const activeSlideIndex = track.details.rel
+      slides.forEach( (slide,index) => {
+        let video = slide.querySelector('video')
+        if(video){
+          try{
+            if(index != activeSlideIndex){
+              video.pause()
+            }else{
+              video.play()
+            }
+          }catch(err){
+            // catch console error when too many requests fire for html5 video play / pause
+            setTimeout( () => {
+              updateInlineVideo()
+            },100)
+            console.log(err)
+          }
+        }
+      })
+    }
+
+    function bindSliders(){
+      const productCarouselNav = document.querySelectorAll('.js-product-image-carousel__nav:not([data-bound="true"])')
+      productCarouselNav.forEach(n => {
+        n.dataset.bound = true
+        n.addEventListener('click', e => {
+          e.preventDefault()
+          productCarousel[n.getAttribute('direction') === 'up' ? 'prev' : 'next']()
+        })
+      })
+      
+      productCarousel.slides.forEach((slide,index) => {
+        slide.removeEventListener('click', productGallery.moveToIdx.bind(null,index)) 
+        slide.addEventListener('click', productGallery.moveToIdx.bind(null,index))
+      })  
+    }
+
+    function removeSkuSlides(slider,mediaIdsForOldSku){
+      slider.slides.forEach( slide => {
+        const remove = mediaIdsForOldSku.indexOf(parseInt(slide.dataset.mediaId)) >= 0
+        if(remove){
+          slide.remove()
+        }
+      })
+    }
+
+    function createImageElement({ src, initWidth, widths, width, height, alt , attrs}) {
+      const separator = src.includes('?') ? '&' : '?'
+      const srcset = widths.map(w => {
+          return `${src}${separator}width=${w} ${w}w`
+      }).join(', ')
+  
+      return `<img src="${src}${separator}width=${initWidth}" srcset="${srcset}" width="${width}" height="${height}" 
+              ${alt ? `alt="${alt}"` : ''} ${attrs}>`
+    }
+
+    function createVideoElement(sources, { aspect_ratio, height, width, src }) {
+      const poster = src.includes('//') ? `https:${src}` : src
+      let videoHtml = `<video width="${width}" height="${height}" poster="${poster}" controls>`
+  
+      sources.forEach(({ url, mime_type }) => {
+          videoHtml += `<source src="${url}" type="${mime_type}">`
+      })
+  
+      videoHtml += 'Your browser does not support the video tag.</video>'
+      return videoHtml
+    }
+  
+    function createVideoIframe(host,external_id,alt){
+      if(!host || !external_id){
+        return
+      }
+      return host == 'youtube' ? 
+      `
+        <iframe 
+          class="no_wrapper"
+          frameborder="0" 
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen="allowfullscreen" 
+          src="https://www.youtube.com/embed/${external_id}?color=white&amp;controls=1&amp;enablejsapi=1&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amop;muted=1" 
+          title="${alt}">
+        </iframe>
+      ` : 
+      `
+        <iframe 
+          class="no_wrapper"
+          frameborder="0" 
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen="allowfullscreen" 
+          src="https://player.vimeo.com/video/${external_id}?byline=0&amp;controls=1&amp;loop=1&amp;muted=1&amp;playsinline=1&amp;title=0" 
+          title="${alt}">
+        </iframe>
+      `
+    }
+
+    function getMediaElement(media,carousel){
+      return media.media_type == 'image' ?
+        createImageElement({
+          widths:[128,256,512,1024],
+          initWidth:carousel ? 256 : 1024,
+          src:media.src,
+          width:media.width,
+          height:media.height,
+          alt:media.alt,
+          attrs:'class="block-12/12 d-block" loading="lazy" preload="true" data-aspect="1"'
+        }) :
+        carousel ?
+        createImageElement({
+          widths:[128,256,512,1024],
+          initWidth:carousel ? 256 : 1024,
+          src:media.preview_image.src,
+          width:media.preview_image.width,
+          height:media.preview_image.height,
+          alt:media.alt,
+          attrs:'class="block-12/12 d-block" loading="lazy" preload="true" data-aspect="1"'
+        }) : 
+        media.media_type == 'video' ? 
+        createVideoElement(media.sources,media.preview_image) :
+        createVideoIframe(media.host,media.external_id,media.alt)
+    }
+
+    function updateActiveCarouselSlide(activeSlideIndex){
+      productCarousel.container.querySelectorAll('li').forEach((slide,index) => {
+        slide.classList.toggle('product-image-carousel__active-slide',activeSlideIndex == index)
+        updateInlineVideo()
+      })
+      productCarousel.moveToIdx(activeSlideIndex)
+      const root = document.documentElement
+      root.style.setProperty('--show-tag-awards', activeSlideIndex == 0 ? 'inline-flex' : 'none')
+    }
+
+    function updateSlideForVariant(sku){
+      
+      const mediaIdsForOldSku = variantSkus.find( item => item.sku == selectedSku)?.media?.map(({id}) => id) || []
+      // remove the slides that have SKU attached that isn't active SKU
+      removeSkuSlides(productGallery,mediaIdsForOldSku)
+      removeSkuSlides(productCarousel,mediaIdsForOldSku)
+
+      let mediaForNewSku = variantSkus.find( item => item.sku == sku)
+  
+      const gallerySlides = mediaForNewSku.media.map( media => 
+        `
+        <li 
+          class="keen-slider__slide product-image-gallery__slide" 
+          data-media-id="${media.id}">
+          ${getMediaElement(media)}
+        </li>
+        `
+      ).join('')
+
+      productGallery.container.insertAdjacentHTML('afterbegin',gallerySlides)
+      productGallery.update(productGalleryParams,0)
+
+
+      const carouselSlides = mediaForNewSku.media.map( media => 
+        `
+        <li 
+          class="keen-slider__slide keen-slider__slide--auto-height product-image-carousel__slide" 
+          data-media-id="${media.id}">
+          ${getMediaElement(media,true)}
+        </li>
+        `
+      ).join('')
+
+      productCarousel.container.insertAdjacentHTML('afterbegin',carouselSlides)
+      productCarousel.update(productCarouselParams,0)
+      
+      bindSliders()
+      productGallery.moveToIdx(0)
+      updateActiveCarouselSlide(0)
+      updateGalleryNavState()
+    }
+
+    function updateGalleryNavState(){
+      const productCarouselNav = document.querySelectorAll('.js-product-image-carousel__nav')
+      const {height,width} = productCarousel.container.getBoundingClientRect()
+      const show = Math.floor(height) < productCarousel.container.scrollHeight - 2 
+      productCarouselNav.forEach(
+        nav => (nav.style.display = show ? 'block' : 'none')
+      )
+    }
+
+    productGallery = new KeenSlider('.js-product-image-gallery',productGalleryParams)
+     
+    productGallery.on('slideChanged',() => {
+      const {track} = productGallery
+      const activeSlideIndex = track.details.rel
+      updateActiveCarouselSlide(activeSlideIndex)
+    })
+
+    document.querySelectorAll('[data-product-gallery-nav]').forEach(el => {
+      const direction = el.dataset.productGalleryNav
+      el.addEventListener( 'click' , (e) => {
+        e.preventDefault()
+        if(direction == 'next'){
+          productGallery.next()
+        }else{
+          productGallery.prev()
+        }
+      })
+    })
+
+
+    // init the thumb carousel
+    productCarousel = new KeenSlider('.js-product-image-carousel', productCarouselParams)
+
+    // navigation
+    let timeoutId = 'productCarouselUpdated'
+    productCarousel.on('updated',() => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        updateGalleryNavState()
+      }, 500)
+    })
+
+    // add listener to main variant selector
+    const productMainVariantSelector = document.querySelector('.js-product-main-variant-selector')
+    productMainVariantSelector?.subscribe( () => {
+      const {sku}  = productMainVariantSelector.currentVariant
+      if(!sku){
+        return
+      }
+      updateSlideForVariant(sku)
+      popoverNeedsUpdate = true
+      selectedSku = sku
+      fPopBind()
+    })
+
+    // add listner to gallery slide nav
+
+    bindSliders()
+    updateInlineVideo()
+    updateGalleryNavState()
+    
+  
+    // MOBILE POPOVER
+    function initialiseMobilePopover() {
+      const popover = document.getElementById('product-gallery-mobile-popover')
+      const contentWrapper = popover.querySelector('.js-prod-zoom-popover__content')
+
+      
+      if(popoverNeedsUpdate){
+  
+        // get content from the slideshow
+        contentWrapper.innerHTML = ''
+        const content = productGallery.slides.map( slide => {
+          return `${slide.innerHTML}`
+        }).join('')
+
+        // make it a dom node
+        const html = `<div class="flex flex-grid--d2 column-nowrap">${content}</div>`
+        const parsed = new DOMParser().parseFromString(html, 'text/html')
+        const contentNode = parsed.body.firstChild
+
+        // wrap iframes in video wrapper
+        contentNode.querySelectorAll('iframe').forEach( item => {
+          let wrapper = document.createElement('div')
+          wrapper.classList.add('video-wrapper')
+          item.parentNode.insertBefore(wrapper, item)
+          wrapper.appendChild(item)
+        })
+
+        // insert content
+        contentWrapper.appendChild(contentNode)
+        popoverNeedsUpdate = false
+      
+      }
+
+      // scroll to current image
+      const {track} = productGallery
+      const activeSlideIndex = track.details.rel
+
+      contentWrapper.firstChild?.children[activeSlideIndex]?.scrollIntoView({
+        behavior: 'smooth', 
+        block: 'start', 
+        inline: 'start' 
+      })
+
+    }
+
+    document.querySelectorAll('.product-gallery-zoom-button').forEach(button => {
+      button.addEventListener('click', initialiseMobilePopover)
+    })
+
+  
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

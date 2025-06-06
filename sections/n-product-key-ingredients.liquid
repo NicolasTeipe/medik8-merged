@@ -1,0 +1,222 @@
+{%- if product.metafields.sf_product_layout_a.ingredient_1_title -%}
+
+{{ "n-product-key-ingredients.css" | asset_url | stylesheet_tag }}
+
+{%- assign main_heading = product.metafields.sf_product_layout_a.key_ingredients_heading -%}
+{%- assign main_description = product.metafields.sf_product_layout_a.key_ingredients_description -%}
+
+{%- assign ingredient_title_1 = product.metafields.sf_product_layout_a.ingredient_1_title -%}
+{%- assign ingredient_description_1 = product.metafields.sf_product_layout_a.ingredient_1_description -%}
+{%- assign ingredient_icon_1 = product.metafields.sf_product_layout_a.ingredient_1_icon -%}
+
+{%- assign ingredient_title_2 = product.metafields.sf_product_layout_a.ingredient_2_title -%}
+{%- assign ingredient_description_2 = product.metafields.sf_product_layout_a.ingredient_2_description -%}
+{%- assign ingredient_icon_2 = product.metafields.sf_product_layout_a.ingredient_2_icon -%}
+
+{%- assign ingredient_title_3 = product.metafields.sf_product_layout_a.ingredient_3_title -%}
+{%- assign ingredient_description_3 = product.metafields.sf_product_layout_a.ingredient_3_description -%}
+{%- assign ingredient_icon_3 = product.metafields.sf_product_layout_a.ingredient_3_icon -%}
+
+{%- assign ingredient_title_4 = product.metafields.sf_product_layout_a.ingredient_4_title -%}
+{%- assign ingredient_description_4 = product.metafields.sf_product_layout_a.ingredient_4_description -%}
+{%- assign ingredient_icon_4 = product.metafields.sf_product_layout_a.ingredient_4_icon -%}
+
+{%- assign ingredient_title_5 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_5_t  -%}
+{%- assign ingredient_description_5 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_5_d -%}
+{%- assign ingredient_icon_5 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_5_i -%}
+
+{%- assign ingredient_title_6 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_6_t -%}
+{%- assign ingredient_description_6 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_6_d -%}
+{%- assign ingredient_icon_6 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_6_i -%}
+
+{%- assign ingredient_title_7 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_7_t -%}
+{%- assign ingredient_description_7 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_7_d -%}
+{%- assign ingredient_icon_7 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_7_i -%}
+
+{%- assign ingredient_title_8 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_8_t -%}
+{%- assign ingredient_description_8 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_8_d -%}
+{%- assign ingredient_icon_8 = product.metafields.sf_product_layout_a.key_ingredients_ingredient_8_i -%}
+
+{%- assign ingredients_not_added_item_1 = product.metafields.sf_product_layout_a.whats_not_included_item_1 -%}
+{%- assign ingredients_not_added_item_2 = product.metafields.sf_product_layout_a.whats_not_included_item_2 -%}
+{%- assign ingredients_not_added_item_3 = product.metafields.sf_product_layout_a.whats_not_included_item_3 -%}
+{%- assign ingredients_not_added_item_4 = product.metafields.sf_product_layout_a.whats_not_included_item_4 -%}
+{%- assign ingredients_not_added_item_5 = product.metafields.sf_product_layout_a.whats_not_included_item_5 -%}
+{%- assign ingredients_not_added_item_6 = product.metafields.sf_product_layout_a.whats_not_included_item_6 -%}
+{%- assign ingredients_not_added_item_7 = product.metafields.sf_product_layout_a.whats_not_included_item_7 -%}
+{%- assign ingredients_not_added_item_8 = product.metafields.sf_product_layout_a.whats_not_included_item_8 -%}
+
+<div class="wayfx-wrapper">
+  {%- if main_heading -%}
+    <div class="wayfx-product__section-heading">
+      <h2 class="h1--primary">{{ main_heading }}</h2>
+      {%- if main_description -%}
+        <p class="p--lg">{{ main_description }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  <ul class="wayfx-product__ingredient-cards">
+    {%- if ingredient_title_1 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_1 }}</h4>
+          {%- if ingredient_description_1 -%}
+            <p class="p--sm">{{ ingredient_description_1 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_1 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_1 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_2 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_2 }}</h4>
+          {%- if ingredient_description_2 -%}
+            <p class="p--sm">{{ ingredient_description_2 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_2 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_2 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_3 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_3 }}</h4>
+          {%- if ingredient_description_3 -%}
+            <p class="p--sm">{{ ingredient_description_3 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_3 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_3 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_4 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_4 }}</h4>
+          {%- if ingredient_description_4 -%}
+            <p class="p--sm">{{ ingredient_description_4 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_4 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_4 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_5 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_5 }}</h4>
+          {%- if ingredient_description_5 -%}
+            <p class="p--sm">{{ ingredient_description_5 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_5 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_5 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_6 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_6 }}</h4>
+          {%- if ingredient_description_6 -%}
+            <p class="p--sm">{{ ingredient_description_6 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_6 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_6 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_7 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_7 }}</h4>
+          {%- if ingredient_description_7 -%}
+            <p class="p--sm">{{ ingredient_description_7 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_7 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_7 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+    {%- if ingredient_title_8 -%}
+      <li class="wayfx-product__ingredient-card">
+        <span class="text">
+          <h4 class="h4--primary">{{ ingredient_title_8 }}</h4>
+          {%- if ingredient_description_8 -%}
+            <p class="p--sm">{{ ingredient_description_8 }}</p>
+          {%- endif -%}
+        </span>
+        {%- if ingredient_icon_8 -%}
+          <span class="icon">
+            <img loading="lazy" width="128" height="128" src="https://cdn.medik8.com/{{ ingredient_icon_8 }}/" alt="" />
+          </span>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+  </ul>
+  {%- if ingredients_not_added_item_1 -%}
+    <div class="wayfx-product__not-included">
+      <h4 class="h4--primary">{{ 'products.ingredients.not_included' | t }}</h4>
+      <ul>
+        {%- if ingredients_not_added_item_1 -%}<li>{{ ingredients_not_added_item_1 }}</li>{%- endif -%}
+        {%- if ingredients_not_added_item_2 -%}<li>{{ ingredients_not_added_item_2 }}</li>{%- endif -%}
+        {%- if ingredients_not_added_item_3 -%}<li>{{ ingredients_not_added_item_3 }}</li>{%- endif -%}
+        {%- if ingredients_not_added_item_4 -%}<li>{{ ingredients_not_added_item_4 }}</li>{%- endif -%}
+        {%- if ingredients_not_added_item_5 -%}<li>{{ ingredients_not_added_item_5 }}</li>{%- endif -%}
+        {%- if ingredients_not_added_item_6 -%}<li>{{ ingredients_not_added_item_6 }}</li>{%- endif -%}
+      </ul>
+    </div>
+  {% endif %}
+  <div class="wayfx-product__view-ingredients">
+    <span data-fancybox data-src="#product_{{product.id}}_ingredients" data-touch="false">{{ 'products.ingredients.full_ingredients' | t }}</span>
+  </div>
+</div>
+
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "Key Ingredients",
+        "presets": [
+          {
+            "name": "Key Ingredients"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__section wayfx-product__key-ingredients",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Nothing Displayed?"
+          },
+          {
+            "type": "paragraph",
+            "content": "Make sure the product metafield 'sf_product_layout_a.ingredient_1_title' has a value."
+          }
+        ]
+    }
+{% endschema %}

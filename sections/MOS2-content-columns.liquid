@@ -1,0 +1,115 @@
+{%- assign main_heading = section.settings.main_heading -%}
+{%- assign main_paragraph = section.settings.main_paragraph -%}
+
+{%- assign image = block.settings.image | image_url: width: 560 -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign link = block.settings.link -%}
+
+<div class="wayfx-wrapper">
+
+    {% if main_heading != blank or main_paragraph != blank%}
+        <div class="wayfx-block__heading">
+           {% if main_heading != blank %}
+              <h2 class="h2--primary text-center">{{ main_heading }}</h2>
+            {% endif %}
+            {% if main_paragraph != blank %}
+              <p class="p--lg text-center">{{ main_paragraph }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="grid small--column" style="display: flex; justify-content: center;">
+
+      {% for block in section.blocks %}
+
+
+
+            <div class="grid__item one-whole
+            {% if section.blocks.size == 1 %}
+              large--one-half small--one-whole
+            {% elsif section.blocks.size == 2 %}
+              large--one-half small--one-whole
+            {% elsif section.blocks.size == 3 %}
+              large--one-third small--one-whole
+            {% elsif section.blocks.size >= 4 %}
+              large--one-quarter small--one-whole
+            {% endif %}
+            ">
+                {% if block.settings.link != blank %}
+              		<a href="{{ block.settings.link }}">
+                {% endif %}
+                {% unless block.settings.image contains 'no-image' %}
+                   <div class="wayfx-block__image">
+                     <img loading="lazy" data-blink-src="{{ block.settings.image | image_url }}" alt="" width="560" height="560" />
+                   </div>
+                {% endunless %}
+              	{% if block.settings.link != blank %}
+              		</a>
+              	{% endif %}
+              {% if block.settings.heading != blank %}
+              <h4 class="h4--primary">
+                {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}{{ block.settings.heading }}{% if block.settings.link %}</a>{% endif %}
+              </h4>
+              {% endif %}
+              {% if block.settings.paragraph != blank %}<p class="p--md">{{ block.settings.paragraph }}</p>{% endif %}
+            </div>
+        
+      {% endfor %}
+    </div>
+
+</div>
+
+{% schema %}
+{
+    "name": "Content w/ Columns",
+    "tag": "section",
+    "class": "wayfx-block wayfx-block--content-4columns wayfx-block--content-4columns--light mos2--component",
+    "presets": [
+      {
+        "name": "Content Columns"
+      }
+    ],
+    "settings": [
+        {
+            "id": "main_heading",
+            "type": "text",
+            "label": "Main Heading"
+        },
+        {
+            "id": "main_paragraph",
+            "type": "textarea",
+            "label": "Main Paragraph"
+        }
+    ],
+    "blocks": [
+      {
+        "name": "Column",
+        "type": "Column",
+        "limit": 4,
+        "settings": [
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Block Image"
+        },
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Block Heading"
+        },
+        {
+            "id": "paragraph",
+            "type": "textarea",
+            "label": "Block Paragraph"
+        },
+        {
+            "id": "link",
+            "type": "url",
+            "label": "Block Page Link"
+        }
+        ]
+      }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,84 @@
+.bundle__title {
+  opacity: 1;
+  color: #111111;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 1.88px;
+  line-height: 34px;
+  text-transform: uppercase;
+  margin: 10px 0; }
+
+.bundle__subtitle {
+  color: #6e6e6e;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 26px;
+  margin: 0 0 15px; }
+
+.variant-atc-order {
+  display: flex;
+  flex-direction: column; }
+
+.atc-wrapper {
+  margin: 30px 0 0; }
+  @media screen and (min-width: 768px) {
+    .atc-wrapper {
+      margin: 10px 0 0; } }
+  .atc-wrapper #AddToCart {
+    margin-bottom: 24px !important; }
+    .atc-wrapper #AddToCart s {
+      color: #969696;
+      padding-right: 2px; }
+
+.variant-wrapper {
+  margin: 0; }
+  @media screen and (min-width: 768px) {
+    .variant-wrapper {
+      order: -1; } }
+  .variant-wrapper .bundle-variant {
+    display: flex;
+    border-top: 1px solid #e2e2e2;
+    margin: 0;
+    padding: 20px 0 20px; }
+    .variant-wrapper .bundle-variant:first-of-type {
+      margin-top: 35px; }
+    .variant-wrapper .bundle-variant .variant-image {
+      width: 110px; }
+    .variant-wrapper .bundle-variant .variant-content {
+      display: flex;
+      flex-direction: column;
+      margin-left: 20px;
+      font-weight: 400; }
+      .variant-wrapper .bundle-variant .variant-content div:not(:last-child) {
+        margin-bottom: 6px; }
+      .variant-wrapper .bundle-variant .variant-content .bundle_title {
+        font-size: 16px;
+        line-height: 24px;
+        letter-spacing: 1.25;
+        text-transform: uppercase; }
+      .variant-wrapper .bundle-variant .variant-content .bundle_subtitle {
+        font-size: 14px;
+        line-height: 1;
+        color: #6e6e6e; }
+      .variant-wrapper .bundle-variant .variant-content .bundle_subtitle {
+        font-size: 12px;
+        line-height: 26px; }
+      .variant-wrapper .bundle-variant .variant-content .bundle_price {
+        font-size: 14px;
+        line-height: 26px;
+        color: #111111;
+        font-weight: 600; }
+        .variant-wrapper .bundle-variant .variant-content .bundle_price span {
+          color: #969696;
+          font-weight: 400;
+          text-decoration: line-through;
+          margin-right: 4px; }
+
+.wayfx-product__description {
+  border-top: 1px solid #d2d2d2; }
+  @media screen and (min-width: 768px) {
+    .wayfx-product__description {
+      border-top: none; } }
+
+.wayfx-product__reviews {
+  padding: 0; }

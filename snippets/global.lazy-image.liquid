@@ -1,0 +1,95 @@
+{% unless alt %}
+  {% assign alt = image_desktop.alt %}
+{% endunless %}
+
+{% if image_mobile == blank %}
+  {% assign  image_mobile = image_desktop %}
+{% endif %}
+
+{% assign image_desktop_format = 'jpg' %}
+{% if image_desktop contains '.png' %}
+  {% assign image_desktop_format = 'png' %}
+{% endif %}
+
+{% assign image_mobile_format = 'jpg' %}
+{% if image_mobile contains '.png' %}
+  {% assign image_mobile_format = 'png' %}
+{% endif %}
+
+{% assign image_desktop_ar = image_desktop.aspect_ratio %}
+{% if image_mobile.aspect_ratio %}
+  {% assign image_mobile_ar = image_mobile.aspect_ratio %}
+{% else %}
+  {% assign image_mobile_ar = image_desktop_ar %}
+{% endif %}
+
+
+{% assign init_width_desktop = 1380 | divided_by:1  | floor %}
+{% if init_width_desktop > image_desktop.width %}
+   {% assign init_width_desktop = image_desktop.width | divided_by:1  | floor %}
+{% endif %}
+{% assign init_height_desktop = init_width_desktop | divided_by: image_desktop_ar   |  floor  %}
+
+{% assign init_width_mobile = 756 | divided_by:1  | floor %}
+{% if init_width_mobile > image_mobile.width %}
+   {% assign init_width_mobile = image_mobile.width | divided_by:1  | floor %}
+{% endif %}
+{% assign init_height_mobile = init_width_mobile | divided_by: image_mobile_ar   |  floor  %}
+
+{% capture init_width_w %}{{ init_width_desktop }}w{% endcapture %}
+
+
+{% assign mobileSizeArray = '512,600,700,800,900,1023' | split:',' %}
+{% assign mobileSizeObject = '' %}
+{% for size in mobileSizeArray %}
+  {% assign width  = size | divided_by:1 | floor %}
+  {% assign height  = width | divided_by:image_mobile_ar | floor %}
+  {% if width <=  image_mobile.width and height <= image_mobile.height %}
+    {% capture mobileSizeObject %}{{ mobileSizeObject }}{{ width }}:{{ width }}x{{ height }},{% endcapture %}
+  {% else %}
+    {% capture mobileSizeObject %}{{ mobileSizeObject }}{{ width }}:{{ image_mobile.width }}x{{ image_mobile.width | divided_by:image_mobile_ar | floor }},{% endcapture %}
+  {% endif %}
+{% endfor %}
+{% assign mobileSizes = mobileSizeObject | split:',' %}
+
+{% assign desktopSizeArray = '1024,1280,1380,1580,2048' | split:',' %}
+{% assign desktopSizeObject = '' %}
+{% for size in desktopSizeArray %}
+  {% assign width  = size | divided_by:1 | floor %}
+  {% assign height  = width | divided_by:image_desktop_ar | floor %}
+  {% if width <=  image_desktop.width and height <= image_desktop.height %}
+    {% capture desktopSizeObject %}{{ desktopSizeObject }}{{ width }}:{{ width }}x{{ height }},{% endcapture %}
+  {% else %}
+    {% capture desktopSizeObject %}{{ desktopSizeObject }}{{ width }}:{{ image_desktop.width }}x{{ image_desktop.width | divided_by:image_desktop_ar | floor }},{% endcapture %}
+  {% endif %}
+{% endfor %}
+{% assign desktopSizes = desktopSizeObject | split:',' %}
+
+<picture class="{{ picture_class }} d-block">
+  {% for size in mobileSizes %}
+    {% assign key = size | split:':' | first %}
+    {% assign value = size | split:':' | last %}
+    {% assign width = value | split:'x' | first %}
+    {% assign height = value | split:'x' | last %}
+    <source media="(max-width:{{key}}px)"  srcset="{{ image_mobile  | image_url:width:width , height:height ,   format:image_mobile_format }}">
+  {% endfor %}
+  {% for size in desktopSizes %}
+    {% assign key = size | split:':' | first %}
+    {% assign value = size | split:':' | last %}
+    {% assign width = value | split:'x' | first %}
+    {% assign height = value | split:'x' | last %}
+    <source media="(max-width:{{key}}px)"  srcset="{{ image_desktop  | image_url:width:width , height:height ,   format:image_desktop_format }}">
+  {% endfor %}
+  <img  class="d-block {{ image_class }}"
+        src="{{ image_desktop | image_url:width:init_width_desktop , height:init_height_desktop  , format:image_desktop_format }}" 
+        width="{{ init_width_desktop }}"  
+        height="{{ init_height_desktop }}"
+        alt="{{ alt }}" 
+        title="{{ title }}"
+        {% if fetchpriority != blank %}
+          fetchpriority="{{ fetchpriority }}"
+        {% endif %}
+        loading="lazy">
+</picture>
+
+

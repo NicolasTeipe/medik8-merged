@@ -1,0 +1,14 @@
+{%- assign image_size = block.settings.size -%}
+{% if image_size == 'narrow' %}
+	{%- assign image = block.settings.image | image_url: width: 1100 -%}
+{% else %}
+	{%- assign image = block.settings.image | image_url: width: 2000 -%}
+{% endif %}
+
+{% if block.settings.image %}
+  <section class="wayfx-block wayfx-block--single-image wayfx-block--single-image-{{ image_size }}">
+    <div class="wayfx-wrapper">
+      <img loading="lazy" data-blink-src="{{ image }}" alt="" />
+    </div>
+  </section>
+{% endif %}

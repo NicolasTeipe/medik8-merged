@@ -1,0 +1,114 @@
+{% if section.blocks %}
+  {{ "header-below.css" | asset_url | stylesheet_tag }}
+
+    <div class="js-below-header-msg-bar keen-slider  below-header-msg-bar__slider">
+      {% for block in section.blocks %}
+      {% case block.type %}
+      {% when 'messages' %}
+      {% if block.settings.title != blank %}
+        <div class="keen-slider__slide below-header-msg-bar__message {% if block.settings.icon_after_text %} below-header-msg-bar__message--reverse{% endif %}">
+          {% if block.settings.image %}
+          <style type="text/css">
+            .below-header-msg-bar__image--{{ block.id }}{
+              max-height:{{ block.settings.icon_height }}px;
+            }
+          </style>
+          {% assign width = block.settings.icon_height | times:block.settings.image.aspect_ratio | floor %}
+          <img  class="below-header-msg-bar__image below-header-msg-bar__image--{{ block.id }}" 
+                alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.title | strip_html }}{% endif %}"
+                loading="lazy" 
+                src="{{ block.settings.image | image_url:width:width }}" 
+                width="{{ width }}" 
+                height="{{ block.settings.icon_height }}">
+          {% endif %}
+          <span class="below-header-msg-bar__text {% if block.settings.image %}below-header-msg-bar__text--has-image{% endif %}">{{ block.settings.title }}</span>
+        </div>
+      {% endif %}
+      {% endcase %}
+      {% endfor %}
+  </div>
+  
+  <script type="module"> 
+
+    import { KSautoPlay } from {{ 'scripts.keenSlider.plugins.js' | asset_url | json }};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const belowHeaderMsgsSlider = new KeenSlider('.js-below-header-msg-bar',
+          {
+          loop: true,
+          slides: { 
+            perView:1, 
+            spacing:0 
+          },
+          defaultAnimation:{
+            duration:1000,
+          },
+          breakpoints: {
+            '(min-width: 1024px)': {
+              slides: { perView: 'auto', spacing: 0 },
+              loop: false,
+            },
+          },
+        },
+        [KSautoPlay]
+      )
+    })
+  </script>
+  
+  <style type="text/css">
+    .below-header-msg-bar {
+      background: {{ section.settings.background_color }};
+    }
+  </style>
+  
+  {% endif %}
+  
+  {% schema %}
+      {
+          "name": "Below Header Bar",
+          "tag": "section",
+          "class":"below-header-msg-bar",
+          "settings": [
+              {
+                 "type": "color",
+                 "id": "background_color",
+                 "label": "Background color",
+                 "default": "#000000"
+              }
+          ],
+          "max_blocks":3,
+          "blocks": [
+            {
+                "type": "messages",
+                "name": "Message",
+                "settings": [
+                    {
+                      "type": "image_picker",
+                      "id": "image",
+                      "label": "Icon"
+                    },
+                    {
+                      "type": "range",
+                      "id": "icon_height",
+                      "label": "Icon height",
+                      "default":32,
+                      "step":1,
+                      "min":10,
+                      "max":64
+                    },
+                    {
+                      "type": "checkbox",
+                      "id": "icon_after_text",
+                      "label": "Show icon after text?"
+                    },
+                   
+                    {
+                        "type": "richtext",
+                        "id": "title",
+                        "label": "Message"
+                    }
+                ]
+              }
+      ]
+      }
+  {% endschema %}

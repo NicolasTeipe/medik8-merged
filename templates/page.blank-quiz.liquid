@@ -1,0 +1,30 @@
+{% layout none %}
+
+<div
+  class="octane-ai-quiz "
+  data-quiz-id="{{ settings.octaneai_findyourmatch_id }}"
+  data-embed-type="fullpage"
+  data-mobile-height="match_browser"
+  data-desktop-height="match_browser"
+></div>
+<script src="https://app.octaneai.com/{{ settings.octaneai_script_id }}/quiz.js" async defer></script>
+
+{% style %}
+  .fancybox-content {
+    background: unset !important;
+  }
+  .fancybox-slide:before {
+    content: none;
+  }
+  .fancybox-slide--html {
+    padding: unset !important;
+  }
+  .fancybox-toolbar {
+    opacity: 1 !important;
+    visibility: visible;
+    transition: 2s;
+  }
+  .fancybox-button--zoom {
+    visibility: hidden;
+  }
+{% endstyle %}

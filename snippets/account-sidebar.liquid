@@ -1,0 +1,79 @@
+<div class="grid__item one-quarter medium-down--one-whole">
+  <div class="wayfx-block__right">
+    <h3 class="h3--secondary">{{ 'customer.sidebar.account_links' | t }}</h3>
+    {% for tag in customer.tags %}
+      {% if tag == 'Active Subscriber' or tag == 'Inactive Subscriber' %}{% assign is_subscription_customer = true %}{% break %}{% endif %}
+    {% endfor %}
+    <ul>
+      {% for link in linklists.account-menu.links -%}
+          {% if link.title == "My Subscriptions" and is_subscription_customer %}
+            <li>{{ link.title | link_to: link.url }}</li>
+          {% elsif link.title != "My Subscriptions" %}
+              <li>{{ link.title | link_to: link.url }}</li>
+          {% endif %}
+      {%- endfor %}
+    </ul>
+
+    {%- comment -%}
+      Original, Pre-Recharge link list
+    {%- endcomment -%}
+    {% comment %}
+    <ul>
+      {% for link in linklists.account-menu.links -%}
+        <li>{{ link.title | link_to: link.url }}</li>
+       {%- endfor %}
+    </ul>
+    {% endcomment %}
+  </div>
+
+  {% if show_address %}
+    {% if customer.default_address.address1 != blank %}
+      <div class="wayfx-block__right">
+        <h3 class="h3--secondary">{{ 'customer.sidebar.shipping_address' | t }}</h3>
+        <h4 class="h4--primary">{{ customer.name }}</h4>
+        <p class="p--md">
+          {{ customer.default_address.address1 }}<br>
+          {% if customer.default_address.address2 != blank %}
+            {{ customer.default_address.address2 }}<br>
+          {% endif %}
+          {% if customer.default_address.city != blank %}
+            {{ customer.default_address.city }}
+          {% endif %}
+          {% if customer.default_address.province_code != blank %}
+            {{ customer.default_address.province_code | upcase }}
+          {% endif %}
+          {% if customer.default_address.zip != blank %}
+            {{ customer.default_address.zip | upcase }}<br>
+          {% endif %}
+          {% if customer.default_address.country != blank %}
+            {{ customer.default_address.country }}<br>
+          {% endif %}
+          {% if customer.default_address.phone != blank %}
+            {{ customer.default_address.phone }}
+          {% endif %}
+        </p>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% if show_billing %}
+    <div class="wayfx-block__right">
+      <h3 class="h3--secondary">{{ 'customer.sidebar.billing_address' | t }}</h3>
+      <h4 class="h4--primary">{{ customer.name }}</h4>
+      <p>
+        {% if order.billing_address.company != '' %}
+          {{ order.billing_address.company }}<br>
+        {% endif %}
+        {{ order.billing_address.street }}<br>
+        {{ order.billing_address.city }},
+        {% if order.billing_address.province != '' %}
+          {{ order.billing_address.province }}
+        {% endif %}
+        {{ order.billing_address.zip | upcase }}<br>
+        {{ order.billing_address.country }}<br>
+        {{ order.billing_address.phone }}
+      </p>
+    </div>
+  {% endif%}
+  
+</div>

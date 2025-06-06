@@ -1,0 +1,30 @@
+{%- comment -%} Strength Finder Quiz {%- endcomment -%}
+{% if product.tags contains "find-your-crystal" %}
+  <a href="" id="quiz-page" class="f-product-variant-quiz_label f-w400 t-ul">{{ 'products.product.quiz_link_text' | t }}</a>
+  <script>
+    async function fetchQuizPage() {
+      try {
+        const r = await fetch("/pages/find-your-crystal-match?view=blank-quiz");
+        if (!r.ok) throw new Error(`HTTP error! status: ${r.status}`);
+
+        const quizPageContent = await r.text();
+
+        const fancyboxOptions = {
+          touch: false,
+          src: quizPageContent,
+          type: 'html'
+        };
+        
+        $.fancybox.open(fancyboxOptions);
+      } catch (error) {
+        console.error('Failed to fetch or load content:', error);
+      }
+    }
+
+    document.getElementById('quiz-page').addEventListener('click', e => {
+      e.preventDefault();
+      fetchQuizPage();
+    })
+
+  </script>
+{% endif %}

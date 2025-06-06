@@ -1,0 +1,73 @@
+{% unless product.metafields.accordion.strength_ladder.value == blank %}
+  {%- render 'f-accordion.content-standard',
+    jsObjectName:'StrengthLadder',
+    customElementName:'strength-ladder'-%}
+{% endunless %}
+
+{% schema %}
+    {
+        "name": "Accordion - Str Ladder",
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-standard",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section Content"
+          },
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": "open"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "video",
+            "id": "video",
+            "label": "Video"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text Content"
+          },
+          {
+            "type": "header",
+            "content": "Section Controls"
+          },
+          {
+            "type": "checkbox",
+            "id": "hide_video_controls",
+            "label": "Hide Video Controls",
+            "info": "If controls are hidden, playback is controlled via click.",
+            "default": true
+          }
+        ],
+        "presets": [
+          {
+            "name": "Accordion - Strength Ladder"
+          }
+        ]
+    }
+{% endschema %}

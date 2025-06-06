@@ -1,0 +1,125 @@
+{% comment%} TODO {%endcomment%}
+
+{%- if product.metafields.sf_product_layout_a.cta_block_heading -%}
+
+{%- assign background = product.metafields.sf_product_layout_a.cta_block_background_image %}
+
+{%- assign row_1_heading = product.metafields.sf_product_layout_a.cta_block_item_1_heading -%}
+{%- assign row_1_paragraph = product.metafields.sf_product_layout_a.cta_block_item_1_paragraph -%}
+{%- assign row_1_icon = product.metafields.sf_product_layout_a.cta_block_item_1_icon  %}
+
+{%- assign row_2_heading = product.metafields.sf_product_layout_a.cta_block_item_2_heading -%}
+{%- assign row_2_paragraph = product.metafields.sf_product_layout_a.cta_block_item_2_paragraph -%}
+{%- assign row_2_icon = product.metafields.sf_product_layout_a.cta_block_item_2_icon  %}
+
+{%- assign row_3_heading = product.metafields.sf_product_layout_a.cta_block_item_3_heading -%}
+{%- assign row_3_paragraph = product.metafields.sf_product_layout_a.cta_block_item_3_paragraph -%}
+{%- assign row_3_icon = product.metafields.sf_product_layout_a.cta_block_item_3_icon  %}
+
+{%- assign row_4_heading = product.metafields.sf_product_layout_a.cta_block_item_4_heading -%}
+{%- assign row_4_paragraph = product.metafields.sf_product_layout_a.cta_block_item_4_paragraph -%}
+{%- assign row_4_icon = product.metafields.sf_product_layout_a.cta_block_item_4_icon  %}
+
+{%- assign cta_text = product.metafields.sf_product_layout_a.cta_block_button_text -%}
+{%- assign cta_link = product.metafields.sf_product_layout_a.cta_block_link %}
+
+<style type="text/css">
+
+    @media all and (max-width: 1023px) {
+        .wayfx-product__cta-block.lazyloaded {
+            background: transparent;
+        }
+    }
+
+    @media all and (min-width: 1024px) {
+        .wayfx-product__cta-block.lazyloaded {
+            background-image: url('https://cdn.medik8.com/{{ background }}/');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    }
+</style>
+
+<section class="wayfx-product__cta-block lazyload">
+    <div class="wayfx-wrapper">
+      <div class="wayfx-image">
+          <img width="2880" height="1806" loading="lazy" src="https://cdn.medik8.com/{{ background }}/" alt="" />
+      </div>
+      <div class="wayfx-block" data-aos-duration="300" data-aos="fade-up" data-aos-offset="500" data-aos-delay="300">
+        <h2 class="h2--primary">{{ 'products.misc.product_cta_title' | t }}</h2>
+        <ul>
+          {% if row_1_heading %}
+            <li>
+              <div class="icon">
+                <img width="48" height="48" loading="lazy" src="https://cdn.medik8.com/{{ row_1_icon }}/" alt="" />
+              </div>
+              <div class="text">
+                <h4 class="h4--primary">{{ row_1_heading }}</h4>
+                {{ row_1_paragraph }}
+              </div>
+            </li>
+          {% endif %}
+          {% if row_2_heading %}
+            <li>
+              <div class="icon">
+                <img width="48" height="48" loading="lazy" src="https://cdn.medik8.com/{{ row_2_icon }}/" alt="" />
+              </div>
+              <div class="text">
+                <h4 class="h4--primary">{{ row_2_heading }}</h4>
+                {{ row_2_paragraph }}
+              </div>
+            </li>
+          {% endif %}
+          {% if row_3_heading %}
+            <li>
+              <div class="icon">
+                <img width="48" height="48" loading="lazy" src="https://cdn.medik8.com/{{ row_3_icon }}/" alt="" />
+              </div>
+              <div class="text">
+                <h4 class="h4--primary">{{ row_3_heading }}</h4>
+                {{ row_3_paragraph }}
+              </div>
+            </li>
+          {% endif %}
+          {% if row_4_heading %}
+            <li>
+              <div class="icon">
+                <img width="48" height="48" loading="lazy" src="https://cdn.medik8.com/{{ row_4_icon }}/" alt="" />
+              </div>
+              <div class="text">
+                <h4 class="h4--primary">{{ row_4_heading }}</h4>
+                {{ row_4_paragraph }}
+              </div>
+            </li>
+          {% endif %}
+        </ul>
+        <a href="{{ cta_link }}" class="btn btn--large">{{ cta_text }}</a>
+      </div>
+    </div>
+</section>
+
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "Product CTA",
+        "presets": [
+          {
+            "name": "Product CTA"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Nothing Displayed?"
+          },
+          {
+            "type": "paragraph",
+            "content": "Make sure the product metafield 'sf_product_layout_a.cta_block_heading' has a value."
+          }
+        ]
+    }
+{% endschema %}

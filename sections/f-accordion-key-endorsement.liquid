@@ -1,0 +1,142 @@
+{% if section.blocks.size > 0 %}
+  <endorsement-x>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      {% liquid 
+        if section.blocks.size <= section.settings.initial-show-count
+          assign is_fade = 'hide__fade'
+          assign reset_height = 'reset_height'
+        endif
+      %}
+
+      <ul class="js-list-item {{ is_fade }} {{ reset_height }} content">
+        {%- for block in section.blocks -%}
+          {% liquid
+            if forloop.index > section.settings.initial-show-count
+              assign is_hidden = ' hide__list-item'
+            endif
+          %}
+
+          {%- capture icon_or_text -%}
+            {%- if block.settings.icon -%}
+              {%- assign icon_width = "60" -%}
+              {%- if block.settings.icon contains "Endoresement_1_-_Dan" -%}
+                {%- assign icon_width = "80" -%}
+              {%- elsif block.settings.icon contains "Endoresement_-_5_Stars" -%}
+                {%- assign icon_width = "100" -%}
+              {%- endif -%}
+              <img src="{{ block.settings.icon | image_url: width: 200 }}" alt="Endorsement Icon {{ forloop.index }}" class="endorsement__icon" width="{{ icon_width }}" height="auto" loading="lazy">
+            {%- else -%}
+               <div class="endorsement__icon-text lh-reset f-w500">{{ block.settings.icon_text }}</div>
+            {%- endif -%}
+          {%- endcapture -%}
+
+          <li class="endorsement{{ is_hidden }}">
+            {{ icon_or_text }}
+            {{ block.settings.paragraph }}
+            <div class="endorsement__title t-s f-w500">{{ block.settings.title }}</div>
+            <div class="endorsement__subtitle t-xxs f-w500">{{ block.settings.subtitle }}</div>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- render 'f-accordion.view-toggle' -%}
+    </details>
+  </endorsement-x>
+
+  {%- render 'f-accordion.content-list'
+    jsObjectName:'Endorsements',
+    customElementName:'endorsement-x' -%}
+{% endif %}
+{% schema %}
+{
+  "name": "Accordion - Endorsements",
+  "presets": [
+    {
+      "name": "Accordion - Endorsements"
+    }
+  ],
+  "templates": ["product"],
+  "limit": 1,
+  "tag": "section",
+  "class": "f-accordion accordion-endorsement accordion-list",
+  "settings": [
+    {
+      "type": "select",
+      "id": "start_state",
+      "label": "Start Open / Closed",
+      "options": [
+        {
+          "value": "open",
+          "label": "Open"
+        },
+        {
+          "value": "",
+          "label": "Closed"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Endorsements"
+    },
+    {
+      "type": "text",
+      "id": "view_all",
+      "label": "View All Text",
+      "default": "View All"
+    },
+    {
+      "type": "text",
+      "id": "view_less",
+      "label": "View Less Text",
+      "default": "View Less"
+    },
+    {
+      "type": "range",
+      "id": "initial-show-count",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Initial Show Count",
+      "default": 2
+    }
+  ],
+  "blocks": [
+    {
+      "type": "endorsement",
+      "name": "Endorsement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "icon_text",
+          "label": "Icon Text"
+        },
+        {
+          "type": "richtext",
+          "id": "paragraph",
+          "label": "Paragraph"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

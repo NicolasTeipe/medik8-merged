@@ -1,0 +1,100 @@
+{%- assign related_heading = product.metafields.sf_related_products.heading -%}
+{%- assign related_product_1 = all_products[product.metafields.sf_related_products.related_product_1] -%}
+{%- assign related_product_2 = all_products[product.metafields.sf_related_products.related_product_2] -%}
+{%- assign related_product_3 = all_products[product.metafields.sf_related_products.related_product_3] -%}
+
+{%- if related_product_1.empty? -%}
+  <style type="text/css">
+    .wayfx-product__related-products {display: none;}
+  </style>
+{%- else -%}
+  {%- if related_heading -%}
+    <h2>{{ related_heading }}</h2>
+  {%- else -%}
+    <h2>{{ 'products.misc.related_products_title_default' | t }}</h2>
+  {%- endif -%}
+  <div class="wayfx-wrapper">
+    <div class="wayfx-grid slider--dot-alt">
+      {%- unless related_product_1.empty? -%}
+        {%- assign product = related_product_1 -%}
+        {% render 'product-grid-item', product: product, product_layout: 'related' %}
+      {%- endunless -%}
+      {%- unless related_product_2.empty? -%}
+        {%- assign product = related_product_2 -%}
+        {% render 'product-grid-item', product: product, product_layout: 'related' %}
+      {%- endunless -%}
+      {%- unless related_product_3.empty? -%}
+        {%- assign product = related_product_3 -%}
+        {% render 'product-grid-item', product: product, product_layout: 'related' %}
+      {%- endunless -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% style %}
+
+.wayfx-product__item{
+  padding: 0 24px;
+  display:flex !important;
+}
+
+{% endstyle %}
+
+{% schema %}
+  {
+    "name": "Related Products",
+    "presets": [
+      {
+        "name": "Related Products"
+      }
+    ],
+    "templates": ["product"],
+    "tag": "section",
+    "class": "wayfx-product__section wayfx-product__related-products"
+  }
+{% endschema %}
+
+<script>
+    $(document).ready(function() {
+        var settings = {
+            arrows: false,
+            draggable: true,
+            infinite: false,
+            dots: true,
+            adaptiveHeight: false,
+            mobileFirst: true,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            responsive: [{
+                breakpoint: 768,
+                settings: {
+                    settings: "unslick"
+                }
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 3,
+                    dots: false
+                }
+            }]
+        }
+
+        var $slides = $('.wayfx-product__related-products .wayfx-grid');
+
+        $(window).on('load resize orientationchange', function () {
+            if ($(window).width() > 1023) {
+                if ($slides.hasClass('slick-initialized')) {
+                    $slides.slick('unslick');
+                }
+                $slides.show();
+                return
+            }
+            if (!$slides.hasClass('slick-initialized')) {
+                return $slides.each(function() {
+                    $(this).slick(settings).show();
+                });
+            }
+        });
+    });
+</script>

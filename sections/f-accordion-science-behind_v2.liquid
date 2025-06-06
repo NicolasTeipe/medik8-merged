@@ -1,0 +1,87 @@
+{% unless product.metafields.accordion.science_behind_v2.value == blank %}
+  <science-behind>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      <div class="content t-s f-w400">
+        <div class="flex flex-dir-col align-center tac">
+          {{ section.settings.image | image_url: width: 150 | image_tag: preload: false, loading: 'lazy' }}
+          {%- render 'icon-quote-acta' -%}
+          <p class="row">{{  section.settings.headline }}</p>
+          <span class="t-xxs f-w600 t-ucase">{{  section.settings.endorser }}</span>
+          <span class="t-xxs">{{  section.settings.position }}</span>
+        </div>
+        <div class="text-wrapper">
+          {{ section.settings.text }}
+        </div>
+      </div>
+    </details>
+  </science-behind>
+{% endunless %}
+
+{% schema %}
+    {
+        "name": "Accordion- Science Behind",
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-science",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section Content"
+          },
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": ""
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "text",
+            "id": "headline",
+            "label": "Headline"
+          },
+          {
+            "type": "text",
+            "id": "endorser",
+            "label": "Endorser"
+          },
+          {
+            "type": "text",
+            "id": "position",
+            "label": "Position"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text Content"
+          }
+        ],
+        "presets": [
+          {
+            "name": "Accordion - Science Behind v2"
+          }
+        ]
+    }
+{% endschema %}

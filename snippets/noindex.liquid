@@ -1,0 +1,9 @@
+{%- comment -%} Pages {%- endcomment -%}
+{% if template.name == 'page' and page.metafields.custom.noindex.value == true or template == 'page.all_sections' %}
+  <meta name="robots" content="noindex">
+{% endif %}
+
+{%- comment -%} Products {%- endcomment -%}
+{% if template.name == 'product' and product.metafields.custom.noindex.value == true %}
+  <meta name="robots" content="noindex">
+{% endif %}

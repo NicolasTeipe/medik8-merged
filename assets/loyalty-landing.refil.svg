@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="31px" height="74px" viewBox="0 0 31 74" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Sustainable Refill Icon</title>
+    <g id="Hi-Fi" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Me&amp;Medik8-Guest-Landing-Page---Desktop" transform="translate(-642.000000, -3506.000000)" stroke="#161616">
+            <g id="Ways-To-Earn-Points" transform="translate(0.000000, 2929.000000)">
+                <g id="Grid" transform="translate(240.287458, 247.437578)">
+                    <g id="Refill" transform="translate(286.000000, 293.000000)">
+                        <g id="Sustainable-Refill-Icon" transform="translate(116.000000, 37.000000)">
+                            <g id="Group" transform="translate(0.000000, 7.000000)">
+                                <line x1="0.89809495" y1="1.83748684" x2="0.916238282" y2="61.5602474" id="Path" stroke-width="1.5"></line>
+                                <path d="M0.916238282,61.5602474 C5.30692471,66.1051424 24.3392803,66.2116633 29.1472634,61.4892334 C29.1654067,61.4714799 29.2016934,61.4537264 29.2198367,61.4182194" id="Path" stroke-width="1.5"></path>
+                                <path d="M0.934381615,1.83748684 C4.58119141,4.35848327 24.5570003,4.46500425 29.0202601,1.87299383" id="Path" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <polyline id="Path" stroke-width="1.5" points="29.0928334 61.4537264 29.0928334 1.89074732 29.0928334 1.85524033"></polyline>
+                                <path d="M9.78832779,0.04438374 C4.69005141,0.328439676 2.40399153,0.878798052 0.934381615,1.73096586" id="Path" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M29.0202601,1.76647285 C27.7865135,0.914305044 25.2645903,0.168658212 20.0755972,0.04438374" id="Path" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                            <path d="M10,1.17378526 C13.3272395,0.633785265 16.691042,0.793785265 20,1.17378526" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M21,5.82728768 C21,5.46901243 20.6341463,5.16730695 20.1402439,5.05416739 L20.1402439,4.63932235 C20.5060976,4.5261828 20.7439024,4.29990369 20.7439024,4.05476799 C20.7439024,3.80963228 20.4878049,3.58335317 20.1402439,3.47021362 L20.1402439,3.35707406 C20.5060976,3.22507792 20.7439024,2.96108562 20.7439024,2.65938014 C20.7439024,2.35767466 20.4878049,2.09368237 20.1402439,1.96168622 L20.1402439,1 C16.7195122,1.39598844 13.3170732,1.39598844 9.89634146,1 L9.89634146,2.79137629 C9.38414634,2.88565925 9,3.20622132 9,3.56449658 C9,3.92277184 9.38414634,4.24333391 9.89634146,4.33761687 L9.89634146,5.12959376 C9.38414634,5.22387672 9,5.5444388 9,5.90271405 C9,6.26098931 9.38414634,6.58155138 9.89634146,6.67583435 L9.89634146,8.44835404 C13.3536585,9.16490456 16.7743902,9.20261774 20.1402439,8.44835404 L20.1402439,6.56269479 C20.6341463,6.44955524 21,6.14784976 21,5.7895745 L21,5.82728768 Z" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M10,3.19818319 C11.2288288,4.07818319 18.7405405,3.65818319 21,2.33818319" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M10,3.40116563 C10,3.40116563 13.7857143,4.38116563 20,2.36116563" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M10,5.03883343 C11.2859712,5.91883343 18.6258993,5.73883343 21,4.41883343" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M10,6.71920485 C10,6.71920485 14.1109215,8.55920485 21,6.51920485" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

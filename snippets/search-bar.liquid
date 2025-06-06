@@ -1,0 +1,48 @@
+{% comment %}theme-check-disable UnusedSnippet{% endcomment %}
+
+{%- if settings.predictive_search_enabled -%}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
+{% endif%}
+
+
+<div class="wayfx-header__search">
+  <div class="wayfx-header__search-overlay"></div>
+  <button aria-label="Search" id="wayfxSearchTrigger" class="wayfx-header__icon">
+    <i class="wayfx-icon wayfx-icon-search"></i>
+  </button>
+  <predictive-search>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+      <button type="button" id="wayfxSearchBackClose" class="wayfx-header__search-back-close">
+        <i class="wayfx-icon wayfx-icon-long-arrow-left"></i>
+      </button>
+      <button type="button" id="wayfxSearchClose" class="wayfx-header__search-close">
+        <i class="wayfx-icon wayfx-icon-close-thin"></i>
+      </button>
+      <input
+          id="Search"
+          type="search"
+          name="q"
+          value=""
+          {%- if settings.predictive_search_enabled -%}
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="predictive-search-results-list"
+            aria-controls="predictive-search-results-list"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            autocorrect="off"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          {%- endif -%}
+        >
+        {% comment %} <input type="hidden" name="type" value="product,article,page" /> {% endcomment %}
+        <input type="hidden" name="options[unavailable_products]" value="hide" />
+        <input type="hidden" name="options[prefix]" value="last" />
+
+      {%- if settings.predictive_search_enabled -%}
+        <div id="predictive-search" tabindex="-1"></div>
+      {%- endif -%}
+    </form>
+  </predictive-search>
+</div>

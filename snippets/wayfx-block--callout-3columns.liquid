@@ -1,0 +1,88 @@
+{%- assign background_color = block.settings.background_color -%}
+{%- assign increase_image_height = block.settings.increase_image_height -%}
+{%- assign main_heading = block.settings.main_heading -%}
+{%- assign main_paragraph = block.settings.main_paragraph -%}
+{%- assign image_1 = block.settings.image_1 | image_url -%}
+{%- assign heading_1 = block.settings.heading_1 -%}
+{%- assign paragraph_1 = block.settings.paragraph_1 -%}
+{%- assign cta_link_1 = block.settings.cta_link_1 -%}
+{%- assign cta_text_1 = block.settings.cta_text_1 -%}
+
+{%- assign image_2 = block.settings.image_2 | image_url -%}
+{%- assign heading_2 = block.settings.heading_2 -%}
+{%- assign paragraph_2 = block.settings.paragraph_2 -%}
+{%- assign cta_link_2 = block.settings.cta_link_2 -%}
+{%- assign cta_text_2 = block.settings.cta_text_2 -%}
+
+{%- assign image_3 = block.settings.image_3 | image_url -%}
+{%- assign heading_3 = block.settings.heading_3 -%}
+{%- assign paragraph_3 = block.settings.paragraph_3 -%}
+{%- assign cta_link_3 = block.settings.cta_link_3 -%}
+{%- assign cta_text_3 = block.settings.cta_text_3 -%}
+
+{%- if background_color -%}
+    <style type="text/css">
+        .wayfx-block--callout-3column {
+            background: {{ background_color }}
+        };
+    </style>
+{%- endif -%}
+
+<section class="wayfx-block wayfx-block--callout-3column{% if increase_image_height %} wayfx-block--callout-3column--alt{% endif %}">
+    <div class="wayfx-wrapper">
+        {% if main_heading or main_description %}
+            <div class="wayfx-block__heading">
+                {% if main_heading %}
+                    <h2 class="h2--primary text-center">{{ main_heading }}</h2>
+                {% endif %}
+                {% if main_paragraph %}
+                    <p class="p--lg text-center">{{ main_paragraph }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="grid">
+            {% if heading_1 %}
+                <div class="grid__item large--one-third">
+                    {% if block.settings.image_1 %}
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ image_1 }}" alt="" />
+                        </div>
+                    {% endif %}
+                    {% if heading_1 %}<h4 class="h4--primary">{{ heading_1 }}</h4>{% endif %}
+                    {% if paragraph_1 %}<p class="p--md">{{ paragraph_1 }}</p>{% endif %}
+                    {% if cta_link_1 and cta_text_1 %}
+                        <a href="{{ cta_link_1 }}" class="btn--outline btn--xlarge">{{ cta_text_1 }}</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if heading_2 %}
+                <div class="grid__item large--one-third">
+                    {% if block.settings.image_1 %}
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ image_2 }}" alt="" />
+                        </div>
+                    {% endif %}
+                    {% if heading_2 %}<h4 class="h4--primary">{{ heading_2 }}</h4>{% endif %}
+                    {% if paragraph_2 %}<p class="p--md">{{ paragraph_2 }}</p>{% endif %}
+                    {% if cta_link_2 and cta_text_2 %}
+                        <a href="{{ cta_link_2 }}" class="btn--outline btn--xlarge">{{ cta_text_2 }}</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if heading_3 %}
+                <div class="grid__item large--one-third">
+                    {% if block.settings.image_1 %}
+                        <div class="wayfx-block__image">
+                            <img loading="lazy" data-blink-src="{{ image_3 }}" alt="" />
+                        </div>
+                    {% endif %}
+                    {% if heading_3 %}<h4 class="h4--primary">{{ heading_3 }}</h4>{% endif %}
+                    {% if paragraph_3 %}<p class="p--md">{{ paragraph_3 }}</p>{% endif %}
+                    {% if cta_link_3 and cta_text_3 %}
+                        <a href="{{ cta_link_3 }}" class="btn--outline btn--xlarge">{{ cta_text_3 }}</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

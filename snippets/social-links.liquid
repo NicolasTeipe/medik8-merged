@@ -1,0 +1,41 @@
+<section class="wayfx-block wayfx-block--footer-social">
+  <div class="wayfx-wrapper">
+    <ul class="footer__list-social list-unstyled list-social" role="list">
+        {%- if settings.social_twitter_link != blank -%}
+          <a href="{{ settings.social_twitter_link }}" target="_blank" class="link list-social__link" >
+            <li class="list-social__item">
+              {%- render 'icon-twitter' -%}
+              <span class="visually-hidden">{{ 'general.social.links.twitter' | t }}</span>             
+            </li>
+          </a>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <a href="{{ settings.social_facebook_link }}" target="_blank" class="link list-social__link" >
+              <li class="list-social__item">
+                {%- render 'icon-facebook' -%}
+                <span class="visually-hidden">{{ 'general.social.links.facebook' | t }}</span>
+              </li>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_instagram_link != blank -%}
+            <a href="{{ settings.social_instagram_link }}" target="_blank" class="link list-social__link" >
+              <li class="list-social__item">
+                {%- render 'icon-instagram' -%}
+                <span class="visually-hidden">{{ 'general.social.links.instagram' | t }}</span>
+              </li>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_youtube_link != blank -%}
+            <a href="{{ settings.social_youtube_link }}" target="_blank" class="link list-social__link" >
+              <li class="list-social__item">
+                {%- render 'icon-youtube' -%}
+                <span class="visually-hidden">{{ 'general.social.links.youtube' | t }}</span>
+              </li>
+            </a>
+          {%- endif -%}
+        </ul>
+    <div class="wayfx-block--footer-social__tag">
+      @officialmedik8
+    </div>
+  </div>
+</section>

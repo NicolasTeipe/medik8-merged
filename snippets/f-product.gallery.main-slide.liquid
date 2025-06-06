@@ -1,0 +1,31 @@
+<li class="keen-slider__slide product-image-gallery__slide" 
+    data-media-id="{{ media.id }}">
+{% liquid
+  assign loading = 'lazy'
+  assign preload = false
+  if forloop.first 
+    assign loading = 'eager'
+    assign preload = true
+  endif
+%}
+ 
+{% case media.media_type %}
+  {% when 'image' %}
+  {% assign alt = media.alt | split: '|' | first %}
+  {{ media | 
+    image_url: width: 1024  | 
+    image_tag: preload: preload, loading: loading , alt: alt
+  }} 
+  
+  {% when 'video' %}
+    {{ media | video_tag: image_size: '1024x', controls: false , playsinline: true, lazy: true , autoplay: false , muted: true }}
+  {% when 'external_video' %}
+  
+  {% if media.host == 'youtube' %}
+    {{ media | external_video_url: color: 'white',  muted: '1' ,  autoplay: '0' | external_video_tag: class: "no_wrapper" }}
+  {% elsif media.host == 'vimeo' %}
+    {{ media | external_video_url: loop: '1', muted: '1' ,  autoplay: '0' | external_video_tag: class: "no_wrapper" }}
+  {% endif %}
+   
+{% endcase %}
+</li>

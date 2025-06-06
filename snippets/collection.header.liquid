@@ -1,0 +1,37 @@
+{%- assign collection_highlight_one = collection.metafields.sf_collection_hero.highlight_1_text -%}
+{%- assign collection_highlight_two = collection.metafields.sf_collection_hero.highlight_2_text -%}
+{%- assign collection_highlight_three = collection.metafields.sf_collection_hero.highlight_3_text -%}
+{%- assign collection_highlight_four = collection.metafields.sf_collection_hero.highlight_4_text -%}
+{%- assign collection_heading_font = collection.metafields.sf_collection_hero.header_font -%}
+
+{% if collection_heading_font == 1 %}
+    <style type="text/css">
+        .wayfx-collection__header h1 {
+            font-family: 'ridley_groteskregular', sans-serif;
+          	margin-top: 9px;
+        }
+    </style>
+{% endif %}
+
+<div class="wayfx-wrapper">
+    {% render 'breadcrumb' %}
+    <h1 class="h1--secondary">
+        {% if template == 'list-collections' %}
+            Products
+        {% else %}
+            {{ collection.title | replace: '[hidden]', '' }}
+        {% endif %}
+    </h1>
+    {% if collection.description != '' and collection.description != '<br>' %}
+        <div id="truncated">{{ collection.description | truncatewords: 50, "... <a class='read-more-collection'><em>leer más</em></a>" }}</div>
+<div id="fullDescription" style="display: none">{{ collection.description }}</div>
+    {% endif %}
+    {% if collection_highlight_one %}
+    <ul class="wayfx-collection__highlights">
+        {% if collection_highlight_one %}<li>{{ collection_highlight_one }}</li>{% endif %}
+        {% if collection_highlight_two %}<li>{{ collection_highlight_two }}</li>{% endif %}
+        {% if collection_highlight_three %}<li>{{ collection_highlight_three }}</li>{% endif %}
+      	{% if collection_highlight_four %}<li>{{ collection_highlight_four }}</li>{% endif %}
+    </ul>
+    {% endif %}
+</div>

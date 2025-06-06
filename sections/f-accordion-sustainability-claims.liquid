@@ -1,0 +1,94 @@
+{%- liquid
+  assign show_provenance = false
+  if product.tags contains 'provenance' and settings.ff_temp_provenance
+    assign show_provenance = true
+  endif
+-%}
+
+{%- if show_provenance -%}
+  <sustainability-claims>
+    <details class="wrapper" {{ section.settings.start_state }}>
+      {%- render 'f-accordion.summary' -%}
+
+      {%- liquid
+        capture provenance_text
+          if section.settings.para_metafield.size > 0
+            echo section.settings.para_metafield
+          elsif section.settings.para_template.size > 0
+            echo section.settings.para_template
+          endif
+        endcapture
+      -%}
+
+      {%- if provenance_text.size > 0 -%}
+        <div class="provenance-text-content">{{ provenance_text }}</div>
+      {%- endif -%}
+
+      <div class="provenance-bundle-content">
+        <provenance-bundle id="provenance-trust-badge" url="https://www.provenance.org/bundles/r2Nvht1v/embed"></provenance-bundle>
+      </div>
+      
+    </details>
+  </sustainability-claims>
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "Accordion- Sustainability",
+        "templates": ["product"],
+        "limit": 1,
+        "tag": "section",
+        "class": "f-accordion accordion-sustainability-claims",
+        "settings": [
+          {
+            "type": "select",
+            "id": "start_state",
+            "label": "Start Open / Closed",
+            "options": [
+              {
+                "value": "open",
+                "label": "Open"
+              },
+              {
+                "value": "",
+                "label": "Closed"
+              }
+            ],
+            "default": ""
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Sustainability Claims"
+          },
+          {
+            "type": "header",
+            "content": "Accordion Text"
+          },
+          {
+            "type": "paragraph",
+            "content": "Text to sit below the accordion title, and above the Provenance content."
+          },
+          {
+            "type": "paragraph",
+            "content": "'Metafield Text' will take precedence over 'Template Text'. If both are empty, no text will be displayed."
+          },
+          {
+            "type": "richtext",
+            "id": "para_metafield",
+            "label": "Metafield Text"
+          },
+          {
+            "type": "richtext",
+            "id": "para_template",
+            "label": "Template Text"
+          }
+        ],
+        "presets": [
+          {
+            "name": "Accordion - Sustainability Claims"
+          }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,146 @@
+<link rel="stylesheet" href="{{ 'f-product-reviews-yotpo.css' | asset_url }}">
+
+{%- liquid
+  assign title = section.settings.title
+  if section.settings.title-caps
+    assign title = title | upcase
+  endif
+-%}
+
+
+  <h2 class="reviews-title lh-reset">{{ title }}</h2>
+	<div id="shopify-section-product-reviews" class="yotpo yotpo-main-widget" data-product-id="{{ product.id }}" data-name="{{ product.title | escape }}" data-url="{{ shop.url }}{{ product.url }}" data-image-url="{{ product.featured_image | image_url: "large" |replace: '?', '%3F' | replace: '&','%26'}}" data-description="{{ product.description | escape }}"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      var container = document.querySelector('#write-review-tabpanel-main-widget .submit-button');
+      if (container) {
+        var firstSubmitButton = container;
+        var disclaimerDiv = document.createElement('div');
+        disclaimerDiv.style.marginTop = '17px';
+        disclaimerDiv.style.textAlign = 'right';
+
+        var disclaimerHTML = '<small>By submitting this review, you agree to the <a class="js-policy-fancybox" href="/policies/terms-of-service">Terms of Service</a> and <a class="js-policy-fancybox" href="/policies/privacy-policy">Privacy Policy</a>.!</small>';
+        disclaimerDiv.innerHTML = disclaimerHTML;
+
+        firstSubmitButton.insertBefore(disclaimerDiv, firstSubmitButton.firstChild);
+      }
+    }, 2000);
+  });
+</script>
+
+{% if template.suffix == 'alternate' %}
+  <style>
+    .wayfx-product__reviews {padding-top: 0;}
+  </style>
+{% endif %}
+
+<style>
+  {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+
+  #shopify-section-{{ section.id }} {
+    max-width: {{ section.settings.max-width }}px;
+    margin: auto;
+    padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 24px {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .reviews-title {
+    font-family: "ridley_groteskmedium";
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1.6px;
+    margin: 0 0 8px;
+  }
+
+  @media all and (min-width: 768px) {
+    #shopify-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 48px {{ section.settings.padding_bottom }}px;
+    }
+
+    #shopify-section-{{ section.id }} .reviews-title {
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin: 0 0 24px;
+    }
+  }
+
+</style>
+
+{% schema %}
+    {
+        "name": "Reviews - v2",
+        "presets": [
+          {
+            "name": "Reviews - v2"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "pdp_reviews_v2",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Config"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Reviews Title",
+            "default": "All Reviews"
+          },
+          {
+            "type": "checkbox",
+            "id": "title-caps",
+            "label": "Capialise Title",
+            "default": true
+          },
+          {
+            "type": "header",
+            "content": "Positioning"
+          },
+          {
+            "type": "range",
+            "id": "max-width",
+            "min": 1000,
+            "max": 1800,
+            "step": 20,
+            "unit": "px",
+            "default": 1440,
+            "label": "Max Width - Desktop",
+            "info": "How wide the section should be on desktop (inc side Padding)."
+          },
+          {
+            "type": "range",
+            "id": "padding_top",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "label": "Section Padding Top",
+            "default": 64
+          },
+          {
+            "type": "range",
+            "id": "padding_bottom",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "label": "Section Padding Bottom",
+            "default": 64
+          },
+          {
+            "type": "range",
+            "id": "mobile-padding",
+            "min": -50,
+            "max": 50,
+            "step": 5,
+            "unit": "%",
+            "label": "Mobile Padding Modifier",
+            "info": "Adjust how much bigger or smaller the section padding should be on mobile",
+            "default": -25
+          }
+        ]
+    }
+{% endschema %}

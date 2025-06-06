@@ -1,0 +1,128 @@
+{%- if product.metafields.sf_product_layout_a.expert_quote_1_text -%}
+
+{{ "n-products-experts.css" | asset_url | stylesheet_tag }}
+
+
+{%- assign expert_quote_1 = product.metafields.sf_product_layout_a.expert_quote_1_text %}
+{%- assign expert_person_1 = product.metafields.sf_product_layout_a.expert_quote_1_person -%}
+{%- assign expert_title_1 = product.metafields.sf_product_layout_a.expert_quote_1_position -%}
+{%- assign expert_photo_1 = product.metafields.sf_product_layout_a.expert_quote_1_image -%}
+
+{%- assign expert_quote_2 = product.metafields.sf_product_layout_a.expert_quote_2_text %}
+{%- assign expert_person_2 = product.metafields.sf_product_layout_a.expert_quote_2_person -%}
+{%- assign expert_title_2 = product.metafields.sf_product_layout_a.expert_quote_2_position -%}
+{%- assign expert_photo_2 = product.metafields.sf_product_layout_a.expert_quote_2_image -%}
+
+{%- assign expert_quote_3 = product.metafields.sf_product_layout_a.expert_quote_3_text %}
+{%- assign expert_person_3 = product.metafields.sf_product_layout_a.expert_quote_3_person -%}
+{%- assign expert_title_3 = product.metafields.sf_product_layout_a.expert_quote_3_position -%}
+{%- assign expert_photo_3 = product.metafields.sf_product_layout_a.expert_quote_3_image -%}
+
+<div class="wayfx-wrapper">
+    <h2 class="h1--primary">{{ 'products.misc.experts_hear' | t }}</h2>
+    <div class="wayfx-product__experts-list{% if expert_quote_2 != blank or expert_quote_3 != blank %} wayfx-product__experts-slider{% endif %}">
+      {%- if expert_quote_1 -%}
+        <div class="wayfx-product__expert">
+            <blockquote>
+              <p class="p--lg">{{ expert_quote_1 }}</p>
+              <cite>
+                {% if expert_photo_1 %}
+                  <div class="wayfx-product__expert-photo">
+                    <img width="60" height="60" loading="lazy" src="https://cdn.medik8.com/{{ expert_photo_1 }}/" alt="" />
+                  </div>
+                {% endif %}
+                {%- if expert_person_1 -%}
+                  <h5>{{ expert_person_1 }}</h5>
+                {%- endif -%}
+                {%- if expert_title_1 -%}
+                  <h6>{{ expert_title_1 }}</h6>
+                {%- endif -%}
+              </cite>
+            </blockquote>
+        </div>
+      {%- endif -%}
+
+      {%- if expert_quote_2 -%}
+        <div class="wayfx-product__expert">
+            <blockquote>
+              <p class="p--lg">{{ expert_quote_2 }}</p>
+              <cite>
+                {% if expert_photo_1 %}
+                  <div class="wayfx-product__expert-photo">
+                    <img width="60" height="60" loading="lazy" src="https://cdn.medik8.com/{{ expert_photo_2 }}/" alt="" />
+                  </div>
+                {% endif %}
+                {%- if expert_person_2 -%}
+                  <h5>{{ expert_person_2 }}</h5>
+                {%- endif -%}
+                {%- if expert_title_2 -%}
+                  <h6>{{ expert_title_2 }}</h6>
+                {%- endif -%}
+              </cite>
+            </blockquote>
+        </div>
+      {%- endif -%}
+
+      {%- if expert_quote_3 -%}
+        <div class="wayfx-product__expert">
+            <blockquote>
+              <p class="p--lg">{{ expert_quote_3 }}</p>
+              <cite>
+                {% if expert_photo_3 %}
+                  <div class="wayfx-product__expert-photo">
+                    <img width="60" height="60" loading="lazy" src="https://cdn.medik8.com/{{ expert_photo_3 }}/" alt="" />
+                  </div>
+                {% endif %}
+                {%- if expert_person_3 -%}
+                  <h5>{{ expert_person_3 }}</h5>
+                {%- endif -%}
+                {%- if expert_title_3 -%}
+                  <h6>{{ expert_title_3 }}</h6>
+                {%- endif -%}
+              </cite>
+            </blockquote>
+        </div>
+      {%- endif -%}
+    </div>
+</div>
+
+{%- endif -%}
+
+{% schema %}
+    {
+        "name": "Experts",
+        "presets": [
+          {
+            "name": "Experts"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__experts",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Nothing Displayed?"
+          },
+          {
+            "type": "paragraph",
+            "content": "Make sure the product metafield 'sf_product_layout_a.expert_quote_1_text' has a value."
+          }
+        ]
+    }
+{% endschema %}
+
+{% javascript %}
+
+ $(document).ready(function() {
+      $('.wayfx-product__experts-list.wayfx-product__experts-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            draggable: false,
+            infinite: true,
+            dots: true
+      }).show();
+ });
+
+{% endjavascript %}

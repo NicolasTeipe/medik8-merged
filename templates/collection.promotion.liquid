@@ -1,0 +1,71 @@
+{%- if collection.image -%}
+  {% section 'collection-header-with-image' %}
+  {%- else -%}
+  {% section 'collection-header' %}
+  {%- endif -%}
+  
+  {%- if settings.progress_discount__enabled == "collection" or settings.progress_discount__enabled == "both" -%}
+    <global-aov-bar class="js-collection-aov collection-aov-bar"></global-aov-bar>
+  {%- endif -%}
+  
+  
+  <div class="wayfx-wrapper">
+    <div class="grid">
+     {% section 'collection-sidebar' %}
+      <div class="grid__item large--three-quarters">
+        {%- paginate collection.products by 150 -%}
+        {% render 'collection-option-bar' %}
+        {% comment %} TODO - Not sure this is rendered on storefront as there is no rule to remove the display property below {% endcomment %}
+        <div class="collection-no-results" style="display: none">
+          <b>{{'general.search.filters' | t }}</b>
+          <small>{{'general.search.filters_aditional' | t }}</small>
+        </div>
+        <div class="wayfx-products">
+  
+          {% for product in collection.products %}
+            {% for variant in product.variants %}
+              {%- if variant.compare_at_price > variant.price -%}
+                {% render 'product-grid-item', product: variant, index: forloop.index %}
+              {%- endif -%}
+            {% endfor %}
+          {% else %}
+          <div class="grid__item">
+            <p>{{ 'collections.general.no_matches' | t }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        {%- endpaginate -%}
+      </div>
+    </div>
+  </div>
+  
+  {% if settings.collection_advert_enabled %}
+  <span id="advert" style="display: none;">
+    {% render 'product-grid-item-ad' %}
+  </span>
+  
+  
+  <script>
+  
+    function collectionAdvert() {
+      let items = $('.wayfx-product__item:visible'),
+          advert = $('#advert').html(),
+          visibleAds = $('.wayfx-product__item-ad:visible');
+  
+      visibleAds.remove();
+  
+      items.map(function(index) {
+        let item = $(this),
+            realIndex = index + 1;
+        item.find('.grid-item-index').html(realIndex)
+        if (realIndex == 3) {
+          $(advert).insertBefore(item);
+        }
+      })
+    }
+  
+    collectionAdvert();
+  
+  </script>
+  {% endif %}
+  

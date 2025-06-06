@@ -1,0 +1,580 @@
+.f-accordion details {
+  width: 100%;
+  padding: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  max-width: calc(100vw - 48px);
+  margin: 0 auto 16px;
+  background-color: rgba(246, 246, 246, 1);
+}
+
+.f-accordion summary {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: padding 0.3s;
+}
+
+.f-accordion details[open] summary {
+  padding: 24px;
+}
+
+.f-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.f-accordion h6 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.f-accordion a {
+  text-decoration: underline;
+}
+
+.f-accordion ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.f-accordion strength-ladder ul {
+  margin: 0 0 0 14px;
+  list-style: disc;
+}
+
+.f-accordion ul.js-list-item {
+  max-height: 200px;
+  transition: max-height 350ms ease-in;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.f-accordion.accordion-endorsement ul.js-list-item {
+  max-height: 350px;
+}
+
+.f-accordion ul.js-list-item.open,
+.f-accordion.accordion-endorsement ul.js-list-item.open {
+  max-height:none;
+}
+
+.f-accordion ul.js-list-item.open::after {
+  opacity: 0;
+}
+
+.f-accordion key-ingredients ul.js-list-item.open::after {
+  display: none;
+}
+
+.f-accordion ul.js-list-item::after {
+  content: '';
+  display: block;
+  height: 100px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(359deg, #f6f6f6 0%, rgba(246, 246, 246, 0) 100%);
+  opacity: 1;
+  transition: ease-in-out opacity 350ms;
+}
+
+.f-accordion ul.js-list-item.hide__fade::after {
+  opacity: 0;
+}
+
+.f-accordion ul.js-list-item.reset_height {
+  max-height: initial;
+}
+
+.f-accordion button.view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  font-weight: 600;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .f-accordion button.view-toggle {
+    font-size: 12px;
+  }
+}
+
+.f-accordion ul:not(.open) + .view-toggle svg {
+  transform: scale(-1);
+}
+
+.f-accordion .title {
+  margin-bottom: 0;
+  margin-top: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.f-accordion .content {
+  padding: 0 24px 24px 24px;
+}
+
+.f-accordion .who,
+.f-accordion .detail {
+  display: grid;
+  grid-template-columns: 42px auto;
+  grid-column: span 2;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.f-accordion .endorsement {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-family: 'ridley_groteskmedium';
+}
+
+.f-accordion.accordion-endorsement li {
+  margin-bottom: 45px;
+}
+
+.f-accordion.accordion-endorsement li:last-child {
+  margin-bottom: 25px;
+}
+
+.f-accordion .endorsement p {
+  margin: 0;
+}
+
+.f-accordion .endorsement__icon {
+  margin: 0 auto;
+}
+
+.f-accordion .endorsement .metafield-rich_text_field {
+  margin: 23px 0 20px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.f-accordion .endorsement__icon-text {
+  font-family: 'acta_displaymedium';
+  font-size: 32px;
+  letter-spacing: 0.25px;
+}
+
+.f-accordion .list-item {
+  display: flex;
+  gap: 8px;
+}
+
+.f-accordion .list-item:not(:last-child) {
+  margin-bottom: 6px;
+}
+
+.f-accordion .list-item svg {
+  margin-top: 2px;
+}
+
+.f-accordion .list-item .list-item-icon {
+  width: 50px;
+  height: fit-content;
+}
+
+.f-accordion .vid-wrapper {
+  position: relative;
+}
+
+.f-accordion .vid-wrapper video {
+  display: block;
+  width: 100%;
+}
+
+.f-accordion .vid-wrapper svg {
+  position: absolute;
+  bottom: 15px;
+  right: 22px;
+
+  display: block;
+  width: 37px;
+  height: 37px;
+  border-radius: 5px;
+  background: var(--color-white);
+  padding: 12px;
+  pointer-events: none;
+}
+
+.f-accordion .img-wrapper {
+  display: flex;
+  position: relative;
+}
+
+.f-accordion .img-wrapper svg {
+  position: absolute;
+  background: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  right: 14px;
+  top: 14px;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.f-accordion .img-wrapper svg g {
+  transform: scale(0.5);
+  transform-origin: center;
+}
+
+@media screen and (max-width: 768px) {
+  .f-accordion .img-wrapper svg {
+    display: none;
+  }
+}
+
+.f-accordion .img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.f-accordion before-after-compare.is-expanded {
+  position: fixed;
+  z-index: 10000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  border: 2px solid var(--color-black);
+  border-radius: 10px;
+}
+
+.f-accordion before-after-compare.is-expanded img{
+  max-height:80vh;
+  max-width:80vw;
+  width: auto;
+  height:auto;
+}
+
+.f-accordion .img-wrapper img.is-expanded {
+  position: fixed;
+  z-index: 10000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 90%;
+  height: auto;
+  max-height: 80vh;
+  border: 2px solid var(--color-black);
+  border-radius: 10px;
+}
+
+
+.f-accordion .can-zoom:not(.is-expanded) {
+  cursor: zoom-in;
+}
+
+.f-accordion .accordion--has-media .content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.f-accordion .faq {
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.f-accordion .faq h6 {
+  padding-right: 25px;
+}
+
+.f-accordion .faq-toggle-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-block;
+  font-size: 24px;
+  line-height: 22px;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  transition: transform 0.3s ease;
+}
+
+.f-accordion .faq-toggle-icon[data-state='minus'] {
+  transform: rotate(0deg);
+}
+
+.f-accordion .faq.hidden span {
+  display: none;
+}
+
+.f-accordion details:not([open]) summary svg {
+  transform: scale(-1);
+}
+
+.f-accordion .text-wrapper h4 {
+  margin-bottom: 8px;
+}
+
+.f-accordion .text-wrapper h4:nth-child(1) {
+  margin-top: 0;
+}
+
+.f-accordion.accordion-proven-results li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.f-accordion.accordion-proven-results p {
+  font-size: 9px;
+  margin-bottom: 0;
+}
+
+.f-accordion.accordion-proven-results .content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.f-accordion.accordion-proven-results .buttons-row {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: white;
+  padding: 2px;
+  border-radius: 5px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  display: flex;
+  gap: 12px;
+  right: 12px;
+  align-items: center;
+}
+
+.f-accordion.accordion-proven-results .buttons-row span {
+  flex: 1;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.f-accordion.accordion-proven-results .buttons-row span.active {
+  background-color: black;
+  color: white;
+  padding: 2px 0;
+}
+
+.f-accordion.accordion-proven-results ul.stats {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.f-accordion.accordion-proven-results ul.stats li > span {
+  font-size: 21px;
+  min-width: 68px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.f-accordion.accordion-proven-results .txt-wrapper {
+  align-self: center;
+}
+
+.f-accordion.accordion-list .copy .metafield-rich_text_field p {
+  margin-bottom: 12px;
+}
+
+.f-accordion.accordion-list .list-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.f-accordion.accordion-list .list-item p {
+  margin-bottom: 0;
+}
+
+.f-accordion.accordion-list .copy > .ki-title:nth-child(1) {
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: inline-flex;
+}
+
+.f-accordion.accordion-good-to-know li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.f-accordion.accordion-good-to-know ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.f-accordion key-ingredients #full-ingredients-list {
+  display: inline-block;
+  margin: 12px 0;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.f-accordion key-ingredients .force_padding #full-ingredients-list {
+  padding-bottom: 18px;
+}
+
+.f-accordion key-ingredients #full-ingredients-list:after {
+  background: #262626;
+  position: relative;
+  bottom: -4px;
+  content: '';
+  display: block;
+  height: 2px;
+}
+
+.full-ingredients-modal {
+  background-color: var(--color-white);
+  padding: 50px 20px 20px;
+  width: 100%;
+  max-width: 780px;
+}
+
+@media (min-width: 768px) {
+  .full-ingredients-modal {
+    padding: 50px 40px 40px;
+  }
+}
+
+.full-ingredients-modal .title {
+  font-size: 24px;
+  letter-spacing: 0.46px;
+  line-height: 32px;
+  margin-bottom: 12px;
+}
+
+.full-ingredients-modal .subtitle {
+  color: #666;
+  font-size: 20px;
+  line-height: 26px;
+  margin-bottom: 15px;
+}
+
+.full-ingredients-modal .ingredient-list p {
+  font-family: ridley_groteskmedium, sans-serif;
+  font-size: 16px;
+  color: #262626;
+  line-height: 28px;
+  margin-bottom: 24px;
+}
+
+.full-ingredients-modal .ingredient-disclaimer {
+  font-size: 12px;
+  color: #262626;
+  line-height: 16px;
+  margin-bottom: 24px;
+}
+
+/* accordion - science behind */
+.f-accordion.accordion-science .content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  grid-column-gap: 40px;
+  grid-row-gap: 0px;
+
+  color: #111111;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+}
+
+.f-accordion.accordion-science .content svg {
+  width: 24px;
+  padding: 20px 0 16px;
+}
+
+.f-accordion.accordion-science .content .text-wrapper {
+  padding-right: 20px;
+  padding: 22px 0 0;
+}
+
+@media (min-width: 1024px) {
+  .f-accordion.accordion-science .content {
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: 1fr;
+  }
+
+  .f-accordion.accordion-science .content .text-wrapper {
+    padding: 0 20px 0 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .f-accordion {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 1440px;
+    display: grid;
+    grid-template-columns: auto 456px;
+    gap: 48px;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .f-accordion {
+    grid-template-columns: initial;
+  }
+}
+
+@media (min-width: 1024px) {
+
+  .f-accordion .accordion--has-media .content {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .f-accordion.accordion-proven-results .content:not(.no-img) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Sustainability Claims Accordion */
+.f-accordion.accordion-sustainability-claims .provenance-text-content{
+  padding: 0 24px
+}
+
+.f-accordion.accordion-sustainability-claims .provenance-bundle-content{
+  padding: 0 14px 14px;
+}
+
+/* overlay */
+
+.body-scroll-lock {
+  position: fixed;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.accordion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9000;
+  background: #00000066;
+}

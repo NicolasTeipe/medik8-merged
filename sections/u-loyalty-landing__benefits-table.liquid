@@ -1,0 +1,176 @@
+<div data-anchor="{{ section.settings.nav_title }}" class="block-12/12 tac flex flex-grid column-wrap align-center justify-center">
+  {% if section.settings.title != blank %}
+  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.text != blank %}
+  <div class="rte-content t-m lh-ml cell-l cell-r">{{ section.settings.text }}</div>
+  {% endif %}
+  <loyaltylion-benefits-table 
+    class="d-block ct--x2 block-12/12 cell-l cell-r">
+  </loyaltylion-benefits-table>
+</div>
+
+<script type="text/javascript">   
+
+  class LoyaltyLionBenefitsTable extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then( async () => {
+        if(!this.mounted){
+          this.mounted = true
+          this.util = await new LoyaltyLionUtil()
+          this.render()
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
+    render(){
+      const {_customer} = this.util.loyaltylion
+      const tierTick = ` <svg class="ll-benefits-table__tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290.17 290.17"> <path d="m145.08,290.17C65.08,290.17,0,225.08,0,145.08S65.08,0,145.08,0s145.08,65.08,145.08,145.08-65.08,145.08-145.08,145.08Zm0-275.17C73.36,15,15,73.36,15,145.08s58.36,130.08,130.08,130.08,130.08-58.36,130.08-130.08S216.81,15,145.08,15Z"/> <path d="m119.29,192.27c-1.99,0-3.9-.79-5.3-2.2l-27.78-27.78c-2.93-2.93-2.93-7.68,0-10.61s7.68-2.93,10.61,0l22.48,22.48,74.07-74.07c2.93-2.93,7.68-2.93,10.61,0,2.93,2.93,2.93,7.68,0,10.61l-79.38,79.38c-1.41,1.41-3.31,2.2-5.3,2.2Z"/> </svg>`
+      const icon__crystal = `<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700"> <defs> <style>.cls-1{fill: #fff; stroke: #23201f; stroke-miterlimit: 10; stroke-width: 6px;}</style> </defs> <polygon class="cls-1" points="340.08 42.45 162.15 349.77 340.08 657.09 518 349.77 340.08 42.45"/> <polyline class="cls-1" points="340.08 42.45 403.8 348.09 340.08 434.02"/> <polyline class="cls-1" points="276.36 348.09 240.31 406.37 162.15 349.77"/> <polyline class="cls-1" points="340.08 651.61 340.08 434.02 276.36 348.09 340.08 42.45"/> <line class="cls-1" x1="240.31" y1="406.37" x2="336.63" y2="648.42"/> <polyline class="cls-1" points="403.8 348.09 439.85 406.37 518 349.77"/> <polyline class="cls-1" points="340.08 653.41 340.08 434.02 403.8 348.09 340.08 42.45"/> <line class="cls-1" x1="439.85" y1="406.37" x2="342.26" y2="651.61"/></svg>`
+      const icon__crystal_plus = `<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700"> <defs> <style>.cls-1{fill: none;}.cls-1, .cls-2{stroke: #23201f; stroke-miterlimit: 10; stroke-width: 6px;}.cls-2{fill: #f1f1f1;}</style> </defs> <g> <polyline class="cls-1" points="452.09 187.62 367.79 42 190.92 347.5 367.79 653 544.65 347.5 497.65 266.3"/> <polyline class="cls-1" points="367.79 42 431.13 345.83 367.79 431.25"/> <polyline class="cls-1" points="304.44 345.83 268.61 403.77 190.92 347.5"/> <polyline class="cls-1" points="367.79 647.55 367.79 431.25 304.44 345.83 367.79 42"/> <line class="cls-2" x1="268.61" y1="403.77" x2="364.36" y2="644.38"/> <polyline class="cls-1" points="431.13 345.83 466.96 403.77 544.65 347.5"/> <polyline class="cls-1" points="367.79 649.34 367.79 431.25 431.13 345.83 367.79 42"/> <line class="cls-2" x1="466.96" y1="403.77" x2="369.96" y2="647.55"/> </g> <polygon points="470.98 276.67 470.98 219.23 413.79 219.23 413.79 206.24 470.98 206.24 470.98 149.04 484.22 149.04 484.22 206.24 541.41 206.24 541.41 219.23 484.22 219.23 484.22 276.67 470.98 276.67"/></svg>`
+      const icon__crystal_deluxe = `<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_3" data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700"> <defs> <style>.cls-1{fill: none; stroke: #23201f; stroke-miterlimit: 10; stroke-width: 6px;}</style> </defs> <g> <polyline class="cls-1" points="421.19 162.49 351.44 42 283.26 159.76 280.74 164.11"/> <polyline class="cls-1" points="227.84 255.49 176.01 345 351.44 648 526.86 345 476.67 258.31"/> <line class="cls-1" x1="414.26" y1="343.34" x2="351.44" y2="428.06"/> <polyline class="cls-1" points="351.44 42 374.43 152.27 375.43 157.09"/> <polyline class="cls-1" points="288.61 343.34 253.07 400.8 176.01 345"/> <line class="cls-1" x1="328.45" y1="152.27" x2="351.44" y2="42"/> <polyline class="cls-1" points="351.44 642.59 351.44 428.06 288.61 343.34 305.55 262.09"/> <line class="cls-1" x1="253.07" y1="400.8" x2="348.03" y2="639.45"/> <polyline class="cls-1" points="414.26 343.34 449.8 400.8 526.86 345"/> <polyline class="cls-1" points="375.43 157.09 374.43 152.27 351.44 42"/> <polyline class="cls-1" points="351.44 644.37 351.44 428.06 414.26 343.34 396.81 259.63"/> <line class="cls-1" x1="449.8" y1="400.8" x2="353.59" y2="642.59"/> </g> <g> <path d="m212.13,207.5c0,15.66-12.35,27.54-28.72,27.54h-22.42v-55.07h22.42c16.37,0,28.72,11.88,28.72,27.54Zm-10.23,0c0-10.54-7.63-17.94-18.49-17.94h-12.19v35.88h12.19c10.86,0,18.49-7.47,18.49-17.94Z"/> <path d="m277.59,225.43v9.6h-44.06v-55.07h43.43v9.6h-33.2v13.06h21.01v9.6h-21.01v13.22h33.83Z"/> <path d="m340.77,225.43v9.6h-42.48v-55.07h10.23v45.47h32.26Z"/> <path d="m357.85,212.85v-32.89h10.23v32.89c0,9.28,5.98,13.37,14.63,13.37s14.48-4.09,14.48-13.37v-32.89h10.23v32.89c0,16.05-11.17,23.13-24.78,23.13s-24.78-7.08-24.78-23.13Z"/> <path d="m478,234.32v.71h-11.25l-15.66-21.01-15.66,21.01h-11.25v-.71l21.01-28.24-18.96-25.49v-.63h11.33l13.53,18.17,13.53-18.17h11.33v.63l-18.96,25.49,21.01,28.24Z"/> <path d="m541.88,225.43v9.6h-44.06v-55.07h43.43v9.6h-33.2v13.06h21.01v9.6h-21.01v13.22h33.83Z"/> </g></svg>`
+     
+      const tiers = this.util.loyaltylion.program.loyaltyTiers.map( ({id,name,bounds}) => {
+        return {
+          name:name,
+          active: !_customer || _customer?.loyaltyTierMembership?.loyaltyTierId == id ? true  : false,
+          benefits:[
+            {
+              content:'Pedidos en 12 meses',
+              value:bounds.lower ? `${this.util.settings.currencySymbol}${bounds.lower/100}` : '-',
+            },
+            {
+              content:`${this.util.settings.currencySymbol}1 gastado = 5 puntos`,
+              availableForTier: true
+            }
+          ].concat(
+            this.util.loyaltylion.program.loyaltyTierBenefits.map( ({content,loyaltyTierIds}) => {
+              return {
+                content:content,
+                availableForTier:loyaltyTierIds.some((tierId) => tierId == id)
+              }
+            }),
+            {
+              content:{{ 'apps.loyalty_lion.black_friday_reward' | t | json }},
+              availableForTier:true
+            }
+          )
+        }
+      })
+      .filter(({name}) => name != 'Staff')
+
+      this.innerHTML = `
+        <nice-scroll class="cb">
+        <div class="ll-benefits-table">
+          <div class="ll-benefits-table__row">
+            <span class="ll-benefits-table__cell ll-benefits-table__cell--title"></span>
+            ${tiers.map( ({name,active}) => {
+              return `
+                <span data-active="${active}" class="ll-benefits-table__cell ll-benefits-table__cell--header h-style h-style--accent t-l lh-s">
+                  ${name == 'Crystal' ?  `${icon__crystal}` : name == 'Crystal Plus' ? `${icon__crystal_plus}` : `${icon__crystal_deluxe}` }
+                  <span>${name}</span>
+                </span>
+              `
+            }).join('')}
+          </div>
+          ${tiers[0].benefits.map( (benefit,index) => { 
+            const benfitIndex = index
+            return `
+             <div class="ll-benefits-table__row">
+              <span class="ll-benefits-table__cell ll-benefits-table__cell--title">${benefit.content}</span>
+              ${tiers.map( (tier,index) => {
+                const item = tier.benefits[benfitIndex]
+                return item.value ? 
+                       `<span data-active="${tier.active}" class="ll-benefits-table__cell"><span>${item.value}</span></span>` 
+                       : 
+                       `<span data-active="${tier.active}" class="ll-benefits-table__cell">${item.availableForTier ? `${tierTick}` : ''}</span>`
+              }).join('')}
+            </div>
+            `
+          }).join('')}
+        </div>
+        </nice-scroll>
+      `
+      const active = this.querySelector('[data-active="true"]')
+      const gridGap = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gutter-unit').replace('px','')) * 3
+      const activeBoundingBox = active?.getBoundingClientRect()
+      const activeLeft = active ? activeBoundingBox.x - activeBoundingBox.width - gridGap : 0
+      this.querySelector('nice-scroll').scrollBy({
+        left:activeLeft,
+        behavior: 'smooth'
+      })
+    }
+  }
+  customElements.define('loyaltylion-benefits-table', LoyaltyLionBenefitsTable);
+</script>
+
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+    {% if section.settings.padding-top %}
+      padding-top:var(--gutter-unit-x3);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/benefits-table",
+  "class":"block-grid block-grid--f",
+  "limit":1,
+ 
+  "settings":[
+   
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"padding-top",
+      "label":"padding-top"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin",
+      "default":true
+    },
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Tiers"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Spend More to Get More"
+    },
+    { 
+      "type":"richtext",
+      "id":"text",
+      "label":"text",
+      "default":"<p>Unlock more benefits as you move up tiers.</p>"
+    }
+  ]
+}
+{% endschema %}

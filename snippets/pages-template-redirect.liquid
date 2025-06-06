@@ -1,0 +1,106 @@
+{%- if template.name == 'page' and page.metafields.custom.country_redirect.value == true -%}
+   <script>
+    /**
+    * Handles redirection of users to the correct country-specific version of a page
+    * based on their geographical location.
+    * It compares the current host against a predefined list of hosts mapped to country codes.
+    * If the user's location does not match the shop location determined by the host,
+    * the user is redirected to the corresponding country-specific page.
+    */
+    class CountryRedirect {
+      constructor() {
+        this.shopHost = '{{ request.host }}';
+        this.shopPath = '{{ request.path | remove_first: '/' }}';
+        this.hostMap = {
+          'www.medik8.com': 'GB',
+          'us.medik8.com': 'US',
+          'de.medik8.com': 'DE',
+          'eu.medik8.com': 'EU',
+          'int.medik8.com': 'INT',
+        };
+
+        this.main();
+      }
+
+      async main() {
+        const shopDomain =
+          Object.keys(this.hostMap).find(key => this.shopHost.includes(key)) ??
+          false;
+        let shopLocationZone = this.hostMap[shopDomain] || 'GB';
+
+        if (!shopLocationZone) return;
+
+        this.countriesJson = await this.initCountriesJson();
+
+        const userLocation = await this.getCountryCode();
+        const userLocationObj = this.getCountryData(userLocation);
+
+        const locationMatch = this.isUserInCorrectLocation(
+          userLocationObj.zone,
+          shopLocationZone
+        );
+
+        if (!locationMatch) {
+          // get user country data
+          const redirectTo = `${userLocationObj.website}${this.shopPath}`;
+
+          // check destination exists before redirecting
+          const res = await fetch(redirectTo);
+          if (res.ok) window.location.href = redirectTo;
+        }
+      }
+
+      /**
+      * Retrieves and initializes the country data from a JSON asset.
+      * @returns {json} Countries data as a JSON object.
+      */
+      async initCountriesJson() {
+        const res = await fetch("{{ 'countries.json' | asset_url }}");
+        const countriesJson = await res.json();
+        return countriesJson;
+      }
+
+      /**
+      * Determines the user's country code using a geolocation API.
+      * @returns {string} ISO 3166-1 alpha-2 country code
+      */
+      async getCountryCode() {
+        const r = await fetch(
+          'https://api.bigdatacloud.net/data/reverse-geocode-client'
+        );
+        const json = await r.json();
+        return json.countryCode;
+      }
+
+      /**
+      * Retrieves the country-specific data from the countries configuration for the given location.
+      * @param {string} location - The location code to find data for.
+      * @returns {Object|boolean} The country data object if found, false otherwise.
+      */
+      getCountryData(location) {
+        return (
+          this.countriesJson.find(({ isoAlpha2 }) =>
+            Array.isArray(isoAlpha2)
+              ? isoAlpha2.includes(location)
+              : isoAlpha2 === location
+          ) || false
+        );
+      }
+
+      /**
+      * Checks if the user's location matches the shop zone.
+      * @param {string} userLocation - The user's current country code.
+      * @param {string|Array} shopZone - The shop zone(s) as a string or an array of strings.
+      * @returns {boolean} True if the user's location is within the shop zone, false otherwise.
+      */
+      isUserInCorrectLocation(userLocation, shopZone) {
+        return (
+          (typeof shopZone === 'string' && shopZone === userLocation) ||
+          (Array.isArray(shopZone) && shopZone.includes(userLocation))
+        );
+      }
+    }
+
+    new CountryRedirect();
+  </script>
+{%- endif -%}

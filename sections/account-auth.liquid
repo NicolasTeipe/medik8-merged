@@ -1,0 +1,117 @@
+{%- unless customer -%}
+  <div class="tac">
+    <div class="row--d2 h-style h-style--accent t-xxl lh-s">{{ section.settings.title }}</div>
+    <div class="row t-m lh-ml rte-content block-c block-12/12">{{ section.settings.paragraph }}</div>
+    <button class="btn btn--large" account-modal>{{ section.settings.button_text }}</button>
+  </div>
+
+  <style type="text/css">
+    {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+  
+    #shopify-section-{{ section.id }}{
+      display: block;
+      max-width: {{ section.settings.max-width }}px;
+      margin: auto;
+      padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 24px {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px;
+    }
+  
+    @media all and (min-width: 768px) {
+      #shopify-section-{{ section.id }}{
+        padding: {{ section.settings.padding_top }}px 48px {{ section.settings.padding_bottom }}px;
+      }
+    }
+  </style>
+{%- endunless -%}
+
+
+{% schema %}
+{
+  "name": "Account Login / Register",
+  
+  "presets": [
+    {
+      "name": "Account Login / Register"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Config"
+    },
+    {
+      "type": "url",
+      "id": "redirect_url",
+      "label": "Redirect Url",
+      "info": "Redirect users to this url on successful login / account creation. Leave blank to use current page url, inc params."
+    },
+    {
+      "type": "header",
+      "content": "Positioning"
+    },
+    {
+      "type": "range",
+      "id": "max-width",
+      "min": 1000,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1440,
+      "label": "Max Width - Desktop",
+      "info": "How wide the section should be on desktop (inc side Padding)."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Padding Bottom",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "mobile-padding",
+      "min": -50,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile Padding Modifier",
+      "info": "Adjust how much bigger or smaller the section padding should be on mobile",
+      "default": -25
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default":"Create an Account"
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph",
+      "label": "Paragraph",
+      "default":"To take advantage of this offer, you must have an account"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": " Button Text",
+      "default": "Create Account"
+    }
+  ]
+}
+{% endschema %}

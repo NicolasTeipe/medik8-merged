@@ -1,0 +1,126 @@
+{%- assign block_height = section.settings.block_height -%}
+
+<section
+  class="mos2--component MOS2-editorial wayfx-block wayfx-block--editorial-2columns wayfx-block--editorial-2columns-{{ block.id}} wayfx-block--editorial-2columns-{% if block_height == 'large' %}large{% else %}medium{% endif %}">
+    <div class="wayfx-wrapper">
+        <div class="grid">
+
+          {% for block in section.blocks %}
+            <style>
+              .heading-{{block.id}}, .preHeading-{{block.id}} {
+                color: {{block.settings.heading_color}}
+              }
+              </style>
+
+          {%- assign image = block.settings.block_image | image_url: width: 960 -%}
+          {%- assign heading = block.settings.block_title -%}
+          {%- assign subheading = block.settings.block_subheading -%}
+          {%- assign cta_text = block.settings.block_cta_text -%}
+          {%- assign cta_link = block.settings.block_cta_link -%}
+          {%- assign video_option = block.settings.block_video -%}
+
+            <div class="grid__item {% if section.blocks.size == 2 %}large--one-half{% else %}large--one-whole{% endif %}">
+                <a href="{{ cta_link }}"{% if video_option == 'yes' %} data-fancybox{% endif %}
+                  style="background-image: url({{ image }});"
+                  >
+                    <div>
+                        {% if subheading != blank %}
+                          <div class="editorial__preHeading preHeading-{{block.id}}">
+                            {{ subheading }}
+                          </div>
+                        {% endif %}
+                        {% if video_option == 'yes' %}
+                          <div class="wayfx-block__play">
+                            <i class="wayfx-icon wayfx-icon-play"></i>
+                          </div>
+                        {% endif %}
+                        {% if heading != blank %}
+                          <h3 class="editorial__heading heading-{{block.id}}">
+                            {{ heading }}
+                          </h3>
+                        {% endif %}
+                        {% if cta_text != blank %}
+                          <div class="btn btn--large">
+                            {{ cta_text }}
+                          </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Editorial",
+    "presets": [
+      {
+        "name": "Editorial"
+      }
+    ],
+    "blocks": [
+      {
+          "type": "block",
+          "name": "Block",
+          "limit": 2,
+          "settings": [
+            {
+                "id": "block_image",
+                "type": "image_picker",
+                "label": "Background Image"
+            },
+            {
+                "id": "block_subheading",
+                "type": "text",
+                "label": "Pre Heading"
+            },
+            {
+                "id": "block_title",
+                "type": "text",
+                "label": "Heading"
+            },
+            {
+              "type": "color",
+              "id": "heading_color",
+              "label": "Heading Color",
+              "default": "#000000"
+            },
+            {
+                "id": "block_cta_text",
+                "type": "text",
+                "label": "CTA Text"
+            },
+            {
+                "id": "block_cta_link",
+                "type": "url",
+                "label": "CTA or Video Link"
+            },
+            {
+                "id": "block_video",
+                "type": "select",
+                "label": "Is this a video link?",
+                "options": [
+                    { "value": "no", "label": "No"},
+                    { "value": "yes", "label": "Yes"}
+                ]
+            }
+          ]
+      }
+    ],
+    "settings": [
+        {
+            "id": "block_height",
+            "type": "select",
+            "label": "Block Height Size",
+            "options": [
+                { "value": "large", "label": "Large"},
+                { "value": "medium", "label": "Medium"}
+            ]
+        }
+    ]
+}
+{% endschema %}

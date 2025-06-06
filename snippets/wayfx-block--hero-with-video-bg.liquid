@@ -1,0 +1,40 @@
+{%- if block.settings.alignment == 'top_left' -%}
+    {%- assign alignment = 'wayfx-block--align-top-left' -%}
+{%- elsif block.settings.alignment == 'top_center' -%}
+    {%- assign alignment = 'wayfx-block--align-top-center' -%}
+{%- elsif block.settings.alignment == 'top_right' -%}
+    {%- assign alignment = 'wayfx-block--align-top-right' -%}
+{%- elsif block.settings.alignment == 'bottom_left' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-left' -%}
+{%- elsif block.settings.alignment == 'bottom_center' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-center' -%}
+{%- elsif block.settings.alignment == 'bottom_right' -%}
+    {%- assign alignment = 'wayfx-block--align-bottom-right' -%}
+{%- endif -%}
+{%- assign heading = block.settings.heading -%}
+{%- assign video_link = block.settings.video_link -%}
+{%- assign paragraph = block.settings.paragraph -%}
+{%- assign cta_link = block.settings.cta_link -%}
+{%- assign cta_text = block.settings.cta_text -%}
+
+{% if heading %}
+    <section class="wayfx-block wayfx-block--hero-with-video-bg {{ alignment }}">
+      	{% if video_link %}
+      		<div class="video-overlay"></div>
+     		<div class="video-cover-wrapper">
+              <div class="video-cover-iframe">
+      			<iframe class="normal" width="100%" height="100%" src="{{ video_link }}&background=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+      		</div>
+      	{% endif %}
+        <div class="wayfx-wrapper">
+            <div class="wayfx-block__text">
+                <h1 class="h1--secondary">{{ heading }}</h1>
+                {% if paragraph %}{{ paragraph }}{% endif %}
+              	{% if cta_link and cta_text %}
+                    <a href="{{ cta_link }}" class="btn btn--medium btn--outline">{{ cta_text }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}

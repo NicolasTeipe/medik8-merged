@@ -1,0 +1,66 @@
+{% unless product.metafields.accordion.good_to_know.value == blank %}
+  <details class="wrapper" {{ section.settings.start_state }}>
+    {%- render 'f-accordion.summary' -%}
+    <div class="content">
+      <ul>
+        {%- comment -%} includes fix for de locale using ' und ' instead of ', and ' {%- endcomment -%}
+        {%- liquid
+          assign bullets_str = section.settings.gtk | replace: ' und ', ', and '
+          assign bullet_points = bullets_str | split: ','
+          for bullet in bullet_points
+            echo "<li>"
+              render 'svg_check-circular'
+              if forloop.last
+                echo bullet | slice: 5, bullet.size | upcase
+              else
+                echo bullet | upcase
+              endif
+            echo "</li>"
+          endfor
+        -%}
+      </ul>
+    </div>
+  </details>
+{% endunless %}
+{% schema %}
+{
+  "name": "Accordion - Good To Know",
+  "presets": [
+    {
+      "name": "Accordion - Good To Know"
+    }
+  ],
+  "templates": ["product"],
+  "limit": 1,
+  "tag": "section",
+  "class": "f-accordion accordion-good-to-know",
+  "settings": [
+    {
+      "type": "select",
+      "id": "start_state",
+      "label": "Start Open / Closed",
+      "options": [
+        {
+          "value": "open",
+          "label": "Open"
+        },
+        {
+          "value": "",
+          "label": "Closed"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "gtk",
+      "label": "Good To Know Content"
+    }
+  ]
+}
+{% endschema %}

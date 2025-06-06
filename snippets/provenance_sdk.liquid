@@ -1,0 +1,10 @@
+{%- liquid
+  assign show_provenance = false
+  if product.tags contains 'provenance' and settings.ff_temp_provenance
+    assign show_provenance = true
+  endif
+-%}
+
+{%- if template == 'product.v2' and show_provenance -%}
+  <script defer="" src="https://unpkg.com/@provenance/provenance-sdk@1/dist/provenance-sdk.js"></script>
+{%- endif -%}

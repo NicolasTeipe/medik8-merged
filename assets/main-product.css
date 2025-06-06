@@ -1,0 +1,51 @@
+.template-product main {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.template-product main .wayfx-product__hero {
+  order: -1;
+}
+
+@media (min-width: 1024px) {
+  .product-gallery-and-information .product-gallery-container {
+    margin-bottom: 48px;
+  }
+
+  .template-product main .wayfx-product > .accordion,
+  .template-product main > .accordion {
+    grid-template-columns: auto 456px;
+    display: grid;
+    max-width: initial;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .template-product main .wayfx-product > .accordion details,
+  .template-product main > .accordion details {
+    margin-left: 0;
+    width: calc(100% - 48px);
+  }
+
+  .template-product main .wayfx-product > .accordion details,
+  .template-product main > .accordion details {
+    margin-left: 0;
+  }
+}
+
+/* Yotpo styles used for the new PDP only - temporary, needs a better home */
+.yotpo-hover-enable .yotpo-single-image-container .y-image-wrapper:hover .yotpo-hover-cta,
+.yotpo .playkit-time-display span{
+  color: #fff !important;
+}
+.yotpo .yotpo-lightbox-product-button {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+cite {
+  display: block;
+  font-size: 85%;
+  line-height: 1.5;
+}

@@ -1,0 +1,21 @@
+{% section 'collection-header' %}
+
+<div class="wayfx-wrapper">
+    <div class="grid">
+        {% section 'collection-sidebar' %}
+        <div class="grid__item large--three-quarters">
+            {%- paginate collections.all.products by 150 -%}
+                {% render 'collection-option-bar' %}
+                <div class="wayfx-products">
+                    {% for product in collections.all.products %}
+                        {% render 'product-grid-item', product: product, index: forloop.index %}
+                    {% else %}
+                        <div class="grid__item">
+                            <p>{{ 'collections.general.no_matches' | t }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {%- endpaginate -%}
+        </div>
+    </div>
+</div>

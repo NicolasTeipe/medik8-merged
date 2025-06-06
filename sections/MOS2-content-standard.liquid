@@ -1,0 +1,66 @@
+{%- assign image = section.settings.image | image_url: width: 1100 -%}
+{%- assign heading = section.settings.heading -%}
+{%- assign paragraph = section.settings.paragraph -%}
+{%- assign cta_link = section.settings.cta_link -%}
+{%- assign cta_text = section.settings.cta_text -%}
+
+{% if heading != blank %}
+  <div class="wayfx-wrapper">
+    <div class="wayfx-block__text">
+      <h2 class="h2--primary">{{ heading }}</h2>
+      {% if section.settings.image %}
+        <div class="wayfx-block__image">
+          <img loading="lazy" data-blink-src="{{ image }}" alt="" width="1100" height="1100"/>
+        </div>
+      {% endif %}
+      {% if paragraph != blank %}
+        <p>{{ paragraph }}</p>
+      {% endif %}
+      {% if cta_link != blank and cta_text != blank %}
+      <a href="{{ cta_link }}" class="btn btn--xlarge">{{ cta_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+
+{% schema %}
+{
+    "name": "Content - Standard",
+    "tag": "section",
+    "class": "mos2--component wayfx-block wayfx-block--standard",
+    "presets": [
+      {
+        "name": "Content - Standard"
+      }
+    ],
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Feature Image"
+        },
+        {
+            "id": "paragraph",
+            "type": "textarea",
+            "label": "Paragraph",
+            "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+        },
+        {
+            "id": "cta_text",
+            "type": "text",
+            "label": "CTA Text"
+        },
+        {
+            "id": "cta_link",
+            "type": "url",
+            "label": "CTA Link"
+        }
+    ]
+}
+{% endschema %}

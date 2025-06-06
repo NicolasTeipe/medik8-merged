@@ -1,0 +1,70 @@
+{%- assign image_size = section.settings.size -%}
+{% if image_size == 'narrow' %}
+  {%- assign image_desktop = section.settings.image_desktop | image_url: width: 1100 -%}
+{% elsif image_size == 'container' %}
+  {%- assign image_desktop = section.settings.image_desktop | image_url: width: 2000 -%}
+{% else %}
+{%- assign image_desktop = section.settings.image_desktop | image_url: width: 3000 -%}
+{% endif %}
+
+{% if section.settings.image_desktop %}
+  <section class="wayfx-block wayfx-block--single-image wayfx-block--single-image-{{ image_size }}">
+    {% unless section.settings.size == "full_width" %}
+    <div class="wayfx-wrapper">
+    {% endunless %}
+      <img class="desktop_image" loading="lazy" height="{{image_desktop.height}}" width="{{image_desktop.width }}" src="{{ image_desktop | image_url }}" alt="{{image_desktop.alt}}">
+      <img class="mobile_image" loading="lazy" height="{{section.settings.image_mobile.height}}" width="{{section.settings.image_mobile.width }}" src="{{ section.settings.image_mobile | image_url }}" alt="{{section.settings.image_mobile.alt}}">
+    {% unless section.settings.size == "full_width" %}
+    </div>
+  {% endunless %}
+  </section>
+{% endif %}
+
+{%- style -%}
+.wayfx-block--single-image .desktop_image {
+  display:block;
+}
+.wayfx-block--single-image .mobile_image {
+  display:none;
+}
+@media screen and (max-width: 480px) { 
+  .wayfx-block--single-image .mobile_image {
+    display:block;
+  }
+  .wayfx-block--single-image .desktop_image {
+    display:none;
+  }
+}
+{%- endstyle -%}
+{% schema %}
+{
+  "name": "Simple Image",
+  "settings": [
+    {
+      "id": "image_desktop",
+      "type": "image_picker",
+      "label": "Image(desktop)"
+    },
+    {
+      "id": "image_mobile",
+      "type": "image_picker",
+      "label": "Image(mobile)"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "container", "label": "Container" },
+        { "value": "full_width", "label": "Full Width" }
+      ],
+      "label": "Image Size"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple Image"
+    }
+  ]
+}
+{% endschema %}

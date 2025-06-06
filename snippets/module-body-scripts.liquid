@@ -1,0 +1,17 @@
+<!-- Gorgias Chat -->
+{% if settings.gorgias_app_id != blank %}
+  <script id="gorgias-chat-widget-install-v2" src="https://config.gorgias.chat/gorgias-chat-bundle-loader.js?applicationId={{ settings.gorgias_app_id }}" defer></script>
+{% endif %}
+
+
+<!-- Swym Wishlist -->
+{% if settings.use_swym == true %}
+  {% render 'swymSnippet' %}
+{% endif %}
+
+<!-- Country selector module for header-->
+{% if settings.country_selector_enabled %}
+  <script src="{{ 'country-selector.js' | asset_url }}" defer></script>
+  {{ 'country-selector.css' | asset_url | stylesheet_tag }}
+{% endif %}
+

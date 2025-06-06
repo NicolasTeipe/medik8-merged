@@ -1,0 +1,198 @@
+{% comment %} Section needs refactoring {% endcomment %}
+
+{%- assign media_text_color = section.settings.media_text_color -%}
+{%- assign heading = section.settings.heading -%}
+
+
+{%- assign block_four_image = section.settings.block_four_image -%}
+{%- assign block_four_link = section.settings.block_four_link -%}
+{%- assign block_four_heading = section.settings.block_four_heading -%}
+
+<style type="text/css">
+  .wayfx-block--media-grid h3.h3--primary.wayfx-desktop { color: {{ media_text_color }};}
+  .wayfx-block--media-grid .wayfx-block__two p:last-of-type {color: {{ media_text_color }};}
+</style>
+
+
+<div class="wayfx-wrapper">
+  {%- if heading != blank -%}
+  <h2 class="h2--primary text-center">{{ heading }}</h2>
+  {%- endif -%}
+  <div class="grid wayfx-row__three">
+    <div class="grid__item large--one-half wayfx-block__four">
+      <a data-fancybox class="wayfx-block__content block-rel" aria-label="Play Video" href="{{ block_four_link }}">
+        {% liquid 
+          if block_four_image.alt != blank
+            assign altText = block_four_image.alt
+          else
+            assign altText = page.title
+          endif  
+        %}
+        {% render 'global.lazy-image', 
+                   image_desktop:block_four_image,
+                   image_class:'block-12/12 block-fh block-abc block-objc',
+                   alt:altText
+        %}
+        <div class="block-rel">
+          <div class="wayfx-block__play">
+            <i class="wayfx-icon wayfx-icon-play"></i>
+           </div>
+           {% if block_four_heading != blank %}
+            <h3 class="h3--secondary">
+              <span>{{ block_four_heading }}</span>
+            </h3>
+            {% endif %}
+        </div>
+      </a>
+    </div>
+    <div class="grid__item large--one-half wayfx-block__five">
+      <div class="wayfx-block__content">
+        <div class="wayfx-block__slider slider--dot-alt">
+          {% for block in section.blocks %}
+            {% case block.type %}
+            {% when 'testimonials' %}
+            {%- assign quote = block.settings.quote -%}
+            {%- assign person = block.settings.person -%}
+            {%- assign title = block.settings.title -%}
+            <div class="wayfx-block__slide">
+            <blockquote>
+              <p>{{ quote }}</p>
+              <cite>
+                <span class="wayfx-block__five-person">{{ person }}</span>
+                <span class="wayfx-block__five-title">{{ title }}</span>
+              </cite>
+            </blockquote>
+          </div>
+          {% endcase %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+    {
+      "name": "Media Grid - New",
+      "presets": [
+        {
+          "name": "Media Grid New"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--media-grid media-section",
+      "settings": [
+        {
+            "id": "media_text_color",
+            "type": "color",
+            "label": "Text Color",
+		        "default": "#ffffff"
+        },
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "block_four_heading",
+            "type": "text",
+            "label": "Block 4 Heading"
+        },
+        {
+            "id": "block_four_image",
+            "type": "image_picker",
+            "label": "Block 4 Background"
+        },
+        {
+            "id": "block_four_link",
+            "type": "url",
+            "label": "Block 4 Video Link"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "testimonials",
+            "name": "Testimonials",
+            "settings": [
+                {
+                    "id": "quote",
+                    "type": "textarea",
+                    "label": "Quote"
+                },
+                {
+                    "id": "person",
+                    "type": "text",
+                    "label": "Person"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}
+
+{% javascript %}
+
+ $(document).ready(function() {
+      $('.wayfx-block--media-grid .wayfx-block__slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            draggable: true,
+            infinite: true,
+            dots: true,
+            adaptiveHeight: false,
+            mobileFirst: true,
+            responsive: [{
+                breakpoint: 768,
+                settings: {
+                    adaptiveHeight: false,
+                    arrows: true,
+                    draggable: false
+                }
+            }]
+      }).show();
+
+      var settings = {
+        arrows: false,
+        draggable: true,
+        infinite: false,
+        dots: false,
+        adaptiveHeight: false,
+        mobileFirst: true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        centerMode: true,
+        variableWidth: false,
+        responsive: [{
+            breakpoint: 1024,
+            settings: {
+                settings: "unslick"
+            }
+        }]
+    }
+
+    var $slides = $('.wayfx-block--media-grid .wayfx-row__one');
+
+    $(window).on('load resize orientationchange', function () {
+        if ($(window).width() > 1023) {
+            if ($slides.hasClass('slick-initialized')) {
+                $slides.slick('unslick');
+            }
+            $slides.show();
+            return
+        }
+        if (!$slides.hasClass('slick-initialized')) {
+            return $slides.each(function() {
+                $(this).slick(settings).show();
+            });
+        }
+    });
+
+ });
+
+{% endjavascript %}

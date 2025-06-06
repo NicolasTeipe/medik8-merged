@@ -1,0 +1,292 @@
+{%- assign productIsGiftCard = false -%}
+{%- if product.gift_card? -%}
+    {%- assign productIsGiftCard = true -%}
+{%- endif -%}
+
+{%- if variant_overlay -%}
+	{%- assign product_id = variant.id -%}
+	{%- assign product_title = variant.title -%}
+  {% if product_title  == "Default Title" %}
+    {%- assign product_title = product.title -%}
+  {% endif %}
+  {%- assign product_image = variant.product.featured_image.src -%}
+	{%- assign product_size = variant.metafields.sf_settings.size -%}
+	{%- assign product_overlay_id = variant.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = variant.price -%}
+  {%  assign variant_id = variant.id %}
+  {%  assign variant_inventory = variant.inventory_quantity %}
+{%- else -%}
+	{%- assign product_id = product.id -%}
+	{%- assign product_title = product.title -%}
+	{%- assign product_image = product.featured_image.src -%}
+	{%- assign product_overlay_id = product.variants.first.id -%}
+	{%- assign product_compare_at_price = product.compare_at_price -%}
+	{%- assign product_price = product.price -%}
+  {%  assign variant_id = product.variants.first.id %}
+  {%  assign variant_inventory = product.variants.first.inventory_quantity %}
+{%- endif -%}
+
+
+{%- assign site_wide_enabled = settings.site_wide__enabled -%}
+{%- assign site_wide_percentage = settings.site_wide__percentage | divided_by: 100.0 -%}
+{%- assign site_wide_label = settings.site_wide__label -%}
+{%- assign site_wide_label_enabled = settings.site_wide__label_enabled -%}
+{%- if settings.discounts__vip_code == blank -%}
+  {%- assign site_wide_crossed_out_pricing_enabled = settings.site_wide__crossed_out_pricing_enabled -%}
+{%- endif -%}
+{%- assign site_wide_collection = settings.site_wide__collection -%}
+
+{%- assign product_description = product.metafields.sf_product_hero.description -%}
+{%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
+{%- assign highlight_title_1 = product.metafields.sf_product_hero.highlight_1_heading -%}
+{%- assign highlight_text_1 = product.metafields.sf_product_hero.highlight_1_description -%}
+{%- assign highlight_title_2 = product.metafields.sf_product_hero.highlight_2_heading -%}
+{%- assign highlight_text_2 = product.metafields.sf_product_hero.highlight_2_description -%}
+{%- assign highlight_title_3 = product.metafields.sf_product_hero.highlight_3_heading -%}
+{%- assign highlight_text_3 = product.metafields.sf_product_hero.highlight_3_description -%}
+
+{%- if site_wide_enabled -%}
+  {% for collection in product.collections %}
+    {% if collection.handle == site_wide_collection %}
+      {% assign site_wide_product = true %}
+    {% endif %}
+  {% endfor %}
+  {%- if site_wide_product -%}
+    {%- assign on_sale = true -%}
+    {%- if site_wide_crossed_out_pricing_enabled -%}
+      {%- assign discount_off = product_price | times: site_wide_percentage -%}
+      {%- assign discount_price = product_price | minus: discount_off -%}
+      {% assign product_price = discount_price %}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%}
+  Check availability - Only 'available' if both below are true
+  - Bundle Product Object is available
+  - All bundle line items are available
+{%- endcomment -%}
+{% liquid 
+  assign bundleIsAvailable = true
+  unless product.available
+    assign bundleIsAvailable = false
+  endunless
+  for b in product.metafields.custom.bundle_items.value
+    unless b.variant.value.available
+      assign bundleIsAvailable = false
+      break
+    endunless
+  endfor
+%}
+
+{%- if product.type == 'Bundles' -%}
+  {{ "n-product-bundles.css" | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+<global-product-quick-view 
+  id="product_{{ product_id }}_information" 
+  class="wayfx-product__grid-overlay" 
+  data-wrapper-id="{{ product_id }}"
+  {% if showOnIt %}
+    style="display:block;"
+  {% endif %}
+>
+    <div class="wayfx-product__grid">
+        <div class="wayfx-product__photos-wrapper">
+            {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+            <img class="js-prod-qv__image" loading="lazy" width="480" height="480" src="{{ product_image | image_url: width: 480 }}" alt="{{ product.featured_image.alt | escape }}" />
+            {% if product.type == 'Bundles' %}
+            <p class="js-prod-qv__price wayfx-product__grid-price flex flex-grid--d2 align-center justify-center">
+              {% if product.compare_at_price %}
+              <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+              {% endif %}
+              {{ product.price | money_without_trailing_zeros }}
+            </p>
+            {% else %}
+            <p class="js-prod-qv__price wayfx-product__grid-price flex flex-grid--d2 align-center justify-center">
+              {% if on_sale and site_wide_crossed_out_pricing_enabled %}
+                <s>{{ variant.price | money_without_trailing_zeros }}</s>
+                {% elsif  variant.compare_at_price > variant.price %}
+                <s>{{ variant.compare_at_price }}</s>
+              {% endif %}
+              {{ product_price | money_without_trailing_zeros }}
+          	</p>
+            {% endif %}
+          	<div class="wayfx-product__grid-add">
+              {%- if product.type == 'Bundles' and bundleIsAvailable -%}
+                <button 
+                  class="js-btn-qv-bundle-atc btn btn--full btn--large">
+                  <span id="AddToCartText">
+                    {{ 'products.product.add_to_cart' | t }}
+                  </span>
+                </button>
+
+                <template data-bundle="true">
+                  {
+                    "variantData":{
+                      "items": [
+                      {% for b in product.metafields.custom.bundle_items.value reversed %}
+                        {
+                          "id":{{ b.variant.value.id | json }},
+                          "quantity": 1,  
+                          "properties": {
+                            "_bundle_id": "bundle_{{ product.id }}",
+                            "_bundle": {{ product.title | json }},  
+                            "_bundle_discount": {{ b.discount | divided_by: 100.00 | minus: 1 | abs | json }},
+                            "_bundle_prod_count": {{ product.metafields.custom.bundle_items | split: ',' | size  | json }}
+                          }
+                        }
+                        {% unless forloop.last %},{% endunless %}
+                      {% endfor %}
+                      ]
+                    }
+                      
+                  }
+                </template>
+
+              {%- else -%}
+                <form id="wayfx-product-overlay-{{ product_overlay_id }}" action="/cart/add" method="post" enctype="multipart/form-data">
+                  {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+                    <input type="hidden" name="id" id="productSelect" value="{{ product_overlay_id }}" />
+                  {% else %}
+                  <select name="id" class="js-prod-qv__select block-12/12" data-productid="{{ product.id }}">
+                    {%- for _variant in product.variants -%}
+                      {% assign variant_discount_price = false %}
+                      {%- unless _variant.title contains "travel" or _variant.title contains "Travel" -%}
+                        {%- assign site_wide_product = true -%}
+                      {%- endunless -%}
+                      {%- if site_wide_product == true and site_wide_enabled == true -%}
+                        {%- if site_wide_crossed_out_pricing_enabled -%}
+                            {%- assign variant_discount_off = _variant.price | times: site_wide_percentage -%}
+                            {%- assign variant_discount_price = _variant.price | minus: variant_discount_off -%}
+                        {%- endif -%}
+                      {%- endif -%}
+      
+                      {%- assign variant_sold_out = false -%}
+                      {%- assign variant_low_stock = false -%}
+                      {%- if _variant.inventory_quantity > 0 and _variant.inventory_quantity < 20 -%}
+                        {%- assign variant_low_stock = true -%}
+                      {%- endif -%}
+                      {%- if productIsGiftCard == false %}
+                        {%- unless _variant.available -%}
+                          {%- assign variant_sold_out = true -%}
+                        {% endunless %}
+                      {%- endif -%}
+                      {%- assign variant_size = _variant.metafields.sf_settings.size -%}
+                        <option value="{{ _variant.id }}"
+                                data-disabled="{{ variant_sold_out }}"
+                                data-low-stock="{{ variant_low_stock }}"
+                                {% if _variant.image %}
+                                data-image="{{ _variant.image | image_url: width: 480 }}"
+                                {% endif %}
+                                data-price="{{ _variant.price | money_without_trailing_zeros }}"
+                                {%- unless _variant.title contains "travel" or _variant.title contains "Travel" -%}
+                                {% if _variant.compare_at_price >= _variant.price %}
+                                data-discounted-price="{{ _variant.price | money_without_trailing_zeros }}"
+                                {% elsif variant_discount_price %}
+                                data-discounted-price="{{ variant_discount_price | money_without_trailing_zeros }}"
+                                {% endif %}
+                                {%- endunless -%}
+                                {% if _variant == product.selected_or_first_available_variant %}selected{% endif %}
+                                >
+                                {{ _variant.title }}
+                                {% if variant_size != 0 and productIsGiftCard != true %} - {{ variant_size }}{% endif %}
+                                {% if variant_sold_out %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                       </option>
+                    {%- endfor -%}
+                  </select>
+                  {% endif%}
+                  <input 
+                    type="hidden" 
+                    id="quantity" 
+                    name="quantity" 
+                    value="1"
+                    data-variant-id="{{ variant_id }}"
+                    data-variant-inventory-qty="{{ variant_inventory }}"/>
+                  {% if product_gift == "reward" %} <input name="properties[_birthdayGift]" type="hidden" value="birthdayGift" />{% endif %}
+
+                  {%- if sold_out or bundleIsAvailable == false -%}
+                    {% if product.tags contains 'Find out More' %}
+                      <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.find_out_more' | t }}</a>
+                    {% elsif product.tags contains "Coming Soon" %}
+                      <a href="{{ product.url }}" class="btn--full btn--outline">{{ 'products.product.coming_soon' | t }}</a>
+                    {%- else -%}
+                      <button class="btn--full btn--outline btn--sold-out" onClick="return false;">{{ 'products.product.sold_out' | t }}</button>
+                    {%- endif -%}
+
+                  {%- else -%}                  
+                    <button class="js-prod-qv__atc btn--full btn" onClick="GlobalCartMain.addProductFromButton(event)">
+                      <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+                    </button>
+                    <a class="wayfx-product__grid-product-link" href="{{ variant.url }}">{{ 'products.general.view_product' | t }}</a>
+                  {%- endif -%}
+                </form>
+              {%- endif -%}
+
+
+          	</div>
+        </div>
+        <div class="wayfx-product__details">
+            <div class="wayfx-product__actions">
+              <button data-href="{{ product.url }}#shopify-section-product-reviews">
+                <div class="yotpo bottomLine"
+                    data-appkey="{{ settings.yotpo_api_key }}"
+                    data-domain="{{shop.permanent_domain | escape }}"
+                    data-product-id="{{ product.id }}"
+                    data-product-models="{{ product.id }}"
+                    data-name="{{ product.title | escape }}"
+                    data-url="{{ shop.url }}{{ product.url }}"
+                    data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
+                    data-description="{{ product.description | escape }}"
+                    data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+                </div>
+              </button>
+                {% if product_size != 0 and product_size != 1 %}
+                    <div class="wayfx-product__size" style="margin-left: 0;">
+                        {{ product_size }}
+                    </div>
+                {% endif %}
+            </div>
+          	
+          	<div class="js-prod-qv__low-stock wayfx-product__low-stock-wrap" {% unless low_stock %}style="display:none"{% endunless %}>
+              <div class="wayfx-product__low-stock">{{ 'products.product.low_stock' | t }}</div>
+          	</div>
+            <h1 class="js-prod-qv__title wayfx-product__title">{{ product_title }}</h1>
+            {%- if product_subtitle -%}
+                <h2 class="wayfx-product__subtitle">{{ product_subtitle }}</h2>
+            {%- endif -%}
+
+            {%- if product.type == 'Bundles' -%}
+              <ul class="variant-wrapper">
+                {%- for b in product.metafields.custom.bundle_items.value -%}
+                  {%- render 'MOS2-bundle-variant', bundle_item: b.variant.value, bundle_discount: b.discount.value -%}
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+
+            {%- if product_description -%}
+                <p class="wayfx-product__description">{{ product_description }}</p>
+            {%- endif -%}
+            <dl class="wayfx-product__highlights">
+                {%- if highlight_title_1 -%}
+                    <dt>{{ highlight_title_1 }}</dt>
+                    <dd>{{ highlight_text_1 }}</dd>
+                {%- endif -%}
+                {%- if highlight_title_2 -%}
+                    <dt>{{ highlight_title_2 }}</dt>
+                    <dd>{{ highlight_text_2 }}</dd>
+                {%- endif -%}
+                {%- if highlight_title_3 -%}
+                    <dt>{{ highlight_title_3 }}</dt>
+                    <dd>{{ highlight_text_3 }}</dd>
+                {%- endif -%}
+            </dl>
+          	{%- if show_close_button -%}
+          		<button class="btn--outline btn--large btn--close" onclick="$.fancybox.close()">
+                  <i class="wayfx-icon wayfx-icon-close-thin"></i> {{ 'products.general.close' | t }}</button>
+          	{%- endif -%}
+        </div>
+    </div>
+</global-product-quick-view>
+

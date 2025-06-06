@@ -1,0 +1,76 @@
+{% if section.settings.background_image %}
+{{ section.settings.background_image | 
+  image_url: width: 2048 | 
+  image_tag: loading: 'lazy', class: 'block-abc block-objc block-fh block-12/12' 
+}}
+{% endif %}
+
+<div data-anchor="{{ section.settings.nav_title }}" class="block-grid block-grid--f block-rel tac flex flex-grid column-wrap align-center justify-left">
+  {% if section.settings.title != blank %}
+  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.text != blank %}
+  <div class="rte-content t-m lh-ml block-c block-6/12 cell-l cell-r @mobile__tablet-9/12 @mobile__block-12/12">{{ section.settings.text }}</div>
+  {% endif %}
+  <div class="block-12/12" data-lion-rules-list></div>
+</div>
+
+{% if section.settings.row or section.settings.padding-top %}
+<style type="text/css">
+  #shopify-section-{{ section.id }}{
+    {% if section.settings.row %}
+      margin-bottom:var(--gutter-unit-x3);
+    {% endif %}
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+   
+  "name":"u/loyalty/points-grid",
+  "limit":1,
+  "class":"block-rel ct--x3 cb--x2 block-oh bg-grey-1",
+  "settings":[
+   
+    {
+      "type":"image_picker",
+      "id":"background_image",
+      "label":"Background image"
+    },
+    {
+      "type":"header",
+      "content":"design/margins"
+    },
+    {
+      "type":"checkbox",
+      "id":"row",
+      "label":"margin",
+      "default":true
+    },
+    
+    {
+      "type":"header",
+      "content":"Content"
+    },
+    { 
+      "type":"text",
+      "id":"nav_title",
+      "label":"Nav title",
+      "default":"Earn Points"
+    },
+    { 
+      "type":"textarea",
+      "id":"title",
+      "label":"Heading",
+      "default":"Ways To Earn Points"
+    },
+    { 
+      "type":"richtext",
+      "id":"text",
+      "label":"text",
+      "default":"<p>Acumula puntos cada vez que compres con nosotros en Internet, y consigue puntos adicionales completando las actividades que se indican a continuación.</p>"
+    }
+  ]
+}
+{% endschema %}

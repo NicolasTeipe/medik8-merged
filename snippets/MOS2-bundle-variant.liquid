@@ -1,0 +1,33 @@
+{%- comment -%} Build bundle title data {%- endcomment -%}
+{%- assign title = bundle_item.title -%}
+{%- if title == "Default Title" -%}
+  {%- assign title = bundle_item.product.title -%}
+{%- endif -%}
+
+{%- comment -%} Build bundle text data {%- endcomment -%}
+{%- assign subtitle = bundle_item.product.metafields.sf_product_hero.sub_heading.value -%}
+
+{%- comment -%} Build bundle size data {%- endcomment -%}
+{%- assign size = bundle_item.metafields.sf_settings.size -%}
+{%- if size == 0 -%}
+  {%- assign size = bundle_item.product.metafields.sf_product_hero.size -%}
+{%- endif -%}
+
+{%- comment -%} Build bundle price data {%- endcomment -%}
+{%- assign price_old = bundle_item.price | money_without_trailing_zeros -%}
+{%- assign price_modifier = bundle_discount | divided_by: 100.00 | minus: 1 | abs -%}
+{%- assign price_new = bundle_item.price | times: price_modifier -%}
+
+<li class="bundle-variant">
+  {%- render 'global.lazy-image',
+    image_desktop:bundle_item.product.featured_image,
+    image_mobile:bundle_item.product.featured_image,
+    image_class:'variant-image' -%}
+  <div class="variant-content">
+    <div class="bundle_title">{{ title }}</div>
+    <div class="bundle_subtitle">{{ subtitle }}</div>
+    <div class="bundle_size">{{ size }}</div>
+    <div class="bundle_price">
+      <span>{%- unless bundle_discount == 0 -%}{{ price_old }}{%- endunless -%}</span> {{ price_new | money_without_trailing_zeros }}</div>
+  </div>
+</li>

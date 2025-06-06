@@ -1,0 +1,120 @@
+
+<!-- Please add your alpha2 code, you can find it here: https://help.shopify.com/en/api/custom-storefronts/storefront-api/reference/enum/countrycode -->
+
+
+{% if shop.url contains "www.us.medik8"%}
+  {%- assign fa_product_id_alpha2_code = 'UK' -%}
+{% elsif shop.url contains "www.us.medik8" %}
+ {%- assign fa_product_id_alpha2_code = 'US' -%}
+{% elsif shop.url contains "www.de.medik8" %}
+  {%- assign fa_product_id_alpha2_code = 'DE' -%}
+{% else %}
+  {%- assign fa_product_id_alpha2_code = 'US' -%}
+{% endif %}
+
+{%- assign fa_product_id = 'sku' -%}
+
+{%- if template contains 'product' -%}
+
+{%- assign fa_current_variant = product.selected_or_first_available_variant -%}
+{%- assign fa_variant_count = product.variants | size -%}
+{%- assign fa_count = 0 -%}
+
+{%- if fa_product_id == 'default' -%}
+{%- capture fa_product_id_value -%}shopify_{{ fa_product_id_alpha2_code }}_{{ product.id }}_{{ fa_current_variant.id }}{%- endcapture -%}
+{%- elsif fa_product_id == 'product_id' -%}
+{%- capture fa_product_id_value -%}{{ fa_current_variant.id }}{%- endcapture -%}
+{%- elsif fa_product_id == 'parent_id' -%}
+{%- capture fa_product_id_value -%}{{product.id }}{%- endcapture -%}
+{%- elsif fa_product_id == 'sku' -%}
+{%- capture fa_product_id_value -%}{{ fa_current_variant.sku | escape }}{%- endcapture -%}
+{%- endif -%}
+
+{%- if cart.currency.iso_code == 'GBP' or cart.currency.iso_code == 'USD' or cart.currency.iso_code == 'AUD' or cart.currency.iso_code == 'AED' or cart.currency.iso_code == 'CAD' or cart.currency.iso_code == 'BWP' or cart.currency.iso_code == 'BND' or cart.currency.iso_code == 'DOP' or cart.currency.iso_code == 'GTQ' or cart.currency.iso_code == 'HKD' or cart.currency.iso_code == 'INR' or cart.currency.iso_code == 'ILS' or cart.currency.iso_code == 'YEN' or cart.currency.iso_code == 'KES' or cart.currency.iso_code == 'KOR' or cart.currency.iso_code == 'LBP' or cart.currency.iso_code == 'MYR' or cart.currency.iso_code == 'MXN' or cart.currency.iso_code == 'NPR' or cart.currency.iso_code == 'NZD' or cart.currency.iso_code == 'NIO' or cart.currency.iso_code == 'NGN' or cart.currency.iso_code == 'PKR' or cart.currency.iso_code == 'CNY' or cart.currency.iso_code == 'PHP' or cart.currency.iso_code == 'SGD' or cart.currency.iso_code == 'LKR' or cart.currency.iso_code == 'CHF' or cart.currency.iso_code == 'TWD' or cart.currency.iso_code == 'TSH' or cart.currency.iso_code == 'THB' or cart.currency.iso_code == 'UGX' or cart.currency.iso_code == 'KWD' or cart.currency.iso_code == 'CLP' -%}
+{%- assign fa_product_price = fa_current_variant.price | money_without_currency | remove:',' -%}
+{%- else -%}
+{%- assign fa_product_price = fa_current_variant.price | money_without_currency | remove:'.' | replace: ',', '.' -%}
+{%- endif -%}
+
+
+<script type="application/ld+json" data-creator_name="ocontis">
+{
+  "@context": "http://schema.org/",
+  "@type": "Product",
+  {% comment %} "@id": {{ canonical_url | json }}, {% endcomment %}
+  "name": "{{ product.title | strip_html | escape }}",
+  "url": "{{ shop.url }}{{ product.url }}",
+  "sku": "{{fa_product_id_value}}",
+  {%- if product.variants.first.barcode.size == 12 -%}
+    "gtin12": {{ product.variants.first.barcode }},
+  {%- endif -%}
+  {%- if product.variants.first.barcode.size == 13 -%}
+    "gtin13": {{ product.variants.first.barcode }},
+  {%- endif -%}
+  {%- if product.variants.first.barcode.size == 14 -%}
+    "gtin14": {{ product.variants.first.barcode }},
+  {%- endif -%}
+  "productID": "{{ product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ product.vendor | escape }}",
+    "image": "{{ 'logo.png' | asset_url }}",
+    "url": "{{ shop.url }}"
+  },
+  "description": {{ product.metafields.sf_product_hero.description  | strip_html | json }},
+  "image": "https:{{ product.featured_image.src | image_url: width: 1200 }}",
+  {%- if product.variants -%}
+  {%- assign fa_count = fa_count | plus: 1 -%}
+    "offers":
+      {
+        "@type" : "Offer",
+        "priceCurrency": "{{ cart.currency.iso_code }}",
+        "price": "{{ fa_product_price }}",
+        "itemCondition" : "http://schema.org/NewCondition",
+        "availability" : "http://schema.org/{% if fa_current_variant.available %}InStock{% else %}OutOfStock{% endif %}",
+        "url" : "{{ shop.url }}{{ fa_current_variant.url }}",
+            {%- if fa_current_variant.image -%}
+              "image": "https:{{ fa_current_variant.image.src | image_url: width: fa_current_variant.image.width }}",
+            {%- else -%}
+              "image": "https:{{ product.featured_image.src | image_url: width: 1200 }}",
+            {%- endif -%}
+            {%- if fa_current_variant.title != 'Default Title' -%}
+              "name" : "{{ product.title | strip_html | escape }} - {{ fa_current_variant.title | escape }}",
+            {%- else -%}
+              "name" : "{{ product.title | strip_html | escape }} - {{product.metafields.sf_product_hero.sub_heading | strip_html | escape }}",
+            {%- endif -%}
+            {%- if fa_current_variant.barcode.size == 12 -%}
+              "gtin12": {{ fa_current_variant.barcode }},
+            {%- endif -%}
+            {%- if fa_current_variant.barcode.size == 13 -%}
+              "gtin13": {{ fa_current_variant.barcode }},
+            {%- endif -%}
+            {%- if fa_current_variant.barcode.size == 14 -%}
+              "gtin14": {{ fa_current_variant.barcode }},
+            {%- endif -%}
+			         "sku": "{{fa_product_id_value}}",
+            {%- if product.metafields.sf_product_hero.description  != blank -%}
+            "description" : {{ product.metafields.sf_product_hero.description  | strip_html | json }},
+            {%- endif -%}
+          "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' | url_encode | replace:'+','%20' }}"
+      }
+    {%- if product.variants.size > 1 -%},
+      "additionalProperty": [{
+        "@type": "PropertyValue",
+        "propertyID": "item_group_id",
+        "value": "{{ product.id }}"
+      }]
+    {%- endif -%}
+    {% if product.metafields.yotpo.reviews_count and product.metafields.yotpo.reviews_count != 0 %}
+      {%- if product.metafields.yotpo.reviews_count != 0 -%}
+      ,"aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ product.metafields.yotpo.reviews_average | strip_html | json }},
+      "ratingCount": {{ product.metafields.yotpo.reviews_count | strip_html | json }}
+      }
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+}
+</script>
+{%- endif -%}

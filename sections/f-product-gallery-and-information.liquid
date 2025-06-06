@@ -1,0 +1,931 @@
+{%- comment -%}
+  NOTES
+  -----
+
+  The 'Crossed out pricing' option (site_wide_crossed_out_pricing_enabled) only works
+  if there is no value in the 'VIP Code' input.
+
+{%- endcomment -%}
+
+{% liquid
+  assign tag = product.metafields.tags.tag
+  assign award = product.metafields.tags.award.value
+  assign site_wide_enabled = settings.site_wide__enabled
+  assign site_wide_percentage = settings.site_wide__percentage | divided_by: 100.0
+  assign site_wide_label = settings.site_wide__label
+  assign site_wide_label_enabled = settings.site_wide__label_enabled
+  assign site_wide_collection = settings.site_wide__collection
+  assign productIsGiftCard = false
+  assign sold_out = true
+  assign low_stock = false
+  assign product_form_id = 'product-form-' | append: section.id
+  assign vip_pricing = settings.vip-pricing
+
+  if settings.discounts__vip_code == blank
+    assign site_wide_crossed_out_pricing_enabled = settings.site_wide__crossed_out_pricing_enabled
+  endif
+
+  if site_wide_enabled
+    for collection in product.collections
+      if collection.handle == site_wide_collection
+        assign site_wide_product = true
+        assign on_sale = true
+      endif
+    endfor
+  endif
+
+  if product.gift_card?
+    assign productIsGiftCard = true
+  endif
+
+  if productIsGiftCard or product.available
+    assign sold_out = false
+  endif
+%}
+
+{% liquid 
+  if product.selected_variant
+    assign current_variant = product.selected_variant
+
+  elsif product.metafields.custom.default_variant and product.metafields.custom.default_variant.value.product == product
+      assign current_variant = product.metafields.custom.default_variant.value
+
+  else
+    assign current_variant = product.selected_or_first_available_variant
+  endif
+
+  if current_variant.inventory_quantity > 0 and current_variant.inventory_quantity < 20
+    assign low_stock = true
+  endif
+%}
+
+<script>
+  window.variantStrings = {
+    addToCart: `{{ 'products.product.add_to_cart' | t }}`,
+    soldOut: `{{ 'products.product.sold_out' | t }}`,
+    unavailable: `{{ 'products.product.unavailable' | t }}`,
+    unavailable_with_option: `{{ 'products.product.value_unavailable' | t: option_value: '[value]' }}`,
+  };
+</script>
+<script src="{{ 'f-popover.js' | asset_url }}" defer></script>
+<script src="{{ 'd-constants.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'd-pubsub.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'd-variant-radios.js' | asset_url }}" defer="defer"></script>
+
+{% liquid
+  echo 'f-popover.css' | asset_url | stylesheet_tag
+  echo 'd-variant-radios.css' | asset_url | stylesheet_tag
+  echo 'f-product-hero.css' | asset_url | stylesheet_tag
+  echo 'recharge-widget.css' | asset_url | stylesheet_tag
+%}
+
+<style>
+  .pdp-gallery-page-width {
+    position: relative;
+    max-width: 100%;
+    width:1440px;
+    overflow:hidden;
+    margin: 0 auto;
+    z-index: 10;
+  }
+  div.medk8-product--quantity-box {
+    display: none;
+  }
+  .medk8-product--quantity-box .quantity-label {
+    visibility: hidden;
+  }
+
+  .yotpo-bottomline.pull-left.star-clickable { align-items: center; }
+
+
+
+  .product-gallery-and-information {
+    display: grid;
+    grid-template-columns: 100%;
+  }
+
+  .product-information-scroll-track {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .product-gallery-and-information {
+    grid-template-areas:
+        'pdp-title'
+        'pdp-gallery'
+        'pdp-info'
+        'pdp-description';
+    gap: 0;
+    grid-template-rows: auto 1fr;
+  }
+
+  .product-information-scroll-item {
+    grid-area: pdp-title;
+  }
+
+  .product-information-scroll-track {
+    grid-area: pdp-info;
+  }
+
+  .product-gallery-container {
+    grid-area: pdp-gallery;
+    margin-bottom: 24px;
+  }
+
+  .product-information-description {
+    grid-area: pdp-description;
+  }
+
+  .breadcrumbs {
+    padding: 12px 24px;
+    border-bottom: 2px solid #ebebeb;
+  }
+
+  .breadcrumbs__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 27px;
+  }
+
+  .breadcrumbs__item {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 0;
+  }
+
+  .breadcrumbs__item:not(:last-child):after {
+    content: '•';
+    font-size: 14px;
+    position: absolute;
+    vertical-align: middle;
+    right: -16px;
+    top: 1px;
+  }
+
+  .breadcrumbs__link {
+    text-decoration: none;
+    font-size: var(--t-xxs);
+  }
+
+  .breadcrumbs__link[aria-current="page"] {
+    color: inherit;
+    font-weight: normal;
+    text-decoration: none;
+  }
+
+  .breadcrumbs__link[aria-current="page"]:hover,
+  .breadcrumbs__link[aria-current="page"]:focus {
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 1023px) {
+
+    .product-information-scroll-item.f-product-hero__details {
+      padding: 16px 24px;
+    }
+
+    .product-information-scroll-item.f-product-hero__details .breadcrumbs {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .product-information-scroll-item.f-product-hero__details .breadcrumbs::after {
+      content: '';
+      height: 1px;
+      width: 100vw;
+      position: absolute;
+      left: -24px;
+      right: 0;
+      bottom: 0;
+      background-color: #EBEBEB;
+    }
+
+    .product-information-scroll-item.f-product-hero__details .breadcrumbs li {
+      margin-bottom: 0;
+    }
+
+    .product-information-scroll-item.f-product-hero__details  .f-product-title {
+      font-weight: 600;
+    }
+  }
+
+
+  #AddToCart {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px !important;
+    font-size: 12px;
+  }
+
+  div.product-gallery-price,
+  div.product-gallery-price #ProductPrice,
+  div.product-gallery-price #DiscountedPrice {
+    color: white;
+    font-size: inherit;
+    min-height: 0;
+    margin-right: 0;
+    padding-left: 10px;
+  }
+
+  #AddToCart:hover div.product-gallery-price,
+  #AddToCart:hover div.product-gallery-price #ProductPrice,
+  #AddToCart:hover div.product-gallery-price #DiscountedPrice {
+    color: black;
+  }
+
+  .product-information-description.f-product-hero__description {
+    line-height: 24px;
+    padding: 0 24px;
+    margin: 0 0 24px;
+  }
+
+  .product-gallery-and-information .btn {
+    border-radius: 5px;
+  }
+
+  .product-gallery-and-information .btn--large {
+    padding: 16px 24px;
+  }
+
+  @media screen and (min-width:1024px) {
+    .breadcrumbs {
+      padding: 20px 48px 0;
+      border-bottom: none;
+    }
+
+    .product-information-scroll-item {
+      position: sticky;
+      top: 160px;
+      z-index: 0;
+    }
+
+    .product-information-scroll-track {
+      position: sticky;
+      top: 300px;
+      height: fit-content;
+      background-color: white;
+    }
+
+    .product-gallery-and-information {
+      grid-template-areas:
+          'pdp-gallery pdp-title'
+          'pdp-gallery pdp-info'
+          'pdp-description pdp-info';
+      gap: 0;
+      grid-template-rows: auto 1fr;
+    }
+
+    .product-gallery-and-information {
+      grid-template-columns: auto 456px;
+      padding-left: 48px;
+      padding-right: 48px;
+      margin-top: 16px;
+      column-gap: 48px;
+    }
+
+    .product-information-scroll-track {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+
+    .product__returns {
+      line-height: 20px;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .product__returns a {
+      color: #262626;
+      font-size: 14px;
+      text-decoration: underline;
+    }
+
+    .product__returns a:hover {
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .product-information-description.f-product-hero__description {
+      font-size: 16px;
+      margin: 0 0 32px;
+      padding: 0;
+    }
+
+    @media all and (max-width: 1023px) {
+      .product__returns a {
+        font-size: 12px;
+      }
+    }
+  }
+
+  
+  .product-image-carousel__slide[data-video]:before{
+    position:absolute;
+    content:'';
+    top:50%;
+    left:50%;
+    width:50px;
+    height:50px;
+    background-image:url({{ 'pdp.play-icon.svg' | asset_url }});
+    background-size:100% 100%;
+    transform:translate(-50%,calc(-50% - 6px));
+  }
+
+  @media all and (max-width: 1023px) {
+    .product-image-carousel__slide[data-video]:before{
+      transform:translate(-50%,-50%);
+    }
+  }
+
+  .provenance-trust-badge-wrapper {
+    margin-top: 20px;
+  }
+</style>
+
+<div id="product-gallery-mobile-popover" class="f-popover">
+  <div class="f-popover-content">
+    <button class="f-popover-close">
+      <img width="12" height="12" src="{{ 'Close.svg' | asset_url }}" alt="Close" loading="lazy">
+    </button>
+    <div class="js-prod-zoom-popover__content block-12/12"></div>
+  </div>
+</div>
+
+<div class="pdp-gallery-page-width">
+  <nav class="breadcrumbs" role="navigation" aria-label="breadcrumbs">
+    <ol class="breadcrumbs__list">
+      <li class="breadcrumbs__item">
+        <a
+          class="breadcrumbs__link"
+          href="/"
+          title="{{ 'general.breadcrumbs.home_link_title' | t }}"
+        >
+          {{ 'general.breadcrumbs.home' | t }}
+        </a>
+      </li>
+      {% if collection.url %}
+        <li class="breadcrumbs__item">
+          {{ collection.title | replace: '[hidden]', '' | link_to: collection.url }}
+        </li>
+      {% endif %}
+      <li class="breadcrumbs__item">
+        <a class="breadcrumbs__link" href="{{ product.url }}" aria-current="page">{{ product.title }}</a>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="product-gallery-and-information f-product-hero__wrapper">
+    <div class="product-gallery-container">
+      {% render 'f-product.gallery' , tag: tag %}
+      
+    </div>
+
+    <div id="full-details" class="product-information-description f-product-hero__description">{{ product.description }}</div>
+
+    <div class="product-information-scroll-item f-product-hero__details">
+      {% liquid
+        echo 'f-product-information.css' | asset_url | stylesheet_tag
+      %}
+
+      <h1 class="f-product-title lh-reset f-w400 t-ucase">{{ product.title }}</h1>
+
+      <h2 class="f-product__subheading lh-r f-w400">
+        {% if section.settings.sub_heading %}
+          <span>{{- section.settings.sub_heading -}}</span>
+        {% endif %}
+        <a class="f-product__full-details t-ul" href="#full-details-anchor">Detalles</a>
+      </h2>
+
+      <div class="f-product__actions flex align-center justify-space">
+        <div class="f-product__yotpo yotpo bottomLine"
+          data-product-id="{{ product.id }}"
+          data-product-models="{{ product.id }}"
+          data-name="{{ product.title | escape }}"
+          data-url="{{ shop.url }}{{ product.url }}"
+          data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
+          data-description="{{ product.description | escape }}"
+          data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+        </div>
+        <div class="f-product__wishlist">
+          {% render 'product-wishlist' with product,
+            disable_text: true
+          %}
+        </div>
+      </div>
+
+      {%- liquid
+        assign show_provenance = false
+        if product.tags contains 'provenance' and settings.ff_temp_provenance
+          assign show_provenance = true
+        endif
+      -%}
+      {%- if show_provenance -%}
+        <div class="provenance-trust-badge-wrapper">
+          <provenance-trust-badge access-token="Ctkh1BgW7S0SezpMjF2KyQ1sz37oOJOi">
+            <div style="height: 38px"></div>
+          </provenance-trust-badge>
+      </div>
+      {%- endif -%}
+
+    </div>
+
+    <div class="js-product-form-wrapper product-information-scroll-track f-product-hero__details">
+      {% liquid
+        render 'product-bar'
+        render 'f-product-variant-picker', product: product, product_form_id: product_form_id, current_variant: current_variant
+      %}
+
+      {% render 'f-product-bnpl' %}
+
+      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical" data-productid="{{product.id}}">
+        {% unless sold_out %}
+          <div class="medk8-product--quantity-box">
+            <label class="quantity-label" for="quantityInput">Quantity:</label>
+            <input type="number" name="quantity" value="1" max="5" min="1" id="quantityInput" data-variant-inventory-qty="{{ product.selected_or_first_available_variant.inventory_quantity }}"/>
+            <div class="product__returns">
+              <a data-fancybox data-src="#easy-returns" data-touch="false">{{ section.settings.shipping_popup }}</a>
+            </div>
+          </div>
+        {% endunless %}
+
+        {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+          <input type="hidden" name="id" id="productSelect" value="{{ product.selected_or_first_available_variant.id }}" />
+        {% else %}
+          <select name="id" id="productSelect" class="product-single__variants hide" data-productid="{{ product.id }}">
+            {%- for variant in product.variants -%}
+
+              {% liquid
+                assign variant_size = variant.metafields.sf_settings.size
+                assign variant_sold_out = false
+                assign low_stock = false
+
+                unless variant.title contains "travel" or variant.title contains "Travel"
+                  assign site_wide_product = true
+                endunless
+
+                if site_wide_product == true and site_wide_enabled == true
+                  if site_wide_crossed_out_pricing_enabled
+                    assign discount_off = variant.price | times: site_wide_percentage
+                    assign discount_price = variant.price | minus: discount_off
+                  endif
+                endif
+
+                if variant.inventory_quantity > 0 and variant.inventory_quantity < 20
+                  assign low_stock = true
+                endif
+
+                if productIsGiftCard == false
+                  unless variant.available
+                    assign variant_sold_out = true
+                  endunless
+                endif
+
+                capture option_attributes
+                  if variant_sold_out
+                    echo ' data-disabled="true"'
+                  endif
+
+                  if variant == current_variant
+                    echo ' selected="selected"'
+                  endif
+
+                  if low_stock
+                    echo ' data-low-stock="true"'
+                  else
+                    echo ' data-low-stock="false"'
+                  endif
+
+                  if variant.compare_at_price >= variant.price
+                    echo ' data-price="' | append: variant.compare_at_price | money_without_trailing_zeros | append: '"'
+                  else
+                    echo ' data-price="' | append: variant.price | money_without_trailing_zeros | append: '"'
+                  endif
+
+                  unless variant.title contains "travel" or variant.title contains "Travel"
+                    if variant.compare_at_price >= variant.price
+                      echo ' data-discounted-price="' | append: variant.price | money_without_trailing_zeros | append: '"'
+                    else
+                      echo ' data-discounted-price="' | append: discount_price | money_without_trailing_zeros | append: '"'
+                    endif
+                  endunless
+                endcapture
+              %}
+              <option
+                data-image-id="{{ variant.image.id }}"
+                data-sku="{{ variant.sku }}"
+                data-discounted-price="{{ discount_price | money }}"
+                data-price="{{ variant.price | money }}"
+                value="{{ variant.id }}"
+                data-option-inventory-qty="{{ variant.inventory_quantity }}"
+                {{ option_attributes }}
+              >
+              {{ variant.title }}
+              {% if variant_size != 0 and productIsGiftCard != true %} - {{ variant_size }}{% endif %}
+              {% if variant_sold_out %} - {{ 'products.product.sold_out' | t }}{% endif %}
+              </option>
+            {%- endfor -%}
+          </select>
+        {% endif%}
+
+        <div id="productInfoAtcContainer">
+          <button type="submit"
+            onClick="GlobalCartMain.addProductFromButton(event)"
+            name="add"
+            id="AddToCart"
+            class="js-product-main-atc btn btn--full btn--large{% unless current_variant.available %} hide{% endunless%}">
+            <span id="AddToCartText" >
+              {{ 'products.product.add_to_cart' | t }}
+            </span>
+            <div class="medk8-product--price-box product-gallery-price" id="price-{{ section.id }}">
+              {% if current_variant.available %}
+                {% if current_variant.compare_at_price >= current_variant.price  %}
+                  <span id="ProductPrice" aria-label="original price" class="slashed-price">
+                    {% if discount_price > 0 %}
+                      {{ discount_price | money_without_trailing_zeros }}
+                    {% else %}
+                      {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+                    {% endif %}
+                  </span>
+                  <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" style="display:initial;">
+                    {{ current_variant.price | money_without_trailing_zeros }}
+                  </span>
+                  {% comment %}<span>{% render 'product-labels',
+                    product: product,
+                    on_sale: true,
+                    site_wide: true
+                  %}</span>{% endcomment %}
+                {% else %}
+                  <span id="ProductPrice" aria-label="original price" {%- if site_wide_product == true and site_wide_enabled == true and vip_pricing != true -%}class="slashed-price"{%- endif-%}>
+                    {{ current_variant.price | money_without_trailing_zeros }}
+                  </span>
+                  {% if site_wide_product == true and site_wide_enabled == true %}
+                    <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
+                      {% liquid
+                        if site_wide_crossed_out_pricing_enabled
+                          assign discount_off = current_variant.price | times: site_wide_percentage
+                          assign discount_price = current_variant.price | minus: discount_off
+                        endif
+                      %}
+                      {{discount_price | money_without_trailing_zeros }}
+                    </span>
+                  {% endif %}
+                  {% comment %}<span id="DiscountLabel" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
+                    {% render 'product-labels',
+                      product: product,
+                      on_sale: true,
+                      site_wide: true
+                    %}
+                  </span>{% endcomment %}
+                {% endif %}
+              {% endif %}
+            </div>
+          </button>
+          <button
+            type="button"
+            name="out-of-stock-trigger"
+            class="btn btn--full btn--large f-popover-trigger {% if current_variant.available %} hide{% endif %}"
+            data-target="#OutOfStockPopover">
+            {{ section.settings.oos__pdp_button_text }}
+          </button>
+        </div>
+      </form>
+
+      <div class="f-popover" id="OutOfStockPopover">
+        <div class="f-popover-overlay"></div>
+        <div class="f-popover-content">
+          <button class="f-popover-close">
+            <img width="12" height="12" src="{{ 'Close.svg' | asset_url }}" alt="Close" loading="lazy">
+          </button>
+          {% render 'f-block-oos-notify' section:section %}
+        </div>
+      </div>
+
+      {% comment %} {% render 'product-loyalty-points' section:section %} {% endcomment %}
+      {% render 'f-product-loyalty-points' section:section %}
+
+      <div id="easy-returns" style="display: none;">
+        <p class="p--md">{{ section.settings.popup_text }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  DomReadyPromise().then( () => {
+    if (window.outerWidth >= 1024) {
+      setTimeout(function() {
+        // Trigger resize to fix the image gallery not loading correctly
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    }
+ 
+    const mobileBreakPoint = 1023;
+
+    const stickyHeaderElheight = document.querySelector("#shopify-section-header");
+    const firstElement = document.querySelector("main .product-information-scroll-item");
+    const secondElement = document.querySelector("main div.product-information-scroll-track");
+    const sectionAccordions = document.querySelectorAll('.f-accordion');
+    const lastSectionAccordion = sectionAccordions[sectionAccordions.length - 1];
+    const mediaGallery = document.querySelector('main .product-gallery-container');
+    const provenanceTrustBadge = document.querySelector('provenance-trust-badge')
+
+    updateStylesOnScroll();
+
+    if(provenanceTrustBadge) provenanceBadgeObserver(provenanceTrustBadge)
+
+    function findLocationFromTop(element) {
+      const rect = element.getBoundingClientRect();
+      return rect.top + window.pageYOffset;
+    }
+
+    function applyStyles(element, position, top, right, bottom, left) {
+      const windowWidth = document.documentElement.clientWidth;
+      const width = windowWidth >= 1024 ? 456 : windowWidth;
+
+      element.style.top = `${top}px`;
+      if(top === 'unset') element.style.top = '';
+      element.style.right = `${right}px`;
+      if(right === 'unset') element.style.right = '';
+      element.style.bottom = `${bottom}px`;
+      if(bottom === 'unset') element.style.bottom = '';
+      element.style.left = `${left}px`;
+      if(left === 'unset') element.style.left = '';
+      element.style.width = `${width}px`;
+      if (position) {
+        element.style.position = position;
+        if(position === 'unset') element.style.position = '';
+      }
+    }
+
+    function updateStylesOnScroll() {
+      resetElsCheck();
+      if (document.documentElement.clientWidth <= mobileBreakPoint) return;
+
+      const scrollPosition = window.scrollY;
+      const lastAccordionLocation = lastSectionAccordion ? findLocationFromTop(lastSectionAccordion) + lastSectionAccordion.getBoundingClientRect().height : 0
+      const maxFixedPoint = (lastAccordionLocation - (firstElement.getBoundingClientRect().height + secondElement.getBoundingClientRect().height));
+
+      const passedLastAccordion = (scrollPosition > (maxFixedPoint - 185));
+      const beforeLastAccordion = (scrollPosition <= maxFixedPoint - 185);
+      const passedMediaGallery = (scrollPosition >= (findLocationFromTop(mediaGallery) + mediaGallery.getBoundingClientRect().height));
+      const beforeMediaGallery = (scrollPosition < (findLocationFromTop(mediaGallery) + mediaGallery.getBoundingClientRect().height));
+
+      const discountsBar = document.querySelector(
+        '.template-product .wayfx-main global-aov-bar'
+      )
+
+      if (beforeLastAccordion) {
+        const container = document.querySelector('.pdp-gallery-page-width');
+        const containerRightOffset = ((document.documentElement.clientWidth - container.getBoundingClientRect().width) / 2) + 48;
+        const firstElementPosRight = containerRightOffset;
+        const secondElementPosRight = containerRightOffset;
+
+        // calculate top positioning to follow header
+        const headerEl = document.querySelector('#shopify-section-header-below');
+        if (!headerEl) { headerEl = document.querySelector('#shopify-section-header'); }
+
+        const headerElPos = (headerEl.getBoundingClientRect().top + headerEl.getBoundingClientRect().height);
+
+        const discountsBarRect =
+          discountsBar ? discountsBar?.getBoundingClientRect() : 0
+
+        const discountsBarVisibleHeight =
+          discountsBar ?
+            discountsBarRect.height - (headerElPos - discountsBarRect.top) : 0
+
+        const el1Top = headerElPos + 60 + Math.max(0, discountsBarVisibleHeight);
+        applyStyles(firstElement, 'fixed', el1Top, firstElementPosRight);
+
+        const el1Pos = (firstElement.getBoundingClientRect().top + firstElement.getBoundingClientRect().height);
+        applyStyles(secondElement, 'fixed', el1Pos, firstElementPosRight);
+
+        // else if scroll position of last item touches the beginning of accordion, set to absolute
+      } else if (passedLastAccordion) {
+        if (secondElement.style.position != 'absolute') {
+          const discountsBarHeight =
+            discountsBar ? discountsBar?.getBoundingClientRect().height : 0
+
+          const bottomOffset = maxFixedPoint - (165 + discountsBarHeight);
+
+          applyStyles(secondElement, 'absolute', bottomOffset, 48, '', '');
+          applyStyles(firstElement, 'absolute', bottomOffset - firstElement.getBoundingClientRect().height, 48, '', '');
+        }
+      }
+    }
+
+    function resetElsCheck() {
+      if (document.documentElement.clientWidth <= mobileBreakPoint) {
+        applyStyles(firstElement, 'relative', 'unset', 'unset', 'unset', 'unset');
+        applyStyles(secondElement, 'relative', 'unset', 'unset', 'unset', 'unset');
+        return;
+      }
+    }
+
+    function handleResize() {
+      resetElsCheck();
+      window.removeEventListener('scroll', updateStylesOnScroll);
+      window.addEventListener('scroll', updateStylesOnScroll, {passive: true});
+    }
+
+    window.addEventListener('scroll', updateStylesOnScroll, {passive: true});
+    window.addEventListener('resize', () => {
+      handleResize();
+      updateStylesOnScroll();
+    }, {passive: true});
+
+    const detailsWrappers = document.querySelectorAll('.template-product details.wrapper');
+    detailsWrappers.forEach((detailsWrapper) =>
+      detailsWrapper.addEventListener('click', () => {
+        setTimeout(function() {
+          updateStylesOnScroll();
+        }, 100);
+      })
+    );
+
+    // listen for provenance trust-badge loading in, and when it does,
+    // - call updateStylesOnScroll so it displays
+    // - open the 'good to know' accordion
+    function provenanceBadgeObserver(provenanceTrustBadge) {
+      const handleProvenanceBadgeMutation = function(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+            observer.disconnect();
+            updateStylesOnScroll()
+            provenanceTrustBadge.addEventListener('click', e => {
+              document.querySelector('.accordion-sustainability-claims .wrapper').setAttribute('open', '')
+            })
+          }
+        }
+      };
+      const observer = new MutationObserver(handleProvenanceBadgeMutation);
+      const config = { childList: true, subtree: true };
+      observer.observe(provenanceTrustBadge, config);
+    }
+
+  }).catch(err => {
+    console.log(err)
+  })
+
+  // Recharge
+  DomReadyPromise().then(() => {
+    const addToCartFormEl = document.getElementById('AddToCartForm');
+    
+    const rechargeWidgetLoaded = () => {
+      window.rechargeWidgetLoaded = true;
+
+      addToCartFormEl
+        .querySelector('.medk8-product--price-box')
+        .classList.add('hide');
+
+      // listen for and react to recharge widget option change
+      const rcWidgetOptions = document.querySelectorAll('.rc_container_wrapper .rc-option')
+
+      rcWidgetOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+          setTimeout(()=> {
+            const price = document.querySelector('#ProductPrice').textContent
+            if(price){
+              document.querySelector('.js-loyalty-hint__price').innerHTML = price
+            }
+          }, 0)
+        })
+      })
+    };
+  
+
+    // watch for recharge being addded
+    if (addToCartFormEl.querySelector('.rc-container-wrapper')) {
+      rechargeWidgetLoaded();
+    } else {
+      const observer = new MutationObserver(mutations => {
+        for (let mutation of mutations) {
+          if (
+            mutation.addedNodes.length &&
+            [...mutation.addedNodes].filter(
+              n =>
+                n.nodeType === Node.ELEMENT_NODE &&
+                n.classList.contains('rc-container-wrapper')
+            ).length
+          ) {
+            rechargeWidgetLoaded();
+            observer.disconnect();
+            break;
+          }
+        }
+      });
+  
+      observer.observe(addToCartFormEl, { childList: true, subtree: false });
+    }
+  });
+
+</script>
+
+{% schema %}
+{
+  "name": "Product Gallery/Info",
+  "presets": [
+    {
+      "name": "Product Gallery/Info"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Config"
+    },
+    {
+      "type": "text",
+      "id": "sub_heading",
+      "label": "Product Subheading"
+    },
+    {
+      "type": "checkbox",
+      "id": "update_variant_id_url_param",
+      "label": "Update Variant ID Url Parameter",
+      "info": "When checked, each time a different variant is selected, update the variant url parameter with the new ID.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Buy Now Pay Later"
+    },
+    {
+      "type": "paragraph",
+      "content": "Choose which BNPL option to show."
+    },
+    {
+      "type": "checkbox",
+      "id": "klarna",
+      "label": "Klarna",
+      "info": "UK Store Only - Not Yet Implemented",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "afterpay",
+      "label": "Afterpay",
+      "info": "US Store Only",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "OOS Notification"
+    },
+    {
+      "type": "text",
+      "id": "oos__pdp_button_text",
+      "label": "PDP OOS Button Text",
+      "info": "Button text to show in place of 'Add To Bag' when product is out of stock.",
+      "default": "Email me when back in stock"
+    },
+    {
+      "type": "checkbox",
+      "id": "oos__show",
+      "label": "Show email capture",
+      "info": "Show the OOS email capture form. This will add the user to the stock notification flow on Klaviyo. Klaviyo API key can be found in theme settings/modules",
+      "default":true
+    },
+    {
+      "type": "text",
+      "id": "oos__heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "oos__content",
+      "label": "Tagline / below heading text"
+    },
+    {
+      "type": "text",
+      "id": "oos__button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "richtext",
+      "id": "oos__accept_policy_text",
+      "label": "Policy acceptance text"
+    },
+    {
+      "type": "richtext",
+      "id": "oos__below_button__default",
+      "label": "Below button (default)"
+    },
+    {
+      "type": "richtext",
+      "id": "oos__below_button__success",
+      "label": "Below button (user added)"
+    },
+    {
+      "type": "richtext",
+      "id": "oos__below_button__error",
+      "label": "Below button (error)"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,68 @@
+<script type="module">
+  {% comment %} import ModalBox from  {% endcomment %}
+
+  class {{ jsObjectName }} extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.contentContainer = this.querySelector('.js-list-item');
+      this.allKeyBenefits = this.querySelectorAll('.list-item');
+      this.viewToggle = this.querySelector('.js-toggle');
+      this.toggleText = this.querySelector('.js-toggle-copy');
+
+      if (this.viewToggle) this.addViewToggleListener();
+
+      this.localName == 'key-ingredients' && this.ingredientsModal();
+    }
+
+    addViewToggleListener() {
+      this.viewToggle.addEventListener('click', () => {
+        this.contentContainer.classList.toggle('open');
+        const isOpen = this.contentContainer.classList.contains('open')
+        const action = isOpen ? 'remove' : 'add';
+        const initialShowCount = {{ section.settings.initial-show-count }};
+
+        this.changeVisibility(initialShowCount, 'hide__list-item', action);
+      });
+    }
+
+    // add or remove 'hide__**' classes
+    changeVisibility(sliceIndex, className, action) {
+      [...this.allKeyBenefits].slice(sliceIndex).forEach((keyBenefit) => {
+        keyBenefit.classList[action](className);
+      });
+      this.toggleText.textContent =
+        action == 'add'
+          ? '{{ section.settings.view_all | upcase }}'
+          : '{{ section.settings.view_less | upcase }}';
+    }
+
+    ingredientsModal(){
+      const ingredientsLink = this.querySelector('#full-ingredients-list')
+      let ingredientsModal = false;
+      let htmlContent;
+
+      ingredientsLink.addEventListener('click', () => {
+        if (!ingredientsModal) {
+          ingredientsModal = new ModalBox({
+            content: '',
+            settings: {
+              contentClass:'full-ingredients-modal',
+              containerCloseButton: true,
+            },
+          });
+
+          const ingredientsTemplate = document.getElementById('ingredients-template');
+          htmlContent = ingredientsTemplate.content.cloneNode(true);
+        }
+
+        ingredientsModal.open()
+        document.querySelector('.modal-content').appendChild(htmlContent)
+      })
+    }
+  }
+
+  customElements.define('{{ customElementName }}', {{ jsObjectName }})
+</script>

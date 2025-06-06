@@ -1,0 +1,194 @@
+{% if customer %}
+
+  <section id="shopify-section-collection-header" class="shopify-section wayfx-collection__header">
+      <div class="wayfx-wrapper">
+          {% render 'breadcrumb' %}
+          <h1 class="h1--secondary">{{ page.title }}</h1>
+          {{ page.content }}
+      </div>
+  </section>
+
+  <div class="wayfx-wrapper">
+      <div class="grid">
+        <div class="grid__item large--three-quarters">
+          
+
+            <div id="wishlist-items-container">
+              <div class="lds-heart"><div></div></div>
+            </div>
+
+          
+        </div>
+      </div>
+  </div>
+
+  <script src="{{ 'swym-wishlist--page.js' | asset_url }}" async="async"></script>
+
+  <script type="text/javascript">
+    const SHARE_WISHLIST_HTML = `
+      <share-swym-form id="swym-custom-emailWishlist-box">
+        <h2>{{ 'apps.swym_wishlist.share_title' | t }}</h2>
+        <div class="form-vertical" style="margin: 0 auto; max-width: 700px;">
+          <form>
+            <input name="from_email" type="hidden" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+            <input name="to_email" class="input-full" type="email" placeholder="Send to email" autocorrect="off" autocapitalize="off">
+            <textarea name="wishlist_note" class="input-full" placeholder="Check out my Medik8 Wishlist"></textarea>
+            <input type="submit" class="btn btn--xlarge btn--full" value="Send Email">
+          </form>
+        </div>
+      </share-swym-form>
+    `
+  </script>
+
+  <style type="text/css">
+    share-swym-form{
+      background: #fff;
+      padding: var(--gutter-unit);
+      display: block;
+      text-align: center;
+    }
+  </style>
+
+
+{% else %}
+
+  <script> 
+    window.location = window.origin + "/account/login"; 
+  </script>
+
+{% endif %}
+
+
+
+<style class="custom-swym-wishlist-css">
+ 
+  
+  .wayfx-collection__header {
+    margin-bottom: 40px;
+  }
+  
+  .swym-wishlist-actions {
+    margin-bottom: 35px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  
+  #swym-custom-emailWishlist i {
+	font-size: 2rem;
+  vertical-align:middle;
+  }
+  
+  #swym-custom-add-all-toCartBtn {
+  	max-width: 200px;
+    margin-left: 10px;
+  }
+  
+  @media all and (min-width: 401px) {
+    #swym-custom-emailWishlist {
+      position: relative;
+      padding-left: 3rem;
+      max-width: 220px;
+    }
+
+    #swym-custom-emailWishlist i {
+      position: absolute;
+      top: 50%;
+      transform: translate(0%, -50%);
+      display: block;
+      left: 1rem;
+    }
+    
+  }
+  
+  @media all and (max-width: 400px) {
+    #swym-custom-emailWishlist {
+      max-width: 100px;
+    }
+    #swym-custom-emailWishlist span {
+      display: none;
+    }
+  }
+  
+  
+  .large--three-quarters {
+  	margin: 0 auto;
+    display: block;
+    float: none;
+  }
+  
+  #wishlist-items-container {
+    width: 100%;
+  }
+  
+  .wayfx-product__item {
+  	position: relative;
+  }
+  .wayfx-product__item .fancybox-button {
+  	top: 0;
+  	right: 0;
+    color: black;
+  }
+  .wayfx-product__item .fancybox-button:hover {
+  	color: #ccc;
+  }
+  
+  /* Loading Heart 
+  --------------------------------------------------- */
+  .lds-heart {
+  	display: block;
+	margin: 0 auto;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    transform: rotate(45deg);
+    transform-origin: 40px 40px;
+    margin-bottom: 4rem;
+  }
+  .lds-heart div {
+    top: 32px;
+    left: 32px;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background: #000;
+    animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  .lds-heart div:after,
+  .lds-heart div:before {
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 32px;
+    height: 32px;
+    background: #000;
+  }
+  .lds-heart div:before {
+    left: -24px;
+    border-radius: 50% 0 0 50%;
+  }
+  .lds-heart div:after {
+    top: -24px;
+    border-radius: 50% 50% 0 0;
+  }
+  @keyframes lds-heart {
+    0% {
+      transform: scale(0.95);
+    }
+    5% {
+      transform: scale(1.1);
+    }
+    39% {
+      transform: scale(0.85);
+    }
+    45% {
+      transform: scale(1);
+    }
+    60% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(0.9);
+    }
+  }
+</style>
