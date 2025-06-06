@@ -1,0 +1,228 @@
+<!-- sections/v2_navigation__sidebar-nav.liquid -->
+
+{%- capture template_json -%}
+{
+  "section_settings":{{ section.settings | json }},
+  "main_list": [
+    {% for link in section.settings.linklist.links %}
+      {
+        "url": {{ link.url | json }},
+        "title": {{ link.title | json }}
+      }
+      {% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "secondary_list": [
+    {% for link in section.settings.linklist_secondary.links %}
+      {
+        "url": {{ link.url | json }},
+        "title": {{ link.title | json }}
+      }
+      {% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "blocks":{{ section.blocks | map: 'settings' | json }}
+}
+{%- endcapture -%}
+
+{%- if request.design_mode -%}
+  <global-sidebar class="js-sidebar-nav-wrapper" hidden>
+    <global-mobile-nav>
+      <template>
+        {{ template_json }}
+      </template>
+    </global-mobile-nav>
+  </global-sidebar>
+  {% else %}
+  <global-sidebar class="js-sidebar-nav-wrapper" button_right>
+    <template>
+      <global-sidebar-nav>
+        <template>
+          {{ template_json }}
+        </template>
+      </global-sidebar-nav>
+    </template>
+  </global-sidebar>
+{%- endif -%}
+
+<script type="text/javascript">
+  let hasOpen = false
+  let mobMenuTimeout
+  
+  // Mobile menu toggle logic
+  DomReadyPromise().then( () => {
+    window.globalJsSidebarNavWrapper = document.querySelector('.js-sidebar-nav-wrapper')
+    const menuToggle = document.querySelector('.js-sidebar-mobile__toggle')
+    menuToggle.addEventListener('click', (e) => {
+      e.preventDefault()
+
+      if( menuToggle.classList.contains('active')) {
+        clearTimeout(mobMenuTimeout)
+        mobMenuTimeout = setTimeout(() => {
+          document.body.classList.remove('mobile-menu')
+        }, 250);
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.classList.remove('active')
+        window.globalJsSidebarNavWrapper.close()
+      } else {
+        clearTimeout(mobMenuTimeout)
+        document.body.classList.add('mobile-menu')
+        menuToggle.setAttribute('aria-expanded', 'true');
+        menuToggle.classList.add('active')
+        window.globalJsSidebarNavWrapper.open()
+      }
+    })
+  }).catch(err =>{
+    console.log(err)
+  })
+</script>
+
+{% schema %}
+{ 
+"name":"global/sidebar-nav",
+"tag":"div",
+"class":"sidebar-nav__wrapper",
+"settings":[
+  
+  { 
+    "type":"header",
+    "content":"links"
+  },
+  { 
+    "type":"link_list",
+    "id":"linklist",
+    "label":"linklist (primary)"
+  },
+  { 
+    "type":"link_list",
+    "id":"linklist_secondary",
+    "label":"linklist (secondary)"
+  },
+  { 
+    "type":"header",
+    "content":"CTA Slider"
+  },
+  { 
+    "type":"paragraph",
+    "content":"CTA Slider items are added as blocks"
+  },
+  { 
+    "type":"text",
+    "id":"cta_slider_heading",
+    "label":"CTA Slider Heading"
+  },
+  { 
+    "type":"header",
+    "content":"Footer Items"
+  },
+  {
+    "type": "header",
+    "content": "Rewards"
+  },
+  { 
+    "type":"checkbox",
+    "id":"rewards__show",
+    "label":"Show?",
+    "default":true
+  },
+  { 
+    "type":"url",
+    "id":"rewards__url",
+    "label":"Link",
+    "default":"/"
+  },
+  { 
+    "type":"text",
+    "id":"rewards__text",
+    "label":"Text",
+    "default":"Rewards"
+  },
+  { 
+    "type":"header",
+    "content":"Wishlist"
+  },
+  { 
+    "type":"checkbox",
+    "id":"wishlist__show",
+    "label":"Show?",
+    "default":true
+  },
+  { 
+    "type":"url",
+    "id":"wishlist__url",
+    "label":"Link",
+    "default":"/"
+  },
+  { 
+    "type":"text",
+    "id":"wishlist__text",
+    "label":"Text",
+    "default":"Wishlist"
+  },
+  { 
+    "type":"header",
+    "content":"Account"
+  },
+  { 
+    "type":"checkbox",
+    "id":"account__show",
+    "label":"Show?",
+    "default":false
+  },
+  { 
+    "type":"text",
+    "id":"account__text",
+    "label":"Text",
+    "default":"Account"
+  },
+  { 
+    "type":"header",
+    "content":"Help Center"
+  },
+  { 
+    "type":"checkbox",
+    "id":"hc__show",
+    "label":"Show?",
+    "default":true
+  },
+  { 
+    "type":"url",
+    "id":"hc__url",
+    "label":"Link",
+    "default":"/"
+  },
+  { 
+    "type":"text",
+    "id":"hc__text",
+    "label":"Text",
+    "default":"Help Center"
+  },
+  
+  ],
+  "blocks": [
+    {
+      "type": "block",
+      "name": "Carousell CTA item",
+      "limit": 15,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        { 
+          "type":"url",
+          "id":"link",
+          "label":"link",
+          "default":"/"
+        },
+        { 
+          "type":"inline_richtext",
+          "id":"text",
+          "label":"text"
+        }
+      ]
+    }  
+  ]
+}
+{% endschema %}

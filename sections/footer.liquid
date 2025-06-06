@@ -11,7 +11,7 @@
 {%- assign wayfx_footer_tiktok = section.settings.wayfx_footer_tiktok -%}
 
 
-<div class="wayfx-wrapper">
+<div class="wayfx-wrapper block-grid--index qp0 qfooter__wrapper">
   <div class="wayfx-footer__columns">
     {% for link in linklists[wayfx_footer_menu].links %}
       {% if link.links.size > 1 %}
@@ -31,79 +31,58 @@
     {% endfor %}
   </div>
 
+  <div class="module-footer-newsletter-wrapper qfooter__wrapper">
     {% render 'module-footer-newsletter' %}
 
-  <div class="wayfx-footer__bottom">
-    <div class="wayfx-footer__column-left">
-      <div class="wayfx-footer__copyright">
-        &#169; {{ 'now' | date: '%Y' }} {{ wayfx_footer_copyright }}
-      </div>
-      {%- if wayfx_footer_legal_menu != blank -%}
-        <div class="wayfx-footer__extra-links">
-          <ul>
-            {%- for link in linklists[wayfx_footer_legal_menu].links -%}
-              {%- if link.url == '#resetcookieprefs' -%}
-                <li><a href="{{ link.url }}" onclick="clearCookie(event, ['_tracking_consent', '_clck', '_clsk'], true)">{{ link.title }}</a></li>
-                {%- else -%}
-                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-              {%- endif -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
+    {% render 'footer-social-icons'
+      wayfx_footer_instagram: wayfx_footer_instagram,
+      wayfx_footer_facebook: wayfx_footer_facebook,
+      wayfx_footer_youtube: wayfx_footer_youtube,
+      wayfx_footer_tiktok: wayfx_footer_tiktok
+    %}
+  
+    <!-- TrustBox widget - Micro Star -->
+    <div class="trustpilot-widget" data-locale="en-GB" data-template-id="5419b732fbfb950b10de65e5" data-businessunit-id="5e1a62f381857100017c4b42" data-style-height="19px" data-style-width="100%" data-theme="dark">
+      <a href="https://uk.trustpilot.com/review/medik8.com" target="_blank" rel="noopener">Trustpilot</a>
     </div>
-  <div class="border-element"></div>
-    <div class="wayfx-footer__column-right">
-      <ul class="wayfx-footer__social-icons">
-      {% if wayfx_footer_instagram != blank %}
-        <li>
-          <a class="icon-fallback-text" href="{{ wayfx_footer_instagram }}" title="{{ shop.name }} on Instagram" rel="noreferrer" target="_blank">
-            <i class="wayfx-icon wayfx-icon-instagram" aria-hidden="true"></i>
-            <span class="fallback-text">Instagram</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if wayfx_footer_facebook != blank %}
-        <li>
-          <a class="icon-fallback-text" href="{{ wayfx_footer_facebook }}" title="{{ shop.name }} on Facebook" rel="noreferrer" target="_blank">
-            <i class="wayfx-icon wayfx-icon-facebook" aria-hidden="true"></i>
-            <span class="fallback-text">Facebook</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if wayfx_footer_youtube != blank %}
-        <li>
-          <a class="icon-fallback-text" href="{{ wayfx_footer_youtube }}" title="{{ shop.name }} on YouTube" rel="noreferrer" target="_blank">
-            <i class="wayfx-icon wayfx-icon-youtube" aria-hidden="true"></i>
-            <span class="fallback-text">YouTube</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if wayfx_footer_tiktok != blank %}
-      <li>
-        <a class="icon-fallback-text" href="{{ wayfx_footer_tiktok }}" title="{{ shop.name }} on Tiktok" rel="noreferrer" target="_blank">
-          <i class="wayfx-icon wayfx-icon-tiktok" aria-hidden="true"></i>
-          <span class="fallback-text">Tiktok</span>
-        </a>
-      </li>
-      {% endif %}
-      </ul>
-    </div>
+    <!-- End TrustBox widget -->
+
   </div>
+
 </div>
 
+<div class="wayfx-footer__bottom block-grid--index footer__wrapper">
 
-
-<script>
-  (function(w,e,b,g,a,i,n,s){w['ITCLKOBJ']=a;w[a]=w[a]||function(){(w[a].q=w[a].q||[]).push(arguments)},w[a].l=1*new Date();i=e.createElement(b),n=e.getElementsByTagName(b)[0];i.async=1;i.src=g;n.parentNode.insertBefore(i,n)})(window,document,'script','https://analytics.webgains.io/clk.min.js','ITCLKQ');
-  ITCLKQ('set', 'internal.cookie', true);
-  ITCLKQ('set', 'internal.api', true);
-  ITCLKQ('click');
-</script>
+  <div class="wayfx-footer__column-left">
+    <div class="wayfx-footer__copyright">
+      &#169; {{ 'now' | date: '%Y' }} {{ wayfx_footer_copyright }}
+    </div>
+    {%- if wayfx_footer_legal_menu != blank -%}
+      <div class="wayfx-footer__extra-links">
+        <ul>
+          {%- for link in linklists[wayfx_footer_legal_menu].links -%}
+            {%- if link.url == '#resetcookieprefs' -%}
+              <li>
+                <button
+                  role="button"
+                  class="ot-sdk-show-settings"
+                  aria-label='Reset cookie preferences'
+                  onclick="window.OneTrust ? OneTrust.ToggleInfoDisplay() : clearCookie(event, ['_tracking_consent', '_clck', '_clsk'], true);"
+                  >{{ link.title }}</button
+                >
+              </li>
+              {%- else -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+  {%- render 'footer-payment-icons' -%}
+</div>
 
 <script type="text/javascript">
-
-  
   DomReadyPromise().then( () => {
     document.querySelectorAll('.js-footer-accordion-toggle').forEach(element => {
       element.addEventListener('click', e => {
@@ -184,6 +163,121 @@
       "id": "wayfx_footer_tiktok",
       "label": "Tiktok URL",
       "info": "https:\/\/tiktok.com\/wayfx"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter Title",
+      "default": "Become a Medik8 Member"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_subtitle",
+      "label": "Newsletter Subtitle",
+      "default": "Subscribe to our newsletter and enjoy 15% off your first order"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_discount_code",
+      "label": "Newsletter Discount Code",
+      "default": "WELCOME15"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_small_print",
+      "label": "Newsletter Small Print",
+      "default": "By joining, you agree to receive email communications from Medik8."
+    },
+    {
+      "type": "text",
+      "id": "footer_extra_terms",
+      "label": "Footer Extra Terms"
+    },
+    {
+      "type": "header",
+      "content": "Footer Payment Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_american_express",
+      "label": "Show American Express",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_apple_pay",
+      "label": "Show Apple Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_diners_club",
+      "label": "Show Diners Club",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discover",
+      "label": "Show Discover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_google_pay",
+      "label": "Show Google Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_maestro",
+      "label": "Show Maestro",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_master",
+      "label": "Show Mastercard",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_paypal",
+      "label": "Show PayPal",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shopify_pay",
+      "label": "Show Shopify Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_unionpay",
+      "label": "Show UnionPay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_visa",
+      "label": "Show Visa",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_afterpay",
+      "label": "Show Afterpay",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_klarna",
+      "label": "Show Klarna",
+      "default": true
     }
   ]
 }

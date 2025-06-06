@@ -1,0 +1,53 @@
+current-loyalty-points + [data-beam-widget="product-details-page"] {
+  margin: -40px 0px 20px -4px !important;
+}
+
+#easy-returns + [data-beam-widget="product-details-page"] {
+   margin: -8px 0px 20px 0px !important;
+}
+
+beam-product-details-page{
+  --beam-ProductDetailsPage-title-marginTop: 0px !important;
+}
+
+#beam-community-header {
+    text-align: center;
+    font-size: 32px;
+    line-height: 110%;
+    font-weight: 500;
+    padding-bottom: 0px;
+    text-transform: uppercase;
+    color: #202324;
+    margin: 4px;
+}
+
+#beam-community-description {
+    font-weight: 300;
+    font-size: 18px;
+    margin: 0px auto 10px;
+    text-align: center;
+    font-family: inherit;
+    color: #525252;
+}
+
+.beam-community-impact {
+  max-width: 870px;
+  margin: 0px auto 35px;
+  padding: 17px;
+  position: relative;
+}
+
+[data-beam-widget="select-nonprofit"] {
+  text-align: left;
+  margin: 18px 0px;
+}
+
+@media only screen and (max-width: 600px) {
+    #beam-community-header {
+        font-size: 22px;
+    }
+
+    #beam-community-description {
+        font-size: 16px;
+    }
+}

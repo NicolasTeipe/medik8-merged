@@ -10,8 +10,8 @@
     <div class="wayfx-wrapper">
       <h2 class="h2--primary text-center">{{ 'general.404.best_sellers' | t }}</h2>
       <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
-        {%- paginate collections['productos-mas-vendidos'].products by 8 -%}
-        {%- for product in collections['productos-mas-vendidos'].products -%}
+        {%- paginate collections['best-sellers'].products by 8 -%}
+        {%- for product in collections['best-sellers'].products -%}
         {% render 'product-grid-item', product: product, product_layout: 'standard' %}
         {%- endfor -%}
         {%- endpaginate -%}

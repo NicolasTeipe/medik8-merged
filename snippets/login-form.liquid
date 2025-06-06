@@ -20,7 +20,7 @@
     {%- endif -%}
 
     <label for="CustomerEmail" class="hidden-label">{{ 'customer.login.email' | t }}</label>
-    <input type="email" name="customer[email]" id="CustomerEmail" required class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" autofocus>
+    <input type="email" name="customer[email]" id="CustomerEmail" required class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off">
 
     {% if form.password_needed %}
       <label for="CustomerPassword" class="hidden-label">{{ 'customer.login.password' | t }}</label>

@@ -1,0 +1,23 @@
+<article class="regime-card">
+  {% if metaobject.image %}
+    {{ metaobject.image | image_url: width: 700 | image_tag: class: 'regime-card__image' }}
+  {% endif %}
+
+  <div class="regime-card__info">
+    {% if metaobject.title %}
+      <h3 class="regime-card__title h3--secondary">
+        {{ metaobject.title.value }}
+      </h3>
+    {% endif %}
+
+    {% if metaobject.subtitle %}
+      <p class="regime-card__text p--lg">
+        {{ metaobject.subtitle.value }}
+      </p>
+    {% endif %}
+
+    <a class="regime-card__link" href="{{ metaobject.system.url }}">
+      {{ 'regime.discover_more' | t }}
+    </a>
+  </div>
+</article>

@@ -1,0 +1,69 @@
+.image-bar {
+  overflow: hidden; }
+  @media only screen and (max-width: 749px) {
+    .image-bar {
+      max-width: 400px;
+      margin: 0 auto; } }
+
+.image-bar__item {
+  display: block;
+  color: var(--color-overlay-title-text);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover; }
+
+.image-bar__link:hover .image-bar__overlay::before, .image-bar__link:focus .image-bar__overlay::before {
+  opacity: var(--hover-overlay-opacity); }
+
+.image-bar__link:focus {
+  position: relative;
+  z-index: 2; }
+  .image-bar__link:focus .image-bar__content {
+    outline: 1px dotted #212121;
+    outline: 5px auto -webkit-focus-ring-color; }
+
+.image-bar__content, .image-bar__item {
+  position: relative;
+  width: 100%; }
+  .image-bar--x-small .image-bar__content, .image-bar--x-small .image-bar__item {
+    height: 94px; }
+  .image-bar--small .image-bar__content, .image-bar--small .image-bar__item {
+    height: 225px; }
+  .image-bar--medium .image-bar__content, .image-bar--medium .image-bar__item {
+    height: 357px; }
+  .image-bar--large .image-bar__content, .image-bar--large .image-bar__item {
+    height: 488px; }
+  .image-bar--x-large .image-bar__content, .image-bar--x-large .image-bar__item {
+    height: 582px; }
+  @media only screen and (min-width: 750px) {
+    .image-bar--x-small .image-bar__content, .image-bar--x-small .image-bar__item {
+      height: 125px; }
+    .image-bar--small .image-bar__content, .image-bar--small .image-bar__item {
+      height: 300px; }
+    .image-bar--medium .image-bar__content, .image-bar--medium .image-bar__item {
+      height: 475px; }
+    .image-bar--large .image-bar__content, .image-bar--large .image-bar__item {
+      height: 650px; }
+    .image-bar--x-large .image-bar__content, .image-bar--x-large .image-bar__item {
+      height: 775px; } }
+
+.image-bar__overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-image-overlay);
+  opacity: var(--opacity-image-overlay); }
+
+.image-bar__caption {
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  transition: 0.1s cubic-bezier(0.44, 0.13, 0.48, 0.87);
+  width: 100%;
+  text-align: center;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4); }

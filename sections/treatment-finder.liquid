@@ -1,0 +1,341 @@
+{% unless section.settings.enable_single_click == true %}
+  <script src="{{ 'scripts.components.dist.TreatmentFinder.js' | asset_url }}" async></script>
+{% endunless %}
+
+{{ 'treatment-finder.css' | asset_url | stylesheet_tag }}
+
+{% style %}
+  #shopify-section-{{ section.id }} .treatment-finder-container {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .treatment-finder-container {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<section
+  class="treatment-finder-container flex column-nowrap gap"
+  style="background-color:{{ section.settings.section_bg_color }}"
+>
+  {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+    {% render 'v2_global.section_heading',
+      heading: section.settings.heading,
+      sub_heading: section.settings.sub_heading
+    %}
+  {% endif %}
+
+  <div class="cell-l cell-r block-grid block-grid--index">
+    <treatment-finder class="treatment-finder {% unless section.settings.open_by_default %}treatment-finder--overlay{% endunless %}" {% if section.settings.enable_reset_form == true %}data-reset-form{% endif %}>
+      {% unless section.settings.enable_single_click == true %}
+        <button class="btn-reset dropdown-button {% if section.settings.open_by_default %}active dropdown-button--open-by-default{% endif %} {%- unless section.settings.show_type_selector -%}dropdown-button--double{%- endunless -%}" data-placeholder="{{ section.settings.concern_placeholder }}">
+          <span>{{ section.settings.concern_placeholder }}</span>
+          {% render 'icon-chevron-down' %}
+        </button>
+
+        {%- if section.settings.show_type_selector -%}
+          <button class="btn-reset dropdown-button {% if section.settings.open_by_default %}dropdown-button--open-by-default{% endif %}" data-placeholder="{{ section.settings.type_placeholder }}">
+            <span>{{ section.settings.type_placeholder }}</span>
+            {% render 'icon-chevron-down' %}
+          </button>
+        {%- endif -%}
+
+        <a
+          href="#"
+          class="v2-btn v2-btn--black flex_1 treatment-finder__btn treatment-finder__btn--disabled"
+          data-disabled-text="{{ section.settings.btn_text_disabled }}"
+          data-active-text="{{ section.settings.btn_text_active }}"
+        >
+          {{ section.settings.btn_text_disabled }}
+        </a>
+      {% endunless %}
+
+      {% if section.settings.open_by_default == true %}
+      <div class="treatment-finder__content {% if section.settings.enable_single_click == true %}treatment-finder__content--single-click{% endif %} {% unless section.settings.open_by_default == true %}treatment-finder__content--overlay hidden{% endunless %}">
+      {% endif %}
+        <div class="treatment-finder__content-item{% if section.settings.open_by_default == false %} treatment-finder__content-item--overlay hidden{% endif %}{% if section.settings.enable_single_click == true %} treatment-finder__content-item--single-click{% endif %}">
+          <fieldset class="grid-layout-6 gap--d2">
+            <legend class="visually-hidden">{{ section.settings.concern_placeholder }}</legend>
+            {% for block in section.blocks %}
+              <{% if section.settings.enable_single_click == true %}a href="{{ block.settings.collection.url }}"{% else %}label{% endif %} class="gbl-image-thumb-checkbox">
+                {% unless section.settings.enable_single_click == true %}
+                  <input
+                    class="gbl-image-thumb-checkbox__input"
+                    type="checkbox"
+                    name="gtf__concern"
+                    value="{{ block.settings.title }}"
+                    data-collection="{{ block.settings.collection.url }}"
+                  >
+                {% endunless %}
+
+                <span class="gbl-image-thumb-checkbox__content flex column-nowrap gap--d3">
+                  <div class="gbl-image-thumb-checkbox__image block-rel {% if section.settings.enable_single_click == true %}gbl-image-thumb-checkbox__image--single-click{% endif %}">
+                    {% if block.settings.image != blank %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 736
+                        | image_tag:
+                          widths: '256, 512',
+                          loading: 'lazy',
+                          alt: block.settings.image.alt,
+                          class: 'block-fh block-12/12',
+                          style: "display: block;"
+                      }}
+                    {% else %}
+                      <div class="block-fh block-12/12" style="background:#f1f1f1;"></div>
+                    {% endif %}
+                  </div>
+                  <span class="t-s">{{ block.settings.title }}</span>
+                </span>
+              </{% if section.settings.enable_single_click == true %}a{% else %}label{% endif %}>
+            {% endfor %}
+          </fieldset>
+        </div>
+
+        {% unless section.settings.enable_single_click == true %}
+          {%- if section.settings.show_type_selector -%}
+            <div class="treatment-finder__content-item {% unless section.settings.open_by_default %}treatment-finder__content-item--overlay{% endunless %} hidden">
+              <fieldset>
+                <legend class="visually-hidden">{{ section.settings.type_placeholder }}</legend>
+                <div class="grid-layout-4 gap--d2">
+                  {% assign filters_type = settings.filter_type | split: ', ' %}
+
+                  {% for filter in filters_type %}
+                    <label class="gbl-styled-checkbox">
+                      <input
+                        style="display: none;"
+                        class="gbl-styled-checkbox__input"
+                        type="checkbox"
+                        name="gtf__type"
+                        value="{{ filter | handleize }}"
+                        data-label="{{ filter }}"
+                      >
+                      <span class="gbl-styled-checkbox__content flex row-wrap align-center block-rel">{{ filter }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            </div>
+          {%- endif -%}
+        {% endunless %}
+
+        {% if section.settings.open_by_default == true %}
+      </div>
+      {% endif %}
+    </treatment-finder>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Treatment Finder",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default": "#fff"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open 'Concern' by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_type_selector",
+      "label": "Enable 'Product Type' selector.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_single_click",
+      "label": "Single click redirect",
+      "default": false,
+      "info": "If enabled, the user will be redirected to the collection when they click on a concern. This will automatically hide the selectors and button."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reset_form",
+      "label": "Reset the form on load",
+      "default": false,
+      "info": "If enabled, the form will be reset when the user navigates away from the page. This means navigating back to the page using the back button will also reset the form."
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "Here you can define the heading. The categories and concerns are defined in the theme settings (Collection Sidebar Filters). You can add / change the images used for the Concerns using the blocks in this section"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    },
+    {
+      "type": "text",
+      "id": "concern_placeholder",
+      "label": "Concern select placeholder",
+      "default": "Skin Concern"
+    },
+    {
+      "type": "text",
+      "id": "type_placeholder",
+      "label": "Type select placeholder",
+      "default": "Product Type (optional)"
+    },
+    {
+      "type": "text",
+      "id": "btn_text_disabled",
+      "label": "Button text - disabled",
+      "default": "Select options"
+    },
+    {
+      "type": "text",
+      "id": "btn_text_active",
+      "label": "Button text - active",
+      "default": "Find Treatments"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "concern_image",
+      "name": "Concern Image",
+      "limit": 15,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Aspect ratio of 1:1 recommended"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Shows in the treatment finder"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "info": "The collection that the user is re-directed to"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Treatment Finder"
+    }
+  ]
+}
+{% endschema %}

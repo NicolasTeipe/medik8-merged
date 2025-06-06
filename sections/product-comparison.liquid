@@ -1,89 +1,556 @@
-{% schema %}
-{
-  "name": "Product Comparison",
-  "class": "product-comparison-section",
-  "settings": [
-    {
-      "type": "color",
-      "id": "section_bg_color",
-      "label": "Background Color",
-      "default": "#f7f7f7"
-    },
-    {
-      "type": "product",
-      "id": "product_1",
-      "label": "First Product"
-    },
-    {
-      "type": "product",
-      "id": "product_2",
-      "label": "Second Product"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Section Heading",
-      "default": "Product Comparison"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Product Comparison",
-      "category": "Product",
-      "settings": {}
-    }
-  ]
-}
-{% endschema %}
+{% assign metaobj = shop.metaobjects['product_comparison'][section.settings.comparison] %}
 
-<section class="product-comparison-container" style="background: {{ section.settings.section_bg_color }}">
-  <div class="block-grid block-grid--index cell-l cell-r flex column-nowrap gap--d2 lh-s tac">
-    <h2 class="h-style t-lxl @mobile__t-l">{{ section.settings.heading }}</h2>
-  </div>
+{% liquid
+  assign compareObj = blank
 
-  <div class="carousel-wrapper block-grid block-grid--index">
-    <div class="items global-carousel__items">
-      <div class="product-comparison-grid global-carousel__container" style="justify-content: center;">
-        <div class="comparison-col title">
-          <div class="col-product"></div>
-          <div class="col-content concerns title">Concerns</div>
-          <div class="col-content types title">Skin Types</div>
-          <div class="col-content benefits title">Benefits</div>
-          <div class="col-content ingredients title">Key Ingredients</div>
-        </div>
+  if template contains 'product'
+    assign compareObj = product.metafields.product.comparison_metaobject.value
 
-        {% assign products = section.settings.product_1 | default: blank %}
-        {% if section.settings.product_2 %}
-          {% assign products = products | append: ',' | append: section.settings.product_2 %}
-        {% endif %}
+    if compareObj
+      assign metaobj = compareObj
+    endif
+ 
+  endif
+  assign productCount = metaobj.variants.value.count
 
-        {% for product_handle in products %}
-          {% assign product = all_products[product_handle] %}
-          {% if product != blank %}
-          <div class="comparison-col">
-            <div class="col-product">
-              <div class="col-product-image">
-                {% if product.featured_image %}
-                  <img src="{{ product.featured_image | img_url: '512x512' }}" alt="{{ product.title }}" width="512" height="512">
-                {% endif %}
-              </div>
-              <span class="col-product-title f-w400">{{ product.title }}</span>
-              <form method="post" action="/cart/add">
-                <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-                <button type="submit" class="comparison-add-btn btn btn--full btn--outline">
-                  <span class="bag-text">Add to Bag</span>
-                  <div class="price-wrapper">{{ product.price | money }}</div>
-                </button>
-              </form>
-            </div>
-            <div class="col-content concerns">{{ product.metafields.custom.concerns }}</div>
-            <div class="col-content types">{{ product.metafields.custom.skin_types }}</div>
-            <div class="col-content benefits">{{ product.metafields.custom.benefits }}</div>
-            <div class="col-content ingredients">{{ product.metafields.custom.ingredients }}</div>
-          </div>
+  assign components = 'scripts.components.dist.ProductComparison.js' | asset_url
+
+  assign components = components | split: ','
+%}
+
+{%- capture bag_icon -%}
+  <svg class="flex bag-icon" width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="{{ 'products.product.add_to_cart' | t }}">
+    <path d="M0 18V4H3.5V3.5C3.5 2.52817 3.84042 1.70192 4.52125 1.02125C5.20192 0.340416 6.02817 0 7 0C7.97183 0 8.79808 0.340416 9.47875 1.02125C10.1596 1.70192 10.5 2.52817 10.5 3.5V4H14V18H0ZM1 17H13V5H10.5V8H9.5V5H4.5V8H3.5V5H1V17ZM4.5 4H9.5V3.5C9.5 2.79617 9.25933 2.2035 8.778 1.722C8.2965 1.24067 7.70383 1 7 1C6.29617 1 5.7035 1.24067 5.222 1.722C4.74067 2.2035 4.5 2.79617 4.5 3.5V4Z" fill="black"/>
+  </svg>
+{%- endcapture -%}
+
+{% if productCount > 0 and metaobj %}
+  {% capture content %}
+    <product-comparison>
+      <template>
+        {
+          "variantCount": {{ productCount }},
+          "designMode": {{ request.design_mode | json }},
+          "dateSettings": {
+            "enabled": {{ section.settings.date_enable }},
+            "start_date": {{ section.settings.start_date | json }},
+            "end_date": {{ section.settings.end_date | json }}
+          }
+        }
+      </template>
+      <div class="product-comparison-container {% if productCount == 2 %} mobile-padding {% endif %} hidden" style="background:{{ section.settings.section_bg_color }}">
+          {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+            {% 
+              render 'v2_global.section_heading', 
+              heading: section.settings.heading,
+              sub_heading: section.settings.sub_heading
+            %}
           {% endif %}
-        {% endfor %}
+          <div class="carousel-wrapper block-grid block-grid--index">
+            {% if productCount > 2 %}
+              <global-carousel>
+                <template>
+                  {
+                    "options": {
+                      "loop": false,
+                      "dragFree": true
+                    }
+                  }
+                </template>
+            {% endif %}
+            <div class="items global-carousel__items">
+              <div class="product-comparison-grid global-carousel__container">
+                <div class="comparison-col title">
+                  <div class="col-product"></div>
+                  <div class="col-content concerns title">
+                    Concerns
+                  </div>
+                  <div class="col-content types title">
+                    Skin Types
+                  </div>
+                  <div class="col-content benefits title">
+                    Benefits
+                  </div>
+                  <div class="col-content ingredients title">
+                    Key Ingredients
+                  </div>
+                </div>
+                {% for variant in metaobj.variants.value %}
+                  <div class="comparison-col">
+                    <div class="col-product">
+                      <div class="col-product-image">
+                        {% liquid
+                          assign image = variant.product.featured_image
+                          if variant.featured_image
+                            assign image = variant.featured_image
+                          endif
+
+                          assign badge = variant.metafields.custom.badge
+                          assign routine = variant.product.metafields.pdp.recommendations_api_badge
+                        %}
+
+                        {% if badge %}
+                          <span class="badge-v2 badge-v2__product-card">{{ badge }}</span>
+                        {% endif %}
+                        {% if routine %}
+                          <span class="pc__routine t-xxs lh-16 block-z3">{{ routine }}</span>
+                        {% endif %}
+                        {{ image | image_url: width: 512 | image_tag }}
+                      </div>
+                      <span class="col-product-title f-w400">
+                        {%- if variant.title contains 'Default Title' -%}
+                          {{ variant.product.title }}
+                        {%- else -%}
+                          {{ variant.title }}
+                        {%- endif -%}
+                      </span>
+                      <form action="/cart/add" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ variant.id }}">
+                        <input type="hidden" name="quantity" min="1" value="1" data-variant-id="{{ variant.id }}" data-variant-inventory-qty="{{ variant.inventory_quantity }}">
+                        <button onclick="GlobalCartMain.addProductFromButton(event)" class="comparison-add-btn btn btn--full btn--outline">
+                          {%- if productCount < 3 -%}
+                            {{ bag_icon }}
+                          {%- endif -%}
+                          <span class="flex bag-text{% if productCount < 3 %} product-count-2{% endif %}">
+                            {{ 'products.product.add_to_cart' | t }}
+                          </span>
+                          <div class="price-wrapper">
+                            {%- render 'price-v2', variant: variant, style: 'product_card', sold_out_price: 'true' -%}
+                          </div>
+                        </button>
+                      </form>
+                    </div>
+                    <div class="col-content concerns">
+                        <span class="col-mobile-title">
+                          {% if forloop.first %}
+                            Concerns
+                          {% endif %}
+                        </span>
+                        {% assign concerns = variant.metafields.comparison.concerns %}
+                        {% if concerns %}
+                          <ul>
+                            {% for concern in concerns.value %}
+                              <li>{{ concern }}</li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                    </div>
+                    <div class="col-content types">
+                        <span class="col-mobile-title">
+                          {% if forloop.first %}
+                            Skin Types
+                          {% endif %}
+                        </span>
+                        {% assign skin_types = variant.metafields.comparison.skin_types %}
+                        {% if skin_types %}
+                          <ul>
+                            {% for skin_type in skin_types.value %}
+                                <li>{{ skin_type }}</li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                    </div>
+                    <div class="col-content benefits">
+                      <span class="col-mobile-title">
+                        {% if forloop.first %}
+                          Benefits
+                        {% endif %}
+                      </span>
+                      {% assign benefits = variant.metafields.comparison.benefits %}
+                      {% if benefits %}
+                        <ul>
+                          {% for benefit in benefits.value %}
+                            <li>{{ benefit }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </div>
+                    <div class="col-content ingredients">
+                      <span class="col-mobile-title">
+                        {% if forloop.first %}
+                          Key Ingredients
+                        {% endif %}
+                      </span>
+                      {% assign ingredients = variant.metafields.comparison.ingredients %}
+                      {% if ingredients %}
+                        <ul>
+                          {% for ingredient in ingredients.value %}
+                            <li>{{ ingredient }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% if productCount > 2 %}
+          </global-carousel>
+        {% endif %}
       </div>
-    </div>
   </div>
-</section>
+</product-comparison>
+{% endcapture %}
+
+  {% assign cols = '20%' %}
+  {% assign mobileCols = '' %}
+
+  {% for i in (1..productCount) %}
+    {% assign cols = cols | append: ' 23.5%' %}
+    {% assign mobileCols = mobileCols | append: '60% ' %}
+  {% endfor %}
+
+  {% if productCount == 2 %}
+    {% assign mobileCols = 'repeat(2, 1fr)' %}
+    {% comment %}  
+      first column is 16px wider to account for 16px margin, 
+      can't use gap as first column has 0 gap on desktop 
+    {% endcomment %}
+    {% assign cols = '20% minmax(216px, 326px) minmax(216px, 326px)' %}
+  {% endif %}
+
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+
+  <style>
+    #shopify-section-{{ section.id }} .product-comparison-container {
+      margin-block-start: {{ section.settings.mb_margin_top }}px;
+      margin-block-end: {{ section.settings.mb_margin_bottom }}px;
+      padding-block-start: {{ section.settings.mb_padding_top }}px;
+      padding-block-end: {{ section.settings.mb_padding_bottom }}px;
+      padding-inline: 24px 0;
+    }
+
+    #shopify-section-{{ section.id }} .product-comparison-container.mobile-padding {
+      padding-inline: 24px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .product-comparison-container {
+        margin-block-start: {{ section.settings.dt_margin_top }}px;
+        margin-block-end: {{ section.settings.dt_margin_bottom }}px;
+        padding-block-start: {{ section.settings.dt_padding_top }}px;
+        padding-block-end: {{ section.settings.dt_padding_bottom }}px;
+        padding-inline: 24px;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .product-comparison-container.hidden {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .comparison-col.title {
+      display: none;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .comparison-col.title {
+        display: block;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .product-comparison-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-columns: {{ mobileCols }};
+    }
+
+    @media screen and (max-width: 768px) {
+      #shopify-section-{{ section.id }} .product-comparison-grid {
+        gap: 16px;
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .product-comparison-grid {
+        grid-template-columns: {{ cols }};
+      }
+    }
+
+
+    #shopify-section-{{ section.id }} .col-mobile-title {
+      display: inline-block;
+      width: 100%;
+      margin-block-end: 12px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #919191;
+      font-weight: 600;
+      min-height: 20px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .comparison-col:not(:first-child) {
+        margin-inline-end: 16px;
+      }
+    }
+
+
+    #shopify-section-{{ section.id }} .global-carousel__items {
+      position: relative;
+      {% if productCount == 2 %}
+        margin-inline: auto;
+      {% endif %}
+    }
+
+    #shopify-section-{{ section.id }} .col-content.title {
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #919191;
+      letter-spacing: 1.17px;
+    }
+
+  #shopify-section-{{ section.id }} .col-content {
+    padding-block: 16px;
+    border-top: 2px solid #d1d1d1;
+    font-size: 12px;
+    letter-spacing: 0.17px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #shopify-section-{{ section.id }} .col-content:last-child {
+    padding-block-start: 16px;
+    padding-block-end: 0;
+  }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .col-content {
+        font-size: 14px;
+      }    
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .col-mobile-title {
+        display: none;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .carousel-wrapper {
+      margin-block-start: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .col-product {
+      margin-block-end: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .col-product-title {
+      font-size: 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+  #shopify-section-{{ section.id }} .comparison-add-btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-inline: 8px;
+    align-items: center;
+    letter-spacing: 1px;
+    line-height: 32px;
+    font-size: 12px;
+  }
+
+    @media screen and (max-width: 767px) {
+      #shopify-section-{{ section.id }} .bag-text.product-count-2 {
+        display: none;
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .bag-icon {
+        display: none;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .col-product {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .col-product {
+        gap: 12px;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .col-product-image {
+      display: flex;
+      position: relative;
+    }
+
+    #shopify-section-{{ section.id }} .pc__routine {
+      position: absolute;
+      bottom: 8px;
+      left: 12px;
+      background: #f6f6f6;
+      color: #000000;
+      border-radius: 5px;
+      padding: 4px 12px;
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Product Comparison",
+    "presets": [
+      {
+        "name": "V2/GBL/Product-Comparison"
+      }
+    ],
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg_color",
+        "label": "Background Color",
+        "default":"#fff"
+      },
+      {
+        "type": "header",
+        "content": "Products Source"
+      },
+      {
+        "type": "metaobject",
+        "metaobject_type": "product_comparison",
+        "id": "comparison",
+        "label":"Product Comparison Metaobject",
+        "info": "If on PDP and product has metafield assigned for comparison object that will take precedence"
+      },
+      {
+        "type": "header",
+        "content": "Layout: Mobile"
+      },
+      {
+        "type": "range",
+        "id": "mb_margin_top",
+        "label": "Margin - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "mb_margin_bottom",
+        "label": "Margin - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "mb_padding_top",
+        "label": "Padding - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "mb_padding_bottom",
+        "label": "Padding - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "header",
+        "content": "Layout: Desktop"
+      },
+      {
+        "type": "range",
+        "id": "dt_margin_top",
+        "label": "Margin - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "dt_margin_bottom",
+        "label": "Margin - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "dt_padding_top",
+        "label": "Padding - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "dt_padding_bottom",
+        "label": "Padding - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "header",
+        "content": "Date Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "date_enable",
+        "label": "Enable Date Restriction"
+      },
+      {
+        "type": "text",
+        "id": "start_date",
+        "label": "Start Date",
+        "info": "Use date format YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "end_date",
+        "label": "End Date",
+        "info": "Use date format YYYY-MM-DD"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "sub_heading",
+        "label": "Sub Heading"
+      }
+    ]
+    
+  }
+{% endschema %}

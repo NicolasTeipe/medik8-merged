@@ -1,18 +1,4 @@
-.f-product-wrapper {
-    zoom: 1;
-    max-width: 78rem;
-    padding: 0 1.5rem;
-  }
 
-  @media screen and (min-width: 480px) {
-    .f-product-wrapper {
-      padding: 0 1.5rem;
-    }
-  }
-
-  .f-product__section {
-    padding: 0;
-  }
 
 .f-product-hero__wrapper .f-product-hero__details .product-form__input {
   display: flex;
@@ -54,11 +40,6 @@
   border: 1px solid var(--color-black);
 }
 
-.f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__title {
-  margin-bottom: 12px;
-}
-
-
 .f-product-hero__wrapper .f-product-hero__details .form-vertical{
   margin-top: 24px;
 }
@@ -74,12 +55,6 @@
 
 .f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__item-wrapper::-webkit-scrollbar {
   display: none;
-}
-
-.f-product-hero__wrapper .f-product-hero__details .f-product-variant-picker__label,
-.f-product-hero__wrapper .f-product-hero__atc {
-  font-size: var(--t-xxs);
-  letter-spacing: 0.075rem;
 }
 
 .f-product-hero__wrapper .f-product-hero__details .f-product-variant-quiz_label {

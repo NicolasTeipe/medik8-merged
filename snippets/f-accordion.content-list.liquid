@@ -7,14 +7,20 @@
     }
 
     connectedCallback() {
-      this.contentContainer = this.querySelector('.js-list-item');
-      this.allKeyBenefits = this.querySelectorAll('.list-item');
-      this.viewToggle = this.querySelector('.js-toggle');
-      this.toggleText = this.querySelector('.js-toggle-copy');
+      DomReadyPromise().then( () => {
+        if(this.bound){
+          return
+        }
+        this.bound = true
+        this.contentContainer = this.querySelector('.js-list-item');
+        this.allKeyBenefits = this.querySelectorAll('.list-item');
+        this.viewToggle = this.querySelector('.js-toggle');
+        this.toggleText = this.querySelector('.js-toggle-copy');
 
-      if (this.viewToggle) this.addViewToggleListener();
+        if (this.viewToggle) this.addViewToggleListener();
 
-      this.localName == 'key-ingredients' && this.ingredientsModal();
+        this.localName == 'key-ingredients' && this.ingredientsModal();
+      })
     }
 
     addViewToggleListener() {
@@ -59,7 +65,7 @@
         }
 
         ingredientsModal.open()
-        document.querySelector('.modal-content').appendChild(htmlContent)
+        document.querySelector('.modal-content.full-ingredients-modal').appendChild(htmlContent)
       })
     }
   }

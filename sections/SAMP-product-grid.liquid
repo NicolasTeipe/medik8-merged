@@ -96,23 +96,23 @@
             "validation":{
               "samples_use_global_max":true,
               "upsell":true,
-              {% if section.settings.customer_validation != 'none' %}
               "customer":{
                 "current":{
                   "id":{{ customer.id | json }},
                   "tags":{{ customer.tags | json }},
                   "email": {{ customer.email | json }},
-                  "orders_count": {{ customer.orders_count | json }}
+                  "orders_count": {{ customer.orders_count | json }},
+                  "upsell_offer_id_history":{{ customer.metafields['medik8_checkout_ext_app'].upsell_offer_id_history.value | json }}
                 },
                 "required":{
                   {% if section.settings.customer_validation == 'existing_customer_only' %}
-                  "existing_customer_only": true
-                  {% else %}
-                  "new_customer_only": true
+                  "existing_customer_only": true,
+                  {% elsif section.settings.customer_validation == 'new_customers_only'%}
+                  "new_customer_only": true,
                   {% endif %}
+                  "logic_allow_reorder":false
                 }
               },
-              {% endif %}
               "offer_id": {{ section.id | json }},
               "max_items":{{ section.settings.max_samples | json }},
               "validation_error_message": {{ section.settings.validation_error_message | json }}

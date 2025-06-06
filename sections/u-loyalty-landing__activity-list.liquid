@@ -70,23 +70,23 @@
 
         if(item.type == 'reward'){
           const claimedReward = _customer.claimedRewards.find( ({id}) => id == item.claimedRewardId )
-          data.action = claimedReward.reward.title
-          data.points = 0 - claimedReward.point_cost
+          data.action = claimedReward?.reward?.title || '--'
+          data.points = claimedReward?.point_cost ? 0 - claimedReward.point_cost : '--'
         }
 
         if(item.type == 'rule'){
           const rule = rules.find( ({id}) => id == item.ruleId )
-          data.action = rule.title
+          data.action = rule?.title || '--'
           data.points = item.points
         }
 
         if(item.type == 'add'){
-          data.action = '--'
+          data.action = item.note.en ? item.note.en : 'Approved'
           data.points = item.points
         }
 
         if(item.type == 'remove'){
-          data.action = '--'
+          data.action = item.note.en ? item.note.en : 'Approved'
           data.points = 0 - item.points
         }
 
@@ -117,13 +117,19 @@
           </thead>
           <tbody>
             ${pages.find(({index}) => index == this.currentPage).actions.map( item => {
+              let state = item.state
+
+              if (item.type == 'add' || item.type == 'remove') {
+                state = 'Approved'
+              }
+
               return `
                 <tr>
                   <td>${item.date}</td>
                   <td class="t-capitalize @mobile__hide">${item.type}</td>
                   <td>${item.action}</td>
                   <td>${item.points}</td>
-                  <td class="t-capitalize f-w600">${item.state}</td>
+                  <td class="t-capitalize f-w600">${state || '--'}</td>
                 </tr>
               `
             }).join('')}
@@ -187,13 +193,13 @@
       "type":"text",
       "id":"nav_title",
       "label":"Nav title",
-      "default":"Actividad Reciente"
+      "default":"Recent Activity"
     },
     { 
       "type":"textarea",
       "id":"title",
       "label":"Heading",
-      "default":"Tu Actividad Reciente"
+      "default":"Your Recent Activity"
     }
   ]
 }

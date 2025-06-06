@@ -1,0 +1,28 @@
+<!-- snippets/shopify-video.liquid -->
+
+{%- liquid
+  assign attributes = ''
+  if muted
+    assign attributes = attributes | append: ' muted'
+  endif
+  if autoplay
+    assign attributes = attributes | append: ' autoplay'
+  endif
+  if loop
+    assign attributes = attributes | append: ' loop'
+  endif
+  if playsinline
+    assign attributes = attributes | append: ' playsinline'
+  endif
+-%}
+
+{%- if video_src.sources.size > 0 -%}
+  <div class="video-container{% if class != blank %} {{ class }}{% endif %}">
+    <video {{ attributes }}{% if thumbnail != blank %} poster="{{ thumbnail | image_url: width: thumbnail.width }}"{% endif %}>
+      {%- for video in video_src.sources -%}
+        <source src="{{ video.url }}" type="video/{{ video.format }}">
+      {%- endfor -%}
+      Sorry, your browser cannot display this video.
+    </video>
+  </div>
+{%- endif -%}

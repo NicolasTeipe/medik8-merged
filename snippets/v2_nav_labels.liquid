@@ -1,0 +1,11 @@
+{%- comment -%}
+  Snippet to handle navigation menu labels.
+
+  Takes the following params
+  - str: str - [ the full ]
+  - style: str - [ takes either 'nav-link' or 'product-card' ]
+{%- endcomment -%}
+
+{%- if str contains '[' -%}
+  <span class="badge-v2 badge-v2__{{ style }}">{{ str | split: '[' | last | replace: ']', '' }}</span>
+{%- endif -%}

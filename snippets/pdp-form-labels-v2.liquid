@@ -1,0 +1,28 @@
+{%- comment -%}
+  Snippet to handle pdp form labels. Handles the following:
+  - Compare-At price labels
+  - Sitewide promo labels (via script call)
+
+  Takes the following params
+  - variant: obj - [ a Shopify variant obj ]
+  - no_script: string - ['true' or blank / '' - indicates whether or not to include js
+{%- endcomment -%}
+
+{%- assign compare_text = settings.compare_at_label_text -%}
+
+<div class='label-wrapper label-wrapper__{{ variant.id }}'
+     data-type='pdp'
+     aria-label='Label for {{ variant.product.title }}'>
+  {%- if settings.compare_at_pdp_show and variant.price < variant.compare_at_price -%}
+    <span class='badge-v2 badge-v2__pdp' aria-label='{{ compare_text }}'>{{ compare_text }}</span>
+  {%- endif -%}
+</div>
+
+{%- unless no_script -%}
+  <script>
+    ( async () => {
+      await DomReadyPromise()
+      sitewide && sitewide.updateLabelV2("{{ variant.id }}")
+    })();
+  </script>
+{%- endunless -%}

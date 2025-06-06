@@ -1,0 +1,36 @@
+{%- comment -%}
+  Takes a metaobject of a list of variants and outputs as json
+
+  Requires the following params
+  - metaobj: metaobject list - [ a list of variants ]
+{%- endcomment -%}
+
+{%- for variant in metaobj.variant_list.value -%}
+  {
+    "id": "{{ variant.id }}",
+    "id_product": "{{ variant.product.id }}",
+    "title_product": "{{ variant.product.title }}",
+    "title_variant": "{{ variant.title }}",
+    "handle_product": "{{ variant.product.handle }}",
+    "image_variant": "{% if variant.featured_image.src %}{{ variant.featured_image.src | image_url: width: 512 }}{%  endif %}",
+    "image_product": "{{ variant.product.featured_image.src | image_url: width: 512 }}",
+    "images_product": [
+      {%- for img in variant.product.images limit: 3 -%}
+        "{{ img.src | image_url: width: 512 }}"
+        {% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ],
+    "badge": "{{ variant.metafields.custom.badge }}",
+    "routine": "{{ variant.product.metafields.pdp.recommendations_api_badge }}",
+    "size_variant": "{{ variant.metafields.sf_settings.size }}",
+    "size_product": "{{ variant.product.metafields.sf_product_hero.size }}",
+    "tagline_variant": "{{ variant.metafields.MOS2.tagline }}",
+    "subheading_product": "{{ variant.product.metafields.sf_product_hero.sub_heading }}",
+    "price": "{{ variant.price }}",
+    "inventory_quantity": "{{ variant.inventory_quantity }}",
+    "compare": "{{ variant.compare_at_price }}",
+    "reviews_average": "{{variant.product.metafields.yotpo.reviews_average }}",
+    "reviews_count": "{{variant.product.metafields.yotpo.reviews_count }}"
+  }
+  {% unless forloop.last %},{% endunless %}
+{%- endfor -%}

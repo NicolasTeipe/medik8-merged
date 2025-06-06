@@ -1,0 +1,65 @@
+
+<global-before-after-slider class="flex row-wrap align-center justify-left block-12/12 block-rel block-oh">
+  {% 
+    liquid
+    assign hasMobileVersion = false 
+    if settings.before_image__mobile and settings.after_image__mobile
+    assign hasMobileVersion = true
+    endif
+  %}
+  <div 
+    class="ba-slider__after-wrapper {% if hasMobileVersion %}@mobile__hide{% endif %}">
+    {{ settings.after_image | 
+      image_url: width: desktop_width , height:desktop_height | 
+      image_tag: 
+        widths: '256, 512, 736, 1024, 2048',
+        loading: 'lazy', 
+        image_alt: settings.after_image.alt,
+        class: 'd-block block-12/12'
+    }}
+  </div>
+  {% if hasMobileVersion %}
+    <div 
+      class="ba-slider__after-wrapper @mobile__show">
+      {{ settings.after_image__mobile | 
+        image_url: width: mobile_width , height:mobile_height | 
+        image_tag: 
+          widths: '256, 512, 736, 1024, 2048',
+          loading: 'lazy', 
+          image_alt: settings.after_image__mobile.alt,
+          class: 'd-block block-12/12'
+      }}
+    </div>
+  {% endif %}
+  <div 
+    class="ba-slider__before-wrapper"
+    data-ba-before-label="{{ settings.before_text }}"
+    data-ba-after-label="{{ settings.after_text }}" before>
+    <span class="ba-slider__control"></span>
+    <div 
+      class="ba-slider__before-container {% if hasMobileVersion %}@mobile__hide{% endif %}">
+      {{ settings.before_image | 
+        image_url: width: desktop_width, height:desktop_height | 
+        image_tag: 
+          widths: '256, 512, 736, 1024',
+          image_alt: settings.before_image.alt,
+          loading: 'lazy', 
+          class: 'ba-slider__before-image'
+      }}
+    </div>
+    {% if hasMobileVersion %}
+      <div 
+        class="ba-slider__before-container @mobile__show">
+        {{ settings.before_image__mobile | 
+          image_url: width: mobile_width, height:mobile_height | 
+          image_tag: 
+            widths: '256, 512, 736, 1024',
+            image_alt: settings.before_image__mobile.alt,
+            loading: 'lazy', 
+            class: 'ba-slider__before-image'
+        }}
+      </div>
+    {% endif  %}
+  </div>
+  <input class="js-ba__input ba-slider__input" type="range" min="0" max="100" value="50" aria-label="Before and after results image split">
+</global-before-after-slider>

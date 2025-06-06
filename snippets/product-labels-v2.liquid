@@ -1,0 +1,35 @@
+{%- comment -%}
+  Snippet to handle product labels across the theme. Handles the following:
+  - Badges
+  - Compare-At price labels
+
+  Takes the following params
+  - variant: obj - [ a Shopify variant obj ]
+  - type: str - [ label type to display, currently only accepts 'product-card']
+  - no_script: string - ['true' or blank / '' - indicates whether or not to include js
+{%- endcomment -%}
+
+{%- assign label_text = variant.metafields.custom.badge -%}
+
+{%- if variant.price < variant.compare_at_price -%}
+  {%- assign label_text = settings.compare_at_label_text -%}
+{%- endif -%}
+
+<div
+  class='label-wrapper label-wrapper__{{ variant.id }}'
+  data-type='{{ type }}'
+  aria-label='Label for {{ variant.product.title }}'
+>
+  {%- if label_text.size > 0 -%}
+    <span class='badge-v2 badge-v2__product-card' aria-label='{{ label_text }}'>{{ label_text }}</span>
+  {%- endif -%}
+</div>
+
+{%- unless no_script -%}
+  <script>
+    (async () => {
+      await DomReadyPromise();
+      sitewide && sitewide.updateLabelV2('{{ variant.id }}');
+    })();
+  </script>
+{%- endunless -%}

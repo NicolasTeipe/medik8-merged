@@ -20,8 +20,6 @@
   <product-loyalty-points-hint-v2 style="display:none" hint_popup_text="{{ 'products.product.loyalty_lion__hint_text' | t | replace: '**cart.currency.symbol**', cart.currency.symbol }}" hint_button_text='{{ hintTextHtml }}'></product-loyalty-points-hint-v2>
 {%- endunless -%}
 
-<div id="full-details-anchor"></div>
-
 <current-loyalty-points style="display:none">
   {% if customer %}
     <p>{{ 'products.product.loyalty_lion__have_before_text' | t }}<span data-lion-points="approved"></span>{{ 'products.product.loyalty_lion__have_after_text' | t }}&nbsp;&nbsp;<button class="btn-reset" type="button"><u>Convert Points</u></button></p>
@@ -43,6 +41,7 @@
     font-weight: 500;
     font-size: 12px;
     line-height: normal;
+    position: relative;
     color: #000;
     text-transform: uppercase;
     align-items: center;
@@ -87,31 +86,51 @@
     width: 530px;
     max-width:100%;
     left:0px;
-    top: 100%;
+    top: calc(100% + 12px);
     font-size: 12px;
     line-height: 18px;
     text-transform: none;
+    display: none;
   }
 
   @media (max-width: 767px) {
-
     body.template-product.loyalty--isActive #gorgias-chat-container{
       display:none;
       z-index: -1;
       pointer-events:none;
     }
+  }
 
+  .loyalty-hint__bg-overlay {
+    display: none;
+  }
+
+  .loyalty-hint__text.active ~ .loyalty-hint__bg-overlay {
+    content: "";
+    display: block;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left:50%;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9998;
   }
 
   @media (max-width: 1023px) {
     .loyalty-hint__text {
       position: fixed;
-      top: auto;
-      left: var(--gutter-unit);
+      top: 50% !important;
+      left: 50% !important;
       bottom:var(--gutter-unit);
       max-height:80vw;
       max-width:calc(100% - var(--gutter-unit-x2));
+      transform: translate(-50%, -50%);
       z-index: 9999;
+    }
+
+    .loyalty-hint__text.active ~ .loyalty-hint__bg-overlay {
+      background: #1111118a;
     }
   }
 
@@ -206,110 +225,68 @@
     }
 
     renderHintText(){
-      this.hintTextRendered = true
       this.hintText = document.createElement('div')
       this.hintText.classList.add('loyalty-hint__text')
+      this.backgroundOverlay = document.createElement('div')
+      this.backgroundOverlay.classList.add('loyalty-hint__bg-overlay')
       this.hintText.style.display = 'none'
       this.hintText.innerHTML = this.hint_popup_text
 
       this.hintTextToggle = document.createElement('button')
-      this.hintTextToggle.innerHTML = `<i class="wayfx-icon wayfx-icon-close" aria-hidden="true"></i>
-                                       <span class="fallback-text">"Close"</span>`
-
+      this.hintTextToggle.innerHTML = `<i class="wayfx-icon wayfx-icon-close" aria-hidden="true"></i><span class="fallback-text">"Close"</span>`
       this.hintTextToggle.classList.add('loyalty-hint__close-btn','icon-fallback-text')
+      this.hintTextToggle.type = 'button'
+
       this.hintText.appendChild(this.hintTextToggle)
       this.appendChild(this.hintText)
-
-      this.hintTextToggle.addEventListener('click',(e) => {
-        this.toggleHintTextDisplay(e)
-      })
+      this.appendChild(this.backgroundOverlay)
     }
 
 
     toggleHintTextDisplay(e){
-      const {hintText} = this
-      const show = hintText.style.display == 'none'
-      if(show){
-        hintText.style.display = 'block'
-        document.addEventListener('click',this.toggleHintTextDisplay,true)
-     
-      }else{
-        hintText.style.display = 'none'
-        document.removeEventListener('click',this.toggleHintTextDisplay,true)
-      }
-      e.stopPropagation()
-
-      this.updateLoyaltyHintPosition()
-    }
-
-    // reposition hint text if it is off screen
-    updateLoyaltyHintPosition() {
-      const loyaltyHintElem = this.querySelector('.loyalty-hint__text')
-
-      if (!loyaltyHintElem) return;
-
-      const loyaltyHintPos = loyaltyHintElem.getBoundingClientRect()
-      const windowHeight = window.innerHeight;
       const mobileWidthThreshold = 1024;
-      const offsetPx = 20;
+      const {hintText} = this
 
-      if (window.innerWidth < mobileWidthThreshold) {
-        loyaltyHintElem.style.top = 'auto';
-        return;
+      if(hintText.classList.contains('active')){
+        hintText.style.display = 'none'
+        hintText.classList.remove('active')
+        document.body.classList.remove("body-masked")
+      }else{
+        hintText.style.display = 'block'
+        hintText.classList.add('active')
+        if (window.innerWidth < mobileWidthThreshold){
+          document.body.classList.add("body-masked")
+        }
       }
-      
-      if (loyaltyHintPos.bottom > windowHeight) {
-        const diff = loyaltyHintPos.bottom - windowHeight;
-        loyaltyHintElem.style.top = `calc(100% - (${diff}px + ${offsetPx}px))`;
-        return;
-      }
-      
-      loyaltyHintElem.style.top = '100%';
     }
 
     update(price){
       if(price){
         this.productPointsPrice =  this.productPointsPrice || this.querySelector('.js-loyalty-hint__price')
         this.productPointsPrice.innerHTML = price
+        this.style.display = 'flex'
+      }else{
+        this.style.display = 'none'
       }
       window.loyaltylion.ui.refresh()
     }
 
     bind(){
-      //@to do, maybe replace this with an attr input for selector
-      this.variantSelector = document.querySelector('#productSelect')
-      this.variantSelector.addEventListener('change',(event) => {
-        // 0ms timeout used to push this to the back of the event loop
-        setTimeout(()=> {
-          const selectedOption = event.target.querySelector('option:checked')         
-          var selectOptionPrice;
+      // update LL points on page load
+      this.update(document.querySelector('.price-v2__actual-pdp')?.textContent || false)
 
-          if (window.rechargeWidgetLoaded) {
-            selectOptionPrice = document.querySelector('#ProductPrice').textContent
-          } else {
-            selectOptionPrice = selectedOption.dataset.discountedPrice
-            ? selectedOption.dataset.discountedPrice
-            : selectedOption.dataset.price;
-          }
-          this.update(selectOptionPrice)
-        }, 0)
-      })
-
-      // force change event to display correct points on load
-      this.variantSelector.dispatchEvent(
-        new Event('change')
-      );
+      if (this.classList.contains('click-event')) {
+        return
+      }
 
       this.addEventListener('click',(e) => {
-        if(!this.hintTextRendered){
+        if(!this.querySelector('.loyalty-hint__text')){
           this.renderHintText()
         }
         this.toggleHintTextDisplay(e)
       })
 
-      window.addEventListener('resize', () => {
-        this.updateLoyaltyHintPosition()
-      })
+      this.classList.add('click-event')
     }
 
     render(){

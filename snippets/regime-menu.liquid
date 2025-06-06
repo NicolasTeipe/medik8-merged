@@ -1,0 +1,54 @@
+{% assign newline = '
+' %}
+
+{% liquid
+  assign tags = settings.regime_collection_tags | split: newline | default: false
+
+  assign metaobjects = shop.metaobjects['regime'].values | sort_natural: 'order'
+
+  assign page_handle = request.path | split: '/' | slice: 2 | first
+
+  assign page = pages[page_handle]
+%}
+
+<div class="regime-menu">
+  <a class="regime-menu__link" href="{{ page.url }}">
+    {{ page.title }}
+  </a>
+
+  <styled-select>
+    <select data-regime-menu-select style="display: none;">
+      {% for tag in tags %}
+        {% assign tag_metaobjects = metaobjects | where: 'tag', tag | default: false %}
+
+        <optgroup label="{{ tag | escape }}">
+          {% for metaobject in tag_metaobjects %}
+            <option
+              value="{{ metaobject.system.url }}"
+
+              {% if metaobject.system.handle == handle %}
+                selected
+              {% endif %}
+            >
+              {{ metaobject.title.value }}
+            </option>
+          {% endfor %}
+        </optgroup>
+      {% endfor %}
+
+      {% for metaobject in metaobjects %}
+        {% unless tags contains metaobject.tag.value %}
+          <option
+            value="{{ metaobject.system.url }}"
+
+            {% if metaobject.system.handle == handle %}
+              selected
+            {% endif %}
+          >
+            {{ metaobject.title.value }}
+          </option>
+        {% endunless %}
+      {% endfor %}
+    </select>
+  </styled-select>
+</div>

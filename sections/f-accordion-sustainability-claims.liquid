@@ -25,11 +25,12 @@
       {%- endif -%}
 
       <div class="provenance-bundle-content">
-        <provenance-bundle id="provenance-trust-badge" url="https://www.provenance.org/bundles/r2Nvht1v/embed"></provenance-bundle>
+        <provenance-bundle id="provenance-trust-badge" identifier="{{ product.selected_or_first_available_variant.sku }}" url="https://www.provenance.org/bundles/r2Nvht1v/embed"></provenance-bundle>
       </div>
       
     </details>
   </sustainability-claims>
+  {% render 'f-product.sections-data-layer' %}
 {%- endif -%}
 
 {% schema %}

@@ -1,0 +1,18 @@
+<sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    {% render 'cart.footer-main' %}
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/footer-main",
+  "settings": [
+  ]
+}
+{% endschema %}

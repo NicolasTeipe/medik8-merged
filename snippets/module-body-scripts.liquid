@@ -1,6 +1,21 @@
 <!-- Gorgias Chat -->
-{% if settings.gorgias_app_id != blank %}
-  <script id="gorgias-chat-widget-install-v2" src="https://config.gorgias.chat/gorgias-chat-bundle-loader.js?applicationId={{ settings.gorgias_app_id }}" defer></script>
+{% if settings.gorgias_chat_app_id != blank %}
+  <script id="gorgias-chat-widget-install-v3"
+    src="https://config.gorgias.chat/bundle-loader/{{ settings.gorgias_chat_app_id }}" defer>
+  </script>
+
+  {%- if settings.gorgias_enable_chat_hours and settings.gorgias_chat_config != blank -%}
+    <script>
+      var initGorgiasChatPromise = (window.GorgiasChat) ? window.GorgiasChat.init() : new Promise(function (resolve) { window.addEventListener('gorgias-widget-loaded', function () { resolve();})});
+
+      // Edit business hours on the go, if `Hide chat outside of business hours` is enabled, the chat will automatically appear or disappear.
+      // Using a timezone from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      // Day 1 represents Monday, Day 7 represents Sunday
+      initGorgiasChatPromise.then(function () {
+          GorgiasChat.setCustomBusinessHours({{ settings.gorgias_chat_config }})
+      });
+    </script>
+  {%- endif -%}
 {% endif %}
 
 
@@ -8,10 +23,3 @@
 {% if settings.use_swym == true %}
   {% render 'swymSnippet' %}
 {% endif %}
-
-<!-- Country selector module for header-->
-{% if settings.country_selector_enabled %}
-  <script src="{{ 'country-selector.js' | asset_url }}" defer></script>
-  {{ 'country-selector.css' | asset_url | stylesheet_tag }}
-{% endif %}
-

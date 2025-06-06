@@ -1,0 +1,74 @@
+{%- comment -%}
+  Renders payment methods in the footer using the Shopify shop.enabled_payment_types loop.
+
+  Each payment method is checked against section settings to determine if it should be hidden. 
+  If disabled, the payment method is skipped; otherwise, it is rendered, ensuring any newly 
+  added methods automatically appear.
+
+  Klarna is appended to the list of payment methods and icon is loaded via snippet render.
+
+  Accepts:
+  - enabled_payment_types: {Array} The shop's available payment methods.
+  - section.settings[show_{type}]: {Object} Toggle visibility of each payment method in the footer.
+
+  Usage:
+  {%- render 'footer-payments.liquid' -%}
+{%- endcomment -%}
+
+{% comment %} Shopify payments and unlisted but supported payments {% endcomment %}
+{%- assign enhanced_payment_methods = shop.enabled_payment_types | join: ','-%}
+{%- assign unlisted_payment_methods = 'afterpay,klarna' | split: ',' -%}
+
+{% comment %} Check and append unlisted methods into the listed {% endcomment %}
+{%- for method in unlisted_payment_methods -%}
+  {%- unless enhanced_payment_methods contains method -%}
+    {%- assign enhanced_payment_methods = enhanced_payment_methods | append: ',' | append: method -%}
+  {%- endunless -%}
+{%- endfor -%}
+
+{% comment %} Turn the comma separated list into an array {% endcomment %}
+{%- assign enhanced_payment_methods = enhanced_payment_methods | split: ',' -%}
+
+<div class="footer__payment wayfx-footer__extra-links">
+  <ul class="list list-payment" role="list">
+    {%- for type in enhanced_payment_methods -%}
+      {% capture show_type %}show_{{ type }}{% endcapture %}
+      {%- comment -%} 
+        Check if the payment type is not explicitly disabled 
+      {%- endcomment -%}
+      {%- if section.settings[show_type] != false -%}  
+        <li class="list-payment__item">
+        {%- if type == 'american_express' -%}
+          {%- render 'icon-american-express.svg' -%}
+        {%- elsif type == 'apple_pay' -%}
+          {%- render 'icon-apple-pay.svg' -%}
+        {%- elsif type == 'diners_club' -%}
+          {%- render 'icon-diners-club.svg' -%}
+        {%- elsif type == 'discover' -%}
+          {%- render 'icon-discover.svg' -%}
+        {%- elsif type == 'google_pay' -%}
+          {%- render 'icon-google-pay.svg' -%}
+        {%- elsif type == 'maestro' -%}
+          {%- render 'icon-maestro.svg' -%}
+        {%- elsif type == 'master' -%}
+          {%- render 'icon-mastercard.svg' -%}
+        {%- elsif type == 'paypal' -%}
+          {%- render 'icon-paypal.svg' -%}
+        {%- elsif type == 'shopify_pay' -%}
+          {%- render 'icon-shop-pay.svg' -%}
+        {%- elsif type == "unionpay" -%}
+          {%- render 'icon-unionpay.svg' -%}
+        {%- elsif type == 'visa' -%}
+          {%- render 'icon-visa.svg' -%}
+        {%- elsif type == 'klarna' -%}
+          {%- render 'icon-klarna.svg' -%}
+        {%- elsif type == 'afterpay' -%}
+          {%- render 'icon-afterpay.svg' -%}
+        {%- else -%}
+          {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+        {%- endif -%}
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>

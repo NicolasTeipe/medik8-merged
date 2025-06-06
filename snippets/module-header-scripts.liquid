@@ -1,42 +1,36 @@
 {% comment %}theme-check-disable MissingTemplate{% endcomment %}
 
-{% if settings.optimize_id != blank %}
-  <!-- Google Optimize -->
-  <script src="https://www.googleoptimize.com/optimize.js?id={{settings.optimize_id}}" async></script>
-{% endif %}
+{%- unless settings.disable_analytics -%}
+  {%- if settings.clarity_id != blank -%}
+    <!-- MS Clarity Tracking Code -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "{{ settings.clarity_id }}");
+    </script>
+  {%- endif -%}
+{%- endunless -%}
 
-{% if settings.clarity_id != blank %}
-  <!-- MS Clarity Tracking Code -->
-<script type="text/javascript">
-  (function(c,l,a,r,i,t,y){
-      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-  })(window, document, "clarity", "script", "{{ settings.clarity_id }}");
-</script>
-{% endif %}
-
-{% if settings.hotjar_id != blank %}
-<!-- Hotjar Tracking Code for https://www.medik8.com/ -->
-<script>
-  (function(h,o,t,j,a,r){
-    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-    h._hjSettings={hjid:{{settings.hotjar_id}},hjsv:6};
-    a=o.getElementsByTagName('head')[0];
-    r=o.createElement('script');r.async=1;
-    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-    a.appendChild(r);
-  })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-</script>
-{% endif %}
-
-<!-- Algolia -->
-{% if settings.search_provider == 'algolia_legacy' %}
-  {%- render 'algolia' -%}
-{% endif %}
+{%- unless settings.disable_analytics -%}
+  {%- if settings.hotjar_id != blank -%}
+    <!-- Hotjar Tracking Code for https://www.medik8.com/ -->
+    <script>
+      (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:{{settings.hotjar_id}},hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+  {%- endif -%}
+{%- endunless -%}
 
 <!-- Font Awesome -->
-<script src="https://kit.fontawesome.com/77dad25771.js" crossorigin="anonymous" async></script>
+<script src="https://kit.fontawesome.com/67e3860b04.js" crossorigin="anonymous" async></script>
 
 <!-- Shopify Customer Privacy Api -->
 <script>

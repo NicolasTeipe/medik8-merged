@@ -1,0 +1,26 @@
+<sidebar-cart-section class="block-fh flex column-nowrap flex-grid align-center justify-center">
+  <template data-settings>
+    {
+      "id":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    {% assign link = '/' %}
+    {% if settings.cart_empty_cta_url != blank %}
+      {% assign link = settings.cart_empty_cta_url %}
+    {% endif %}
+    <div class="tac cell-l cell-r flex column-nowrap align-center justify-center flex-grid">
+      <h2 class="h-style t-m">{{ settings.cart_empty_header }}</h2>
+      <div class="t-grey lh-r t-rm empty-cart-message">{{ settings.cart_empty_message }}</div>
+      <a class="btn btn--large" href="{{ link }}">{{ settings.cart_empty_cta_text }}</a>
+    </div>
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/empty/default",
+  "settings": [
+  ]
+}
+{% endschema %}

@@ -1,0 +1,231 @@
+
+<style>
+  {% capture bp-mobile %}{{ settings.bp_mobile }}px{% endcapture %}
+  {% capture bp-tablet %}{{ settings.bp_tablet }}px{% endcapture %}
+  {% capture bp-desktop %}{{ settings.bp_desktop }}px{% endcapture %}
+  
+  .modal-upsell{
+    background:#fff;
+    width:1024px;
+    max-width:100%;
+  }
+
+  .modal-upsell__img{
+    aspect-ratio:1;
+    min-height:100%;
+    object-fit:cover;
+  }
+
+  .modal-upsell__content{
+    padding:calc(10px + (var(--gutter-unit) * 2));
+  }
+
+  @media screen and (max-width:{{ bp-tablet }}) {
+    .modal-upsell__content{
+      padding:calc(10px + (var(--gutter-unit) * 2)) var(--gutter-unit);
+    }
+  }
+
+  @media screen and (max-width:{{ bp-mobile }}) {
+    .modal-upsell__content{
+      padding:var(--gutter-unit);
+    }
+  }
+
+</style>
+<script type="text/javascript">
+
+  function generateUpsellModal(modalData){
+    const {heading, image, image_mobile, content , offer} = modalData      
+    const dekstopSrc = image?.src || image
+    const dekstopAlt = image?.alt || heading
+    const mobileSrc = image_mobile?.src || image_mobile
+    const mobileAlt = image_mobile?.alt || heading
+
+    const conditionalUpsellModal = `
+      <div class="modal-upsell flex row-wrap align-stretch justify-center">
+        
+        <img class="block-6/12 modal-upsell__img @mobile__hide" src="${dekstopSrc}?w=512" alt="${dekstopAlt}" height="512" width="512" loading="lazy">
+        <img class="block-12/12 @mobile__show" src="${mobileSrc}?w=512" alt="${mobileAlt}" height="512" width="512" loading="lazy">
+        <div class="block-6/12 modal-upsell__content tac flex column-nowrap flex-grid justify-top block-mfrh @mobile__block-12/12">
+          <h2 class="h-style t-m ls-15 t-ucase">${heading}</h2>
+          <div class="rte-content">${content}</div>
+          
+            <div class="flex column-nowrap flex-grid">
+              ${offer.upsells.length > 1 ? 
+                (
+                  `
+                  ${
+                    offer.upsells.map( item => {
+                      return `
+                        <div class="flex row-wrap align-center cell-r bdr bdr-grey ct--d2 cb--d2 @mobile__cell-l--d2 @mobile__cell-r--d2">
+                          <img class="block-3/12 @mobile__block-4/12" src="${item.featured_image.src}?w=256" alt="${item.name}" width="128" height="128" loading="lazy">
+                          <div class="block-9/12 flex-grid-y--d3 flex row-wrap align-center  @mobile__block-8/12 @mobile__tal">
+                            <span class="block-8/12 cell-l--d3 cell-r--d2 t-xs  @mobile__block-12/12  @mobile__cell-r--none">${item.title}</span>
+                            <div class="block-4/12 flex row-wrap justify-right @mobile__justify-left @mobile__block-12/12  @mobile__cell-l--d3">
+                              <dynamic-upsell-atc>
+                                <template>
+                                  {
+                                    "offer_id":"${offer.id}",
+                                    "item_id":"${item.id}",
+                                    "translations":{
+                                      "add":"${modalData.add_to_cart_button_text}",
+                                      "remove":"${modalData.remove_from_cart_button_text}"
+                                    },
+                                    "class":"btn btn--xs btn--wfocus-state d-block"
+                                  }
+                                </template>
+                                Add
+                              </dynamic-upsell-atc>
+                            </div>
+                          </div>
+                        </div>
+                      `
+                    }).join('')
+                  }
+                  `
+                ) : (
+                  `
+                  <dynamic-upsell-atc class="btn btn--l d-block block-12/12">
+                    <template>
+                      {
+                        "offer_id":"${offer.id}",
+                        "item_id":"${offer.upsells[0].id}",
+                        "translations":{
+                          "add":"${modalData.add_to_cart_button_text}",
+                          "remove":"${modalData.remove_from_cart_button_text}"
+                        }
+                      }
+                    </template>
+                    Add
+                  </dynamic-upsell-atc>
+                  `
+                )
+              }
+            </div>
+
+        </div>
+      </div>
+    `
+    return new ModalBox({
+      content:conditionalUpsellModal,
+      settings: {
+        containerCloseButton: true,
+      },
+    })
+  }
+
+  let modal_dialogues = []
+  // get any object specfic items
+  {% assign modal_dialogue = [request.page_type].metafields.custom.modal_dialogue.value  %}
+  {% if modal_dialogue %}
+    modal_dialogues.push(
+      {
+        "id": {{ modal_dialogue.system.id | json }},
+        "index":0,
+        "trigger": {{ modal_dialogue.trigger.value | json }},
+        "heading": {{ modal_dialogue.heading.value | json }},
+        "content": {{ modal_dialogue.content | metafield_tag | json }},
+        "image": {{ modal_dialogue.image.value | json }},
+        "image_mobile": {{ modal_dialogue.image_mobile.value | json }},
+        "offer_id": {{ modal_dialogue.offer.value.system.id | json }},
+        "add_to_cart_button_text":{{ modal_dialogue.add_to_cart_button_text.value | json }},
+        "remove_from_cart_button_text":{{ modal_dialogue.remove_from_cart_button_text.value | json }}
+      }
+    )
+  {% endif %}
+
+  let modal_dialogue_id = null
+  {% for modal_dialogue in shop.metaobjects.modal_dialogue.values  %}
+    {% if modal_dialogue.show_globally %}
+      modal_dialogue_id = {{ modal_dialogue.system.id | json }}
+      if(!modal_dialogues.some( ({id}) => id == modal_dialogue_id)){
+        modal_dialogues.push(
+          {
+            "id": {{ modal_dialogue.system.id | json }},
+            "index": {{ modal_dialogue.index.value | plus:1 | json }},
+            "trigger": {{ modal_dialogue.trigger.value | json }},
+            "heading": {{ modal_dialogue.heading.value | json }},
+            "content": {{ modal_dialogue.content | metafield_tag | json }},
+            "image": {{ modal_dialogue.image.value | json }},
+            "image_mobile": {{ modal_dialogue.image_mobile.value | json }},
+            "offer_id": {{ modal_dialogue.offer.value.system.id | json }},
+            "add_to_cart_button_text":{{ modal_dialogue.add_to_cart_button_text.value | json }},
+            "remove_from_cart_button_text":{{ modal_dialogue.remove_from_cart_button_text.value | json }}
+          }
+        )
+      }
+    {% endif %}
+  {% endfor %}
+
+  modal_dialogues = modal_dialogues.sort((a,b) => {
+    let a_index = a.index || 999
+    let b_index = b.index || 999
+    return b_index - a_index
+  })
+
+  DomReadyPromise().then( async () => {
+  
+    /* 
+      get the correct modal dialogues (MD) to show based on
+      1. MDs assigned to current objects metafield
+      2. offer defined in the MD that are "active" based on the params set up in the upsell, using GlobalConditonalUpsellProducer as data source
+      3. if there are more than one, something else
+
+      if there is an active MD, init and bind it to an exit intent event observable
+    */
+    const UpsellProducer = await new GlobalConditonalUpsellProducer()
+    const validUpsellOffers = UpsellProducer.getValidOffers()
+    let modalDialougesWithValidUpsellOffers = modal_dialogues.map( item => {
+      item.offer = validUpsellOffers.find( ({id}) => id == item.offer_id )
+      return item.offer ? item : false
+    }).filter( item => item )
+
+    /* for AB testing: provide a method to call modals via AB test and outside of the exit intent trigger e.g.
+
+      // wait for modals to be init and access modal data and render function 
+      const modalDialoguesObserver$ = new ObserverLite({key:'AB.modalDialoguesObserver$'})
+      modalDialoguesObserver$.once().then(({generateUpsellModal,modalDialougesWithValidUpsellOffers}) => {
+        const modal = generateUpsellModal(modalDialougesWithValidUpsellOffers[0])
+        modal.subscribe( ({type}) => {
+          console.log(type)
+          // if type == 'open:rendered' you can safely manipulate items inside the modal, access them via the class
+          console.log(modal)
+        })
+        // trigger open close
+        modal.open()
+        modal.close()
+      }).catch(err => {
+        console.log(err)
+      })
+    */
+
+    const modalDialoguesObserver$ = new ObserverLite({key:'AB.modalDialoguesObserver$'})
+
+    modalDialoguesObserver$.next({
+      generateUpsellModal:generateUpsellModal,
+      modalDialougesWithValidUpsellOffers:modalDialougesWithValidUpsellOffers
+    })
+
+    // regular / current support for exit intent modals
+    const exitIntentLsKey = 'extIntModal0805'
+    const lsData = localStorage.getItem(exitIntentLsKey)
+    if(lsData || !modalDialougesWithValidUpsellOffers.length){
+      return
+    }
+
+    // some way to define which one to show if multiple e.g index
+    const exitIntenModal = modalDialougesWithValidUpsellOffers.find(({trigger}) => trigger == 'Exit Intent') || false
+    const exitIntent$ = new ExitIntentObserver()
+    exitIntent$.subscribe( data => {
+      let modal = exitIntenModal.modal || false
+      if(!modal){
+        modal = exitIntenModal.modal = generateUpsellModal(exitIntenModal)
+        modal.open()
+        localStorage.setItem(exitIntentLsKey,true)
+      }
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

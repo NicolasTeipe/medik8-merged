@@ -1,0 +1,18 @@
+<sidebar-cart-section class="flex column-nowrap flex-grid cell-l cell-r">
+  <template data-settings>
+    {
+      "id":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    {% render 'cart.items' %}
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/items",
+  "settings": [
+  ]
+}
+{% endschema %}

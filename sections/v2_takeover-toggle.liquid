@@ -1,0 +1,438 @@
+<!-- sections/v2_takeover-toggle.liquid -->
+
+{%- assign render_section = false -%}
+{%- if settings.homepage_takeover_enable -%}
+  {%- assign render_section = true -%}
+{%- elsif template == 'index' and settings.homepage_takeover_design_mode == true and request.design_mode -%}
+  {%- assign render_section = true -%}
+{%- endif -%}
+
+{%- if render_section and section.settings.is_enabled -%}
+  {%- capture content -%}
+    <div class="tot-container flex justify-center">
+      <div class="takeover-text d-iblock">{{ section.settings.takeover_text }}</div>
+      <global-takeover-toggle data-fetch-delay="{{ section.settings.fetch_delay | default: 2000 }}">
+        <template>
+          {
+            "togglePageUrl": "{{ section.settings.toggle_page_url }}"
+          }
+        </template>
+        <label class="takeover-toggle__label">
+          <input type="checkbox" autocomplete="off" class="takeover-toggle__input"{% if settings.homepage_takeover_toggle_state %} checked{% endif %}>
+          <span class="takeover-toggle__slider">
+            <span class="toggle-text toggle-text--off">OFF</span>
+            <span class="toggle-text toggle-text--on">ON</span>
+          </span>
+        </label>
+      </global-takeover-toggle>
+    </div>
+
+    <script src="{{ 'scripts.components.dist.GlobalTakeoverToggle.js' | asset_url }}" async></script>
+  
+    <style>
+      {%- if section.settings.position_sticky -%}
+        #shopify-section-{{ section.id }} {
+          position: sticky;
+          z-index: 98;
+        }
+      {%- endif -%}
+      {%- unless settings.use_v2_navigation -%}
+        {%- if section.settings.position_sticky -%}
+          #shopify-section-{{ section.id }} {
+            top: 73px;
+          }
+        {%- endif -%}
+
+        body.has-product-bar #shopify-section-{{ section.id }} {
+          top: 109px;
+        }
+
+        @media all and (min-width: {{ settings.bp_mobile }}px) {
+          #shopify-section-{{ section.id }} {
+            top: 67px;
+          }
+          body.has-product-bar #shopify-section-{{ section.id }} {
+            top: 103px;
+          }
+        }
+
+        @media all and (min-width: {{ settings.bp_tablet }}px) {
+          #shopify-section-{{ section.id }} {
+            top: 102px; 
+          }
+          body.has-product-bar #shopify-section-{{ section.id }} {
+            top: 145px; 
+          }
+        }
+      {%- else -%}
+        {%- if section.settings.position_sticky -%}
+          #shopify-section-{{ section.id }} {
+            top: var(--mh-total-height-no-top-Announcement);
+          }
+          @media screen and (min-width:{{ settings.bp_tablet | plus: 1 }}px) {
+            #shopify-section-{{ section.id }} {
+              top: calc(var(--mh-total-height-no-top-Announcement) - var(--mh-header-desktop-scroll-shift));
+            }
+          }
+        {%- endif -%}
+      {%- endunless -%}
+      #shopify-section-{{ section.id }} .tot-container {
+        background-color:{{ section.settings.section_bg_color }};
+        background-image: url('{{ section.settings.section_bg_img | image_url: width: section.settings.section_bg_img.width }}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        padding: 0 24px;
+      }
+
+
+      #shopify-section-{{ section.id }} .takeover-text {
+        margin-right: 10px;
+        align-self: center;
+        font-size: 13px;
+        color: #FFF;
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.64);
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .takeover-text {
+          margin-right: 15px;
+          font-size: 20px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__label {
+        position: relative;
+        width: 55px;
+        height: 25px;
+        display: inline-block;
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .takeover-toggle__label {
+          width: 71px;
+          height: 34px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__input {
+        opacity: 0;
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        border-radius: 17px;
+        border: 1px solid #FFF;
+        user-select: none;
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__slider::before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.2s;
+        border-radius: 50%;
+        z-index: 2;
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .takeover-toggle__slider::before {
+          height: 25px;
+          width: 25px;
+          left: 4px;
+          bottom: 4px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .toggle-text {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 9px;
+        font-weight: bold;
+        pointer-events: none;
+        transition: opacity 0.2s ease, color 0.2s ease;
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .toggle-text {
+          font-size: 11px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .toggle-text--off {
+        right: 8px;
+        color: #FFF;
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .toggle-text--off {
+          right: 9px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .toggle-text--on {
+        left: 9px;
+        color: #FFF;
+        opacity: 0;
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .toggle-text--on {
+          left: 12px;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__input:checked + .takeover-toggle__slider {
+        background-color: #000;
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__input:checked + .takeover-toggle__slider::before {
+        transform: translateX(29px);
+      }
+
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .takeover-toggle__input:checked + .takeover-toggle__slider::before {
+          transform: translateX(36px);
+        }
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__input:checked + .takeover-toggle__slider .toggle-text--on {
+        opacity: 1;
+      }
+
+      #shopify-section-{{ section.id }} .takeover-toggle__input:checked + .takeover-toggle__slider .toggle-text--off {
+        opacity: 0;
+      }
+
+      #shopify-section-{{ section.id }} .tot-container {
+        {%- if section.settings.mb_margin_top != 0 -%}
+          margin-top: {{ section.settings.mb_margin_top }}px;
+        {%- endif -%}
+        {%- if section.settings.mb_margin_bottom != 0 -%}
+          margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+        {%- endif -%}
+        {%- if section.settings.mb_padding_top != 0 -%}
+          padding-top: {{ section.settings.mb_padding_top }}px;
+        {%- endif -%}
+        {%- if section.settings.mb_padding_bottom != 0 -%}
+          padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+        {%- endif -%}
+      }
+  
+      @media screen and (min-width: 768px) {
+        #shopify-section-{{ section.id }} .tot-container {
+          {%- if section.settings.dt_margin_top != 0 -%}
+            margin-top: {{ section.settings.dt_margin_top }}px;
+          {%- endif -%}
+          {%- if section.settings.dt_margin_bottom != 0 -%}
+            margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+          {%- endif -%}
+          {%- if section.settings.dt_padding_top != 0 -%}
+            padding-top: {{ section.settings.dt_padding_top }}px;
+          {%- endif -%}
+          {%- if section.settings.dt_padding_bottom != 0 -%}
+            padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+          {%- endif -%}
+        }
+      }
+    </style>
+  {%- endcapture -%}
+
+  {%- liquid
+    assign takeover_tags = section.settings.takeover_tags | split: ','
+    assign tag_matched = false
+    for customer_tag in customer.tags
+      for takeover_tag in takeover_tags
+        if customer_tag == takeover_tag
+          assign tag_matched = true
+          break
+        endif
+      endfor
+      if tag_matched
+        break
+      endif
+    endfor
+
+    if takeover_tags == blank or tag_matched == true
+      echo content
+    endif
+  -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "V2/GBL/takeover-toggle",
+  "presets": [
+    {
+      "name": "V2/GBL/Takeover Toggle"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "IMPORTANT"
+    },
+    {
+      "type": "paragraph",
+      "content": "Controls for enabling and setting the initial state for this section can be found inside of Theme Settings - Page Takeover Config."
+    },
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_enabled",
+      "label": "Enable takeover toggle",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "position_sticky",
+      "label": "Enable position sticky",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "fetch_delay",
+      "label": "Toggle fetch delay",
+      "min": 500,
+      "max": 5000,
+      "step": 100,
+      "unit": "ms",
+      "default": 2000,
+      "info": "Synchronise the takeover animation with the takeover page switch action"
+    },
+    {
+      "type": "header",
+      "content": "Image setting"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default": "#fff"
+    },
+    {
+      "type": "image_picker",
+      "id": "section_bg_img",
+      "label": "Background Image",
+      "info": "When present, will override background colour"
+    },
+    {
+      "type": "header",
+      "content": "Text settings"
+    },
+    {
+      "type": "textarea",
+      "id": "takeover_text",
+      "label": "Text"
+    },
+    {
+      "type": "textarea",
+      "id": "takeover_tags",
+      "label": "Takeover Tags",
+      "info": "A comma separated list of tags. Only customers with one of these tags will see this section. If there are no tags, then visible to all customers."
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    }
+  ]
+}
+{% endschema %}

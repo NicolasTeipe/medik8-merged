@@ -1,0 +1,123 @@
+/*=============================================================================
+  #Global
+==============================================================================*/
+
+#loyaltylion .lion-notification-container{
+  font-family: ridley_groteskregular,sans-serif;
+}
+
+
+#loyaltylion .lion-notification-container .lion-action-button--tile{
+  line-height: 1.42;
+  font-weight: 400;
+  text-decoration: none;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all .1s ease-in;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: #000;
+  color: #ffff;
+  padding:5px;
+  font-size:13px;
+}
+
+
+#loyaltylion .lion-notification-container .lion-action-button--tile:hover{
+  border-color:#000;
+}
+
+#loyaltylion .lion-notification__reward-message{
+  margin:0 0 var(--gutter-unit-d2);
+  text-align:left;
+}
+
+#loyaltylion .lion-notification__divider{
+  display: none;
+}
+
+#loyaltylion .lion-notification__icon--points{
+  display:none;
+}
+
+
+/*=============================================================================
+  #REFERAL
+==============================================================================*/
+{% comment %}
+
+Found these as a happy accident and had a play, but not completed as it goes outside the scope of the task. 
+%his CSS will overide the settings for the post purchase referal prompt @ thank you page.
+TODO: replace red placeholder with reference to file + mobile
+#loyaltylion .lion-notification.lion-notification--post-purchase-referral.lion-notification--referral-prompt{
+  display:flex;
+  width:737px;
+  max-width:calc(100vw - 24px - 20px);
+}
+
+#loyaltylion .lion-notification.lion-notification--post-purchase-referral.lion-notification--referral-prompt:after {
+  content: '';
+  width: 100%;
+  background: red;
+  display: block;
+  width:50%;
+}
+
+#loyaltylion .lion-notification.lion-notification--post-purchase-referral.lion-notification--referral-prompt .lion-notification__content{
+  width:50%;
+  min-height:500px;
+  justify-content: center;
+}
+
+#loyaltylion .lion-notification.lion-notification--post-purchase-referral.lion-notification--referral-prompt .lion-notification__title{
+  font-size: var(--t-lxl);
+  line-height: 1.15;
+  font-family: var(--font-accent);
+  text-align: center;
+  padding: var(--gutter-unit) 0;
+  font-weight: 400;
+} 
+
+{% endcomment %}
+
+#loyaltylion .lion-referral-share-button{
+  border-radius:100%;
+}
+
+#loyaltylion .lion-referral-share-button--facebook,
+#loyaltylion .lion-referral-share-button--facebook-messenger,
+#loyaltylion .lion-referral-share-button--whatsapp,
+#loyaltylion .lion-referral-share-button--twitter,
+#loyaltylion .lion-referral-share-button--email,
+#loyaltylion .lion-referral-share__button--facebook,
+#loyaltylion .lion-referral-share__button--facebook-messenger,
+#loyaltylion .lion-referral-share__button--whatsapp,
+#loyaltylion .lion-referral-share__button--twitter,
+#loyaltylion .lion-referral-share__button--email {
+  background: #000
+}
+
+#loyaltylion .lion-referral-share-button--facebook-messenger:hover,
+#loyaltylion .lion-referral-share-button--facebook:hover,
+#loyaltylion .lion-referral-share-button--whatsapp:hover,
+#loyaltylion .lion-referral-share-button--twitter:hover,
+#loyaltylion .lion-referral-share-button--email:hover,
+#loyaltylion .lion-referral-share__button--facebook-messenger:hover,
+#loyaltylion .lion-referral-share__button--facebook:hover,
+#loyaltylion .lion-referral-share__button--whatsapp:hover,
+#loyaltylion .lion-referral-share__button--twitter:hover,
+#loyaltylion .lion-referral-share__button--email:hover  {
+  box-shadow: none;
+  background: #000;
+}
+
+#loyaltylion .lion-referral-share__button--facebook-messenger:after,
+#loyaltylion .lion-referral-share__button--facebook:after,
+#loyaltylion .lion-referral-share__button--whatsapp:after,
+#loyaltylion .lion-referral-share__button--twitter:after,
+#loyaltylion .lion-referral-share__button--email:after  {
+  background-color:#fff;
+}

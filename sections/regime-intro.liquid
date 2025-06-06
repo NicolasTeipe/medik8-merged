@@ -1,0 +1,110 @@
+{% comment %}
+  @TODO:
+
+  - Product card: "Save 20%" - BLOCKED (not sure where data is coming from)
+{% endcomment %}
+
+{% liquid
+  assign description = section.settings.description
+
+  if section.settings.use_page_description
+    assign description = page.content
+
+    if metaobject.description
+      assign description = metaobject.description | metafield_tag
+    endif
+  endif
+%}
+
+{{ 'regime.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  if section.settings.toolbar_enable
+    render 'regime-toolbar'
+  endif
+%}  
+
+<section class="regime-intro is-background-image--{{ section.settings.background_image }}">
+  <div class="wayfx-wrapper">
+    <div class="regime-intro-inner regime-padding-x">
+      {% liquid
+        if section.settings.menu_enable
+          render 'regime-menu'
+        endif
+      %}  
+
+      <h2 class="h2--secondary text-center">
+        {{ section.settings.title }}
+      </h2>
+
+      {% if description != blank %}
+        <div class="text-center">
+          {{ description | replace: '<p', '<p class="p--lg"' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{%- if settings.use_v2_navigation == false -%}
+  <style>
+    .regime-toolbar {
+      top: 108px;
+    }
+    
+    @media only screen and (min-width: 1025px) {
+      .regime-toolbar {
+        top: 144px;
+      }
+    }
+  </style>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Regime intro",
+    "presets": [
+      {
+        "name": "Regime intro"
+      }
+    ],
+    "class": "regime-display-contents",
+    "settings": [
+      {
+        "type": "select",
+        "id": "background_image",
+        "label": "Background image",
+        "options": [
+          { "value": "", "label": "Default" },
+          { "value": "alt", "label": "Alt" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "toolbar_enable",
+        "label": "Toolbar enable?"
+      },
+      {
+        "type": "checkbox",
+        "id": "menu_enable",
+        "label": "Menu enable?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_page_description",
+        "label": "Use page description",
+        "info": "This will override the description with that of the page/metaobject description."
+      }
+    ]
+  }
+{% endschema %}

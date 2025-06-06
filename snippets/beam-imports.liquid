@@ -1,0 +1,15 @@
+{{ 'beam-stylesheet.css' | asset_url | stylesheet_tag }}
+{% render 'beam-config' %}
+{% render 'beam-cart-setup' %}
+{% if template == "product.v2" and settings.beam_show_pdp == true %}
+  {% render 'beam-product-details-page' %}
+{% endif %}
+
+<script
+  type="module"
+  async
+  crossorigin
+  data-em-disable
+  data-categories="analytics"
+  src="https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/components/select-nonprofit.js"
+></script>

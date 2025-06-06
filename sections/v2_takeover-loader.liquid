@@ -1,0 +1,319 @@
+<!-- sections/global-takeover-loader.liquid -->
+
+{%- if section.settings.is_enabled -%}
+  <global-takeover-loader {% if section.settings.testing %}data-testing{% endif %}>
+    <template>
+      {
+        {% if section.settings.svg_background != blank %}
+          "background": "{{  section.settings.svg_background | image_url }}"{% if section.settings.svg_logo != blank %},{% endif %}
+        {% endif %}
+        {% if section.settings.svg_logo != blank %}
+          "logo": "{{ section.settings.svg_logo | image_url }}"
+        {% endif %}
+      }
+    </template>
+  </global-takeover-loader>
+
+  <style>
+    {%- capture style -%}
+      global-takeover-loader {
+        {%- comment -%} logo {%- endcomment -%}
+        --medik8-logo-opacity-delay: {{ section.settings.medik8_logo_opacity_delay | default: 500 }}ms;
+        --medik8-logo-opacity-delay-end: {{ section.settings.medik8_logo_opacity_delay_end | default: 500 }}ms;
+        --medik8-logo-opacity-duration-end: {{ section.settings.medik8_logo_opacity_duration_end | default: 500 }}ms;
+        --medik8-logo-opacity-duration: {{ section.settings.medik8_logo_opacity_duration | default: 500 }}ms;
+        
+        {%- comment -%} background {%- endcomment -%}
+        --takeover-transition-delay: {{ section.settings.takeover_transition_delay | default: 0 }}ms;
+        --takeover-transition-delay-end: {{ section.settings.takeover_transition_delay_end | default: 500 }}ms;
+        --takeover-transition-duration: {{ section.settings.takeover_transition_duration | default: 1500 }}ms;
+        --takeover-transition-duration-end: {{ section.settings.takeover_transition_duration_end | default: 1500 }}ms;
+        --takeover_background-angle: {{ section.settings.takeover_background_angle | default: 40 }}deg;
+        
+        {%- comment -%} animation {%- endcomment -%}
+        --takeover-transition-start: translate(-50%, -250%) scale({{ section.settings.takeover_background_scale | default: 3 }}) rotate(var(--takeover_background-angle));
+        --takeover-transition-middle:translate(-50%, -50%) scale({{ section.settings.takeover_background_scale | default: 3 }}) rotate(var(--takeover_background-angle));
+        --takeover-transition-end:translate(-50%, 200%) scale({{ section.settings.takeover_background_scale | default: 3 }}) rotate(var(--takeover_background-angle));
+        --takeover-reset-delay: {{ section.settings.takeover_reset_delay | default: 1500 }}ms;
+      }
+
+      global-takeover-loader {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        transform: translateY(-100%);
+        position: fixed;
+        z-index: 9999;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      global-takeover-loader:not([data-testing]) {
+        pointer-events: none !important;
+      }
+
+      global-takeover-loader.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.5s ease;
+      }
+
+      .takeover-logo-wrapper {
+        opacity: 0;
+        position: absolute;
+      }
+
+      global-takeover-loader .takeover-logo-wrapper svg {
+        fill: {{ section.settings.primary_colour }};
+      }
+
+      global-takeover-loader .takeover-background-wrapper svg {
+        fill: {{ section.settings.secondary_colour }};
+      }
+
+      global-takeover-loader.reversing .takeover-logo-wrapper svg {
+        fill: {{ section.settings.secondary_colour }};
+      }
+
+      global-takeover-loader.reversing .takeover-background-wrapper svg {
+        fill: {{ section.settings.primary_colour }};
+      }
+
+      global-takeover-loader:not(.hiding).active .takeover-logo-wrapper {
+        transition: opacity var(--medik8-logo-opacity-duration) ease;
+        transition-delay: var(--medik8-logo-opacity-delay);
+        opacity: 1;
+      }
+
+      global-takeover-loader.active.hiding .takeover-logo-wrapper {
+        transition-duration: var(--medik8-logo-opacity-duration-end);
+        transition-delay: var(--medik8-logo-opacity-delay-end);
+        opacity: 0;
+      }
+
+      .takeover-background-wrapper {
+        object-fit: cover;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        height: 100%;
+        width: 100%;
+        transform: var(--takeover-transition-start);
+      }
+
+      global-takeover-loader:not(.hiding).active .takeover-background-wrapper {
+        transform: var(--takeover-transition-middle);
+        transition-duration: var(--takeover-transition-duration);  
+        transition-delay: var(--takeover-transition-delay);
+      }
+
+      global-takeover-loader.active.hiding .takeover-background-wrapper {
+        transform: var(--takeover-transition-end);
+        transition-duration: var(--takeover-transition-duration-end);  
+        transition-delay: var(--takeover-transition-delay-end);
+      }
+    {%- endcapture -%}
+
+    {{- style
+      | strip
+      | strip_newlines
+      | replace: '  ', ''
+      | replace: ': ', ':'
+      | replace: ' {', '{'
+    -}}
+  </style>
+
+  <script src="{{ 'scripts.components.dist.GlobalTakeoverLoader.js' | asset_url }}" async></script>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "V2/GBL/takeover-loader",
+      "presets": [
+      {
+        "name": "V2/GBL/Takeover Loader"
+      }
+    ],
+    "settings": [
+      {
+        "type": "header",
+        "content": "General"
+      },
+      {
+        "type": "checkbox",
+        "id": "is_enabled",
+        "label": "Enable takeover animation",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "testing",
+        "label": "Testing mode",
+        "default": false,
+        "info": "Testing shortcuts: Press '1' to simulate a fetch, '2' to simulate fetch completion, and '3' to toggle the colour scheme"
+      },
+      {
+        "type": "header",
+        "content": "Colours"
+      },
+      {
+        "type": "color",
+        "id": "primary_colour",
+        "label": "Primary",
+        "default": "#ffffff",
+        "info": "Logo colour, also background colour when the colours are swapped"
+      },
+      {
+        "type": "color",
+        "id": "secondary_colour",
+        "label": "Secondary",
+        "default": "#000000",
+        "info": "Background colour, also logo colour when colours are swapped"
+      },
+      {
+        "type": "header",
+        "content": "Images",
+        "info": "They must be SVGs for colour switching to function"
+      },
+      {
+        "type": "image_picker",
+        "id": "svg_logo",
+        "label": "Takeover logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "svg_background",
+        "label": "Takeover background"
+      },
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "range",
+        "id": "medik8_logo_opacity_delay",
+        "label": "Logo opacity delay",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 500,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "medik8_logo_opacity_delay_end",
+        "label": "Logo opacity delay end",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 0,
+        "unit": "ms"
+      },
+      {
+        "type": "header",
+        "content": "Background"
+      },
+      {
+        "type": "range",
+        "id": "medik8_logo_opacity_duration",
+        "label": "Logo opacity duration",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 500,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "medik8_logo_opacity_duration_end",
+        "label": "Logo opacity duration end",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 500,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "takeover_transition_delay",
+        "label": "Transition delay",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 0,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "takeover_transition_delay_end",
+        "label": "Transition delay end",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 500,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "takeover_transition_duration",
+        "label": "Transition duration",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 1500,
+        "unit": "ms"
+      },
+      {
+        "type": "range",
+        "id": "takeover_transition_duration_end",
+        "label": "Transition duration end",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 1500,
+        "unit": "ms"
+      },
+      {
+        "type": "header",
+        "content": "Appearance"
+      },
+      {
+        "type": "range",
+        "id": "takeover_background_angle",
+        "label": "Takeover background angle",
+        "min": 0,
+        "max": 360,
+        "step": 10,
+        "default": 40,
+        "unit": "deg"
+      },
+      {
+        "type": "range",
+        "id": "takeover_background_scale",
+        "label": "Takeover background scale",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "header",
+        "content": "Animation reset"
+      },
+      {
+        "type": "range",
+        "id": "takeover_reset_delay",
+        "label": "Reset Delay",
+        "min": 0,
+        "max": 3000,
+        "step": 100,
+        "default": 1500,
+        "unit": "ms"
+      }
+    ]
+  }
+{% endschema %}

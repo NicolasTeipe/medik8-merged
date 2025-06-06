@@ -1,0 +1,1979 @@
+<!-- sections/v2_global__hero-slider.liquid -->
+
+{%- assign components = '' -%}
+
+{%- capture content -%}
+  {%- assign url_1 = 'scripts.components.dist.GlobalHeroSlider.js' | asset_url -%}
+  {%- assign url_2 = 'scripts.components.dist.GlobalScopedCarousel.js' | asset_url -%}
+  {%- assign components = url_1 | append: ',' | append: url_2 -%}
+  {%- assign component_id = section.id | split: '--' | last | split: '__' | first | downcase -%}
+
+  {% capture kps_slider_content %}
+    {% 
+      render 'v2_global.hero-slider.key_point_slider',
+      settings: section.settings,
+      container_width: settings.index_container_width
+    %}
+  {% endcapture %}
+
+  {%- assign slider_control_colors = '' -%}
+  {%- for block in section.blocks -%}
+    {%- assign slider_control_colors = slider_control_colors | append: block.settings.desktop__slider-control--colour | append: block.settings.mobile__slider-control--colour -%}
+    {%- unless forloop.last -%}
+      {%- assign slider_control_colors = slider_control_colors | append: ',' -%}
+    {%- endunless -%}
+  {%- endfor -%}
+
+  {%- comment -%}
+    Slider speed for this section is controlled via the schema on a global and per slide basis.
+    Therefore, this 'delay' is used only to set the delay for the first slide after initial page load.
+    After that, we update the delay for each slide off the back of the 'settle' event.
+  {%- endcomment -%}
+  {%- assign delay = section.settings.slide_delay | times: 1000 -%}
+  {% for block in section.blocks limit:1 %}
+    {%- if block.settings.slide__delay_override == true -%}
+      {%- assign delay = block.settings.slide__delay_speed | times: 1000 -%}
+    {%- endif -%}
+  {% endfor %}
+
+  <global-hero-slider-{{ component_id }} data-comp-id="{{ component_id }}" class="d-block ghs-container block-rel js-v2-global-hero__hotspot-target">
+    <global-carousel-{{ component_id }}
+      data-comp-id="{{ component_id }}"
+      class="d-block"
+      data-controls-colors="{{ slider_control_colors }}">
+      <template>
+        {
+          "options":{
+            "loop":true
+          },
+          "plugins":{
+            "autoplay":{
+              "delay":{{ delay }}
+            }
+          }
+        }
+      </template>
+      <div class="global-carousel__items">
+        <div class="global-carousel__container">
+          {% for block in section.blocks %}
+            {%- if block.type == 'Slide' -%}
+              {% assign desktop_hotspots = '' %}
+
+              {% for i in (1..6) %}
+                {% capture product %}desktop__hs_{{ forloop.index }}__product{% endcapture %}
+                {% capture sku %}desktop__hs_{{ forloop.index }}__variant_sku{% endcapture %}
+                {% capture top %}desktop__hs_{{ forloop.index }}__top{% endcapture %}
+                {% capture left %}desktop__hs_{{ forloop.index }}__left{% endcapture %}
+                {% capture dark %}desktop__hs_{{ forloop.index }}__dark{% endcapture %}
+                {% capture reviews %}desktop__hs_{{ forloop.index }}__show_reviews{% endcapture %}
+                {% capture colour %}desktop__hs_{{ forloop.index }}__colour{% endcapture %}
+
+                {% capture product %}{{ block.settings[product] }}{% endcapture %}
+                {% capture sku %}{{ block.settings[sku] }}{% endcapture %}
+                {% capture top %}{{ block.settings[top] }}%{% endcapture %}
+                {% capture left %}{{ block.settings[left] }}%{% endcapture %}
+                {% capture dark %}{{ block.settings[dark] }}{% endcapture %}
+                {% capture reviews %}{{ block.settings[reviews] }}{% endcapture %}
+                {% capture colour %}{{ block.settings[colour] }}{% endcapture %}
+
+                {{ product.id }}
+                {% capture hotspot %}
+                  {% if product %}
+                    <global-hotspot-target 
+                      style="top:{{ top }};left:{{ left }};opacity:0;"
+                      class="hotspot-color--{{ colour }}"
+                      data-product_handle="{{ product }}"
+                      data-sku="{{ sku }}"
+                      data-hotspot_item_class="global-hotspot-item--bottom-right-x2"
+                      data-hotspot_item_target=".js-v2-global-hero__hotspot-target"
+                      data-dark="{{ dark }}"
+                      data-show_reviews="{{ reviews }}">
+                    </global-hotspot-target>
+                  {% endif %}
+                {% endcapture %}
+                {% capture desktop_hotspots %}{{ desktop_hotspots }}{{ hotspot }}{% endcapture %}
+              {% endfor %}
+
+              {% assign mobile_hotspots = '' %}
+              {% for i in (1..6) %}
+                {% capture product %}mobile__hs_{{ forloop.index }}__product{% endcapture %}
+                {% capture sku %}mobile__hs_{{ forloop.index }}__variant_sku{% endcapture %}
+                {% capture top %}mobile__hs_{{ forloop.index }}__top{% endcapture %}
+                {% capture left %}mobile__hs_{{ forloop.index }}__left{% endcapture %}
+                {% capture dark %}mobile__hs_{{ forloop.index }}__dark{% endcapture %}
+                {% capture reviews %}mobile__hs_{{ forloop.index }}__show_reviews{% endcapture %}
+                {% capture colour %}mobile__hs_{{ forloop.index }}__colour{% endcapture %}
+
+                {% capture product %}{{ block.settings[product] }}{% endcapture %}
+                {% capture sku %}{{ block.settings[sku] }}{% endcapture %}
+                {% capture top %}{{ block.settings[top] }}%{% endcapture %}
+                {% capture left %}{{ block.settings[left] }}%{% endcapture %}
+                {% capture dark %}{{ block.settings[dark] }}{% endcapture %}
+                {% capture reviews %}{{ block.settings[reviews] }}{% endcapture %}
+                {% capture colour %}{{ block.settings[colour] }}{% endcapture %}
+
+                {%- liquid
+                  assign hotspot_item_force_up = ''
+                  if block.settings.force_cta_bottom == true and block.settings.mobile__vertical != '@mobile__align-bottom'
+                    assign hotspot_item_force_up = 'global-hotspot-item--force-up'
+                  elsif block.settings.mobile__vertical == '@mobile__align-bottom'
+                    assign hotspot_item_force_up = 'global-hotspot-item--force-top'
+                  endif
+                -%}
+
+                {% capture hotspot %}
+                  {% if product != blank %}
+                    <global-hotspot-target 
+                      style="top:{{ top }};left:{{ left }};opacity:0;"
+                      class="hotspot-color--{{ colour }}"
+                      data-product_handle="{{ product }}"
+                      data-sku="{{ sku }}"
+                      data-hotspot_item_class="global-hotspot-item--bottom-right-x2 {{ hotspot_item_force_up }}"
+                      data-hotspot_item_target=".js-v2-global-hero__hotspot-target"
+                      data-dark="{{ dark }}"
+                      data-show_reviews="{{ reviews }}">
+                    </global-hotspot-target>
+                  {% endif %}
+                {% endcapture %}
+                {% capture mobile_hotspots %}{{ mobile_hotspots }}{{ hotspot }}{% endcapture %}
+              {% endfor %}
+            {%- elsif block.type == 'Video' -%}
+              {%- capture desktop_video -%}
+                {%- render 'shopify-video', 
+                  class: "video-container__desktop-video", 
+                  video_src: block.settings.video_desktop, 
+                  thumbnail: block.settings.desktop__image,
+                  autoplay: block.settings.autoplay_desktop,
+                  loop: block.settings.loop_desktop,
+                  muted: block.settings.muted_desktop,
+                  playsinline: true
+                -%}
+              {%- endcapture -%}
+              {%- capture mobile_video -%}
+                {%- render 'shopify-video', 
+                  class: "video-container__mobile-video", 
+                  video_src: block.settings.video_mobile, 
+                  thumbnail: block.settings.mobile__image,
+                  autoplay: block.settings.autoplay_mobile,
+                  loop: block.settings.loop_mobile,
+                  muted: block.settings.muted_mobile,
+                  playsinline: true
+                -%}
+              {%- endcapture -%}
+            {%- endif -%}
+
+            {%- liquid 
+              assign contentWrapperClass = 'global-hero-slider__content block-6/12 flex gap column-nowrap cell-l cell-r ct @tablet__block-9/12 @mobile__block-12/12'
+              if kps_slider_content != blank
+                assign contentWrapperClass = 'global-hero-slider__content global-hero-slider__content--has-kps block-6/12 flex gap column-nowrap cell-l cell-r ct @tablet__block-9/12 @mobile__block-12/12'
+              endif
+            -%}
+            
+            {%- liquid
+              assign loading = 'lazy'
+              if forloop.first 
+                assign loading = 'eager'
+              endif 
+            -%}
+
+            {%- assign slide_delay = section.settings.slide_delay | times: 1000 -%}
+            {%- if block.settings.slide__delay_override == true -%}
+              {%- assign slide_delay = block.settings.slide__delay_speed | times: 1000 -%}
+            {%- endif -%}
+
+            {%- if block.type == 'Slide' -%}
+              {%- render 'global.hero-banner',
+                class:'global-carousel__slide',
+                loading: loading,
+                contentWrapperClass: contentWrapperClass,
+                settings: block.settings,
+                desktop_hotspots: desktop_hotspots,
+                mobile_hotspots: mobile_hotspots,
+                slide_delay: slide_delay,
+              -%}
+            {%- elsif block.type == 'Video' -%}
+              {%- render 'global.hero-banner',
+                class:'global-carousel__slide',
+                loading: loading,
+                contentWrapperClass: contentWrapperClass,
+                settings: block.settings,
+                desktop_video: desktop_video,
+                mobile_video: mobile_video,
+                slide_delay: slide_delay,
+              -%}
+            {%- endif -%}
+          {% endfor %}
+        </div>
+      </div>
+    </global-carousel-{{ component_id }}>
+    {%- if section.blocks.size > 1 -%}
+      <div class="global-hero-slider__controls {% if kps_slider_content != blank %} global-hero-slider__controls--has-kps{% endif %}">
+        <div class="block-grid block-grid--index flex row-wrap align-center cell-l cell-r flex-grid">
+          <button aria-label="Previous" type="button" class="js-ghs__prev btn-reset global-carousel-nav-btn global-carousel-nav-btn--prev"></button>
+          <span class="js-ghs__count global-hero-slider__count t-xxs tac">1 / {{ section.blocks.size }}</span>
+          <button aria-label="Next" type="button" class="js-ghs__next btn-reset global-carousel-nav-btn global-carousel-nav-btn--next"></button>
+          <button aria-label="Pause" type="button" class="js-ghs__play btn-reset global-carousel-nav-btn global-carousel-nav-btn--play"></button>
+        </div>
+      </div>
+    {%- endif -%}
+  </global-hero-slider-{{ component_id }}>
+
+  {% if kps_slider_content != blank %}
+    <div class="kps-slider__wrapper flex align-center justify-center">
+      {{ kps_slider_content }}
+    </div>
+  {% endif %}
+
+  <style>
+    #shopify-section-{{ section.id }} .ghs-container {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .ghs-container {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+  </style>
+{%- endcapture -%}
+
+{% assign components =  components | split:',' %}
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }} 
+      </template>
+  </global-section-loader>
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async data-comp-id="{{ component_id }}"></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/hero-slider",
+  "class":"block-rel",
+  "presets": [ 
+    {
+      "name": "V2/GBL/hero-slider"
+    }
+  ],
+  "settings":[
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Slider Config"
+    },
+    {
+      "type": "range",
+      "id": "slide_delay",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "sec",
+      "label": "Slide Speed",
+      "info": "How long, in seconds, each slide should display for before moving to the next slide",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Key Points Slider (KPS)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_kps",
+      "label": "Show KPS Slider",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "KPS #1"
+    },
+    {
+      "id": "kps_1__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_1__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    },
+    {
+      "type": "header",
+      "content": "KPS #2"
+    },
+    {
+      "id": "kps_2__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_2__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    },
+    {
+      "type": "header",
+      "content": "KPS #3"
+    },
+    {
+      "id": "kps_3__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_3__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    },
+    {
+      "type": "header",
+      "content": "KPS #4"
+    },
+    {
+      "id": "kps_4__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_4__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    },
+    {
+      "type": "header",
+      "content": "KPS #5"
+    },
+    {
+      "id": "kps_5__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_5__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    },
+    {
+      "type": "header",
+      "content": "KPS #6"
+    },
+    {
+      "id": "kps_6__icon",
+      "type": "image_picker",
+      "label": "Image",
+      "info": "64x64 px"
+    },
+    {
+      "id": "kps_6__title",
+      "type": "text",
+      "label": "Text",
+      "info": "Text will truncate after 24 characters."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Slide",
+      "name": "Slide",
+      "limit": 15,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Global Settings"
+        },
+        {
+          "type": "checkbox",
+          "id": "slide__delay_override",
+          "label": "Override global slide delay value",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "slide__delay_speed",
+          "min": 2,
+          "max": 10,
+          "step": 1,
+          "unit": "sec",
+          "label": "Slide delay, in seconds",
+          "default": 6
+        },
+        {
+          "type": "checkbox",
+          "id": "h1",
+          "label": "Use h1",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Desktop Settings"
+        },
+        {
+          "type": "header",
+          "content": "Layout @desktop"
+        },
+        {
+          "type": "select",
+          "id": "desktop__vertical",
+          "label": "Aligmnent - vertical",
+          "default": "align-center",
+          "options": [
+            {
+              "value": "align-center",
+              "label": "Center"
+            },
+            {
+              "value": "align-top",
+              "label": "Top"
+            },
+            {
+              "value": "align-bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "desktop__horizontal",
+          "label": "Aligmnent - horizontal",
+          "default": "justify-center",
+          "options": [
+            {
+              "value": "justify-center",
+              "label": "Center"
+            },
+            {
+              "value": "justify-left",
+              "label": "Left"
+            },
+            {
+              "value": "justify-right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "desktop__text_align",
+          "label": "Text Aligment",
+          "default": "tal",
+          "options": [
+            {
+              "value": "tac",
+              "label": "Center"
+            },
+            {
+              "value": "tal",
+              "label": "Left"
+            },
+            {
+              "value": "tar",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Text Content @desktop"
+        },
+        {
+          "type": "color",
+          "id": "desktop__text_color",
+          "label": "Text Color",
+          "default":"#000"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "desktop__heading",
+          "label": "Heading"
+        },
+        {
+          "type": "html",
+          "id": "desktop__paragraph",
+          "label": "Paragraph",
+          "info": "Accepts HTML"
+        },
+        {
+          "type": "text",
+          "id": "desktop__cta_text",
+          "label": "CTA Text"
+        },
+        {
+          "type": "select",
+          "id": "desktop_cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "url",
+          "id": "desktop__cta_url",
+          "label": "CTA link"
+        },
+        {
+          "type": "select",
+          "id": "desktop__slider-control--colour",
+          "label": "Slider Controls Colour",
+          "options": [
+            {
+              "value": "0",
+              "label": "Black"
+            },
+            {
+              "value": "1",
+              "label": "White"
+            },
+          ],
+          "default": "0"
+        },
+        {
+          "type": "header",
+          "content": "Visual Content @desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop__image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Hotspots @desktop"
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #1"
+        },
+        {
+          "id": "desktop__hs_1__product",
+          "type": "product",
+          "label": "Hotspot #1 - Product"
+        },
+        {
+          "id": "desktop__hs_1__variant_sku",
+          "type": "text",
+          "label": "Hotspot #1 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_1__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #1 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_1__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #1 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_1__colour",
+          "label": "Hotspot #1 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_1__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_1__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #2"
+        },
+        {
+          "id": "desktop__hs_2__product",
+          "type": "product",
+          "label": "Hotspot #2 - Product"
+        },
+        {
+          "id": "desktop__hs_2__variant_sku",
+          "type": "text",
+          "label": "Hotspot #2 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_2__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #2 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_2__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #2 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_2__colour",
+          "label": "Hotspot #2 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_2__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_2__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+
+        {
+          "type": "header",
+          "content": "Hotspot #3"
+        },
+        {
+          "id": "desktop__hs_3__product",
+          "type": "product",
+          "label": "Hotspot #3 - Product"
+        },
+        {
+          "id": "desktop__hs_3__variant_sku",
+          "type": "text",
+          "label": "Hotspot #3 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_3__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #3 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_3__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #3 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_3__colour",
+          "label": "Hotspot #3 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_3__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_3__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #4"
+        },
+        {
+          "id": "desktop__hs_4__product",
+          "type": "product",
+          "label": "Hotspot #4 - Product"
+        },
+        {
+          "id": "desktop__hs_4__variant_sku",
+          "type": "text",
+          "label": "Hotspot #4 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_4__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #4 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_4__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #4 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_4__colour",
+          "label": "Hotspot #4 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_4__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_4__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+
+        {
+          "type": "header",
+          "content": "Hotspot #5"
+        },
+        {
+          "id": "desktop__hs_5__product",
+          "type": "product",
+          "label": "Hotspot #5 - Product"
+        },
+        {
+          "id": "desktop__hs_5__variant_sku",
+          "type": "text",
+          "label": "Hotspot #5 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_5__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #5 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_5__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #5 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_5__colour",
+          "label": "Hotspot #5 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_5__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_5__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #6"
+        },
+        {
+          "id": "desktop__hs_6__product",
+          "type": "product",
+          "label": "Hotspot #6 - Product"
+        },
+        {
+          "id": "desktop__hs_6__variant_sku",
+          "type": "text",
+          "label": "Hotspot #6 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_6__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #6 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "desktop__hs_6__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #6 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "desktop__hs_6__colour",
+          "label": "Hotspot #6 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_6__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desktop__hs_6__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Mobile Settings"
+        },
+        {
+          "type": "header",
+          "content": "Layout @mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile__vertical",
+          "label": "Aligmnent - vertical",
+          "default": "@mobile__align-center",
+          "options": [
+            {
+              "value": "@mobile__align-center",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__align-top",
+              "label": "Top"
+            },
+            {
+              "value": "@mobile__align-bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "mobile__horizontal",
+          "label": "Aligmnent - horizontal",
+          "default": "@mobile__justify-center",
+          "options": [
+            {
+              "value": "@mobile__justify-center",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__justify-left",
+              "label": "Left"
+            },
+            {
+              "value": "@mobile__justify-right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "mobile__text_align",
+          "label": "Text Aligment",
+          "default": "@mobile__tal",
+          "options": [
+            {
+              "value": "@mobile__tac",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__tal",
+              "label": "Left"
+            },
+            {
+              "value": "@mobile__tar",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Text Content @mobile"
+        },
+        {
+          "type": "color",
+          "id": "mobile__text_color",
+          "label": "Text Color",
+          "default":"#000"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "mobile__heading",
+          "label": "Heading"
+        },
+        {
+          "type": "html",
+          "id": "mobile__paragraph",
+          "label": "Paragraph",
+          "info": "Accepts HTML"
+        },
+        {
+          "type": "text",
+          "id": "mobile__cta_text",
+          "label": "CTA Text"
+        },
+        {
+          "type": "select",
+          "id": "mobile_cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "url",
+          "id": "mobile__cta_url",
+          "label": "CTA link"
+        },
+        {
+          "type": "checkbox",
+          "id": "force_cta_bottom",
+          "label": "Force CTA to bottom of section",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "mobile__slider-control--colour",
+          "label": "Slider Controls Colour",
+          "options": [
+            {
+              "value": "0",
+              "label": "Black"
+            },
+            {
+              "value": "1",
+              "label": "White"
+            },
+          ],
+          "default": "0"
+        },
+        {
+          "type": "header",
+          "content": "Visual Content @mobile"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile__image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Hotspots @mobile"
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #1"
+        },
+        {
+          "id": "mobile__hs_1__product",
+          "type": "product",
+          "label": "Hotspot #1 - Product"
+        },
+        {
+          "id": "mobile__hs_1__variant_sku",
+          "type": "text",
+          "label": "Hotspot #1 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_1__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #1 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_1__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #1 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_1__colour",
+          "label": "Hotspot #1 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_1__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_1__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #2"
+        },
+        {
+          "id": "mobile__hs_2__product",
+          "type": "product",
+          "label": "Hotspot #2 - Product"
+        },
+        {
+          "id": "mobile__hs_2__variant_sku",
+          "type": "text",
+          "label": "Hotspot #2 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_2__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #2 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_2__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #2 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_2__colour",
+          "label": "Hotspot #2 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_2__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_2__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #3"
+        },
+        {
+          "id": "mobile__hs_3__product",
+          "type": "product",
+          "label": "Hotspot #3 - Product"
+        },
+        {
+          "id": "mobile__hs_3__variant_sku",
+          "type": "text",
+          "label": "Hotspot #3 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_3__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #3 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_3__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #3 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_3__colour",
+          "label": "Hotspot #3 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_3__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_3__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #4"
+        },
+        {
+          "id": "mobile__hs_4__product",
+          "type": "product",
+          "label": "Hotspot #4 - Product"
+        },
+        {
+          "id": "mobile__hs_4__variant_sku",
+          "type": "text",
+          "label": "Hotspot #4 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_4__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #4 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_4__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #4 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_4__colour",
+          "label": "Hotspot #4 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_4__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_4__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #5"
+        },
+        {
+          "id": "mobile__hs_5__product",
+          "type": "product",
+          "label": "Hotspot #5 - Product"
+        },
+        {
+          "id": "mobile__hs_5__variant_sku",
+          "type": "text",
+          "label": "Hotspot #5 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_5__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #5 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_5__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #5 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_5__colour",
+          "label": "Hotspot #5 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_5__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_5__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hotspot #6"
+        },
+        {
+          "id": "mobile__hs_6__product",
+          "type": "product",
+          "label": "Hotspot #6 - Product"
+        },
+        {
+          "id": "mobile__hs_6__variant_sku",
+          "type": "text",
+          "label": "Hotspot #6 - Variant SKU"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_6__left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #6 - Postiion X"
+        },
+        {
+          "type": "range",
+          "id": "mobile__hs_6__top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "label": "Hotspot #6 - Postiion Y"
+        },
+        {
+          "type": "radio",
+          "id": "mobile__hs_6__colour",
+          "label": "Hotspot #6 Colour",
+          "options": [
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "white",
+              "label": "White"
+            }
+          ],
+          "default": "black"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_6__dark",
+          "label": "Use dark version of product card",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile__hs_6__show_reviews",
+          "label": "Show Reviews",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "type": "Video",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Global Setting"
+        },
+        {
+          "type": "checkbox",
+          "id": "slide__delay_override",
+          "label": "Override global slide delay value",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "slide__delay_speed",
+          "min": 2,
+          "max": 10,
+          "step": 1,
+          "unit": "sec",
+          "label": "Slide delay, in seconds",
+          "default": 6
+        },
+        {
+          "type": "checkbox",
+          "id": "h1",
+          "label": "Use h1",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Desktop Settings"
+        },
+
+        {
+          "type": "header",
+          "content": "Layout @desktop"
+        },
+        {
+          "type": "select",
+          "id": "desktop__vertical",
+          "label": "Aligmnent - vertical",
+          "default": "align-center",
+          "options": [
+            {
+              "value": "align-center",
+              "label": "Center"
+            },
+            {
+              "value": "align-top",
+              "label": "Top"
+            },
+            {
+              "value": "align-bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "desktop__horizontal",
+          "label": "Aligmnent - horizontal",
+          "default": "justify-center",
+          "options": [
+            {
+              "value": "justify-center",
+              "label": "Center"
+            },
+            {
+              "value": "justify-left",
+              "label": "Left"
+            },
+            {
+              "value": "justify-right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "desktop__text_align",
+          "label": "Text Aligment",
+          "default": "tal",
+          "options": [
+            {
+              "value": "tac",
+              "label": "Center"
+            },
+            {
+              "value": "tal",
+              "label": "Left"
+            },
+            {
+              "value": "tar",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Text Content @desktop"
+        },
+        {
+          "type": "color",
+          "id": "desktop__text_color",
+          "label": "Text Color",
+          "default":"#000"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "desktop__heading",
+          "label": "Heading"
+        },
+        {
+          "type": "html",
+          "id": "desktop__paragraph",
+          "label": "Paragraph",
+          "info": "Accepts HTML"
+        },
+        {
+          "type": "text",
+          "id": "desktop__cta_text",
+          "label": "CTA Text"
+        },
+        {
+          "type": "select",
+          "id": "desktop_cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "url",
+          "id": "desktop__cta_url",
+          "label": "CTA link"
+        },
+        {
+          "type": "select",
+          "id": "desktop__slider-control--colour",
+          "label": "Slider Controls Colour",
+          "options": [
+            {
+              "value": "0",
+              "label": "Black"
+            },
+            {
+              "value": "1",
+              "label": "White"
+            },
+          ],
+          "default": "0"
+        },
+        {
+          "type": "header",
+          "content": "Visual Content @desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop__image",
+          "label": "Image",
+          "info": "This image is also used as the video thumbnail"
+        },
+        {
+          "type": "header",
+          "content": "Video Settings @desktop"
+        },
+        {
+          "type": "video",
+          "id": "video_desktop",
+          "label": "Video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay_desktop",
+          "label": "Autoplay",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "loop_desktop",
+          "label": "Loop",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "muted_desktop",
+          "label": "Muted",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Mobile Settings"
+        },
+        {
+          "type": "header",
+          "content": "Layout @mobile"
+        },
+        {
+          "type": "select",
+          "id": "mobile__vertical",
+          "label": "Aligmnent - vertical",
+          "default": "@mobile__align-center",
+          "options": [
+            {
+              "value": "@mobile__align-center",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__align-top",
+              "label": "Top"
+            },
+            {
+              "value": "@mobile__align-bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "mobile__horizontal",
+          "label": "Aligmnent - horizontal",
+          "default": "@mobile__justify-center",
+          "options": [
+            {
+              "value": "@mobile__justify-center",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__justify-left",
+              "label": "Left"
+            },
+            {
+              "value": "@mobile__justify-right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "mobile__text_align",
+          "label": "Text Aligment",
+          "default": "@mobile__tal",
+          "options": [
+            {
+              "value": "@mobile__tac",
+              "label": "Center"
+            },
+            {
+              "value": "@mobile__tal",
+              "label": "Left"
+            },
+            {
+              "value": "@mobile__tar",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Text Content @mobile"
+        },
+        {
+          "type": "color",
+          "id": "mobile__text_color",
+          "label": "Text Color",
+          "default":"#000"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "mobile__heading",
+          "label": "Heading"
+        },
+        {
+          "type": "html",
+          "id": "mobile__paragraph",
+          "label": "Paragraph",
+          "info": "Accepts HTML"
+        },
+        {
+          "type": "text",
+          "id": "mobile__cta_text",
+          "label": "CTA Text"
+        },
+        {
+          "type": "select",
+          "id": "mobile_cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "url",
+          "id": "mobile__cta_url",
+          "label": "CTA link"
+        },
+        {
+          "type": "checkbox",
+          "id": "force_cta_bottom",
+          "label": "Force CTA to bottom of section",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "mobile__slider-control--colour",
+          "label": "Slider Controls Colour",
+          "options": [
+            {
+              "value": "0",
+              "label": "Black"
+            },
+            {
+              "value": "1",
+              "label": "White"
+            },
+          ],
+          "default": "0"
+        },
+        {
+          "type": "header",
+          "content": "Visual Content @mobile"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile__image",
+          "label": "Image",
+          "info": "This image is also used as the video thumbnail"
+        },
+        {
+          "type": "header",
+          "content": "Video Settings @mobile"
+        },
+        {
+          "type": "video",
+          "id": "video_mobile",
+          "label": "Video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay_mobile",
+          "label": "Autoplay",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "loop_mobile",
+          "label": "Loop",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "muted_mobile",
+          "label": "Muted",
+          "default": true
+        }
+      ]
+    } 
+  ]
+}
+{% endschema %}

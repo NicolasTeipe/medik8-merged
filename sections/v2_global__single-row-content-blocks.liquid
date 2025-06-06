@@ -1,0 +1,344 @@
+{%- assign slider_style = section.settings.slider_style -%}
+
+{%- assign slider_loop = true -%}
+{%- if slider_style == 'full_width' -%}
+  {%- assign slider_loop = false -%}
+{%- endif -%}
+
+{%- assign slide_width = 100 -%}
+{%- if slider_style == 'peek' -%}
+  {%- assign slide_width = 66 -%}
+{%- endif -%}
+
+<div class="srcb-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+  {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+    {% render 'v2_global.section_heading',
+      heading: section.settings.heading,
+      sub_heading: section.settings.sub_heading
+    %}
+  {% endif %}
+
+  <div class="block-grid block-grid--index cell-l cell-r {% if slider_style == 'peek' %}@mobile__cell-r--none{% endif %}">
+    <global-carousel class="d-block">
+      <template>
+        {
+          "options":{ 
+            "loop": false,
+            "skipSnaps": {{- slider_loop -}},
+            "breakpoints": {
+              "(min-width: 768px)": { "active": false }
+            }
+          },
+          "plugins":{
+            "nav": {
+              "dotsNode": ".nav-dots-{{ section.id }}"
+            }
+          }
+        }
+      </template>
+
+      <div class="global-carousel__items">
+        <div class="global-carousel__container">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'testimonial' -%}
+              <figure class="srcb-block srcb-block-{{ section.id }} srcb-testimonial global-carousel__slide--auto flex flex-dir-col align-center tac">
+                {%- render 'icon-quote-acta' -%}
+                <div class="flex-grid--d2 flex flex-dir-col align-center">
+                  <span class="srcb-testimonial__headline">{{ block.settings.headline | newline_to_br }}</span>
+                  <span class="srcb-testimonial__text">{{ block.settings.text | newline_to_br }}</span>
+                </div>
+                <figcaption class="srcb-testimonial__attribution t-ucase f-w600">
+                  {{ block.settings.attribution }}
+                </figcaption>
+              </figure>
+            {%- endif -%}
+
+            {%- if block.type == 'claim' -%}
+              {%- capture block_content -%}
+                {%- if block.settings.image -%}
+                  {{ block.settings.image | 
+                    image_url: width: 800 | 
+                    image_tag: 
+                    widths: '256, 512, 1024',
+                    loading: 'lazy', 
+                    class: 'block-ar-1 block-12/12 block-objc',
+                    alt: block.settings.image.alt
+                  }}
+                {%- endif -%}
+                <span class="srcb-claim__headline tac">{{ block.settings.headline }}</span>
+                <div class="srcb-claim__content flex column-nowrap flex-grid--d2 grow-1 justify-space">
+                  <span class="srcb-claim__body tac">{{ block.settings.text | newline_to_br }}</span>
+                  {%- if block.settings.url and block.settings.cta.size > 0 -%}
+                    <span class="srcb-claim__cta t-ul t-ucase tac f-w600">{{ block.settings.cta }}</span>
+                  {%- endif -%}
+                </div>
+              {%- endcapture -%}
+              
+              {%- capture block_content -%}
+                {%- if block.settings.url -%}
+                  <a href="{{ block.settings.url }}" class="srcb-block srcb-block-{{ section.id }} srcb-claim global-carousel__slide--auto flex">
+                    <article class="flex flex-dir-col flex-grid--d2">
+                      {{ block_content }}
+                    </article>
+                  </a>
+                {%- else -%}
+                  <article class="srcb-block srcb-block-{{ section.id }} srcb-claim global-carousel__slide--auto flex flex-dir-col flex-grid--d2">
+                    {{ block_content }}
+                  </article>
+                {%- endif -%}
+              {%- endcapture -%}
+
+              {{ block_content }}
+            {%- endif -%}
+
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.show_nav_dots -%}
+          <div class="nav-dots-{{ section.id }} tac"></div>
+        {%- endif -%}
+      </div>
+    </global-carousel>
+  </div>
+</div>
+
+<style>
+  #shopify-section-{{ section.id }} .srcb-container {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .srcb-container {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+
+  .srcb-block-{{ section.id }} {
+    max-width: {{- slide_width -}}%;
+    width: {{- slide_width -}}%;
+  }
+
+  @media screen and (min-width: 768px) {
+    .srcb-block-{{ section.id }} {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "V2/GBL/single-row-content",
+  "presets": [
+    {
+      "name": "V2/GBL/Single Row Content Blocks"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default": "#fff"
+    },
+    {
+      "type": "header",
+      "content": "Slider Configuration"
+    },
+    {
+      "type": "paragraph",
+      "content": "Applies only to mobile widths."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_nav_dots",
+      "label": "Show Slider Navigation Dots",
+      "default": false
+    },
+    {
+      "type": "radio",
+      "id": "slider_style",
+      "label": "Slider Style",
+      "options": [
+        {
+          "value": "full_width",
+          "label": "Full Width"
+        },
+        {
+          "value": "peek",
+          "label": "Peek"
+        }
+      ],
+      "default": "full_width"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "html",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "headline",
+          "label": "Headline"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "attribution",
+          "label": "Attribution"
+        },
+      ]
+    },
+    {
+      "type": "claim",
+      "name": "Claim",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "headline",
+          "label": "Headline"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "cta",
+          "label": "CTA"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -4,7 +4,6 @@
 
 {%- comment -%}
   Badge display priority
-  - low_stock
   - site_wide / site_wide_label_enabled
   - custom_badge
   - on_sale
@@ -34,10 +33,8 @@
 {%- endfor -%}
 
 
-{%- if low_stock -%}
-  <div class="wayfx-badge wayfx-badge--low-stock">{{ 'products.product.low_stock' | t }}</div>
-{%- elsif on_sale and site_wide -%}
-    <div class="wayfx-badge wayfx-badge--discount site-wide--label discounts__vip_access_only">
+{%- if on_sale and site_wide -%}
+    <div class="wayfx-badge wayfx-badge--discount site-wide--label">
       {%- if site_wide_label_enabled -%}
         {{ site_wide_label }}
       {%- endif -%}

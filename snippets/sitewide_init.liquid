@@ -1,0 +1,10 @@
+<script>
+  {%- if settings.ff_sitewide_pricing -%}
+    {%- assign customer_tags = customer.tags | json -%}
+    window.sitewide = window.progressBarTieredDiscountsData?.metafields
+      ? new SitewidePriceHandler({{ customer_tags }})
+      : undefined;
+  {%- else -%}
+    window.sitewide = undefined;
+  {%- endif -%}
+</script>  

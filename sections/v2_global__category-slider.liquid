@@ -1,0 +1,315 @@
+{% assign components = '' %}
+
+{% capture content %}
+  <div class="gcs-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+    {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+      {% 
+        render 'v2_global.section_heading', 
+        heading: section.settings.heading,
+        sub_heading: section.settings.sub_heading
+      %}
+    {% endif %}
+    <div class="cell-l cell-r block-grid block-grid--index @mobile__cell-r--none">
+      <global-carousel class="d-block">
+        <template>
+          {
+            "options":{ 
+              "loop": false,
+              "skipSnaps": true,
+              "breakpoints": {
+                "(min-width: 768px)": { "active": false }
+              }
+            },
+            "plugins":{
+              "nav": {
+                "nextBtn": ".gcs__nav--next",
+                "prevBtn": ".gcs__nav--prev"
+              }
+            }
+          }
+        </template>
+        <div class="global-carousel__items block-rel">
+          <div class="global-carousel__container flex-item-grid flex-item-grid--gap-d2 flex-item-grid--6 flex-item-grid--peek-50 @mobile__flex-item-grid--3">
+            {% for block in section.blocks %}
+              {% if block.settings.image != blank and block.settings.link != blank and block.settings.title != blank  %}
+                <a href="{{ block.settings.link }}" class="global-carousel__slide global-carousel__slide--auto flex-item-grid__child flex column-nowrap gap--d2">
+                  {{ block.settings.image | 
+                    image_url: width: 366 | 
+                    image_tag: 
+                      widths: '256, 512,',
+                      loading: 'lazy', 
+                      class: 'block-ar-1 block-12/12 block-objc',
+                      alt: block.settings.title
+                  }}
+                  {% if block.settings.title != blank %}
+                  <span class="tac">{{ block.settings.title }}</span>
+                  {% endif %}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% comment %}
+          <button aria-label="Previous slide" class="js-gcs__prev gcs__nav gcs__nav--prev">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+            </svg>
+          </button>
+          <button aria-label="Next slide" class="js-gcs__next gcs__nav gcs__nav--next">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+            </svg>
+          </button>
+          {% endcomment %}
+        </div>
+      </global-carousel>
+    </div>
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }} .gcs-container {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .gcs-container {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .global-carousel__container {
+      margin-top: 8px;
+    }
+    #shopify-section-{{ section.id }} .global-carousel__slide img:hover {
+      box-shadow: 0 9px 12px #0000001a;
+      transform: scale(1.05);
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .global-carousel__slide--auto{
+        flex: 1;
+      }
+    }
+
+    .gcs__nav {
+      display: block;
+      background-color: #FFFFFFB3;
+      line-height: 0;
+      padding: 9px;
+      border: 1px solid #000;
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%) scale(0.9);
+
+    }
+  
+    .gcs__nav[disabled="disabled"] {
+      display: none;
+    }
+    
+    @media screen and (min-width: 768px){
+      .gcs__nav {
+        display: none;
+      }
+    }
+    
+    .gcs__nav--prev svg {
+      transform: rotate(180deg);
+    }
+    
+    .gcs__nav--prev {
+      left: 20px;
+    }
+    
+    .gcs__nav--next {
+      right: 20px;
+    }
+  </style>
+{% endcapture %}
+{% assign components =  components | split:',' %}
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }} 
+      </template>
+  </global-section-loader>
+
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/category-slider",
+  "presets": [ 
+    {
+      "name": "V2/GBL/category-slider"
+    }
+  ],
+  "settings":[
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "Here you can define the heading and 2 x CTA tiles. The large/feature tile are defined as blocks"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Block",
+      "name": "Block",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Aspect ratio of 1:1 recommended",
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+      ]
+    }   
+    
+  ]
+}
+{% endschema %}

@@ -1,0 +1,457 @@
+<!-- sections/v2_global__multi-panel-display.liquid -->
+
+{% assign components = '' %}
+
+{% capture content %}
+  <div class="mpd-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+    {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+      {% 
+        render 'v2_global.section_heading', 
+        heading: section.settings.heading,
+        sub_heading: section.settings.sub_heading
+      %}
+    {% endif %}
+    <div class="block-grid block-grid--index cell-l cell-r">
+      <global-carousel class="block-oh block-rel">
+        <template>
+          {
+            "options":{ 
+              "loop": false,
+              "skipSnaps": true,
+              "breakpoints": {
+                "(min-width: 768px)": { "active": false }
+              }
+            },
+            "plugins":{
+              "nav": {
+                "nextBtn": ".mpd__nav--next",
+                "prevBtn": ".mpd__nav--prev"
+              }
+            }
+          }
+        </template>
+
+        <div class="block-grid global-carousel__items global-carousel__items--overflow-visibile">
+          <div class="global-carousel__container flex-grid--d2">
+            {%- for block in section.blocks -%}
+              {%- if block.settings.image -%}
+                <span class="mpd__panel flex_1">
+                  <div class="block-rel">
+                    {%- assign image_alt = block.settings.image.alt | default: block.settings.text -%}
+                    {{ block.settings.image | 
+                      image_url: width: 512 | 
+                      image_tag: 
+                      widths: '256, 512,',
+                      loading: 'lazy', 
+                      class: 'd-block block-ar-1 block-12/12 block-objc row--d2',
+                      image_alt: image_alt
+                    }}
+                    {%- if block.settings.badge != blank -%}
+                      <span class="mpd__badge">{{  block.settings.badge }}</span>
+                    {%- endif -%}
+                  </div>
+                  <div class="mpd__text row--d2">{{ block.settings.text }}</div>
+                  <div class="flex flex-grid--d2 mpd__cta-wrapper">
+                    {%- if block.settings.cta_1_text != blank -%}
+                      <a 
+                        href="{{ block.settings.cta_1_url }}" 
+                        class="v2-btn v2-btn--{{ block.settings.cta_1_style }} d-block"
+                      >{{ block.settings.cta_1_text }}</a>
+                    {%- endif -%}
+                    {%- if block.settings.cta_2_text != blank -%}
+                      <a 
+                        href="{{ block.settings.cta_2_url }}" 
+                        class="v2-btn v2-btn--{{ block.settings.cta_2_style }} d-block"
+                      >{{ block.settings.cta_2_text }}</a>
+                    {%- endif -%}
+                  </div>
+                </span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          <button aria-label="Previous slide" class="mpd__nav mpd__nav--prev">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+            </svg>
+          </button>
+          <button aria-label="Next slide" class="mpd__nav mpd__nav--next">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+            </svg>
+          </button>
+        </div>
+      </global-carousel>
+    </div>
+
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }} .mpd-container {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .mpd-container {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+
+    .mpd__panel {
+      min-width: 70%;
+    }
+
+    .mpd__text {
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .mpd__cta-wrapper {
+      flex-wrap: wrap;
+    }
+
+    .mpd__badge {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      display: inline-flex;
+      color: black;
+      background-color: #f6f6f6;
+      padding: 4.75px 13.5px;
+      border-radius: 0.3rem;
+      line-height:1.2;
+      font-size:12px;
+      max-width:calc(100% - 120px)
+    }
+    
+    @media screen and (min-width: 768px) {
+      .mpd__panel {
+        min-width: auto;
+      }
+      
+      .mpd__text {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+
+      .mpd__badge {
+        bottom: 16px;
+        left: 16px;
+      }
+    }
+
+    .mpd__nav {
+      display: block;
+      background-color: #FFFFFFB3;
+      line-height: 0;
+      padding: 9px;
+      border: 1px solid #000;
+      position: absolute;
+      top: 35%;
+      transform: translateY(-50%) scale(0.9);
+
+    }
+
+    .mpd__nav[disabled="disabled"] {
+      display: none;
+    }
+    
+    @media screen and (min-width: 768px){
+      .mpd__nav {
+        display: none;
+      }
+    }
+    
+    .mpd__nav--prev svg {
+      transform: rotate(180deg);
+    }
+    
+    .mpd__nav--prev {
+      left: 20px;
+    }
+    
+    .mpd__nav--next {
+      right: 20px;
+    }
+
+    .template-index.dark-mode .mpd__badge {
+      color: var(--bodyText);
+      background-color: var(--body-Background);
+    }
+    
+    .template-index.dark-mode .mpd__badge {
+      color: var(--bodyText);
+    }
+  </style>
+{% endcapture %}
+
+{% assign components =  components | split:',' %}
+
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }}
+      </template>
+  </global-section-loader>
+
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/multi-panel",
+  "presets": [ 
+    {
+      "name": "V2/GBL/multi-panel"
+    }
+  ],
+  "settings":[
+    
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+ 
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "Here you can define the heading and 2 x CTA tiles. The large/feature tile are defined as blocks"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    }
+  ],
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "panel",
+      "name": "Panel",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge"
+        },
+        {
+          "type": "header",
+          "content": "CTA One"
+        },
+        {
+          "type": "text",
+          "id": "cta_1_text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "cta_1_url",
+          "label": "Url"
+        },
+        {
+          "type": "select",
+          "id": "cta_1_style",
+          "label": "Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "header",
+          "content": "CTA Two"
+        },
+        {
+          "type": "text",
+          "id": "cta_2_text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "cta_2_url",
+          "label": "Url"
+        },
+        {
+          "type": "select",
+          "id": "cta_2_style",
+          "label": "Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+      ]
+    },
+  ]
+}
+{% endschema %}

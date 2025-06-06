@@ -1,0 +1,77 @@
+{% if shop.metaobjects.sidebar_cart_upsells.values %}
+<sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }},
+      "dependancies":[
+        {
+          "type":"js",
+          "url":{{ 'scripts.dist.cart_upsells.js' | asset_url | json }}
+        }
+      ]
+    }
+  </template>
+  <template data-content>
+    <cart-upsells observer_key="{{ section.id }}">
+      <template>
+        { 
+          "offers":[
+            {% for upsell in shop.metaobjects.sidebar_cart_upsells.values  %}
+              {
+                "id": {{ upsell.system.id | json }},
+                "heading": {{ upsell.heading.value | json }},
+                "offer_id": {{ upsell.offer.value.system.id | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          "offers_initially_open": {{ settings.start_with_upsell_open | json }},
+          "section_settings":{{ section.settings | json }},
+          "translations":{
+            "remove":{{ 'cart.general.remove' | t | json }}
+          }
+        }
+      </template>
+    </cart-upsells>
+  </template>
+</sidebar-cart-section>
+{% endif %}
+
+{% schema %}
+{ 
+  "name":"sb-cart/upsells",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "title_text",
+      "label": "Title text",
+      "default": "Free Samples"
+    },
+    {
+      "type": "image_picker",
+      "id": "title_icon",
+      "label": "Title icon"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Show Button text",
+      "default": "Choose Free Samples"
+    },
+    {
+      "type": "text",
+      "id": "add_button_text",
+      "label": "Add Button text",
+      "default": "Add Samples"
+    }
+  ]
+}
+{% endschema %}

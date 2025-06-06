@@ -1,0 +1,26 @@
+{% if metaobject.product_lists.value %}
+  <regime-toolbar class="regime-toolbar">
+    <div class="wayfx-wrapper">
+      <div class="regime-toolbar__inner regime-padding-x">
+        <p class="p--lg">
+          {{ metaobject.title.value }}
+        </p>
+  
+        <div class="regime-display-contents" action="{{ routes.cart_add_url }}">
+          {% for variant_id in variant_ids %}
+            <input type="hidden" name="items[][id]" value="{{ variant_id }}">
+          {% endfor %}
+  
+          <button
+            class="btn btn--large"
+            role="button"
+            aria-label="{{ 'regime.add_all_to_cart_label' | t }}"
+            js-submit
+          >
+            {{ 'regime.add_all_to_cart' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </regime-toolbar>
+{% endif %}

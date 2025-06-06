@@ -1,0 +1,79 @@
+<div class="flex gap flex-dir-col ml-auto">
+  {% if block.settings.cta_section__title != blank %}
+    <h2 class="h-style t-grey-2 t-xxs lh-1 ls-12 t-ucase f-w600 grid-layout__item--span-{{ cta_item_span | times:cta_count }}">{{ block.settings.cta_section__title }}</h2>
+  {% endif %}
+
+  <div class="flex gap">
+    {% for i in (1..cta_count) %}
+      {% liquid 
+        assign image = false
+        assign title = false
+        assign text = false
+        assign link = false
+      %}
+      {% capture imageKey %}cta_{{ forloop.index }}__image{% endcapture %}
+      {% capture titleKey %}cta_{{ forloop.index }}__title{% endcapture %}
+      {% capture linkKey %}cta_{{ forloop.index }}__link{% endcapture %}
+      {% capture textKey %}cta_{{ forloop.index }}__text{% endcapture %}
+      {% liquid
+        if block.settings[imageKey]
+          assign image = block.settings[imageKey]
+        endif
+        if block.settings[titleKey] != blank
+          assign title = block.settings[titleKey]
+        endif
+        if block.settings[linkKey] != blank
+          assign link = block.settings[linkKey]
+        endif
+        if block.settings[linkKey] != blank
+        assign text = block.settings[textKey]
+        endif
+      %}
+      {% if image and link  %}
+        {%- assign current_handle = link | split: '/' | last -%}
+        {%- assign variant = all_products[current_handle].first_available_variant | default: product.variants[0] -%}
+        {% assign badgeText = variant.metafields.custom.badge %}
+
+        <a
+          href="{{ link }}" 
+          class="block-rel grid-layout__item--span-{{ cta_item_span }} 
+          flex column-nowrap {{ cta_item_class }}">
+
+          {%- if badgeText != blank -%}
+            <span class='badge-v2 badge-v2__product-card block-z3' aria-label='{{badgeText}}'>{{badgeText}}</span>
+          {%- endif -%}
+
+          {%- if cta_item_image_class contains "block-ar-2" -%}
+            {{ image | 
+              image_url: width: 440 | 
+              image_tag: 
+                preload: false, 
+                loading: 'lazy',
+                class:cta_item_image_class,
+                width: 440,
+                height: 220
+            }}
+          {%- else -%}
+            {{ image | 
+              image_url: width: 256 | 
+              image_tag: 
+                preload: false, 
+                loading: 'lazy',
+                class:cta_item_image_class
+            }}
+          {%- endif -%}
+
+          {%- if title != blank -%}
+            <h3 class="h-style lh-s f-w600 flex align-bottom {{ cta_item_heading_class }}">
+              {{- title | split: '[' | first | strip -}}
+            </h3>
+            {%- render 'v2_nav_labels', str: title, style: 'product-card' -%}
+          {%- endif -%}
+          {%- if text != blank -%}
+            <div class="t-xs">{{ text }}</div>
+          {%- endif -%}
+        </a> 
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>

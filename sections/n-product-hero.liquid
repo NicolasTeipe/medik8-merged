@@ -1,3 +1,5 @@
+<!-- sections/n-product-hero.liquid -->
+
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
 {%- assign product_description = product.metafields.sf_product_hero.description -%}
@@ -121,18 +123,12 @@
       {%- endif -%}
 
       <div class="wayfx-product__actions">
-          <div class="yotpo bottomLine"
-               data-product-id="{{ product.id }}"
-               data-product-models="{{ product.id }}"
-               data-name="{{ product.title | escape }}"
-               data-url="{{ shop.url }}{{ product.url }}"
-               data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
-               data-description="{{ product.description | escape }}"
-               data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
-          </div>
-          <div class="wayfx-product__wishlist">
-            {% render 'product-wishlist' with product %}
-          </div>
+        {%- if settings.yotpo_stars_instance_id != blank -%}
+          <div class="yotpo-widget-instance" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+        {%- endif -%}
+        <div class="wayfx-product__wishlist">
+          {% render 'product-wishlist' with product %}
+        </div>
       </div>
 
 
@@ -165,7 +161,6 @@
           <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" style="display:initial;">
             {{ current_variant.price  | money_without_trailing_zeros }}
           </span>
-          <span>{% render 'product-labels', product: product, on_sale: true, site_wide: true %}</span>
         {% else %}
           <span id="ProductPrice" aria-label="original price" 
             {%- if site_wide_product == true and site_wide_enabled == true and vip_pricing != true -%}class="slashed-price"{%- endif-%}>
@@ -176,10 +171,6 @@
             {%- if site_wide_product == true and site_wide_enabled == true -%}
               {{discount_price | money_without_trailing_zeros }}
             {%- endif-%}
-          </span>
-          <span id="DiscountLabel" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
-            {% comment %} @todo Octavian make it preaty {% endcomment %}
-            {% render 'product-labels', product: product, on_sale: true, site_wide: true %}
           </span>
         {% endif %}
         

@@ -1,0 +1,42 @@
+{%- assign faqs = collection.metafields.custom.faqs.value -%}
+
+{%- if settings.show_collection_faqs and faqs -%}
+  <div class="wayfx-block wayfx-block--faqs collection-faqs">
+    {%- if settings.collection_faqs_title != blank -%}
+      <h3 class="collection-faqs__title">{{ settings.collection_faqs_title }}</h3>
+    {%- endif -%}
+    <div class="wayfx-wrapper">
+      {%- assign faqs = collection.metafields.custom.faqs.value -%}
+
+      {% for faq in faqs %}
+        {%- assign faq_title = faq.question -%}
+        {%- assign faq_description = faq.answer -%}
+
+        <div class="wayfx-block--faq">
+          <div id="{{ faq_title | handleize }}" class="wayfx-block--faq__title" data-anchor-offset="200">
+            {{ faq_title }}
+          </div>
+          <div class="wayfx-block--faq__content">
+            <p>
+              {{ faq_description }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <style>
+    .wayfx-block.wayfx-block--faqs.collection-faqs {
+      margin: 30px 0 40px;
+      max-width: 100%;
+    }
+
+    .collection-faqs .collection-faqs__title {
+      margin: 0 0 15px;
+      font-size: 30px;
+      line-height: 1.5;
+      text-align: {{ settings.collection_faqs_horizontal_alignment }};
+    }
+  </style>
+{%- endif -%}

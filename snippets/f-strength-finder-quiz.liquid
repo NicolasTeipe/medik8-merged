@@ -1,6 +1,8 @@
 {%- comment -%} Strength Finder Quiz {%- endcomment -%}
 {% if product.tags contains "find-your-crystal" %}
-  <a href="" id="quiz-page" class="f-product-variant-quiz_label f-w400 t-ul">{{ 'products.product.quiz_link_text' | t }}</a>
+  <a href="" class="f-product-variant-quiz_label f-w400 t-ul" data-quiz-page>
+    {{ 'products.product.quiz_link_text' | t }}
+  </a>
   <script>
     async function fetchQuizPage() {
       try {
@@ -21,10 +23,12 @@
       }
     }
 
-    document.getElementById('quiz-page').addEventListener('click', e => {
-      e.preventDefault();
-      fetchQuizPage();
-    })
+    document.querySelectorAll('[data-quiz-page]').forEach((element) => {
+      element.addEventListener('click', e => {
+        e.preventDefault();
+        fetchQuizPage();
+      });
+    });
 
   </script>
 {% endif %}

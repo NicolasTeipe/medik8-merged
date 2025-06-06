@@ -1,0 +1,77 @@
+<script type="text/javascript">
+
+
+  DomReadyPromise().then( async () => {
+    const GlobalCartMain = await new GlobalCart()
+
+    // DISCOUNTS 2.0: Gets settings from APP block, loads plugin JS if settings has blocks or free gift item is in bag
+    // plugin adds helper functions / data needed for cart / cart UI
+    // wait for App extensions with target:head to load. NB this assumes excecution within is none async / promise
+    const DiscountTierMetafieldsData = window.progressBarTieredDiscountsData?.metafields || {}
+    const DiscountTierMetafieldKeys = Object.keys(DiscountTierMetafieldsData)
+    const DiscountTierMetafields = DiscountTierMetafieldKeys?.map( 
+      key => DiscountTierMetafieldsData[key]
+    )
+    
+    const V2discountTiers$ = new ObserverLite({key:'V2discountTiers$'}) 
+    V2discountTiers$.next(DiscountTierMetafields)
+
+    const cartFreeGifts = await GlobalCartMain.get_CartFreeDiscountV2Gifts()
+
+    // if cart has free items or there is discount metaifelds, load the discounts JS
+    if(!cartFreeGifts.length && !DiscountTierMetafields.length){
+      return
+    }
+
+    const freegiftToggleKey = 'medik8RemoveFreeGifts'
+    GlobalCartMain.freeGiftToggle = {
+      show: false,
+      key: freegiftToggleKey,
+      remove: localStorage.getItem(freegiftToggleKey) == 'true' ? true : false
+    }
+
+    const discountPluginLoader = new DynamicImporter([
+      {
+        type:'js',
+        url:{{ 'scripts.dist.globalCartPlugins.discountsv2.js' | asset_url | json }}
+      }
+    ])
+    const loadDiscountPlugins = await discountPluginLoader.load()
+    const discountV2Util = new DiscountsV2Util({
+      {% if customer %}
+      customer:{
+        tags: {{ customer.tags | json }}
+      }
+      {% endif %}
+    })
+
+    GlobalCartMain.subscribe( ({eventType,data}) => {
+      if(eventType == 'update'){
+        if(data?.itemsWithZeroBugCatch){
+          discountV2Util.updateSoldOutItems(data.itemsWithZeroBugCatch)
+        }
+        discountV2Util.updateCartFreeGifts()
+      }
+    })
+
+    discountV2Util.updateCartFreeGifts()
+
+    const discounts = await discountV2Util.get_ActiveProgressBarTierDiscount()
+    // progress bar
+    if(DiscountTierMetafields.length){
+      const tiersProducer$ = await new GlobalCartProgressBarTiersProducer() 
+      // push discounts to progress bar (remove all with discountV2 flag, then add "active")
+      tiersProducer$.dynamic.push(
+        new Promise( async (resolve,reject) => {
+          const activeTier = await discountV2Util.get_ActiveProgressBarTierDiscount()
+          resolve(activeTier?.tiers)
+        })
+      )
+      tiersProducer$.next()
+    }
+
+  
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

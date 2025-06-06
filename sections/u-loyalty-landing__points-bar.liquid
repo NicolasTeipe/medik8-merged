@@ -80,66 +80,25 @@
       const loggedOutHTML = `
         <a href="/account" class="btn btn--large">{{ 'apps.loyalty_lion.join_now' | t }}</a>
       `
-      // Uncomment this line to manually test with a predefined value
-// _customer.pointsRedeemable = 350; 
-
-// Log customer points
-console.log('Customer Points Redeemable:', _customer.pointsRedeemable);
-
-// Find the current reward index
-const currentIndex = rewards.findIndex(({current}) => current);
-console.log('Current Reward Index:', currentIndex);
-
-// Initialize barSize
-let barSize = 0;
-
-if (_customer) {
-  // Log rewards structure
-  console.log('Rewards:', rewards);
-
-  // If the current index is not the last reward tier
-  if (currentIndex < rewards.length - 1) {
-    // Calculate base bar size up to the current index
-    barSize = (100 / rewards.length) * currentIndex;
-    console.log('Base Bar Size (up to current tier):', barSize);
-
-    // Get current and next rewards
-    const current = rewards[currentIndex];
-    const next = rewards[currentIndex + 1];
-    console.log('Current Reward:', current);
-    console.log('Next Reward:', next);
-
-    // Calculate the points needed for the next tier
-    const points_to_next_tier = next.point_cost - _customer.pointsRedeemable;
-    console.log('Points to Next Tier:', points_to_next_tier);
-
-    // Calculate the tier difference
-    const tier_diff = next.point_cost - current.point_cost;
-    console.log('Tier Difference (Next - Current):', tier_diff);
-
-    // Calculate progress towards the next tier
-    const progress_towards_next_tier = tier_diff - points_to_next_tier;
-    const progress_towards_next_tier_as_percentage = (progress_towards_next_tier / tier_diff) * 100;
-    console.log('Progress Towards Next Tier:', progress_towards_next_tier);
-    console.log('Progress Towards Next Tier as Percentage:', progress_towards_next_tier_as_percentage);
-
-    // Calculate relative difference to adjust bar size
-    const relative_diff = ((100 / rewards.length) / 100) * progress_towards_next_tier_as_percentage;
-    console.log('Relative Difference for Bar Size:', relative_diff);
-
-    // Add the calculated progress to the bar size
-    barSize = (barSize + relative_diff) + (50 / rewards.length);
-    console.log('Final Bar Size:', barSize);
-  } else {
-    // If customer is at the highest tier, set bar size to 100%
-    barSize = 100;
-    console.log('Customer is at the highest tier. Bar Size:', barSize);
-  }
-}
-
-// Log the final calculated bar size
-console.log('Final Calculated Bar Size:', barSize);
-
+      //_customer.pointsRedeemable = 350
+      const currentIndex = rewards.findIndex(({current}) => current)
+      let barSize = 0
+      if(_customer){
+        if(currentIndex < rewards.length - 1 ){
+          barSize = (100/rewards.length) * currentIndex
+          const current = rewards[currentIndex]
+          const next = rewards[currentIndex+1]
+          const points_to_next_tier = next.point_cost - _customer.pointsRedeemable
+          const tier_diff = next.point_cost - current.point_cost
+          const progress_towards_next_tier = tier_diff - points_to_next_tier
+          const progress_towards_next_tier_as_percentage = (progress_towards_next_tier/tier_diff) * 100
+          const relative_diff = ((100/rewards.length) / 100) * progress_towards_next_tier_as_percentage
+          barSize = (barSize + relative_diff) + (50/rewards.length)
+  
+        }else{
+          barSize = 100
+        }
+      }
 
       barSize = `calc(${barSize}%)`
       this.innerHTML = `

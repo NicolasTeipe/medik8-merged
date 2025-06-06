@@ -2,20 +2,21 @@
 
   :root{
     --show-tag-awards:inline-flex;
+    --show-badge:none;
   }
 
   .product-tag {
     display:var(--show-tag-awards);
     color: black;
     background-color: #f5f5f5;
-    z-index: 99;
+    z-index: 1;
     padding: 0.3rem 1rem;
     border-radius: 0.3rem;
     line-height:1.1;
     font-size:12px;
     position: absolute;
-    top: 16px;
-    left: 20px;
+    bottom: 14px;
+    left: 18px;
     max-width:calc(100% - 120px)
   }
 
@@ -29,6 +30,40 @@
     height: auto;
     max-width:70px;
     z-index: 98;
+  }
+
+  .product-badge {
+    display:var(--show-badge);
+    z-index: 1;
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    color: #FFF;
+    background: #1A1A1A !important;
+    font-size: 11px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    padding: 5px 12px 4px;
+    border-radius: 4px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .product-tag {
+      bottom: 12px;
+      max-width:calc(100% - 170px)
+    }
+
+    .product-award {
+      top: 25px;
+      right: 25px;
+      width:100%;
+      max-width:70px;
+      z-index: 98;
+    }
+
+    .product-badge {
+      top: 12px;
+    }
   }
 
   #product-gallery-mobile-popover .f-popover-content {
@@ -220,23 +255,6 @@
       position:relative;
     }
   }
-
-
-  @media screen and (min-width: 768px) {
-    .product-tag {
-      top: 25px;
-      left: 25px;
-      max-width:calc(100% - 170px)
-    }
-
-    .product-award {
-      top: 25px;
-      right: 25px;
-      width:100%;
-      max-width:70px;
-      z-index: 98;
-    }
-  }
 </style>
 {% assign variant = product.selected_or_first_available_variant %}
 {% capture mediaForVariantImages %}{{ product.variants | map: 'featured_media' | map: 'id' }}{% endcapture %}
@@ -264,6 +282,9 @@
 <div class="product-image-container">
         
   <div class="block-rel block-oh">
+    <div class="product-badge">
+      {{- variant.metafields.custom.badge -}}
+    </div>
     {% if tag %}
     <div class="product-tag">
       {{ tag }}
@@ -356,6 +377,26 @@
         media:media.filter((media) => media.skus.includes(sku))
       }
     })
+
+    const productBadgeEl = document.querySelector('.product-image-container .product-badge')
+
+    document.documentElement.style.setProperty(
+      '--show-badge',
+      productBadgeEl.textContent.length > 0 ? 'inline-flex' : 'none'
+    );
+
+    const badgeData = [
+      {%- for variant in product.variants -%}
+        {
+          "variant_id":{{ variant.sku | json }},
+          "badge": {{ variant.metafields.custom.badge | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+
+    const badgeMap = new Map(
+      badgeData?.map(badge => [badge.variant_id, badge.badge])
+    );
 
     // GALLERIES //
     let productGallery, productCarousel
@@ -508,10 +549,17 @@
       productCarousel.moveToIdx(activeSlideIndex)
       const root = document.documentElement
       root.style.setProperty('--show-tag-awards', activeSlideIndex == 0 ? 'inline-flex' : 'none')
+
+      root.style.setProperty(
+        '--show-badge',
+        activeSlideIndex == 0 && productBadgeEl.textContent.length > 0
+          ? 'inline-flex'
+          : 'none'
+      );
+
     }
 
     function updateSlideForVariant(sku){
-      
       const mediaIdsForOldSku = variantSkus.find( item => item.sku == selectedSku)?.media?.map(({id}) => id) || []
       // remove the slides that have SKU attached that isn't active SKU
       removeSkuSlides(productGallery,mediaIdsForOldSku)
@@ -545,6 +593,9 @@
 
       productCarousel.container.insertAdjacentHTML('afterbegin',carouselSlides)
       productCarousel.update(productCarouselParams,0)
+
+      badgeText = badgeMap.get(sku)
+      productBadgeEl.textContent = badgeText
       
       bindSliders()
       productGallery.moveToIdx(0)

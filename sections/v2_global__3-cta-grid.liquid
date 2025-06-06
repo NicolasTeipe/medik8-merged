@@ -1,0 +1,711 @@
+<!-- sections/v2_global__3-cta-grid.liquid -->
+
+{% assign components = '' %}
+
+{% capture content %}
+<div class="gcg-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+  {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+    {% 
+      render 'v2_global.section_heading', 
+      heading: section.settings.heading,
+      sub_heading: section.settings.sub_heading
+    %}
+  {% endif %}
+  <div class="block-grid block-grid--index cell-l cell-r grid-layout gap--d2 align-center @mobile__cell-l--none @mobile__cell-r--none cta3__ios--no-grid">
+    <div class="grid-layout__item--span-7 block-fh block-rel cta3__ios--primary
+         {% if section.settings.layout == 'cta_left_feat_right' %}
+          order-2 @tablet__no-order
+         {% endif %}
+          @mobile__grid-layout__item--span-12">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'quote' %}
+            {% capture components %}{{ 'scripts.components.dist.GlobalVideoThumbnail.js' | asset_url }}{% endcapture %}
+            {% render 'v2_global.3-cta-grid.quote' block: block %}
+          {% when 'before_after' %}
+            {% capture components %}{{ 'scripts.components.dist.GlobalBeforeAfterSlider.js' | asset_url }}{% endcapture %}
+            {% 
+              render 'v2_global.before_after', 
+              settings: block.settings,
+              desktop_width: 512
+              desktop_height: 512,
+            %}
+            {% if block.settings.cta_url and block.settings.cta_text != blank %}
+              <div class="block-abbl cell-l cell-r cb block-12/12 flex justify-center">
+                <a 
+                  href="{{ block.settings.cta_url }}" 
+                  class="v2-btn v2-btn--{{ block.settings.cta_button }} block-z3"
+                >{{ block.settings.cta_text }}</a>
+              </div>
+            {% endif %}
+          {%- when 'static_image' -%}
+              {%- if block.settings.image -%}                
+                {{ block.settings.image | 
+                  image_url: width: 1024 , height: 1024 | 
+                  image_tag: 
+                    widths: '1024, 2048',
+                    loading: 'lazy', 
+                    alt: block.settings.image.alt,
+                    class: 'd-block block-12/12'
+                }}
+              {%- endif -%}
+              {% if block.settings.cta_url and block.settings.cta_text != blank %}
+                <div class="block-abbl cell-l cell-r cb block-12/12 flex justify-center">
+                  <a 
+                    href="{{ block.settings.cta_url }}" 
+                    class="v2-btn"
+                    style="
+                      background:{{ block.settings.cta_button_background_color }};
+                      color:{{ block.settings.cta_button_text_color }};
+                      border-color:{{ block.settings.cta_button_border_color }};
+                    "
+                  >{{ block.settings.cta_text }}</a>
+                </div>
+              {% endif %}
+        {% endcase %}
+      {% endfor %}
+    </div>
+    <div class="grid-layout__item--span-5 flex column-nowrap gap--d2 block-mfrh cta3__ios--secondary
+         {% if section.settings.layout == 'cta_left_feat_right' %}
+          order-1 @tablet__no-order
+         {% endif %}
+          @mobile__cell-l @mobile__cell-r
+          @mobile__grid-layout__item--span-12">
+      {% if  section.settings.cta_1_image %}
+      <div class="v2-cta-tile block-rel block-oh grow-1">
+        {{ section.settings.cta_1_image | 
+          image_url: width: 736 | 
+          image_tag: 
+            widths: '256, 512, 736, 1024',
+            loading: 'lazy', 
+            alt: section.settings.cta_1_image.alt,
+            class: 'block-abc block-fh block-12/12 block-objc'
+        }}
+        {% if section.settings.cta_1_heading != blank or section.settings.cta_1_url and section.settings.cta_1_text != blank %}
+        <div class="block-abbl cell-l cell-r cb block-12/12 flex gap--d2 row-wrap justify-center tac">
+          {% if section.settings.cta_1_heading != blank %}
+            <h3 class="h-style h-style--accent t-ml f-w500 lh-s block-12/12" style="color:{{ section.settings.cta_1_heading_color }}">{{ section.settings.cta_1_heading }}</h3>
+          {% endif %}
+          {% if section.settings.cta_1_url and section.settings.cta_1_text != blank %}
+          <a 
+            href="{{ section.settings.cta_1_url }}" 
+            class="v2-btn v2-btn--{{ section.settings.cta_button_1 }}"
+          >{{ section.settings.cta_1_text }}</a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if section.settings.cta_2_image %}
+      <div class="v2-cta-tile block-rel block-oh grow-1">
+        {{ section.settings.cta_2_image | 
+          image_url: width: 736 | 
+          image_tag: 
+            widths: '256, 512, 736, 1024',
+            loading: 'lazy', 
+            alt: section.settings.cta_2_image.alt,
+            class: 'block-abc block-fh block-12/12 block-objc'
+        }}
+        {% if section.settings.cta_2_heading != blank or section.settings.cta_2_url and section.settings.cta_2_text != blank %}
+          <div class="block-abbl cell-l cell-r cb block-12/12 flex gap--d2 row-wrap justify-center tac">
+            {% if section.settings.cta_2_heading != blank %}
+              <h3 class="h-style h-style--accent t-ml f-w500 lh-s block-12/12" style="color:{{ section.settings.cta_2_heading_color }}">{{ section.settings.cta_2_heading }}</h3>
+            {% endif %}
+            {% if section.settings.cta_2_url and section.settings.cta_2_text != blank %}
+            <a 
+              href="{{ section.settings.cta_2_url }}" 
+              class="v2-btn v2-btn--{{ section.settings.cta_button_2 }}"
+            >{{ section.settings.cta_2_text }}</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<style>
+  #shopify-section-{{ section.id }} .gcg-container {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .gcg-container {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+
+  {% capture bp-mobile %}{{ settings.bp_mobile }}px{% endcapture %}
+  {% capture bp-tablet %}{{ settings.bp_tablet }}px{% endcapture %}
+  {% capture bp-desktop %}{{ settings.bp_desktop }}px{% endcapture %}
+
+  .v2-cta-tile:after{
+    padding-top:69.2%;
+    content:'';
+    display:block;
+  }
+
+  
+  .v2-quote-block__img-wrap{
+    border-radius:100%;
+    overflow:hidden;
+    position:relative;
+    max-width:400px;
+    width:100%;
+  }
+  
+  .v2-quote-block__quote{
+    width:100%;
+    max-width:440px;
+  }
+  
+  .v2-quote-block__quote-icon{
+    display:block;
+    width:12px;
+    height:auto;
+  }
+  
+  @media screen and (max-width:{{ bp-tablet }}) {
+    .v2-quote-block__img-wrap{
+      max-width:256px;
+    }
+  }
+
+  @supports (font: -apple-system-body) and (-webkit-appearance: none) {
+    @media screen and (max-width: 1024px) {
+      #shopify-section-{{ section.id }} .cta3__ios--no-grid {
+        display: block;
+        padding: 0
+      }
+
+      #shopify-section-{{ section.id }} .cta3__ios--primary {
+        padding-bottom: 12px;
+      }
+
+      #shopify-section-{{ section.id }} .cta3__ios--secondary {
+        padding: 0 24px;
+      }
+    }
+  }
+</style>
+{% endcapture %}
+
+{% assign components =  components | split:',' %}
+
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }}
+      </template>
+  </global-section-loader>
+
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/3-cta-grid",
+  "presets": [ 
+    {
+      "name": "V2/GBL/3-cta-grid"
+    }
+  ],
+  "settings":[
+    {
+      "type": "paragraph",
+      "content": "A grid with 2 x CTA tiles and 1 x 'Feature' title"
+    },
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "feat_left_cta_right",
+      "options": [
+        {
+          "value": "cta_left_feat_right",
+          "label": "CTA left / Feature right"
+        },
+        {
+          "value": "feat_left_cta_right",
+          "label": "Feature left / CTA right"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+ 
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "Here you can define the heading and 2 x CTA tiles. The large/feature tile are defined as blocks"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    },
+   
+    {
+      "type": "header",
+      "content": "Content - CTA 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "cta_1_image",
+      "label": "CTA 1 Image",
+    },
+
+    {
+      "type": "text",
+      "id": "cta_1_heading",
+      "label": "CTA 1 Heading",
+    },
+    {
+      "type": "color",
+      "id": "cta_1_heading_color",
+      "label": "CTA 1 Heading Color",
+      "default":"#fff"
+    },
+    {
+      "type": "select",
+      "id": "cta_button_1",
+      "label": "CTA 1 Button Style",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        },
+        {
+          "value": "grey-dark",
+          "label": "Grey - Dark"
+        },
+        {
+          "value": "grey-light",
+          "label": "Grey - Light"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "cta_1_text",
+      "label": "CTA 1 Button Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_1_url",
+      "label": "CTA 1 Button link"
+    },
+    {
+      "type": "header",
+      "content": "Content - CTA 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "cta_2_image",
+      "label": "CTA 2 Image",
+    },
+
+    {
+      "type": "text",
+      "id": "cta_2_heading",
+      "label": "CTA 2 Heading",
+    },
+
+    {
+      "type": "color",
+      "id": "cta_2_heading_color",
+      "label": "CTA 2 Heading Color",
+      "default":"#fff"
+    },
+    {
+      "type": "select",
+      "id": "cta_button_2",
+      "label": "CTA 2 Button Style",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        },
+        {
+          "value": "grey-dark",
+          "label": "Grey - Dark"
+        },
+        {
+          "value": "grey-light",
+          "label": "Grey - Light"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "cta_2_text",
+      "label": "CTA 2 Button Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_2_url",
+      "label": "CTA 2 Button link"
+    }
+  ],
+  "max_blocks": 1,
+  "blocks": [
+    {
+      "type": "before_after",
+      "name": "Before / After",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Before"
+        },
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Before image",
+        },
+        {
+          "type": "text",
+          "id": "before_text",
+          "label": "Before text",
+          "default":"Before"
+        },
+        {
+          "type": "header",
+          "content": "After"
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "After image",
+        },
+        {
+          "type": "text",
+          "id": "after_text",
+          "label": "After text",
+          "default":"After"
+        },
+        {
+          "type": "header",
+          "content": "CTA"
+        },
+        {
+          "type": "select",
+          "id": "cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "CTA Button Text"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "CTA Button link"
+        }
+      ]
+    },
+    {
+      "type": "quote",
+      "name": "Quote",
+      "limit": 1,
+      "settings": [
+  
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "Background image",
+        },
+        {
+          "type": "video",
+          "id": "bg_video",
+          "label": "Background Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Main image",
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "accept": [
+            "youtube"
+          ],
+          "default": "https://www.youtube.com/watch?v=ZciK4xCUPFk",
+          "label": "Video URL",
+          "info": "Youtube Supported"
+        },
+        {
+          "type": "text",
+          "id": "video_description",
+          "label": "Video alt text",
+          "info": "Describe the video for customers using screen readers."
+        },
+        {
+          "type": "text",
+          "id": "video_ar",
+          "label": "Video Aspect Ratio",
+          "info": "For example: 16 / 9",
+          "default": "16 / 9"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color",
+          "default":"#ffffff"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "sub_heading",
+          "label": "Sub heading"
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Quote"
+        },
+        {
+          "type": "select",
+          "id": "cta_button",
+          "label": "CTA Button Style",
+          "options": [
+            {
+              "value": "white",
+              "label": "White"
+            },
+            {
+              "value": "black",
+              "label": "Black"
+            },
+            {
+              "value": "grey-dark",
+              "label": "Grey - Dark"
+            },
+            {
+              "value": "grey-light",
+              "label": "Grey - Light"
+            }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "CTA Button Text"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "CTA Button link"
+        }
+      ]
+    },
+    {
+      "type": "static_image",
+      "name": "Static Image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+        },
+        {
+          "type": "header",
+          "content": "CTA"
+        },
+        {
+          "type": "color",
+          "id": "cta_button_text_color",
+          "label": "CTA Button Text Color",
+          "default":"#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "cta_button_border_color",
+          "label": "CTA Button Border Color",
+          "default":"#000"
+        },
+        {
+          "type": "color_background",
+          "id": "cta_button_background_color",
+          "label": "CTA Button Background Color",
+          "default":"#000"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "CTA Button Text"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "CTA Button link"
+        }
+      ]
+    } 
+  ]
+}
+{% endschema %}

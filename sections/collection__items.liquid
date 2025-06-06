@@ -1,37 +1,37 @@
-<div class="wayfx-wrapper">
+<!-- sections/collection__items.liquid -->
+
+<div class="wayfx-wrapper ct">
   <div class="grid">
     <aside class="grid__item large--one-quarter wayfx-collection__sidebar">
       {% render 'collection.sidebar', 
-                 collection:collection, 
-                 section:section 
+        collection:collection, 
+        section:section 
       %}
     </aside>
     <div class="grid__item large--three-quarters">
       {%- paginate collection.products by 150 -%}
-      {% render 'collection-option-bar' %}
-      {% comment %} TODO - Not sure this is rendered on storefront as there is no rule to remove the display property below {% endcomment %}
-      <div class="collection-no-results" style="display: none">
-        <b>{{'general.search.filters' | t }}</b>
-        <small>{{'general.search.filters_aditional' | t }}</small>
-      </div>
-      <div class="wayfx-products">
-        {% comment %} #TODO - bring product sorting to collection level in order to accomodate "sort by" feature without compromising on variants {% endcomment %}
-        {% assign products = collection.products %}
-        {% if collection.sort_by == "price-ascending" %}
-          {% assign products = collection.products | sort: "price_max" %}
-        {% elsif collection.sort_by == "price-descending" %}
-          {% assign products = collection.products | sort: "price_max" | reverse %}
-        {% endif %}
-        {% for product in products %}
-          {% render 'product-grid-item', product: product, index: forloop.index %}
-        {% endfor %}
-      </div>
+        {% render 'collection-option-bar' %}
+        {% comment %} TODO - Not sure this is rendered on storefront as there is no rule to remove the display property below {% endcomment %}
+        <div class="collection-no-results" style="display: none">
+          <b>{{'general.search.filters' | t }}</b>
+          <small>{{'general.search.filters_aditional' | t }}</small>
+        </div>
+        <div class="wayfx-products">
+          {% comment %} #TODO - bring product sorting to collection level in order to accomodate "sort by" feature without compromising on variants {% endcomment %}
+          {% assign products = collection.products %}
+          {% if collection.sort_by == "price-ascending" %}
+            {% assign products = collection.products | sort: "price_max" %}
+          {% elsif collection.sort_by == "price-descending" %}
+            {% assign products = collection.products | sort: "price_max" | reverse %}
+          {% endif %}
+          {% for product in products %}
+            {% render 'product-grid-item', product: product, index: forloop.index %}
+          {% endfor %}
+        </div>
       {%- endpaginate -%}
     </div>
   </div>
 </div>
-
-
 
 {% schema %}
   {

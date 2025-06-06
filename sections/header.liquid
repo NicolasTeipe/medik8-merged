@@ -2,7 +2,7 @@
 
 {% render 'header-extra-links', layout: 'desktop' %}
 
-<div class="wayfx-wrapper">
+<div class="flex justify-space block-grid--index block-c cell-l cell-r block-rel">
     <div class="wayfx-header__left">
         <div class="wayfx-header__mobile-nav">
           <button aria-label="Mobile menu" id="wayfxNavTrigger" class="wayfx-header__icon">
@@ -14,8 +14,6 @@
         <button aria-label="Search" id="header-search-icon" class="wayfx-header__icon search-icon">
           <i class="wayfx-icon wayfx-icon-search"></i>
         </button>
-      {% elsif settings.search_provider == 'algolia_legacy' %}
-        {% render "algolia-search-bar" %}
       {%- else -%}
         {% render "search-bar" %}
       {% endif %}
@@ -29,12 +27,12 @@
       <link itemprop="logo"  content="{{ 'logo.png' | asset_url }}">
     </div>
     <div class="wayfx-header__right">
-        <!--<div class="wayfx-header__favorites">
+        <div class="wayfx-header__favorites">
           <a aria-label="Wishlist" href="#swym-wishlist" class="swym-wishlist wayfx-header__icon">
               <i class="wayfx-icon wayfx-icon-heart"></i>
           </a>
         </div>
-        <div style="display:none;" id="swym-wishlist"></div>-->
+        <div style="display:none;" id="swym-wishlist"></div>
         {% if shop.customer_accounts_enabled %}
           <div class="wayfx-header__account">
               <a aria-label="My account" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="wayfx-header__icon">
@@ -64,7 +62,7 @@
     </div>
 </div>
 
-<nav class="wayfx-header__nav wayfx-header__nav--desktop">
+<nav class="wayfx-header__nav wayfx-header__nav--desktop block-grid--index block-c cell-r cell-l">
 
   	{% for link in section.settings.main-menu.links %}
       {% assign link-handle = link.title | handleize  %}
@@ -81,7 +79,7 @@
             {% if forloop.index <= 6 %} wayfx-header__dropdown--full{% else %} wayfx-header__dropdown--small{% endif %}">
               {%- for lvl1_link in link.links -%}
                 {%- if lvl1_link.links != blank -%}
-            	  {%- if forloop.first -%}<div class="wayfx-wrapper">{%- endif -%}
+            	  {%- if forloop.first -%}<div class="wayfx-wrapper block-grid--index">{%- endif -%}
                     <div class="wayfx-header__dropdown-column">
                       <span class="heading">{{ lvl1_link.title }}</span>
                       <ul>
@@ -203,6 +201,22 @@
 <style>
     .single-menu { text-align:center; }
 </style>
+
+<script>
+  DomReadyPromise().then( () => {
+    // init countries data util
+    window.countriesData = new CountriesData({
+      jsonDataUrl:{{ 'countries.json' | asset_url | json }},
+      selectorSettings:{
+        country_selector_heading:{{ settings.country_selector_heading | json }},
+        country_selector_footer_url: {{ settings.country_selector_footer_url | json }},
+        country_selector_footer_text: {{ settings.country_selector_footer_text | json }}
+      }
+    })
+
+    {%- render 'v2-global__geo-locator-popup.js' -%}
+  })
+</script>
 
 {% schema %}
     {

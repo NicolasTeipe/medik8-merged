@@ -1,0 +1,62 @@
+ <sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }},
+      "dependancies":[
+        {
+          "type":"js",
+          "url":{{ 'scripts.dist.cart_cross-sells.js' | asset_url | json }}
+        }
+      ]
+    }
+  </template>
+  <template data-content>
+    <cart-cross-sells class="ct cb bg-grey-1 flex column-nowrap bg-secondary" observer_key="{{ section.id }}">
+      <template>
+        { 
+          "section_settings":{{ section.settings | json }},
+          "translations":{
+            "remove":{{ 'cart.general.remove' | t | json }},
+            "add": {{ section.settings.atc_button_text | json }}
+          },
+          "subscriptions":{
+            "show":{{ settings.cart__subscriptions__show | json }},
+            "button_text":{{ settings.cart__subscriptions__button_text | json }}
+          }
+        }
+      </template>
+    </cart-cross-sells>
+  </template>
+</sidebar-cart-section>
+
+
+{% schema %}
+{ 
+  "name":"sb-cart/cross-sells",
+  "settings": [
+  
+    {
+      "type": "text",
+      "id": "title_text",
+      "label": "Title text",
+      "default": "Recommended for you"
+    },
+    {
+      "type": "text",
+      "id": "atc_button_text",
+      "label": "ATC button text",
+      "default": "Add"
+    },
+    {
+      "type":"range",
+      "min":1,
+      "max":10,
+      "step":1,
+      "id":"limit",
+      "default":3,
+      "label":"items to show"
+    }
+  ]
+}
+{% endschema %}

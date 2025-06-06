@@ -21,6 +21,23 @@
 {% endif %}
 
 {%- style -%}
+    #shopify-section-{{ section.id }} {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+      background-color: {{ section.settings.section_bg_color }};
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+
 .wayfx-block--single-image .desktop_image {
   display:block;
 }
@@ -40,6 +57,104 @@
 {
   "name": "Simple Image",
   "settings": [
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
     {
       "id": "image_desktop",
       "type": "image_picker",

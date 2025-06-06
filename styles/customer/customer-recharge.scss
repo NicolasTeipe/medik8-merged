@@ -1,0 +1,33 @@
+.recharge-heading-h1,
+.recharge-heading-h2,
+.recharge-button {
+  font-size: inherit;
+  text-transform: uppercase;
+}
+
+.recharge-text {
+  font-size: inherit;
+}
+
+.recharge-button {
+  border-radius: 0.25rem;
+
+  &:hover {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  &-secondary {
+    background-color: inherit;
+    border: 1px solid;
+
+    &:hover {
+      background-color: #000000;
+      color: #ffffff;
+    }
+  }
+}
+
+.recharge-card {
+  padding: 10px;
+}

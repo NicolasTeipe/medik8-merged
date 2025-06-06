@@ -1,0 +1,197 @@
+{%- if template contains 'product' -%}
+  {% assign dcs = shop.metaobjects.discount_config_schema[settings.dcs_metaobject] %}
+
+  {%- assign dcs_variants = '' -%}
+  {%- paginate dcs.variants.value by 500 -%}
+    {%- for gid in dcs.variants.value -%}
+      {% assign parts = gid.id | split: '/' %}
+      {% assign id = parts | last %}
+      {% assign dcs_variants = dcs_variants | append: id %}
+      {% unless forloop.last %}
+        {% assign dcs_variants = dcs_variants | append: ',' %}
+      {% endunless %}
+    {%- endfor -%}
+  {%- endpaginate -%}
+
+  {%- assign dcs_discount = 1 | minus: dcs.discount -%}
+
+  {%- assign schema_type = 'Product' -%}
+  {% unless product.has_only_default_variant %}
+    {%- assign schema_type = 'ProductGroup' -%}
+    {%- assign product_group_id = '"productGroupID": "' | append: product.id | append: '",' -%}
+  {% endunless %}
+
+  {%- capture reviews_schema -%}
+    {%- if product.metafields.yotpo.reviews_count and product.metafields.yotpo.reviews_count != 0 -%}
+      ,"aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ product.metafields.yotpo.reviews_average | strip_html | times: 1 | json }},
+      "reviewCount": {{ product.metafields.yotpo.reviews_count | strip_html | round | json }}
+    }
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture variant_schema_data -%}
+    {%- assign is_discounted = false -%}
+
+    {%- if product.has_only_default_variant -%}
+
+      {%- if dcs_variants contains product.selected_or_first_available_variant.id -%}
+        {%- assign is_discounted = true -%}
+      {%- endif -%}
+
+      {%- capture availability -%}
+        {%- if product.available -%}
+          InStock
+        {%- else -%}
+          OutOfStock
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- capture price -%}
+        {%- if is_discounted -%}
+          {%- assign disc_price = product.price | times: dcs_discount -%}
+          {%- render 'format-schema-price', price: disc_price -%}
+        {%- else -%}
+          {%- render 'format-schema-price', price: product.price -%}
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- capture price_spec_price -%}
+        {%- render 'format-schema-price', price: product.price -%}
+      {%- endcapture -%}
+
+      {%- capture price_valid_until -%}
+        {%- if is_discounted -%}
+          {{- dcs.valid_until -}}
+        {%- else -%}
+          {{- 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' | url_encode | replace:'+','%20' -}}
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- capture price_spec -%}
+        {%- if is_discounted -%}
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "priceType": "http://schema.org/ListPrice",
+            "price": "{{ price_spec_price }}",
+            "priceCurrency": "{{ cart.currency.iso_code }}"
+          },
+        {%- endif -%}        
+      {%- endcapture -%}
+
+      {%- comment -%} Single Default Variant Schema {%- endcomment -%}
+      "sku": "{{ product.selected_or_first_available_variant.sku }}",
+      "gtin": "{{ product.selected_or_first_available_variant.barcode }}",
+      "image": "{{ product.featured_image | image_url: width: 1000 }}",
+      "name": "{{ product.title }}",
+      "offers": {
+        "@id": "{{ product.url}}?variant={{ product.selected_or_first_available_variant.id}}#offer",
+        "@type": "Offer",
+        "availability": "http://schema.org/{{ availability }}",
+        "price": "{{ price }}",
+        "priceCurrency": "{{ cart.currency.iso_code }}",
+        "priceValidUntil": "{{ price_valid_until }}",
+        {{ price_spec }}
+        "url": "{{ shop.url }}{{ product.url }}?variant={{ product.selected_or_first_available_variant.id}}"
+      },
+    {%- else -%}
+      {%- comment -%} Multiple Variant Schema {%- endcomment -%}
+      "hasVariant": [
+        {%- for variant in product.variants -%}
+
+          {%- capture variant_image -%}
+            {%- if variant.featured_image -%}
+              {{- variant.featured_image | image_url: width: 1000 -}}
+            {%- else -%}
+              {{- product.featured_image | image_url: width: 1000 -}}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- capture availability -%}
+            {%- if variant.available -%}
+              InStock
+            {%- else -%}
+              OutOfStock
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- assign is_discounted = false -%}
+          {%- if dcs_variants contains variant.id -%}
+            {%- assign is_discounted = true -%}
+          {%- endif -%}
+    
+          {%- capture price -%}
+            {%- if is_discounted -%}
+              {%- assign disc_price = variant.price | times: dcs_discount -%}
+              {%- render 'format-schema-price', price: disc_price -%}
+            {%- else -%}
+              {%- render 'format-schema-price', price: variant.price -%}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- capture price_spec_price -%}
+            {%- render 'format-schema-price', price: variant.price -%}
+          {%- endcapture -%}
+    
+          {%- capture price_valid_until -%}
+            {%- if is_discounted -%}
+              {{- dcs.valid_until -}}
+            {%- else -%}
+              {{- 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' | url_encode | replace:'+','%20' -}}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- capture price_spec -%}
+            {%- if is_discounted -%}
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "priceType": "http://schema.org/ListPrice",
+                "price": "{{ price_spec_price }}",
+                "priceCurrency": "{{ cart.currency.iso_code }}"
+              },
+            {%-  endif -%}        
+          {%- endcapture -%}
+          {
+            "@id": "{{ product.url}}?variant={{ variant.id }}#variant",
+            "@type": "Product",
+            "sku": "{{ variant.sku }}",
+            "gtin": "{{ variant.barcode }}",
+            "image": "{{ variant_image }}",
+            "name": "{{ product.title }} - {{  variant.title }}",
+            "offers": {
+              "@id": "{{ product.url}}?variant={{ variant.id }}#offer",
+              "@type": "Offer",
+              "availability": "http:\/\/schema.org\/{{ availability }}",
+              "price": "{{ price }}",
+              "priceCurrency": "{{ cart.currency.iso_code }}",
+              "priceValidUntil": "{{ price_valid_until }}",
+              {{ price_spec }}
+              "url": "{{ shop.url }}{{ product.url }}?variant={{ variant.id}}"
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@id": "/products/{{ product.handle }}#product",
+      "@type": "{{ schema_type }}",
+      "brand": {
+        "@type": "Brand",
+        "name": "{{ product.vendor }}"
+      },
+      "category": "{{ product.type }}",
+      "description": "{{ product.description | strip_html | strip_newlines -}}",
+      {{ variant_schema_data }}
+      {% unless product.has_only_default_variant %}"name": "{{ product.title }}",{% endunless %}
+      {{ product_group_id }}
+      {% if product.has_only_default_variant %}"sku": "{{ product.selected_or_first_available_variant.sku }}",{% endif %}
+      "url": "{{ shop.url }}{{ product.url }}"
+      {{ reviews_schema }}
+    }
+  </script>
+{%- endif -%}

@@ -1,0 +1,18 @@
+<!-- snippets/image-preloader.liquid -->
+
+{%- comment -%} 
+  Mobile
+{%- endcomment -%}
+{%- if settings.countdown_timer_mobile != blank -%}
+  {%- assign mobile_image = settings.countdown_timer_mobile | image_url: width: settings.countdown_timer_mobile.width, format: 'pjpg' -%}
+  <link rel="preload" href="{{ mobile_image }}" as="image">
+{%- endif -%}
+
+{%- comment -%} 
+  Desktop
+{%- endcomment -%}
+{%- if settings.countdown_timer_desktop != blank -%}
+  {%- assign desktop_image = settings.countdown_timer_desktop | image_url: width: settings.countdown_timer_desktop.width, format: 'pjpg' -%}
+  <link rel="preload" href="{{ desktop_image }}" as="image">
+{%- endif -%}
+

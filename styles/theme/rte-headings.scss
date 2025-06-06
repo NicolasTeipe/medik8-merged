@@ -1,0 +1,38 @@
+.rte {
+  color: var(--color-body-text);
+  margin-bottom: 35px; }
+  .rte:last-child {
+    margin-bottom: 0; }
+  .rte h1,
+  .rte h2,
+  .rte h3,
+  .rte .h3,
+  .rte h4,
+  .rte .h4,
+  .rte h5,
+  .rte .h5,
+  .rte h6,
+  .rte .h6 {
+    margin-top: 55px;
+    margin-bottom: 27.5px; }
+    .rte h1:first-child,
+    .rte h2:first-child,
+    .rte h3:first-child,
+    .rte .h3:first-child,
+    .rte h4:first-child,
+    .rte .h4:first-child,
+    .rte h5:first-child,
+    .rte .h5:first-child,
+    .rte h6:first-child,
+    .rte .h6:first-child {
+      margin-top: 0; }
+  .rte li {
+    margin-bottom: 4px;
+    list-style: inherit; }
+    .rte li:last-child {
+      margin-bottom: 0; }
+
+.rte-setting {
+  margin-bottom: 19.44444px; }
+  .rte-setting:last-child {
+    margin-bottom: 0; }

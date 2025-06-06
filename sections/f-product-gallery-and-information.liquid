@@ -1,3 +1,5 @@
+<!-- sections/f-product-gallery-and-information.liquid -->
+
 {%- comment -%}
   NOTES
   -----
@@ -17,7 +19,6 @@
   assign site_wide_collection = settings.site_wide__collection
   assign productIsGiftCard = false
   assign sold_out = true
-  assign low_stock = false
   assign product_form_id = 'product-form-' | append: section.id
   assign vip_pricing = settings.vip-pricing
 
@@ -53,10 +54,6 @@
   else
     assign current_variant = product.selected_or_first_available_variant
   endif
-
-  if current_variant.inventory_quantity > 0 and current_variant.inventory_quantity < 20
-    assign low_stock = true
-  endif
 %}
 
 <script>
@@ -84,9 +81,7 @@
     position: relative;
     max-width: 100%;
     width:1440px;
-    overflow:hidden;
     margin: 0 auto;
-    z-index: 10;
   }
   div.medk8-product--quantity-box {
     display: none;
@@ -99,10 +94,6 @@
 
 
 
-  .product-gallery-and-information {
-    display: grid;
-    grid-template-columns: 100%;
-  }
 
   .product-information-scroll-track {
     padding-left: 24px;
@@ -110,13 +101,17 @@
   }
 
   .product-gallery-and-information {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 100%;
     grid-template-areas:
         'pdp-title'
         'pdp-gallery'
         'pdp-info'
         'pdp-description';
     gap: 0;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: min-content;
   }
 
   .product-information-scroll-item {
@@ -180,6 +175,13 @@
     text-decoration: underline;
   }
 
+  .f-accordion--attached-to-description{
+    display:block;
+    padding-left:0;
+    padding-right:0;
+
+  }
+
   @media screen and (max-width: 1023px) {
 
     .product-information-scroll-item.f-product-hero__details {
@@ -239,6 +241,7 @@
   }
 
   .product-information-description.f-product-hero__description {
+    scroll-margin-top: var(--mh-total-height);
     line-height: 24px;
     padding: 0 24px;
     margin: 0 0 24px;
@@ -258,15 +261,17 @@
       border-bottom: none;
     }
 
-    .product-information-scroll-item {
+    .product-form-sticky-section {
       position: sticky;
-      top: 160px;
+      position:-webkit-sticky;
       z-index: 0;
+      grid-row: span 4;
+      height: fit-content;
     }
 
     .product-information-scroll-track {
       position: sticky;
-      top: 300px;
+      position:-webkit-sticky;
       height: fit-content;
       background-color: white;
     }
@@ -277,10 +282,6 @@
           'pdp-gallery pdp-info'
           'pdp-description pdp-info';
       gap: 0;
-      grid-template-rows: auto 1fr;
-    }
-
-    .product-gallery-and-information {
       grid-template-columns: auto 456px;
       padding-left: 48px;
       padding-right: 48px;
@@ -312,6 +313,7 @@
     }
 
     .product-information-description.f-product-hero__description {
+      scroll-margin-top: var(--mh-total-height);
       font-size: 16px;
       margin: 0 0 32px;
       padding: 0;
@@ -383,12 +385,13 @@
   <div class="product-gallery-and-information f-product-hero__wrapper">
     <div class="product-gallery-container">
       {% render 'f-product.gallery' , tag: tag %}
-      
     </div>
 
-    <div id="full-details" class="product-information-description f-product-hero__description">{{ product.description }}</div>
+    <div id="full-details" class="js-product-description product-information-description f-product-hero__description">
+      <div class="row">{{ product.description }}</div>
+    </div>
 
-    <div class="product-information-scroll-item f-product-hero__details">
+    <div class="js-product-information product-information-scroll-item f-product-hero__details">
       {% liquid
         echo 'f-product-information.css' | asset_url | stylesheet_tag
       %}
@@ -399,25 +402,21 @@
         {% if section.settings.sub_heading %}
           <span>{{- section.settings.sub_heading -}}</span>
         {% endif %}
-        <a class="f-product__full-details t-ul" href="#full-details-anchor">Detalles</a>
+        <a class="f-product__full-details t-ul" href="#full-details">Full Details</a>
       </h2>
 
-      <div class="f-product__actions flex align-center justify-space">
-        <div class="f-product__yotpo yotpo bottomLine"
-          data-product-id="{{ product.id }}"
-          data-product-models="{{ product.id }}"
-          data-name="{{ product.title | escape }}"
-          data-url="{{ shop.url }}{{ product.url }}"
-          data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
-          data-description="{{ product.description | escape }}"
-          data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+      {%- if settings.yotpo_stars_instance_id != blank -%}
+        <div class="f-product__actions flex align-center justify-space">
+          <div class="yotpo-widget-instance" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+          <div class="f-product__wishlist">
+            {% render 'product-wishlist' with product,
+              disable_text: true
+            %}
+          </div>
         </div>
-        <div class="f-product__wishlist">
-          {% render 'product-wishlist' with product,
-            disable_text: true
-          %}
-        </div>
-      </div>
+      {%- endif -%}
+
+      {%- render 'pdp-form-labels-v2', variant: current_variant -%}
 
       {%- liquid
         assign show_provenance = false
@@ -435,15 +434,18 @@
 
     </div>
 
-    <div class="js-product-form-wrapper product-information-scroll-track f-product-hero__details">
+    <div class="js-product-form-wrapper js-product-form product-information-scroll-track f-product-hero__details">
       {% liquid
-        render 'product-bar'
         render 'f-product-variant-picker', product: product, product_form_id: product_form_id, current_variant: current_variant
       %}
 
+      {%- if product.type == 'Bundles' -%}
+        {%- render 'f-pdp-bundle-products' -%}
+      {%- endif -%}
+
       {% render 'f-product-bnpl' %}
 
-      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical" data-productid="{{product.id}}">
+      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical product-form-{{ section.id }}" data-productid="{{product.id}}">
         {% unless sold_out %}
           <div class="medk8-product--quantity-box">
             <label class="quantity-label" for="quantityInput">Quantity:</label>
@@ -463,7 +465,6 @@
               {% liquid
                 assign variant_size = variant.metafields.sf_settings.size
                 assign variant_sold_out = false
-                assign low_stock = false
 
                 unless variant.title contains "travel" or variant.title contains "Travel"
                   assign site_wide_product = true
@@ -474,10 +475,6 @@
                     assign discount_off = variant.price | times: site_wide_percentage
                     assign discount_price = variant.price | minus: discount_off
                   endif
-                endif
-
-                if variant.inventory_quantity > 0 and variant.inventory_quantity < 20
-                  assign low_stock = true
                 endif
 
                 if productIsGiftCard == false
@@ -493,12 +490,6 @@
 
                   if variant == current_variant
                     echo ' selected="selected"'
-                  endif
-
-                  if low_stock
-                    echo ' data-low-stock="true"'
-                  else
-                    echo ' data-low-stock="false"'
                   endif
 
                   if variant.compare_at_price >= variant.price
@@ -520,6 +511,7 @@
                 data-image-id="{{ variant.image.id }}"
                 data-sku="{{ variant.sku }}"
                 data-discounted-price="{{ discount_price | money }}"
+                data-compare="{{ variant.compare_at_price | money }}"
                 data-price="{{ variant.price | money }}"
                 value="{{ variant.id }}"
                 data-option-inventory-qty="{{ variant.inventory_quantity }}"
@@ -538,73 +530,69 @@
             onClick="GlobalCartMain.addProductFromButton(event)"
             name="add"
             id="AddToCart"
-            class="js-product-main-atc btn btn--full btn--large{% unless current_variant.available %} hide{% endunless%}">
+            class="js-product-main-atc ProductSubmitButton-{{ section.id }} btn btn--full btn--large{% unless current_variant.available %} hide{% endunless%}">
+            {%- capture low_stock -%}
+              {%- assign qty = product.selected_or_first_available_variant.inventory_quantity -%}
+              {%- if settings.low_stock_label == true and qty > 0 and qty <= settings.low_stock_trigger -%}
+                <span class="f-w600"> - {{ 'products.product.low_stock' | t }}</span>
+              {% endif -%}
+            {%- endcapture -%}
+            
             <span id="AddToCartText" >
               {{ 'products.product.add_to_cart' | t }}
+              {{ low_stock }}
             </span>
             <div class="medk8-product--price-box product-gallery-price" id="price-{{ section.id }}">
               {% if current_variant.available %}
-                {% if current_variant.compare_at_price >= current_variant.price  %}
-                  <span id="ProductPrice" aria-label="original price" class="slashed-price">
-                    {% if discount_price > 0 %}
-                      {{ discount_price | money_without_trailing_zeros }}
-                    {% else %}
-                      {{ current_variant.compare_at_price | money_without_trailing_zeros }}
-                    {% endif %}
-                  </span>
-                  <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" style="display:initial;">
-                    {{ current_variant.price | money_without_trailing_zeros }}
-                  </span>
-                  {% comment %}<span>{% render 'product-labels',
-                    product: product,
-                    on_sale: true,
-                    site_wide: true
-                  %}</span>{% endcomment %}
-                {% else %}
-                  <span id="ProductPrice" aria-label="original price" {%- if site_wide_product == true and site_wide_enabled == true and vip_pricing != true -%}class="slashed-price"{%- endif-%}>
-                    {{ current_variant.price | money_without_trailing_zeros }}
-                  </span>
-                  {% if site_wide_product == true and site_wide_enabled == true %}
-                    <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
-                      {% liquid
-                        if site_wide_crossed_out_pricing_enabled
-                          assign discount_off = current_variant.price | times: site_wide_percentage
-                          assign discount_price = current_variant.price | minus: discount_off
-                        endif
-                      %}
-                      {{discount_price | money_without_trailing_zeros }}
-                    </span>
-                  {% endif %}
-                  {% comment %}<span id="DiscountLabel" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
-                    {% render 'product-labels',
-                      product: product,
-                      on_sale: true,
-                      site_wide: true
-                    %}
-                  </span>{% endcomment %}
-                {% endif %}
+                {%- render 'price-v2', variant: current_variant, style: 'pdp' -%}
               {% endif %}
             </div>
           </button>
-          <button
-            type="button"
-            name="out-of-stock-trigger"
-            class="btn btn--full btn--large f-popover-trigger {% if current_variant.available %} hide{% endif %}"
-            data-target="#OutOfStockPopover">
-            {{ section.settings.oos__pdp_button_text }}
-          </button>
+          {%- if settings.klaviyo_api != blank -%}
+            <button
+              type="button"
+              name="out-of-stock-trigger"
+              class="js-out-of-stock-trigger btn btn--full btn--large f-popover-trigger {% if current_variant.available %}hide{% endif %}"
+              data-target="#OutOfStockPopover">
+              {{ section.settings.oos__pdp_button_text }}
+            </button>
+          {%- else -%}
+            <button
+              type="button"
+              name="out-of-stock-trigger"
+              class="js-out-of-stock-trigger btn btn--full btn--large f-popover-trigger {% if current_variant.available %}hide{% endif %}"
+              onclick="handleOutOfStockClick('{{ settings.bloomreach_banner_id }}')"
+            >
+              {{ section.settings.oos__pdp_button_text }}
+            </button>
+            <script>
+              function handleOutOfStockClick(bannerId) {
+                if (bannerId && bannerId.trim() !== '') {
+                    try {
+                      exponea.showWebLayer(bannerId);
+                    } catch (error) {
+                      console.error("Error calling exponea.showWebLayer:", error);
+                    }
+                } else {
+                  console.error("Error: bloomreach_banner_id is missing or empty.");
+                }
+              }
+            </script>
+          {%- endif -%}
         </div>
       </form>
 
-      <div class="f-popover" id="OutOfStockPopover">
-        <div class="f-popover-overlay"></div>
-        <div class="f-popover-content">
-          <button class="f-popover-close">
-            <img width="12" height="12" src="{{ 'Close.svg' | asset_url }}" alt="Close" loading="lazy">
-          </button>
-          {% render 'f-block-oos-notify' section:section %}
+      {%- if settings.klaviyo_api != blank -%}
+        <div class="f-popover" id="OutOfStockPopover">
+          <div class="f-popover-overlay"></div>
+          <div class="f-popover-content">
+            <button class="f-popover-close">
+              <img width="12" height="12" src="{{ 'Close.svg' | asset_url }}" alt="Close" loading="lazy">
+            </button>
+            {% render 'f-block-oos-notify' section:section %}
+          </div>
         </div>
-      </div>
+      {%- endif -%}
 
       {% comment %} {% render 'product-loyalty-points' section:section %} {% endcomment %}
       {% render 'f-product-loyalty-points' section:section %}
@@ -616,7 +604,93 @@
   </div>
 </div>
 
+{% render 'product-bar' %}
+
 <script type="text/javascript">
+
+  let productStickySection = false
+  let productStickySectionIsWrapped = false
+  const productStickySectionChildItems = [
+    document.querySelector('.js-product-information'),
+    document.querySelector('.js-product-form-wrapper ')
+  ]
+
+  function wrapProductStickySection(){
+    if(productStickySectionIsWrapped){
+      return
+    }
+    productStickySectionIsWrapped = true
+    productStickySection = document.createElement('div')
+    productStickySection.classList.add('js-product-form-sticky-section','product-form-sticky-section')
+    productStickySectionChildItems[0].parentNode.insertBefore(productStickySection, productStickySectionChildItems[0])
+    productStickySectionChildItems.forEach((item,index) => {
+      productStickySection.appendChild(item);
+    })
+    updateProductStickyStack()
+  }
+
+  function unwrapProductStickySection(){
+    if(!productStickySectionIsWrapped){
+      return
+    }
+    productStickySectionIsWrapped = false
+    productStickySection.childNodes.forEach( item => {
+      productStickySection.parentNode.insertBefore(item, productStickySection)
+    })
+    //productStickySection.remove()
+    productStickySection = false
+  }
+
+  function toggleProductStickSectionWrap(){
+    if(window.innerWidth > 1023){
+      wrapProductStickySection()
+    }else{
+      unwrapProductStickySection()
+    }
+  }
+
+  function updateProductStickyStack(){
+    if(!productStickySection){
+      return
+    }
+    const viewPortBlockingStickyItems = getCombinedBoundingBox(['header','#shopify-section-header-below'])
+    const viewPortBlockingStickyRelativeHeight = viewPortBlockingStickyItems.height + viewPortBlockingStickyItems.top
+    const viewportheight = window.innerHeight - viewPortBlockingStickyRelativeHeight
+    const top = productStickySection.offsetHeight > viewportheight ? 
+      0 - (productStickySection.offsetHeight - viewportheight) : 
+      viewPortBlockingStickyRelativeHeight + 48
+    productStickySection.style.top = `${top}px`
+  }
+
+  function getCombinedBoundingBox(selectors) {
+    const rects = selectors
+        .map(selector => document.querySelector(selector))
+        .filter(element => element !== null)
+        .map(element => element.getBoundingClientRect());
+
+    if (rects.length === 0) {
+        return null
+    }
+    const combinedBoundingBox = rects.reduce((acc, rect) => {
+        return {
+            top: Math.min(acc.top, rect.top),
+            right: Math.max(acc.right, rect.right),
+            bottom: Math.max(acc.bottom, rect.bottom),
+            left: Math.min(acc.left, rect.left)
+        };
+    }, {
+        top: Infinity,
+        right: -Infinity,
+        bottom: -Infinity,
+        left: Infinity
+    });
+
+    combinedBoundingBox.width = combinedBoundingBox.right - combinedBoundingBox.left;
+    combinedBoundingBox.height = combinedBoundingBox.bottom - combinedBoundingBox.top;
+
+    return combinedBoundingBox;
+  }
+
   DomReadyPromise().then( () => {
     if (window.outerWidth >= 1024) {
       setTimeout(function() {
@@ -624,150 +698,71 @@
         window.dispatchEvent(new Event('resize'));
       }, 100);
     }
- 
-    const mobileBreakPoint = 1023;
+    
+    const UXTriggerEvents = ['init','load','resize','scroll']
 
-    const stickyHeaderElheight = document.querySelector("#shopify-section-header");
-    const firstElement = document.querySelector("main .product-information-scroll-item");
-    const secondElement = document.querySelector("main div.product-information-scroll-track");
-    const sectionAccordions = document.querySelectorAll('.f-accordion');
-    const lastSectionAccordion = sectionAccordions[sectionAccordions.length - 1];
-    const mediaGallery = document.querySelector('main .product-gallery-container');
-    const provenanceTrustBadge = document.querySelector('provenance-trust-badge')
-
-    updateStylesOnScroll();
-
-    if(provenanceTrustBadge) provenanceBadgeObserver(provenanceTrustBadge)
-
-    function findLocationFromTop(element) {
-      const rect = element.getBoundingClientRect();
-      return rect.top + window.pageYOffset;
-    }
-
-    function applyStyles(element, position, top, right, bottom, left) {
-      const windowWidth = document.documentElement.clientWidth;
-      const width = windowWidth >= 1024 ? 456 : windowWidth;
-
-      element.style.top = `${top}px`;
-      if(top === 'unset') element.style.top = '';
-      element.style.right = `${right}px`;
-      if(right === 'unset') element.style.right = '';
-      element.style.bottom = `${bottom}px`;
-      if(bottom === 'unset') element.style.bottom = '';
-      element.style.left = `${left}px`;
-      if(left === 'unset') element.style.left = '';
-      element.style.width = `${width}px`;
-      if (position) {
-        element.style.position = position;
-        if(position === 'unset') element.style.position = '';
-      }
-    }
-
-    function updateStylesOnScroll() {
-      resetElsCheck();
-      if (document.documentElement.clientWidth <= mobileBreakPoint) return;
-
-      const scrollPosition = window.scrollY;
-      const lastAccordionLocation = lastSectionAccordion ? findLocationFromTop(lastSectionAccordion) + lastSectionAccordion.getBoundingClientRect().height : 0
-      const maxFixedPoint = (lastAccordionLocation - (firstElement.getBoundingClientRect().height + secondElement.getBoundingClientRect().height));
-
-      const passedLastAccordion = (scrollPosition > (maxFixedPoint - 185));
-      const beforeLastAccordion = (scrollPosition <= maxFixedPoint - 185);
-      const passedMediaGallery = (scrollPosition >= (findLocationFromTop(mediaGallery) + mediaGallery.getBoundingClientRect().height));
-      const beforeMediaGallery = (scrollPosition < (findLocationFromTop(mediaGallery) + mediaGallery.getBoundingClientRect().height));
-
-      const discountsBar = document.querySelector(
-        '.template-product .wayfx-main global-aov-bar'
-      )
-
-      if (beforeLastAccordion) {
-        const container = document.querySelector('.pdp-gallery-page-width');
-        const containerRightOffset = ((document.documentElement.clientWidth - container.getBoundingClientRect().width) / 2) + 48;
-        const firstElementPosRight = containerRightOffset;
-        const secondElementPosRight = containerRightOffset;
-
-        // calculate top positioning to follow header
-        const headerEl = document.querySelector('#shopify-section-header-below');
-        if (!headerEl) { headerEl = document.querySelector('#shopify-section-header'); }
-
-        const headerElPos = (headerEl.getBoundingClientRect().top + headerEl.getBoundingClientRect().height);
-
-        const discountsBarRect =
-          discountsBar ? discountsBar?.getBoundingClientRect() : 0
-
-        const discountsBarVisibleHeight =
-          discountsBar ?
-            discountsBarRect.height - (headerElPos - discountsBarRect.top) : 0
-
-        const el1Top = headerElPos + 60 + Math.max(0, discountsBarVisibleHeight);
-        applyStyles(firstElement, 'fixed', el1Top, firstElementPosRight);
-
-        const el1Pos = (firstElement.getBoundingClientRect().top + firstElement.getBoundingClientRect().height);
-        applyStyles(secondElement, 'fixed', el1Pos, firstElementPosRight);
-
-        // else if scroll position of last item touches the beginning of accordion, set to absolute
-      } else if (passedLastAccordion) {
-        if (secondElement.style.position != 'absolute') {
-          const discountsBarHeight =
-            discountsBar ? discountsBar?.getBoundingClientRect().height : 0
-
-          const bottomOffset = maxFixedPoint - (165 + discountsBarHeight);
-
-          applyStyles(secondElement, 'absolute', bottomOffset, 48, '', '');
-          applyStyles(firstElement, 'absolute', bottomOffset - firstElement.getBoundingClientRect().height, 48, '', '');
-        }
-      }
-    }
-
-    function resetElsCheck() {
-      if (document.documentElement.clientWidth <= mobileBreakPoint) {
-        applyStyles(firstElement, 'relative', 'unset', 'unset', 'unset', 'unset');
-        applyStyles(secondElement, 'relative', 'unset', 'unset', 'unset', 'unset');
-        return;
-      }
-    }
-
-    function handleResize() {
-      resetElsCheck();
-      window.removeEventListener('scroll', updateStylesOnScroll);
-      window.addEventListener('scroll', updateStylesOnScroll, {passive: true});
-    }
-
-    window.addEventListener('scroll', updateStylesOnScroll, {passive: true});
-    window.addEventListener('resize', () => {
-      handleResize();
-      updateStylesOnScroll();
-    }, {passive: true});
-
-    const detailsWrappers = document.querySelectorAll('.template-product details.wrapper');
-    detailsWrappers.forEach((detailsWrapper) =>
-      detailsWrapper.addEventListener('click', () => {
-        setTimeout(function() {
-          updateStylesOnScroll();
-        }, 100);
-      })
-    );
-
-    // listen for provenance trust-badge loading in, and when it does,
-    // - call updateStylesOnScroll so it displays
-    // - open the 'good to know' accordion
-    function provenanceBadgeObserver(provenanceTrustBadge) {
-      const handleProvenanceBadgeMutation = function(mutationsList, observer) {
-        for(let mutation of mutationsList) {
-          if (mutation.type === 'childList') {
-            observer.disconnect();
-            updateStylesOnScroll()
-            provenanceTrustBadge.addEventListener('click', e => {
-              document.querySelector('.accordion-sustainability-claims .wrapper').setAttribute('open', '')
-            })
+    UXTriggerEvents.forEach(event => {
+      if(event == 'init'){
+        toggleProductStickSectionWrap()
+      }else{
+        window.addEventListener(event,(e) => {
+          if(event == 'resize'){
+            toggleProductStickSectionWrap()
+          }else{
+            updateProductStickyStack()
           }
-        }
-      };
-      const observer = new MutationObserver(handleProvenanceBadgeMutation);
-      const config = { childList: true, subtree: true };
-      observer.observe(provenanceTrustBadge, config);
-    }
+        })
+      }
+    })
 
+    // MOVE THE ACCORDIONS INTO THE MAIN GRID
+    const accordionTarget = document.querySelector('.js-product-description')
+  
+    if (accordionTarget != null) {
+      let accordionElements = window.productSectionsDataLayer.map(
+        id => document.getElementById(`shopify-section-${id}`)
+      )
+      .filter(element => element !== null)
+      .sort((a, b) => {
+        return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+      }).forEach(element => {
+        // If we are not accessing the page through the Shopify admin editor
+        {%- unless request.design_mode -%}
+          // Create a new div element
+          const newElement = document.createElement('div');
+
+          // Copy all attributes from the section element to the new div
+          Array.from(element.attributes).forEach(attr => {
+            newElement.setAttribute(attr.name, attr.value);
+          });
+
+          // Move all child elements from the section to the new div
+          while (element.firstChild) {
+            newElement.appendChild(element.firstChild);
+          }
+
+          // Empty origin element
+          element.innerHTML = ''
+
+          // Delete the origin element
+          element.remove();
+
+          // Add a class to the new element
+          newElement.classList.add('f-accordion--attached-to-description')
+
+          accordionTarget.appendChild(newElement);
+        {%- endunless -%}
+      })
+
+      const provenanceTrustBadge = document.querySelector('provenance-trust-badge')
+      if(provenanceTrustBadge){
+        provenanceTrustBadge.addEventListener('click', e => {
+          const sustainabilitySection = document.querySelector('.accordion-sustainability-claims .wrapper')
+          sustainabilitySection.setAttribute('open', '')       
+        })
+      }
+    }
+  
   }).catch(err => {
     console.log(err)
   })
@@ -783,20 +778,76 @@
         .querySelector('.medk8-product--price-box')
         .classList.add('hide');
 
+
+      buildCompareSpan(addToCartFormEl, 'onetime', {{ settings.subs_show_compare_onetime }})
+      buildCompareSpan(addToCartFormEl, 'subsave', {{ settings.subs_show_compare_subsave }})
+      sitewide && sitewide.updateSubscriptionPricing(String({{ current_variant.id }}))
+
       // listen for and react to recharge widget option change
       const rcWidgetOptions = document.querySelectorAll('.rc_container_wrapper .rc-option')
 
       rcWidgetOptions.forEach(option => {
-        option.addEventListener('click', (e) => {
-          setTimeout(()=> {
-            const price = document.querySelector('#ProductPrice').textContent
-            if(price){
-              document.querySelector('.js-loyalty-hint__price').innerHTML = price
-            }
-          }, 0)
-        })
-      })
+        option.addEventListener(
+          'click',
+          e => e.target.value && updateAtcPriceBoxFromSubs(e)
+        );
+      });
     };
+
+    /**
+    * Builds and inserts a comparison price span element next to the price span within a given container.
+    *
+    * @param {HTMLElement} container - The container element where the price span is located.
+    * @param {string} classSuffix - A suffix to distinguish different price span elements.
+    * @param {boolean} [update] - Whether to check for and then show a comparison price, defaults to false.
+    */
+    function buildCompareSpan(container, classSuffix, update=false){
+      let priceSpan = container.querySelector(`.rc_widget__price--${classSuffix}`);
+      priceSpan.style = 'margin-left: 10px';
+
+      const compareSpan = document.createElement('s');
+      compareSpan.className = `rc_widget__price compare-at--${classSuffix} f-w400`;
+      compareSpan.setAttribute('update', update)
+      priceSpan.parentNode.insertBefore(compareSpan, priceSpan);
+
+      if (update) {
+        const variantSelect = document.querySelector('select#productSelect');
+        compareSpan.textContent = variantSelect
+          ? variantSelect.options[variantSelect.selectedIndex].getAttribute(
+              'data-compare'
+            )
+          : '{{ current_variant.compare_at_price | money }}';
+      }
+    }
+
+    // update the pre & actual prices in the ATC price box
+    // with price data from the subscriptions widget
+    function updateAtcPriceBoxFromSubs(event) {
+      if(event.target.tagName !== 'INPUT') return
+
+      const subsType = event.target.value;
+      const pricePre = event.target
+        .closest('.rc-widget')
+        .querySelector(`s.compare-at--${subsType}`).textContent;
+      const priceActual = event.target
+        .closest('.rc-widget')
+        .querySelector(`span.rc_widget__price--${subsType}`).textContent;
+  
+      const priceBox = document.querySelector('#AddToCart');
+      priceBox.querySelector('s.price-v2__pre-pdp') &&
+      (priceBox.querySelector('s.price-v2__pre-pdp').textContent =
+        pricePre);
+      priceBox.querySelector('span.price-v2__actual-pdp').textContent = priceActual;
+
+      setTimeout(()=> {
+        const loyaltyPrice = document.querySelector(
+          '#AddToCart .price-v2__actual-pdp'
+        ).textContent;
+        const loyaltyHint = document.querySelector('.js-loyalty-hint__price')
+        if (loyaltyHint) loyaltyHint.innerHTML = loyaltyPrice;
+        window.loyaltylion.ui && window.loyaltylion.ui.refresh();
+      }, 0)
+    } 
   
 
     // watch for recharge being addded
@@ -823,7 +874,6 @@
       observer.observe(addToCartFormEl, { childList: true, subtree: false });
     }
   });
-
 </script>
 
 {% schema %}

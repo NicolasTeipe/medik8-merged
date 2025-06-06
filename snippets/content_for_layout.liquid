@@ -8,11 +8,14 @@ Used to wrap {{ content_for_layout }} inside an outer element
 {%- endcomment -%}
 
 {%- assign product_templates = 'product,product.alternate,product.mix' | split: ',' -%}
+{%- assign page_type = request.page_type -%}
 
 {%- if template.name == 'product' and product_templates contains template -%}
   <div class="wayfx-product">
     {{ cfl }}
   </div>
+{%- elsif page_type == "policy" -%}
+  {%- render 'policy', content: cfl -%}
 {%- else -%}
   {{ cfl }}
 {%- endif -%}

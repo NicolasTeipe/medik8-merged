@@ -23,8 +23,7 @@
         {% endif %}
     </h1>
     {% if collection.description != '' and collection.description != '<br>' %}
-        <div id="truncated">{{ collection.description | truncatewords: 50, "... <a class='read-more-collection'><em>leer más</em></a>" }}</div>
-<div id="fullDescription" style="display: none">{{ collection.description }}</div>
+        {{ collection.description }}
     {% endif %}
     {% if collection_highlight_one %}
     <ul class="wayfx-collection__highlights">

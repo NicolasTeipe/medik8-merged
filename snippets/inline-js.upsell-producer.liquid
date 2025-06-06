@@ -1,0 +1,51 @@
+<script type="text/javascript">
+  DomReadyPromise().then(() => {
+    // init GlobalConditonalUpsellProducer (used to define / validate upsells)  
+    const ConditonalUpsellProducer = new GlobalConditonalUpsellProducer({
+      "customer":{
+        "id":{{ customer.id | json }},
+        "tags":{{ customer.tags | json }},
+        "email": {{ customer.email | json }},
+        "orders_count": {{ customer.orders_count | json }},
+        "upsell_offer_id_history":{{ customer.metafields['medik8_checkout_ext_app'].upsell_offer_id_history.value | json }},
+        "variant_id_history":{{ customer.orders | map:'line_items' | map: 'variant_id' | uniq | json }}
+      },
+      "offers":[
+        {% for upsell in shop.metaobjects.cart_upsells.values  %}
+          {% capture hmacValidationKeyString %}
+            min_spend={{ upsell.logic_minimum_spend.value}}&
+            variant_ids={{ upsell.logic_cart_content_variants.value | map: 'id' | join:',' }}&
+            variant_excluding_ids={{ upsell.logic_cart_content_variants_excluding.value | map: 'id' | join: ',' }}&
+            samples_use_global_max={{ upsell.samples_use_global_max.value }}&
+            max_items={{ upsell.max_items.value }}&
+            allow_reorder={{ upsell.logic_allow_reorder.value }}&
+            customer_req_tags={{ upsell.logic_customer_tags.value }}&
+            customer_req_customer_order_history_variants={{ upsell.logic_customer_order_history_variants.value | map: 'id' }}&
+            customer_req_new_customer_only={{ upsell.logic_new_customers_only.value }}&
+            customer_req_logic_allow_reorder={{ upsell.logic_allow_reorder.value }}&
+            customer_current_variant_id_history={{ customer.orders | map:'line_items' | map: 'variant_id' | uniq | join: ',' }}&
+            customer_current_upsell_offer_id_history={{ customer.metafields['medik8_checkout_ext_app'].upsell_offer_id_history.value }}
+          {% endcapture %}
+          {
+            "id": {{ upsell.system.id | json }}, 
+            "order":{{ upsell.order.value | json }},
+            "logic_minimum_spend": {{ upsell.logic_minimum_spend.value | json }},
+            "logic_customer_tags": {{ upsell.logic_customer_tags.value | json }},
+            "logic_customer_order_history_variants": {{ upsell.logic_customer_order_history_variants.value | map: 'id' | json }},
+            "logic_cart_content_variant_ids": {{ upsell.logic_cart_content_variants.value | map: 'id' | json }},
+            "logic_cart_content_variants_excluding_ids": {{ upsell.logic_cart_content_variants_excluding.value | map: 'id' | json }},
+            "logic_new_customers_only": {{ upsell.logic_new_customers_only.value | json }},
+            "logic_allow_reorder": {{ upsell.logic_allow_reorder.value | json }},
+            "max_items": {{ upsell.max_items.value | json }},
+            "samples_use_global_max":{{ upsell.samples_use_global_max.value | json  }},
+            "validation_error_message": {{ upsell.validation_error_message.value | json }},
+            "upsells": {{ upsell.upsells.value | json }},
+            "key":{{ hmacValidationKeyString | strip_newlines | lstrip | rstrip | replace:' ' , '' | hmac_sha256: 'ohnoyoudontpal' | json }},
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

@@ -1,0 +1,38 @@
+:root .rc-login {
+  --rc-title-font: acta_displaymedium, sans-serif;
+  --rc-body-font: ridley_groteskregular, sans-serif;
+  --rc-font-color: #000;
+  --rc-button-bg-color: #000;
+  --rc-button-font-color: #fff;
+  --rc-secured-display: none
+}
+
+.rc-login {
+
+  &--header-title,
+  & .rc-enter-code-header {
+    font-family: acta_displaymedium, sans-serif;
+    font-weight: 400 !important;
+    line-height: 1;
+  }
+
+  &--header-title {
+    font-size: 40px !important;
+  }
+
+  & .rc-enter-code-header {
+    font-size: 36px !important;
+  }
+
+  &-form input, &-form input::placeholder{
+    font-family: ridley_groteskregular, sans-serif;
+  }
+
+  & .rc-enter-code-sms-info {
+    font-size: 14px;
+  }
+}
+
+.recharge-button-primary:disabled {
+  color: #000 !important;
+}

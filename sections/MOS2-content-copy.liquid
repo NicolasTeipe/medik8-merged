@@ -5,41 +5,50 @@
   {% endunless %}
 }
 
-.content-copy-wrapper--{{section.id}} {
-  padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-  padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+#shopify-section-{{ section.id }} .content-copy-wrapper {
+  margin-top: {{ section.settings.mb_margin_top }}px;
+  margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+  padding-top: {{ section.settings.mb_padding_top }}px;
+  padding-bottom: {{ section.settings.mb_padding_bottom }}px;
 }
 
-@media screen and (min-width: 750px) {
-  .content-copy-wrapper--{{section.id}} {
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
+@media screen and (min-width: 768px) {
+  #shopify-section-{{ section.id }} .content-copy-wrapper {
+    margin-top: {{ section.settings.dt_margin_top }}px;
+    margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+    padding-top: {{ section.settings.dt_padding_top }}px;
+    padding-bottom: {{ section.settings.dt_padding_bottom }}px;
   }
 }
 </style>
 
-<div class="content-copy-wrapper content-copy-wrapper--{{section.id}}">
-  {% if section.settings.video_bg == true %}
+<div class="content-copy-wrapper">
+  {%- if section.settings.video_bg == true -%}
     <video playsinline autoplay muted loop role="presentation">
       <source src="https://ucarecdn.com/d3a2344d-a1cc-418d-bdd7-e74c9d1995c6/Crystal_Background_compressed.webm" type="video/webm">
       <source src="https://ucarecdn.com/00c8d90d-e63b-4028-b247-5fd579dc53c3/Crystal_Background_compressed.mp4" type="video/mp4">
     </video>
-  {% endif %}
+  {%- endif -%}
 
   <div class="wayfx-wrapper content-copy--{{section.id}}">
-  {% for block in section.blocks %}
-    {% case block.type %}
-      {% when "heading" %}
-        <h1 class="cc-heading" style="color: {{block.settings.heading_color}}">{{block.settings.heading}}</h1>
-      {% when "copy" %}
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when "heading" -%}
+        {%- assign instagram_link = '<a href="https://www.instagram.com/officialmedik8/" target="_blank">@officialmedik8</a>' -%}
+        {%- assign heading = block.settings.heading | replace: '@officialmedik8', instagram_link -%}
+        <h1 class="cc-heading" style="color: {{ block.settings.heading_color }}">
+          {{ heading }}
+        </h1>
+      {%- when "copy" -%}
         <p class="cc-copy" style="color: {{block.settings.copy_color}}">{{block.settings.copy}}</p>
-      {% when "cta" %}
+      {%- when "copy_html" -%}
+          <div>{{block.settings.copy_html}}</div>
+      {%- when "cta" -%}
         <a href="{{ block.settings.cta_link }}" class="{{block.settings.cta_type}} btn--xlarge">{{ block.settings.cta_text }}</a>
-    {% endcase %}
-  {% endfor %}
+    {%- endcase -%}
+  {%- endfor -%}
   </div>
 </div>
-
 
 {% schema %}
   {
@@ -48,27 +57,95 @@
     "settings": [
       {
         "type": "header",
+        "content": "Layout: Mobile"
+      },
+      {
+        "type": "range",
+        "id": "mb_margin_top",
+        "label": "Margin - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "mb_margin_bottom",
+        "label": "Margin - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "mb_padding_top",
+        "label": "Padding - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 56,
+      },
+      {
+        "type": "range",
+        "id": "mb_padding_bottom",
+        "label": "Padding - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 56,
+      },
+      {
+        "type": "header",
+        "content": "Layout: Desktop"
+      },
+      {
+        "type": "range",
+        "id": "dt_margin_top",
+        "label": "Margin - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "dt_margin_bottom",
+        "label": "Margin - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 0,
+      },
+      {
+        "type": "range",
+        "id": "dt_padding_top",
+        "label": "Padding - top",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 56,
+      },
+      {
+        "type": "range",
+        "id": "dt_padding_bottom",
+        "label": "Padding - bottom",
+        "min": 0,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "default": 56,
+      },
+      {
+        "type": "header",
         "content": "Section Settings"
-      },
-      {
-        "type": "range",
-        "id": "padding_top",
-        "min": 0,
-        "max": 100,
-        "step": 4,
-        "unit": "px",
-        "label": "Top Padding",
-        "default": 56
-      },
-      {
-        "type": "range",
-        "id": "padding_bottom",
-        "min": 0,
-        "max": 100,
-        "step": 4,
-        "unit": "px",
-        "label": "Bottom Padding",
-        "default": 56
       },
       {
         "type": "checkbox",
@@ -89,10 +166,10 @@
         "type": "heading",
         "settings": [
           {
-            "type": "text",
+            "type": "html",
             "id": "heading",
             "label": "Heading",
-            "default": "Heading"
+            "info": "@officialmedik8 handle is automatically replaced with Medik8 Instagram link"
           },
           {
             "type": "color",
@@ -117,6 +194,17 @@
             "id": "copy_color",
             "label": "Copy color",
             "default": "#000000"
+          }
+        ]
+      },
+      {
+        "name": "Copy - HTML",
+        "type": "copy_html",
+        "settings": [
+          {
+            "type": "html",
+            "id": "copy_html",
+            "label": "Copy - HTML"
           }
         ]
       },

@@ -1,8 +1,9 @@
 {% style %}
   :root {
     --colorPrimary: {{ settings.color_primary }};
-    --colorBtnPrimaryHover: {{ settings.color_primary | color_darken: 10 }};
-    --colorBtnPrimaryActive: {{ settings.color_primary | color_darken: 20 }};
+    --colorBtnPrimary: {{ settings.color_btn_primary }};
+    --colorBtnPrimaryHover: {{ settings.color_btn_primary | color_darken: 10 }};
+    --colorBtnPrimaryActive: {{ settings.color_btn_primary | color_darken: 20 }};
     --colorSecondary: {{ settings.color_secondary }};
     --colorTextBody: {{ settings.color_body_text }};
     --colorBorder: {{ settings.color_borders }};
@@ -13,6 +14,28 @@
     --colorBtnSecondaryHover: {{ settings.color_secondary | color_darken: 10 }};
     --colorBtnSecondaryActive: {{ settings.color_secondary | color_darken: 10 }};
     --colorLinkHover: {{ settings.color_primary | color_lighten: 15 }};
+    --bodyText: {{ settings.color_body_text }};
+    --body-Background: {{ settings.color_body_bg }};
+    --chevron-icon: url("data:image/svg+xml,%3Csvg width='9' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.044 9.002l.985-.985L1.147.135l-.985.984L7.06 8.017.195 14.882l.984.985 3.936-3.936z' fill='%23{{ settings.color_body_text | replace: '#', '' }}' fill-rule='nonzero'/%3E%3C/svg%3E");
+    /* Used for the yotpo Q&A "ask a question" popup product title */
+    --product-title: "{{ product.title | escape }}";
+  }
+
+  body.dark-mode.template-index {
+    --colorPrimary: {{ settings.color_primary_dark }};
+    --colorBtnPrimary: {{ settings.color_btn_primary_dark }};
+    --colorBtnPrimaryHover: {{ settings.color_btn_primary_dark | color_darken: 10 }};
+    --colorBtnPrimaryActive: {{ settings.color_btn_primary_dark | color_darken: 20 }};
+    --colorSecondary: {{ settings.color_secondary_dark }};
+    --colorTextBody: {{ settings.color_body_text_dark }};
+    --colorBorder: {{ settings.color_borders_dark }};
+    --colorBorderFocus: {{ settings.color_borders_dark | color_darken: 10 }};
+    --colorBtnSecondaryHover: {{ settings.color_secondary_dark | color_lighten: 10 }};
+    --colorBtnSecondaryActive: {{ settings.color_secondary_dark | color_lighten: 10 }};
+    --colorLinkHover: {{ settings.color_primary_dark | color_darken: 15 }};
+    --bodyText: {{ settings.color_body_text_dark }};
+    --body-Background: {{ settings.color_body_bg_dark }};
+    --chevron-icon: url("data:image/svg+xml,%3Csvg width='9' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.044 9.002l.985-.985L1.147.135l-.985.984L7.06 8.017.195 14.882l.984.985 3.936-3.936z' fill='%23{{ settings.color_body_text_dark | replace: '#', '' }}' fill-rule='nonzero'/%3E%3C/svg%3E");
   }
 {% endstyle %}
 
@@ -52,6 +75,16 @@
 {% endcomment %}
 {% render 'inline-js.core' %}
 
+<script>
+  window.shopMoneyFormat =  {{ shop.money_format | json }} 
+  window.cartCurrencySymbol =  {{ cart.currency.symbol | json }}
+</script>
+
+{% if settings.use_v2_navigation %}
+  {{ 'stylesheets.global.v2-navigation.css' | asset_url | stylesheet_tag: preload: true }}
+  <link rel="preload" as="script" href="{{ 'scripts.chunks.v2-navigation.js' | asset_url }}">
+  <script type="text/javascript" src="{{ 'scripts.chunks.v2-navigation.js' | asset_url }}" defer></script> 
+{% endif %}
 
 {% comment %}CART UPDATES
   NOTE: we can't use defer here ATM. We need to plug the cart into a few places that are JQ dependant, JQ doesn't have defer/async so defer async would be an issue here,
@@ -63,6 +96,10 @@
 <script type="text/javascript" src="{{ 'scripts.chunks.core.js' | asset_url }}"></script> 
 
 {% render 'inline-js.cart' %}
+{% render 'inline-js.upsell-producer' %}
+{% render 'inline-js.discountsV2' %}
+{% render 'inline-js.progress-bar' %}
+
 <link rel="preload" as="script" href="{{ 'scripts.chunks.global.js' | asset_url }}">
 <script type="text/javascript" src="{{ 'scripts.chunks.global.js' | asset_url }}" defer></script> 
 
@@ -99,9 +136,6 @@
       webp:true
     });
   })
-
-  window.shopMoneyFormat =  {{ shop.money_format | json }} 
-  window.cartCurrencySymbol =  {{ cart.currency.symbol | json }}
 
   document.addEventListener('DOMContentLoaded', () => {
     

@@ -24,21 +24,28 @@
   data-url="{{ product.url }}"
   data-update-url="{{ update_variant_param }}"
 >
+  {%- if product.type == 'Bundles' -%}
+  <div class="f-product-variant-picker__label row--d2 flex justify-space align-center f-w600 t-ucase"> 
+    {{ 'products.bundles.option_text' | t }}  
+  </div>
+  {%- endif -%}
 
   {%- for option in product.options_with_values -%}
     {%- assign option_name = option.name -%}
     {%- if product.has_only_default_variant or option_name == 'Title' -%}
-      {%- assign option_name = 'Tamaño' -%}
+      {%- assign option_name = 'Size' -%}
     {%- endif -%}
 
 
-    <div class="f-product-variant-picker__title flex justify-space align-center"> 
-      <span class="form__label f-product-variant-picker__label f-w600 t-ucase">
-        {{- option_name -}}
-        {%- if product.variants.size == 1 -%}: <span class="f-w400">{{ product.metafields.sf_product_hero.size }}</span>{%- endif -%}
-      </span>
-      {%- render 'f-strength-finder-quiz' -%}
-    </div>
+    {%- unless product.type == 'Bundles' -%}
+      <div class="f-product-variant-picker__title flex justify-space align-center"> 
+        <span class="form__label f-product-variant-picker__label f-w600 t-ucase">
+          {{- option_name -}}
+          {%- if product.variants.size == 1 and product.type != 'Bundles' -%}: <span class="f-w400">{{ product.metafields.sf_product_hero.size }}</span>{%- endif -%}
+        </span>
+        {%- render 'f-strength-finder-quiz' -%}
+      </div>
+    {%- endunless -%}
 
     {%- render 'f-variant-additional-info' -%}
 

@@ -1,0 +1,124 @@
+.announcement-bar {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  line-height: 22px;
+  justify-content: center;
+  padding: 8px 20px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-transform: uppercase;
+
+  @media all and (min-width: 768px) {
+    font-size: 16px;
+    line-height: 34px;
+    padding: 8px 50px;
+  }
+
+  .button-block {
+    border-radius: 4px;
+    display: inline-block;
+    padding: 8px 20px 7px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .message-block a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .message-block p,
+  .button-block {
+    font-size: 11px;
+    margin-bottom: 0;
+
+    @media all and (min-width: 768px) {
+      font-size: 13px;
+    }
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 65px);
+    grid-template-rows: repeat(2, auto);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+    @media all and (min-width: 768px) {
+      grid-template-columns: repeat(4, 107px);
+      padding: 0 55px;
+    }
+
+    .time {
+      font-size: 16px;
+      font-weight: 600;
+
+      @media all and (min-width: 768px) {
+        font-size: 24px;
+      }
+  
+    }
+
+    .day {
+      font-size: 12px;
+      line-height: 1;
+
+      @media all and (min-width: 768px) {
+        font-size: 16px;
+      }
+  
+    }
+
+    .grid-item {
+      border-left: 1px solid;
+
+      @media all and (max-width: 767px) {
+        &:nth-child(1), &:nth-child(5) {
+          border: none
+        }
+      }
+
+      @media all and (min-width: 768px) {
+        border-left: 1px solid;
+
+        &:nth-child(4n) {
+          border-right: 1px solid;
+        }
+      }
+    }
+  }
+}
+
+@media all and (min-width: 1024px) {
+  .wayfx-below-header,
+  .wayfx-below-header__message {
+    height: 35px;
+  }
+
+  .wayfx-below-header__messages.slick-initialized .wayfx-below-header__message {
+    display: flex !important;
+  }
+
+  .wayfx-below-header__message {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media all and (max-width: 1023px) {
+  .wayfx-below-header__message {
+    padding: 6px 24px;
+  }
+}
+
+@media all and (max-width: 767px) {
+  .announcement-bar {
+    gap: 5px;
+  }
+  .message-block {
+    width: 100%;
+  }
+}

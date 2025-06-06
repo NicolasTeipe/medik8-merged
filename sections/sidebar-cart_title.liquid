@@ -1,0 +1,27 @@
+<sidebar-cart-section class="flex column-nowrap flex-grid">
+  <template data-settings>
+    {
+      "id":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    <div class="sb-cart-header__nav block-rel flex row-wrap align-center justify-center">
+      
+      <span class="h-style f-w600 t-rm ls-5 lh-18 t-ucase">{{ section.settings.title_text }}</span>
+    </div>
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/title",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title_text",
+      "label": "Title text",
+      "default": "Your Bag"
+    }
+  ]
+}
+{% endschema %}

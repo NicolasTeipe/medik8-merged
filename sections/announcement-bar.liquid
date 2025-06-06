@@ -16,12 +16,13 @@
         {% if block.settings.button_url and block.settings.button != blank  %}
           <a href="{{ block.settings.button_url }}" class="button-block">{{ block.settings.button }}</a>
           <style>
-            .button-block {
+            #shopify-section-announcement-bar .button-block {
               background-color: {{section.settings.color_theme | split: '|' | slice: 1 }};
               color: {{section.settings.color_theme | split: '|' | slice: 2 }};
               white-space: nowrap;
             }
-            .button-block:hover {
+            #shopify-section-announcement-bar .button-block:hover,
+            #shopify-section-announcement-bar .button-block:focus {
               color: {{section.settings.color_theme | split: '|' | slice: 2 }};
             }
           </style>
@@ -38,10 +39,10 @@
           <div class="time grid-item" id="tm-h">&nbsp;</div>
           <div class="time grid-item" id="tm-m">&nbsp;</div>
           <div class="time grid-item" id="tm-s">&nbsp;</div>
-          <div class="day grid-item">DÍA</div>
+          <div class="day grid-item">DAY</div>
           <div class="day grid-item">HRS</div>
           <div class="day grid-item">MIN</div>
-          <div class="day grid-item">SEG</div>
+          <div class="day grid-item">SEC</div>
         </div>
 
         <style>
@@ -78,6 +79,22 @@
   </div>
 
 {% endif %}
+
+<script>
+  (() => {
+    const announcementBar = document.querySelector('.announcement-bar');
+    if (!announcementBar) return;
+
+    const observer = new MutationObserver(() => {
+      window.dispatchEvent(new CustomEvent('announcement-bar-mutated'));
+    });
+
+    observer.observe(announcementBar, {
+      childList: true,
+      subtree: true,
+    });
+  })();
+</script>
 
 {%- if countdown_block -%}
   <script>
@@ -129,7 +146,7 @@
 
       start() {
         this.interval = setInterval(() => this.update(), 1000);
-    }
+      }
 
       formatTimeUnit(value) {
         return value.toString().padStart(2, '0');

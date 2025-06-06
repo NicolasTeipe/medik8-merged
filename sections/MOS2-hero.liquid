@@ -7,92 +7,197 @@
 
 {% capture image-overlay %}
 <style type="text/css">
+  #shopify-section-{{ section.id }} .hero-wrapper {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-wrapper {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+
   .hero-media--{{ section.id }} {background: url('{{ block_image | image_url: width: 1920 }}') no-repeat center center / cover;}
   .hero-media--{{ section.id }} .wayfx-block__left p {margin:0;}
   .hero-media--{{ section.id }} .wayfx-wrapper { color: {{ section.settings.heading_color }} !important; }
 </style>
 {% endcapture %}
 
-<section class="wayfx-block hero-media hero-media--{{ section.id }}
-                {% if section.settings.overlay and layout == "one-column" %} wayfx-block--hero-with-media wayfx-block--align-{{section.settings.alignment}}{% endif %}
-                {% for block in section.blocks %}{% if block.type == "image" %} hero-image{% endif %}{% endfor %}
-                ">
-    {% if layout == "two-column" %}<div class="wayfx-wrapper"> <div class="grid">{% endif %}
-    {% if layout == "one-column" and section.settings.overlay  %}<div class="wayfx-wrapper"> {% endif %}
-      <div class="wayfx-block__left 
-                 {% if section.settings.overlay == false and layout == "one-column" %} block-c hero-media__p-align-fix{% endif %}
-                 {% if layout == "two-column" and section.blocks.size == 1 %} grid__item two-quarters{% endif %}">
-        {% if section.settings.heading != blank %}
-            <h1 class="h1--secondary">{{ section.settings.heading }}</h1>
+<div class="hero-wrapper">
+  <section class="wayfx-block hero-media hero-media--{{ section.id }}
+                  {% if section.settings.overlay and layout == "one-column" %} wayfx-block--hero-with-media wayfx-block--align-{{section.settings.alignment}}{% endif %}
+                  {% for block in section.blocks %}{% if block.type == "image" %} hero-image{% endif %}{% endfor %}
+                  ">
+      {% if layout == "two-column" %}<div class="wayfx-wrapper"> <div class="grid">{% endif %}
+      {% if layout == "one-column" and section.settings.overlay  %}<div class="wayfx-wrapper"> {% endif %}
+        <div class="wayfx-block__left 
+                  {% if section.settings.overlay == false and layout == "one-column" %} block-c hero-media__p-align-fix{% endif %}
+                  {% if layout == "two-column" and section.blocks.size == 1 %} grid__item two-quarters{% endif %}">
+          {% if section.settings.heading != blank %}
+              <h1 class="h1--secondary">{{ section.settings.heading }}</h1>
+          {% endif %}
+          {% if section.settings.paragraph != blank %}{{ section.settings.paragraph }}{% endif %}
+          {% if section.settings.cta_text != blank %}
+            <a href="{{ section.settings.cta_link }}" class="{{section.settings.cta_type}} btn--xlarge">{{ section.settings.cta_text }}</a>
         {% endif %}
-        {% if section.settings.paragraph != blank %}{{ section.settings.paragraph }}{% endif %}
-        {% if section.settings.cta_text != blank %}
-          <a href="{{ section.settings.cta_link }}" class="{{section.settings.cta_type}} btn--xlarge">{{ section.settings.cta_text }}</a>
-      {% endif %}
-      </div>
+        </div>
 
-      {% case layout %}
-      {% when "one-column" %}
-        <style>
-          .hero-media--{{ section.id }} .wayfx-wrapper .video-overlay:after, .wayfx-block.wayfx-block--hero-with-media:after {
-            opacity: {{section.settings.overlay_intensity}}
-          }
-        </style>
-        {% for block in section.blocks %}
-          {% case block.type %}
+        {% case layout %}
+        {% when "one-column" %}
+          <style>
+            .hero-media--{{ section.id }} .wayfx-wrapper .video-overlay:after, .wayfx-block.wayfx-block--hero-with-media:after {
+              opacity: {{section.settings.overlay_intensity}}
+            }
+          </style>
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when "video" %}
+              {% if section.settings.overlay %}
+              <div class="video-overlay"></div>
+              <div class="video-cover-wrapper">
+                  <div class="video-cover-iframe">
+                    {%- if block.settings.hero_video.type == 'youtube' -%}
+                      <iframe class="normal" width="100%" height="100%" src="https://www.youtube.com/embed/{{ block.settings.hero_video.id }}?enablejsapi=1{% if block.settings.autoplay %}&autoplay=1&mute=1{%endif%}&modestbranding=1&rel=0&cc_load_policy=1&iv_load_policy=3&color=white&controls=0{% if block.settings.loop %}&loop=1&playlist={{ block.settings.hero_video.id }}{% endif %}" class="js-youtube" allow="autoplay; encrypted-media" frameborder="0" loop webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
+                    {%- else -%}
+                      <iframe class="normal" width="100%" height="100%" src="https://player.vimeo.com/video/{{ block.settings.hero_video.id }}?portrait=0&byline=0{% if block.settings.loop %}&loop=1{% endif %}{% if block.settings.autoplay %}&autoplay=1&background=1{% endif %}" class="js-vimeo" allow="autoplay; encrypted-media" frameborder="0" loop webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
+                    {%- endif -%}
+                  </div>
+              </div>
+              {% endif%}
+
+              {% when "image" %}
+                {% unless section.settings.overlay %}
+                    <div class="wayfx-block__image">
+                      <img width="{{block_image.width}}" height="{{block_image.height}}" loading="lazy" src="{{ block_image | image_url: width: 1920 }}" alt="{{ block_image.alt }}">
+                    </div>
+                {% else %}
+                  {{ image-overlay }} 
+                {% endunless %}
+            {% endcase %}
+          {% endfor %}
+
+        {% when "two-column" %}
+          {% for block in section.blocks %}
+            <div class="wayfx-block__right grid__item two-quarters">
+
+            {% case block.type %}
             {% when "video" %}
-            {% if section.settings.overlay %}
-            <div class="video-overlay"></div>
-            <div class="video-cover-wrapper">
-                 <div class="video-cover-iframe">
-                  {%- if block.settings.hero_video.type == 'youtube' -%}
-                    <iframe class="normal" width="100%" height="100%" src="https://www.youtube.com/embed/{{ block.settings.hero_video.id }}?enablejsapi=1{% if block.settings.autoplay %}&autoplay=1&mute=1{%endif%}&modestbranding=1&rel=0&cc_load_policy=1&iv_load_policy=3&color=white&controls=0{% if block.settings.loop %}&loop=1&playlist={{ block.settings.hero_video.id }}{% endif %}" class="js-youtube" allow="autoplay; encrypted-media" frameborder="0" loop webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
-                  {%- else -%}
-                    <iframe class="normal" width="100%" height="100%" src="https://player.vimeo.com/video/{{ block.settings.hero_video.id }}?portrait=0&byline=0{% if block.settings.loop %}&loop=1{% endif %}{% if block.settings.autoplay %}&autoplay=1&background=1{% endif %}" class="js-vimeo" allow="autoplay; encrypted-media" frameborder="0" loop webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
-                  {%- endif -%}
-                </div>
-             </div>
-            {% endif%}
+              {%- if block.settings.hero_video.type == 'youtube' -%}
+                <iframe src="https://www.youtube.com/embed/{{ block.settings.hero_video.id }}?enablejsapi=1{% if block.settings.autoplay %}&autoplay=1&mute=1{%endif%}&modestbranding=1&rel=0&cc_load_policy=1&iv_load_policy=3&color=white&controls=0{% if block.settings.loop %}&loop=1&playlist={{ block.settings.hero_video.id }}{% endif %}" class="js-youtube" allow="autoplay; encrypted-media" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
+              {%- else -%}
+                <iframe src="https://player.vimeo.com/video/{{ block.settings.hero_video.id }}?portrait=0&byline=0{% if block.settings.loop %}&loop=1{% endif %}{% if block.settings.autoplay %}&autoplay=1{% endif %}" class="js-vimeo" allow="autoplay; encrypted-media" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
+              {%- endif -%}
 
             {% when "image" %}
-               {% unless section.settings.overlay %}
-                  <div class="wayfx-block__image">
-                    <img width="{{block_image.width}}" height="{{block_image.height}}" loading="lazy" src="{{ block_image | image_url: width: 1920 }}" alt="{{ block_image.alt }}">
-                  </div>
-               {% else %}
-                {{ image-overlay }} 
-              {% endunless %}
-          {% endcase %}
-        {% endfor %}
+              <img loading="lazy" src="{{ block_image | image_url: width: 1920 }}" alt="{{ block_image.alt }}" height="{{block_image.height}}" width="{{block_image.width}}" />
+            {% endcase %}
+            </div>
+          {% endfor %}
+        {% endcase%}
 
-      {% when "two-column" %}
-        {% for block in section.blocks %}
-          <div class="wayfx-block__right grid__item two-quarters">
-
-          {% case block.type %}
-          {% when "video" %}
-            {%- if block.settings.hero_video.type == 'youtube' -%}
-              <iframe src="https://www.youtube.com/embed/{{ block.settings.hero_video.id }}?enablejsapi=1{% if block.settings.autoplay %}&autoplay=1&mute=1{%endif%}&modestbranding=1&rel=0&cc_load_policy=1&iv_load_policy=3&color=white&controls=0{% if block.settings.loop %}&loop=1&playlist={{ block.settings.hero_video.id }}{% endif %}" class="js-youtube" allow="autoplay; encrypted-media" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
-            {%- else -%}
-              <iframe src="https://player.vimeo.com/video/{{ block.settings.hero_video.id }}?portrait=0&byline=0{% if block.settings.loop %}&loop=1{% endif %}{% if block.settings.autoplay %}&autoplay=1{% endif %}" class="js-vimeo" allow="autoplay; encrypted-media" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen title="{{ section.settings.heading | escape }}"></iframe>
-            {%- endif -%}
-
-          {% when "image" %}
-            <img loading="lazy" src="{{ block_image | image_url: width: 1920 }}" alt="{{ block_image.alt }}" height="{{block_image.height}}" width="{{block_image.width}}" />
-          {% endcase %}
-          </div>
-        {% endfor %}
-      {% endcase%}
-
-  {% if section.settings.overlay %}</div> {% endif %}
-  {% if layout == "two-column" %}</div></div>{% endif %}
-</section>
-
+    {% if section.settings.overlay %}</div> {% endif %}
+    {% if layout == "two-column" %}</div></div>{% endif %}
+  </section>
+</div>
 
 {% schema %}
 {
   "name": "Hero 2.0",
   "settings": [
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
     {
       "type": "header",
       "content": "Section Settings"

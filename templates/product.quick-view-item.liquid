@@ -12,7 +12,7 @@
 {%- if variant.available -%}
   {%- assign sold_out = false -%}
 {%- endif -%}
-{%- if variant.inventory_quantity > 0 and variant.inventory_quantity < 20 -%}
+{%- if settings.low_stock_label and variant.inventory_quantity > 0 and variant.inventory_quantity <= settings.low_stock_trigger -%}
   {%- assign low_stock = true -%}
 {%- endif -%}
 

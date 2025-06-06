@@ -1,0 +1,76 @@
+<!-- snippets/v2_global.3-cta-grid.quote.liquid -->
+
+<div 
+  class="tac block-rel block-fh flex column-nowrap align-center justify-center cell-l cell-r ct cb flex-grid 
+        {% if block.settings.bg_image == blank and block.settings.bg_video == blank %} bg-grey-1{% endif %}
+  "
+  style="color:{{ block.settings.text_color }}"
+>
+  {% if block.settings.bg_video %}
+    
+    {{ block.settings.bg_video | 
+        video_tag: 
+          autoplay: true, 
+          loop: true, 
+          muted: true, 
+          controls: false, 
+          class: 'block-z1 block-abc block-fh block-12/12 block-objc'
+    }}
+  
+  {% elsif block.settings.bg_image != blank %}
+  {{ block.settings.bg_image | 
+    image_url: width: 736 | 
+    image_tag: 
+      widths: '256, 512, 736, 1024',
+      loading: 'lazy', 
+      alt: block.settings.bg_image.alt,
+      class: 'block-z1 block-abc block-fh block-12/12 block-objc'
+  }}
+  {% endif %}
+  {% if block.settings.image != blank %}
+  <global-video-thumbnail class="v2-quote-block__img-wrap block-rel block-z2 block-ar-1 d-block">
+    <template>
+      {
+        "video_id":{{ block.settings.video_url.id | json }},
+        "video_type": {{ block.settings.video_url.type | json }},
+        "video_description":{{ block.settings.video_description | json }},
+        "video_aspect_ratio": "{{ block.settings.video_ar }}"
+      }
+    </template>
+    {{ block.settings.image | 
+      image_url: width: 736 | 
+      image_tag: 
+        widths: '256, 512, 736, 1024',
+        loading: 'lazy', 
+        alt: block.settings.image.alt,
+        class: 'block-abc block-fh block-12/12 block-objc'
+    }}
+  </global-video-thumbnail>
+  {% endif %}
+  {% if block.settings.heading != blank %}
+  <h3 class="h-style t-lxl h-style--accent lh-reset  block-rel block-z2">{{ block.settings.heading }}</h3>
+  {% endif %}
+  {% if block.settings.sub_heading != blank %}
+  <span class="t-ucase  block-rel block-z2">{{ block.settings.sub_heading }}</span>
+  {% endif %}
+  {% if block.settings.quote != blank %}
+  <svg class="v2-quote-block__quote-icon block-rel block-z2" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="{{ block.settings.text_color }}" d="M10.5305 11.5504C8.02033 11.5504 7.39279 9.37488 7.39279 7.61777C7.39279 3.72703 9.86111 1.42605 12.4968 0.296483L12.706 0.798515C10.3213 1.76074 8.81521 3.72703 8.81521 4.8566C8.81521 5.65148 9.48459 6.19535 10.656 6.19535C12.2039 6.19535 13.2498 7.40859 13.2498 8.83101C13.2498 10.4626 11.9111 11.5504 10.5305 11.5504ZM3.16736 11.5504C0.657206 11.5504 0.0296668 9.37488 0.0296668 7.61777C0.0296668 3.72703 2.49799 1.42605 5.13365 0.296483L5.34283 0.798515C2.95818 1.76074 1.45209 3.72703 1.45209 4.8566C1.45209 5.65148 2.12146 6.19535 3.29287 6.19535C4.8408 6.19535 5.8867 7.40859 5.8867 8.83101C5.8867 10.4626 4.54795 11.5504 3.16736 11.5504Z"/>
+  </svg>
+  <div class="v2-quote-block__quote rte-content block-rel block-z2">
+    {{ block.settings.quote }}
+  </div>
+  {% endif %}
+
+  {% if block.settings.cta_url and block.settings.cta_text %}
+    <a 
+      href="{{ block.settings.cta_url }}" 
+      class="v2-btn v2-btn--{{ block.settings.cta_button }} block-rel block-z2"
+      style="
+        background:{{ block.settings.cta_button_background_color }};
+        color:{{ block.settings.cta_button_text_color }};
+        border-color:{{ block.settings.cta_button_border_color }};
+      "
+    >{{ block.settings.cta_text }}</a>
+  {% endif %}
+</div>
