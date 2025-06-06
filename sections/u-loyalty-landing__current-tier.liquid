@@ -1,5 +1,3 @@
-<!-- sections/u-loyalty-landing__current-tier.liquid -->
-
 <div data-anchor="{{ section.settings.nav_title }}" class="block-grid block-grid--f">
   <loyaltylion-current-tier class="tac flex flex-grid column-wrap align-center justify-center block-12/12">
     {% if section.settings.pre_title != blank %}
@@ -40,7 +38,7 @@
       if(!_customer){
         return
       }
-
+    
       const nextTierText = {{ nextTierText | json }}
       const crystalIconSrc = {{ 'loyalty-landing.medals.standard.jpg' | asset_img_url : '256x'| json }}
       const plusIconSrc = {{ 'loyalty-landing.medals.plus.jpg'  | asset_img_url : '256x' |  json }}
@@ -55,51 +53,19 @@
           tier.next = {
             amount:`${this.util.settings.currencySymbol}${((tier.bounds.upper + 1) - _customer.loyaltyTierEligibleSpend)/100}`,
             tier:loyaltyTiers[index + 1].name,
-            date:_customer.loyaltyTierMembership?.expiresAt?.replace(/^(\d{4})-(\d{2})-(\d{2}).*$/, '$3/$2/$1') || null,
+            date:_customer.loyaltyTierMembership?.expiresAt?.replace(/^(\d{4})-(\d{2})-(\d{2}).*$/, '$3/$2/$1') || this.util.addOneYearToDate(_customer.loyaltyTierMembership.startedAt),
           }
         }
         return tier
       })
-
       if(!loyaltyTiers.find(({active}) => active)){
         loyaltyTiers[0].active = true
       }
-
+      
       const activeTier = loyaltyTiers.find(({active}) => active)
       this.header = this.querySelector('.js-current-tier__header')
       this.content = this.querySelector('.js-curent-tier__content')
       this.header.innerHTML = activeTier.name
-      
-      let _activeTier = { ...activeTier };
-      let _nextTierDate = null;
-      let _nextTierMessage = "";
-
-      if (_activeTier.next) {
-        let _nextTierText = nextTierText;
-
-        // Check if a valid date exists in the tier data
-        if (_activeTier.next.date) {
-          // Convert date from DD/MM/YYYY to ISO format YYYY-MM-DD
-          _nextTierDate = new Date(_activeTier.next.date.split('/').reverse().join('-') + 'T23:59:59.999Z');
-        }
-
-        // Remove date placeholder if the date is missing or invalid
-        if (!_activeTier.next.date) {
-          _nextTierText = _nextTierText.replace(/by <span class="f-w600">\${date}<\/span>/, "");
-        }
-
-        // Show the message if:
-        // - There is no date (e.g., tier does not have an expiration condition)
-        // - The date is valid and in the future
-        if (!_activeTier.next.date || _nextTierDate > new Date()) {
-          _nextTierMessage = `
-            <p class="block-12/12 t-m cell-l cell-r ct--x2">
-              ${_nextTierText.replace(/\${(.*?)}/g, (match, key) => _activeTier.next[key.trim()] || match)}
-            </p>
-          `;
-        }
-      }
-
       this.content.innerHTML = `
         ${loyaltyTiers.map( tier => {
           return `
@@ -110,15 +76,20 @@
             </div>
           `
         }).join('')}
-        ${_nextTierMessage}
+        ${ activeTier.next ? `
+          <p class="block-12/12 t-m cell-l cell-r ct--x2">${nextTierText.replace(/\${(.*?)}/g, (match, key) =>  activeTier.next[key.trim()] || match)}</span>
+        ` : ''}
       `
     }
+    
   }
   customElements.define('loyaltylion-current-tier', LoyaltyLionCurrentTier);
 </script>
 
+
 {% schema %}
 {
+   
   "name":"u/loyalty/current-tier",
   "limit":1,
   "class":"ct--x3 cb--x3",
@@ -132,13 +103,13 @@
       "type":"text",
       "id":"nav_title",
       "label":"Nav title",
-      "default":"Overview"
+      "default":"Resumen"
     },
     { 
       "type":"textarea",
       "id":"pre_title",
       "label":"Pre-heading",
-      "default":"Your Current Tier"
+      "default":"Tu Nivel Actual"
     }
   ]
 }

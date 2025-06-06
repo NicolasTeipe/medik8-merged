@@ -1,0 +1,78 @@
+<div class="wayfx-wrapper">
+  <div class="wayfx-block--faq__toc">
+  <h1>{{ section.settings.heading }}</h1>
+  </div>
+  <ul>
+  {% for block in section.blocks %}
+    <li>
+      <a href="{{ block.settings.item_url }}" target="_blank">
+        <div class="careers__title">
+          {{ block.settings.item_title}}
+        </div>
+        <div class="careers__category">
+          {{ block.settings.item_desc }}
+        </div>
+        <div class="careers__location">
+          {{ block.settings.item_desc2 }}
+        </div>
+      </a>
+    </li>
+  {% endfor %}
+  </ul>
+
+</div>
+
+{% schema %}
+{
+  "name": "List with links",
+  "tag": "section",
+  "class": "wayfx-block wayfx-block--careers",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "List Title",
+      "default": "Career Opportunities"
+    }
+  ],
+  "blocks": [
+     {
+      "name": "List Item",
+      "type": "list_item",
+      "settings": [
+        {
+          "id": "item_title",
+          "type": "text",
+          "label": "Faq Title",
+          "default": "List Item Title"
+        },
+        {
+            "id": "item_desc",
+            "type": "text",
+            "label": "Item Category"
+        },
+        {
+          "id": "item_desc2",
+          "type": "text",
+          "label": "Item Category 2"
+        },
+        {
+          "id": "item_url",
+          "type": "url",
+          "label": "List Item URL"
+      }
+      ]
+    }
+  ],
+  "templates": ["index", "article", "page", "product"],
+  "presets": [
+    {
+      "name": "List of items"
+    }
+  ]
+}
+{% endschema %}

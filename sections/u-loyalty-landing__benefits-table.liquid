@@ -42,11 +42,11 @@
           active: !_customer || _customer?.loyaltyTierMembership?.loyaltyTierId == id ? true  : false,
           benefits:[
             {
-              content:'Spend per year',
+              content:'Pedidos en 12 meses',
               value:bounds.lower ? `${this.util.settings.currencySymbol}${bounds.lower/100}` : '-',
             },
             {
-              content:`${this.util.settings.currencySymbol}1 spent = 1 point`,
+              content:`${this.util.settings.currencySymbol}1 gastado = 5 puntos`,
               availableForTier: true
             }
           ].concat(

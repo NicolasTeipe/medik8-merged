@@ -20,14 +20,12 @@ var productCardMarkup =
 		<div class="wayfx-products">
       {{#products}}
         <div id="wayfx-product-{{epi}}" class="wayfx-product__item wayfx-product__item--grid grid__item">
-          <div class="block-rel">
-            <a href="{{du}}" aria-label="{{dt}}" class="wayfx-product__grid-image">
-              <img alt="{{dt}}" src="{{iu}}" data-productid="{{empi}}" data-variantid="{{epi}}" onerror="javascript: getUpdatedImage(this)">
-            </a>
-            <button id="swym-remove-productBtn" type="button" class="fancybox-button fancybox-close-small" title="Remove" data-variant-id="{{epi}}" data-product-id="{{empi}}">
-              <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path></svg>
+          <a href="{{du}}" aria-label="{{dt}}" class="wayfx-product__grid-image">
+            <img alt="{{dt}}" src="{{iu}}" data-productid="{{empi}}" data-variantid="{{epi}}" onerror="javascript: getUpdatedImage(this)">
+              <button id="swym-remove-productBtn" type="button" class="fancybox-button fancybox-close-small" title="Remove" data-variant-id="{{epi}}" data-product-id="{{empi}}">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path></svg>
             </button>
-          </div>
+          </a>
           <p class="wayfx-product__grid-title">
             <a href="{{du}}">{{dt}}</a>
           </p>
@@ -124,9 +122,11 @@ function swymUpdateAddAllToCartButton() {
   function handleAddAllToCartClick() {
     this.innerHTML = '<img style="position: relative; top: 1px; height: 14px;" src="https://cdn.medik8.com/dd7aab93-06ca-45e0-939c-af4b7956bcb8/loader.svg" alt="" />'
     swymAddMultipleToCartAndRedirect(products, () => {
-      document.dispatchEvent(new CustomEvent('update-drawer-cart', {
-        detail: { openDrawer: true }
-      }));
+      window.GlobalCartMain.updateData()
+      window.globalSideBarUI__cart.open()
+      setTimeout(() => {
+        window.SwymCallbacks.push(swymRenderWishlist) // On cart change, render wishlist again
+      }, 500)
     }, e => {
       console.error(e)
     })
@@ -205,10 +205,9 @@ function onAddToCartClick(e) {
 		e.target.innerHTML = "Added to Bag";
 		e.target.setAttribute("data-state-cart", "swym-added");
 		e.target.classList.add("btn--added");
-    document.dispatchEvent(new CustomEvent('update-drawer-cart', {
-      detail: { openDrawer: true }
-    }));
-    swymUpdateAddAllToCartButton();
+      window.GlobalCartMain.updateData()
+      window.globalSideBarUI__cart.open()
+      swymUpdateAddAllToCartButton();
 	}, function(e) {
 		// console.log(e);
 	});

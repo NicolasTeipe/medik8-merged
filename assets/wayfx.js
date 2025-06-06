@@ -12,9 +12,11 @@ function replaceUrlParam(e,r,a){var n=new RegExp("("+r+"=).*?(&|$)"),c=e;return 
   - Shopify.format money is defined in option_selection.js.
     If that file is not included, it is redefined here.
 ==============================================================================*/
+
 if ((typeof Shopify) === 'undefined') { Shopify = {}; }
 if (!Shopify.formatMoney) {
   Shopify.formatMoney = function(cents, format) {
+
     var value = '',
         placeholderRegex = /\{\{\s*(\w+)\s*\}\}/,
         formatString = (format || this.money_format);
@@ -45,7 +47,15 @@ if (!Shopify.formatMoney) {
       return dollars + cents;
     }
 
-    switch(formatString.match(placeholderRegex)[1]) {
+    let matchResult = formatString.match(placeholderRegex)
+    matchResult = matchResult && matchResult[1] ? matchResult[1] : false
+    if(!matchResult) {  
+      const {shopMoneyFormat,cartCurrencySymbol} = window
+      formatString = shopMoneyFormat ? shopMoneyFormat : cartCurrencySymbol ? `${cartCurrencySymbol}` : false
+      matchResult = formatString.match(placeholderRegex)[1]
+    }
+
+    switch(matchResult) {
       case 'amount':
         value = formatWithDelimiters(cents, 2);
         break;
@@ -128,12 +138,12 @@ wayfx.productPage = function (options) {
     if (variant.available) {
       // Available, enable the submit button, change text, show quantity elements
       $addToCart.removeClass('disabled').prop('disabled', false);
-      $addToCartText.html("Add to Bag");
+      $addToCartText.html("Añadir al carrito");
       $quantityElements.show();
     } else {
       // Sold out, disable the submit button, change text, hide quantity elements
       $addToCart.addClass('disabled').prop('disabled', true);
-      $addToCartText.html("Sold Out");
+      $addToCartText.html("Agotado");
       $quantityElements.hide();
     }
 
@@ -143,7 +153,7 @@ wayfx.productPage = function (options) {
     // Also update and show the product's compare price if necessary
     if (variant.compare_at_price > variant.price) {
       $comparePrice
-        .html("Compare at" + ' ' + Shopify.formatMoney(variant.compare_at_price, moneyFormat))
+        .html(" Comparar en" + ' ' + Shopify.formatMoney(variant.compare_at_price, moneyFormat))
         .show();
     } else {
       $comparePrice.hide();
@@ -155,7 +165,7 @@ wayfx.productPage = function (options) {
     // To only show available variants, implement linked product options:
     //   - http://docs.shopify.com/manual/configuration/store-customization/advanced-navigation/linked-product-options
     $addToCart.addClass('disabled').prop('disabled', true);
-    $addToCartText.html("Unavailable");
+    $addToCartText.html("No disponible");
     $quantityElements.hide();
   }
 };
@@ -237,23 +247,30 @@ wayfx.loginForms = function() {
 
 
 wayfx.collectionProgress = function() {
-	var collectionProgress = $('.wayfx-collection__progress');
+	var collectionProgress = $('.js-collection-aov');
+  if(collectionProgress.length){
 
-  $(window).on('load resize', function () {
-    var wayfxHeaderHeight = $('.wayfx-header').outerHeight();
 
-    if(collectionProgress.length){
-      $(window).scroll(function () {
-        if (collectionProgress.offset().top - $(this).scrollTop() > wayfxHeaderHeight) {
-          collectionProgress.removeClass('sticky');
-        } else {
-          collectionProgress.addClass('sticky');
-        }
-      });
-    }
 
-  });
+    $(window).on('load resize scroll', function () {
+      let header = document.querySelector('.wayfx-header')
+      header = header.getBoundingClientRect()
+      let stickyTop = header.height + header.top - 3
 
+      let messageBar = document.querySelector('.js-below-header-msg-bar')
+      messageBar = messageBar?.getBoundingClientRect()
+      stickyTop = messageBar ? stickyTop + messageBar.height : stickyTop
+      collectionProgress.css('top',stickyTop)
+
+        
+      if (collectionProgress.offset().top - $(this).scrollTop() > stickyTop) {
+        collectionProgress.removeClass('sticky');
+      } else {
+        collectionProgress.addClass('sticky');
+      }
+       
+    })
+  }
 };
 
 wayfx.resetPasswordSuccess = function() {
@@ -592,7 +609,6 @@ function addItem(step, product, title, category, cart_count) {
                 window.GlobalCartMain.updateData()
                 window.globalSideBarUI__cart.open()
 
-
                 $(document).mouseup(function (e) {
                   if($('body').hasClass('js-drawer-open')) {
                     if ($(e.target).closest('#CartDrawer').length === 0) {
@@ -720,14 +736,51 @@ function addToCart(form_id) {
 
 $('.wayfx-product__grid-variant select').on('change', function() {
   var price = $('option:selected',this).data("price");
-  $('.wayfx-product__grid-price').html(price);
+  $(this).parent().next('.wayfx-product__grid-price').html(price);
 });
 
+// TODO: remove the wayfx version above after removing up product-grid-item.liquid file
+$('.product__grid-variant select').on('change', function() {
+  var price = $('option:selected',this).data("price");
+  $(this).parent().next('.product__grid-price').html(price);
+});
+
+function addToCartSuccess(product) {
+  setTimeout(function(){
+    window.GlobalCartMain.updateData()
+    window.globalSideBarUI__cart.open()
+  }, 500);
+}
 
 function addToCartFail(obj, status) {
   console.log('Add to Cart Failed...');
 }
 
+// Smooth Scrolling
+$('a[href*="#"]')
+.not('[href="#"]')
+.not('[href="#0"]')
+.click(function(event) {
+  if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+    var target = $(this.hash);
+    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+    if (target.length) {
+      event.preventDefault();
+      $('html, body').animate({
+        scrollTop: target.offset().top - $('.wayfx-header').outerHeight() - 32
+      }, 600, function() {
+        var $target = $(target);
+        $target.focus();
+        if ($target.is(":focus")) {
+          return false;
+        } else {
+          $target.attr('tabindex','-1');
+          $target.focus();
+        }
+      });
+    }
+  }
+});
 
  $(document).ready(function () {
    var searchWrapper = $(".wayfx-header__search"),
@@ -752,6 +805,7 @@ function addToCartFail(obj, status) {
 
    mobileNavTrigger.on("click", function() {
      mobileNavMenu.fadeIn(100);
+     document.body.style.overflowY = 'hidden'
    });
 
    mobileNavMenuBack.on("click", function() {
@@ -778,7 +832,7 @@ function addToCartFail(obj, status) {
      mobileNavMenuBack.hide().attr('data-back-menu', '0');
      mobileNavMenuHeading.html('');
      $('.wayfx-header__extra-links--mobile').show();
-
+     document.body.style.overflowY = 'auto'
      setTimeout(function(){
        mobileNavMenuLevel.hide();
        mobileNavMenuLevel0.show();
@@ -882,7 +936,6 @@ $(document).ready(function() {
       }
     }
   });
-
 
   var hash= window.location.hash
 

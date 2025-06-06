@@ -1,0 +1,42 @@
+{% comment %} TODO - Old section, artefact, not used anymore - delete if necessary  {% endcomment %}
+
+
+{%- assign wayfx_footer_instagram = section.settings.wayfx_footer_instagram -%}
+{%- assign wayfx_footer_facebook = section.settings.wayfx_footer_facebook -%}
+{%- assign wayfx_footer_youtube = section.settings.wayfx_footer_youtube -%}
+
+<section class="wayfx-block wayfx-block--footer-social">
+  <div class="wayfx-wrapper">
+	<h2>An anti-ageing brand that thinks like a natural brand</h2>
+    <p>Stay connected</p>
+    <ul class="wayfx-block--footer-social__links">
+      {% if wayfx_footer_instagram != blank %}
+      <li>
+        <a class="icon-fallback-text" href="{{ wayfx_footer_instagram }}" title="{{ shop.name }} on Instagram" rel="noreferrer" target="_blank">
+          <i class="wayfx-icon wayfx-icon-instagram" aria-hidden="true"></i>
+          <span class="fallback-text">Instagram</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if wayfx_footer_facebook != blank %}
+      <li>
+        <a class="icon-fallback-text" href="{{ wayfx_footer_facebook }}" title="{{ shop.name }} on Facebook" rel="noreferrer" target="_blank">
+          <i class="wayfx-icon wayfx-icon-facebook" aria-hidden="true"></i>
+          <span class="fallback-text">Facebook</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if wayfx_footer_youtube != blank %}
+      <li>
+        <a class="icon-fallback-text" href="{{ wayfx_footer_youtube }}" title="{{ shop.name }} on YouTube" rel="noreferrer" target="_blank">
+          <i class="wayfx-icon wayfx-icon-youtube" aria-hidden="true"></i>
+          <span class="fallback-text">YouTube</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+    <div class="wayfx-block--footer-social__tag">
+      @officialmedik8
+    </div>
+  </div>
+</section>

@@ -1,0 +1,921 @@
+<script src="{{ 'd-constants.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'd-pubsub.js' | asset_url }}" defer="defer"></script>
+<script>
+  console.log('qq')
+  window.variantStrings = {
+    addToCart: `{{ 'products.product.add_to_cart' | t }}`,
+    soldOut: `{{ 'products.product.sold_out' | t }}`,
+    unavailable: `{{ 'products.product.unavailable' | t }}`,
+    unavailable_with_option: `{{ 'products.product.value_unavailable' | t: option_value: '[value]' }}`,
+  };
+</script>
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
+{%- assign product_description = product.metafields.sf_product_hero.description -%}
+{%- assign product_size = product.metafields.sf_product_hero.size -%}
+{%- assign highlight_title_1 = product.metafields.sf_product_hero.highlight_1_heading -%}
+{%- assign highlight_text_1 = product.metafields.sf_product_hero.highlight_1_description -%}
+{%- assign highlight_title_2 = product.metafields.sf_product_hero.highlight_2_heading -%}
+{%- assign highlight_text_2 = product.metafields.sf_product_hero.highlight_2_description -%}
+{%- assign highlight_title_3 = product.metafields.sf_product_hero.highlight_3_heading -%}
+{%- assign highlight_text_3 = product.metafields.sf_product_hero.highlight_3_description -%}
+
+
+{%- assign site_wide_enabled = settings.site_wide__enabled -%}
+{%- assign site_wide_percentage = settings.site_wide__percentage | divided_by: 100.0 -%}
+{%- assign site_wide_label = settings.site_wide__label -%}
+{%- assign site_wide_label_enabled = settings.site_wide__label_enabled -%}
+{%- if settings.discounts__vip_code == blank -%}
+  {%- assign site_wide_crossed_out_pricing_enabled = settings.site_wide__crossed_out_pricing_enabled -%}
+{%- endif -%}
+{%- assign site_wide_collection = settings.site_wide__collection -%}
+
+{%- if site_wide_enabled -%}
+  {% for collection in product.collections %}
+    {% if collection.handle == site_wide_collection %}
+      {% assign site_wide_product = true %}
+      {%- assign on_sale = true -%}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{{ "n-product-key-ingredients.css" | asset_url | stylesheet_tag }}
+<script src="{{ 'd-variant-radios.js' | asset_url }}" defer="defer"></script>
+{{ 'd-variant-radios.css' | asset_url | stylesheet_tag }}
+{{ "f-product-hero.css" | asset_url | stylesheet_tag }}
+
+{% liquid
+  echo 'f-product-information.css' | asset_url | stylesheet_tag
+  echo 'f-product-hero.css' | asset_url | stylesheet_tag
+  assign product_subtitle = product.metafields.sf_product_hero.sub_heading
+%}
+
+{%- assign full_ingredient_disclaimer = 'products.hero.ingredients_disclaimer' | t -%}
+
+{%- if template == 'product.alternate' -%}
+    {%- assign full_ingredient_list = product.metafields.sf_product_layout_b.full_ingredients -%}
+{%- else -%}
+    {%- assign full_ingredient_list = product.metafields.sf_product_layout_a.full_ingredients -%}
+{%- endif -%}
+
+{%- assign productIsGiftCard = false -%}
+{%- if product.gift_card? -%}
+    {%- assign productIsGiftCard = true -%}
+{%- endif -%}
+
+{%- assign sold_out = true -%}
+{%- if productIsGiftCard or product.available -%}
+  {%- assign sold_out = false -%}
+{%- endif -%}
+
+{%- assign low_stock = false -%}
+{%- if current_variant.inventory_quantity > 0 and current_variant.inventory_quantity < 20 -%}
+    {%- assign low_stock = true -%}
+{%- endif -%}
+
+<nav class="breadcrumbs f-product-wrapper" role="navigation" aria-label="breadcrumbs">
+  <ol class="breadcrumbs__list">
+    {%- if collection.url -%}
+      <li class="breadcrumbs__item">
+        {{ collection.title | link_to: collection.url }}
+      </li>
+    {%- endif -%}
+    <li class="breadcrumbs__item">
+      <a class="breadcrumbs__link" href="{{ product.url }}" aria-current="page">{{ product.title }}</a>
+    </li>
+  </ol>
+</nav>
+
+<div class="f-product-wrapper f-product-details f-product-details__mobile @desktop__hide">
+  <h1 class="f-product-title lh-reset f-w400 t-ucase">{{ product.title }}</h1>
+
+  {%- if product_subtitle -%}
+      <h2 class="f-product__subtitle lh-reset f-w400">
+        {{ product_subtitle }}
+        <a class="f-product__full-details t-ul" href="#full-details">Full Details</a>
+      </h2>
+  {%- endif -%}
+
+  <div class="f-product__actions flex align-center justify-space">
+    <div class="f-product__yotpo yotpo bottomLine"
+        data-product-id="{{ product.id }}"
+        data-product-models="{{ product.id }}"
+        data-name="{{ product.title | escape }}"
+        data-url="{{ shop.url }}{{ product.url }}"
+        data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
+        data-description="{{ product.description | escape }}"
+        data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+    </div>
+    <div class="f-product__wishlist">
+      {% render 'product-wishlist' with product, disable_text: true %}
+    </div>
+  </div>
+</div>
+
+<div class="wayfx-wrapper f-product-hero__wrapper">
+  <div class="wayfx-product__photos-wrapper">
+    <div class="wayfx-product__photos-block">
+        <div class="wayfx-product__featured-photo" id="ProductPhoto">
+          {% for media in product.media %}
+            <div class="wayfx-product__thumbnail">
+              {% case media.media_type %}
+                {% when 'image' %}
+                  <div class="product-single__media" data-media-id="{{ media.id }}">
+                    {{ media | image_url: width: 2048, height: 2048 | image_tag }}
+                  </div>
+                {% when 'external_video' %}
+                  <div class="product-single__media" data-media-id="{{ media.id }}">
+                    {{ media | video_tag: loop: true, autoplay: false, controls: true, image_size: "1024x" }}
+                  </div>
+                {% when 'video' %}
+                  <div class="product-single__media" data-media-id="{{ media.id }}">
+                    {{ media | video_tag: loop: true, autoplay: false, controls: true, image_size: "1024x" }}
+                  </div>
+                {% when 'model' %}
+                  <div class="product-single__media">
+                    {{ media | model_viewer_tag }}
+                  </div>
+              {% endcase %}
+            </div>
+          {% endfor %}
+        </div>
+        {% if product.images.size > 1 %}
+        <div class="wayfx-product__thumbnails">
+         {% for media in product.media %}
+          {% case media.media_type %}
+            {% when 'image' %}
+              <div class="wayfx-product__thumbnail" data-media-id="{{ media.id }}">
+                {{ media | image_url: width: 70, height: 70 | image_tag }}
+              </div>
+            {% when 'external_video' %}
+              <div class="wayfx-product__thumbnail" data-media-id="{{ media.id }}">
+                {% render "icon-play" %}
+              </div>
+            {% when 'video' %}
+              <div class="wayfx-product__thumbnail" data-media-id="{{ media.id }}">
+                {% render "icon-play" %}
+              </div>
+            {% when 'model' %}
+              <div class="wayfx-product__thumbnail">
+                {{ media | model_viewer_tag }}
+              </div>
+          {% endcase %}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+  </div>
+
+  <div class="wayfx-product__details f-product-hero__details">
+
+    <div>
+
+      <div class="wayfx-product__low-stock-wrap"{% unless low_stock %} style="display: none"{% endunless %}><div class="wayfx-product__low-stock">Low Stock</div></div>
+      <div class="f-product-details @mobile__hide">
+        <h1 class="f-product-title lh-reset f-w400 t-ucase">{{ product.title }}</h1>
+
+        {%- if product_subtitle -%}
+            <h2 class="f-product__subtitle lh-reset f-w400">
+              {{ product_subtitle }}
+              <a class="f-product__full-details t-ul" href="#full-details">Full Details</a>
+            </h2>
+        {%- endif -%}
+
+        <div class="f-product__actions flex align-center justify-space">
+          <div class="f-product__yotpo yotpo bottomLine"
+              data-product-id="{{ product.id }}"
+              data-product-models="{{ product.id }}"
+              data-name="{{ product.title | escape }}"
+              data-url="{{ shop.url }}{{ product.url }}"
+              data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
+              data-description="{{ product.description | escape }}"
+              data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+          </div>
+          <div class="f-product__wishlist">
+            {% render 'product-wishlist' with product, disable_text: true %}
+          </div>
+        </div>
+      </div>
+
+
+      {% if product_size %}
+
+      <div class="wayfx-product__size" style="margin-top: 15px;">
+        {{ product_size }}
+      </div>
+      {% endif %}
+
+      {%- if current_variant.title contains "travel" or current_variant.title contains "Travel" -%}
+        {%- assign site_wide_product = false -%}
+      {%- endif -%}
+
+      {%- if site_wide_product == true and site_wide_enabled == true -%}
+        {%- if site_wide_crossed_out_pricing_enabled -%}
+            {%- assign discount_off = current_variant.price | times: site_wide_percentage -%}
+            {%- assign discount_price = current_variant.price | minus: discount_off -%}
+        {%- endif -%}
+      {% elsif current_variant.compare_at_price >= current_variant.price  %}
+        {%- assign discount_price = current_variant.compare_at_price -%}
+      {%- endif -%}
+
+      <div class="medk8-product--price-box">
+
+        {% if current_variant.compare_at_price >= current_variant.price  %}
+          <span id="ProductPrice" aria-label="original price" class="slashed-price">
+            {{ discount_price  | money_without_trailing_zeros }}
+          </span>
+          <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" style="display:initial;">
+            {{ current_variant.price  | money_without_trailing_zeros }}
+          </span>
+          <span>{% render 'product-labels', product: product, on_sale: true, site_wide: true %}</span>
+        {% else %}
+          <span id="ProductPrice" aria-label="original price" {%- if site_wide_product == true and site_wide_enabled == true -%}class="slashed-price"{%- endif-%}>
+            {{ current_variant.price | money_without_trailing_zeros }}
+          </span>
+
+          <span id="DiscountedPrice" class="DiscountedPrice" aria-label="discounted price" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
+            {%- if site_wide_product == true and site_wide_enabled == true -%}
+              {{discount_price | money_without_trailing_zeros }}
+            {%- endif-%}
+          </span>
+          <span id="DiscountLabel" {%- if site_wide_product == true and site_wide_enabled == true -%}style="display:initial;"{%- endif-%}>
+            {% comment %} @todo Octavian make it preaty {% endcomment %}
+            {% render 'product-labels', product: product, on_sale: true, site_wide: true %}
+          </span>
+        {% endif %}
+
+
+
+        {% render 'product-loyalty-points' section:section %}
+
+
+      </div>
+
+      {% render 'product-bar' %}
+
+			{%- assign product_form_id = 'product-form-' | append: section.id -%}
+			{% render 'f-product-variant-picker', product: product, product_form_id: product_form_id %}
+
+      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical" data-productid="{{product.id}}">
+
+          {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+            <input type="hidden" name="id" id="productSelect" value="{{ product.selected_or_first_available_variant.id }}" />
+          {% else %}
+            <select name="id" id="productSelect" class="product-single__variants hide" data-productid="{{ product.id }}">
+              {%- for variant in product.variants -%}
+                {%- unless variant.title contains "travel" or variant.title contains "Travel" -%}
+                  {%- assign site_wide_product = true -%}
+                {%- endunless -%}
+                {%- if site_wide_product == true and site_wide_enabled == true -%}
+                  {%- if site_wide_crossed_out_pricing_enabled -%}
+                      {%- assign discount_off = variant.price | times: site_wide_percentage -%}
+                      {%- assign discount_price = variant.price | minus: discount_off -%}
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- assign variant_sold_out = false -%}
+                {%- assign low_stock = false -%}
+                {%- if variant.inventory_quantity > 0 and variant.inventory_quantity < 20 -%}
+                  {%- assign low_stock = true -%}
+                {%- endif -%}
+                {%- if productIsGiftCard == false %}
+                  {%- unless variant.available -%}
+                    {%- assign variant_sold_out = true -%}
+                  {% endunless %}
+                {%- endif -%}
+                {%- assign variant_size = variant.metafields.sf_settings.size -%}
+                  <option
+                          {% if variant_sold_out %}data-disabled="true"{% endif %}
+                          {% if variant == product.selected_or_first_available_variant %} selected="selected"{% endif %}
+                          {% if low_stock %} data-low-stock="true"{% else %} data-low-stock="false"{% endif %}
+                          data-image-id="{{ variant.image.id }}"
+                          data-sku="{{ variant.sku }}"
+                          value="{{ variant.id }}"
+                          {% if variant.compare_at_price >= variant.price %}
+                            data-price="{{ variant.compare_at_price | money_without_trailing_zeros }}"
+                          {% else %}
+                            data-price="{{ variant.price | money_without_trailing_zeros }}"
+                          {% endif %}
+                          {%- unless variant.title contains "travel" or variant.title contains "Travel" -%}
+                            {% if variant.compare_at_price >= variant.price %}
+                              data-discounted-price="{{variant.price | money_without_trailing_zeros }}"
+                            {% else %}
+                              data-discounted-price="{{discount_price | money_without_trailing_zeros }}"
+                            {% endif %}
+                          {%- endunless -%}
+                        >
+                    		{{ variant.title }}
+                    		{% if variant_size != 0 and productIsGiftCard != true %} - {{ variant_size }}{% endif %}
+                    		{% if variant_sold_out %} - {{ 'products.product.sold_out' | t }}{% endif %}
+             	  </option>
+              {%- endfor -%}
+            </select>
+          {% endif%}
+
+				{% assign showAtcOnInit = true %}
+
+          {% if sold_out or product.selected_or_first_available_variant.available == false or productIsGiftCard %}
+						{% assign showAtcOnInit = false %}
+          {% endif %}
+
+          <button type="submit"
+                  name="add"
+                  id="AddToCart"
+                  class="btn btn--full btn--large f-product-hero__atc"
+                  {% if showAtcOnInit == false %}
+                  style="display:none;"
+                  {% endif %}>
+            <span id="AddToCartText">
+              {{ 'products.product.add_to_cart' | t }}
+            </span>
+          </button>
+      </form>
+
+      <div id="AddToCartDisabled"
+        {% if showAtcOnInit %}
+          style="display:none;"
+        {% endif %}>
+        {% if product.tags contains 'Coming Soon' %}
+        <span class="mdk8--coming-soon">{{ 'products.product.coming_soon' | t }}</span>
+        {%- else -%}
+          {% if section.settings.oos__show %}
+            {% render 'f-block-oos-notify' section:section %}
+          {% else %}
+            <span class="mdk8--sold-out">{{ 'products.product.sold_out' | t }}</span>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      <div id="easy-returns" style="display: none;">
+        <p class="p--md">{{ section.settings.popup_text }}</p>
+      </div>
+
+      {%- if product_description -%}
+          <p class="wayfx-product__description">{{ product_description }}</p>
+      {%- endif -%}
+
+
+      <dl class="wayfx-product__highlights">
+          {%- if highlight_title_1 -%}
+            <dt>{{ highlight_title_1 }}</dt>
+            <dd>{{ highlight_text_1 }}</dd>
+          {%- endif -%}
+          {%- if highlight_title_2 -%}
+              <dt>{{ highlight_title_2 }}</dt>
+              <dd>{{ highlight_text_2 }}</dd>
+          {%- endif -%}
+          {%- if highlight_title_3 -%}
+              <dt>{{ highlight_title_3 }}</dt>
+              <dd>{{ highlight_text_3 }}</dd>
+          {%- endif -%}
+      </dl>
+      {% if template == 'product.alternate' %}
+
+
+
+
+<!-- ///  --->
+
+
+
+
+          <div class="wayfx-product__accordion">
+            {%- assign benefit_title_1 = product.metafields.sf_product_layout_b.key_benefit_1_heading -%}
+            {%- assign benefit_paragraph_1 = product.metafields.sf_product_layout_b.key_benefit_1_description -%}
+            {%- assign benefit_title_2 = product.metafields.sf_product_layout_b.key_benefit_2_heading -%}
+            {%- assign benefit_paragraph_2 = product.metafields.sf_product_layout_b.key_benefit_2_description -%}
+            {%- assign benefit_title_3 = product.metafields.sf_product_layout_b.key_benefit_3_heading -%}
+            {%- assign benefit_paragraph_3 = product.metafields.sf_product_layout_b.key_benefit_3_description -%}
+            {%- assign benefit_title_4 = product.metafields.sf_product_layout_b.key_benefit_4_heading -%}
+            {%- assign benefit_paragraph_4 = product.metafields.sf_product_layout_b.key_benefit_4_description -%}
+            {%- assign benefit_title_5 = product.metafields.sf_product_layout_b.key_benefit_5_heading -%}
+            {%- assign benefit_paragraph_5 = product.metafields.sf_product_layout_b.key_benefit_5_description -%}
+
+            {%- assign how_it_works_paragraph = product.metafields.sf_product_layout_b.how_it_works_main_paragraph -%}
+            {%- assign how_it_works_item_1 = product.metafields.sf_product_layout_b.how_it_works_list_item_1 -%}
+            {%- assign how_it_works_item_2 = product.metafields.sf_product_layout_b.how_it_works_list_item_2 -%}
+            {%- assign how_it_works_item_3 = product.metafields.sf_product_layout_b.how_it_works_list_item_3 -%}
+            {%- assign how_it_works_item_4 = product.metafields.sf_product_layout_b.how_it_works_list_item_4 -%}
+            {%- assign how_it_works_item_5 = product.metafields.sf_product_layout_b.how_it_works_list_item_5 -%}
+
+            {%- assign how_to_use_paragraph = product.metafields.sf_product_layout_b.how_to_use_main_description -%}
+            {%- assign how_to_use_item_1 = product.metafields.sf_product_layout_b.how_to_use_list_item_1 -%}
+            {%- assign how_to_use_item_2 = product.metafields.sf_product_layout_b.how_to_use_list_item_2 -%}
+            {%- assign how_to_use_item_3 = product.metafields.sf_product_layout_b.how_to_use_list_item_3 -%}
+            {%- assign how_to_use_item_4 = product.metafields.sf_product_layout_b.how_to_use_list_item_4 -%}
+            {%- assign how_to_use_item_5 = product.metafields.sf_product_layout_b.how_to_use_list_item_5 -%}
+
+            {%- assign ingredient_title_1 = product.metafields.sf_product_layout_b.ingredient_1_title -%}
+            {%- assign ingredient_description_1 = product.metafields.sf_product_layout_b.ingredient_1_description -%}
+
+            {%- assign ingredient_title_2 = product.metafields.sf_product_layout_b.ingredient_2_title -%}
+            {%- assign ingredient_description_2 = product.metafields.sf_product_layout_b.ingredient_2_description -%}
+
+            {%- assign ingredient_title_3 = product.metafields.sf_product_layout_b.ingredient_3_title -%}
+            {%- assign ingredient_description_3 = product.metafields.sf_product_layout_b.ingredient_3_description -%}
+
+            {%- assign ingredient_title_4 = product.metafields.sf_product_layout_b.ingredient_4_title -%}
+            {%- assign ingredient_description_4 = product.metafields.sf_product_layout_b.ingredient_4_description -%}
+
+            {%- assign ingredient_title_5 = product.metafields.sf_product_layout_b.ingredent_5_title -%}
+            {%- assign ingredient_description_5 = product.metafields.sf_product_layout_b.ingredient_5_description -%}
+
+            {%- assign ingredient_title_6 = product.metafields.sf_product_layout_b.ingredient_6_title -%}
+            {%- assign ingredient_description_6 = product.metafields.sf_product_layout_b.ingredient_6_description -%}
+
+            {%- assign ingredient_title_7 = product.metafields.sf_product_layout_b.ingredient_7_title -%}
+            {%- assign ingredient_description_7 = product.metafields.sf_product_layout_b.ingredient_7_description -%}
+
+            {%- assign ingredient_title_8 = product.metafields.sf_product_layout_b.ingredient_8_title -%}
+            {%- assign ingredient_description_8 = product.metafields.sf_product_layout_b.ingredient_8_description -%}
+
+            {%- assign ingredient_not_added_item_1 = product.metafields.sf_product_layout_b.whats_not_included_item_1 -%}
+            {%- assign ingredient_not_added_item_2 = product.metafields.sf_product_layout_b.whats_not_included_item_2 -%}
+            {%- assign ingredient_not_added_item_3 = product.metafields.sf_product_layout_b.whats_not_included_item_3 -%}
+            {%- assign ingredient_not_added_item_4 = product.metafields.sf_product_layout_b.whats_not_included_item_4 -%}
+            {%- assign ingredient_not_added_item_5 = product.metafields.sf_product_layout_b.whats_not_included_item_5 -%}
+            {%- assign ingredient_not_added_item_6 = product.metafields.sf_product_layout_b.whats_not_included_item_6 -%}
+            {%- assign ingredient_not_added_item_7 = product.metafields.sf_product_layout_b.whats_not_included_item_7 -%}
+            {%- assign ingredient_not_added_item_8 = product.metafields.sf_product_layout_b.whats_not_included_item_8 -%}
+        <ul>
+
+        {% if settings.shipping_title_1 != blank or settings.shipping_title_2 != blank %}
+          <li class="wayfx-product__accordion-item">
+            <div class="wayfx-product__accordion-title">{{ 'products.general.delivery_options' | t }}</div>
+              <div class="wayfx-product__accordion-content wayfx-product__accordion-content--ingredients" style="display: none;">
+              <h5 class="h5--primary">{{settings.shipping_title_1}}</h5>
+              <p>{{settings.shipping_desc_1}}</p>
+              {% if settings.shipping_title_2 != blank %}
+                <h5 class="h5--primary">{{settings.shipping_title_2}}</h5>
+                <p>{{settings.shipping_desc_2}}</p>
+              {% endif %}
+            </div>
+          </li>
+        {% endif%}
+
+
+
+            {%- if benefit_title_1 -%}
+                <li class="wayfx-product__accordion-item">
+                    <div class="wayfx-product__accordion-title">{{ 'products.hero.key_benefits' | t }}</div>
+                    <div class="wayfx-product__accordion-content wayfx-product__accordion-content--benefits" style="display: none;">
+                        <ul>
+                            {%- if benefit_title_1 -%}
+                                <li>
+                                    <h5 class="h5--primary">{{ benefit_title_1 }}</h5>
+                                    {%- if benefit_paragraph_1 %}{{ benefit_paragraph_1 }}{%- endif -%}
+                                </li>
+                            {%- endif -%}
+                            {%- if benefit_title_2 -%}
+                                <li>
+                                    <h5 class="h5--primary">{{ benefit_title_2 }}</h5>
+                                    {% if benefit_paragraph_2 %}{{ benefit_paragraph_2 }}{%- endif -%}
+                                </li>
+                            {%- endif -%}
+                            {%- if benefit_title_3 -%}
+                                <li>
+                                    <h5 class="h5--primary">{{ benefit_title_3 }}</h5>
+                                    {%- if benefit_paragraph_3 -%}{{ benefit_paragraph_3 }}{%- endif -%}
+                                </li>
+                            {%- endif %}
+                            {%- if benefit_title_4 %}
+                                <li>
+                                    <h5 class="h5--primary">{{ benefit_title_4 }}</h5>
+                                    {% if benefit_paragraph_4 -%}{{ benefit_paragraph_4 }}{%- endif -%}
+                                </li>
+                            {%- endif %}
+                            {%- if benefit_title_5 -%}
+                                <li>
+                                    <h5 class="h5--primary">{{ benefit_title_5 }}</h5>
+                                    {%- if benefit_paragraph_5 -%}{{ benefit_paragraph_5 }}{%- endif -%}
+                                </li>
+                            {%- endif -%}
+                        </ul>
+                    </div>
+                </li>
+            {%- endif -%}
+            {%- if how_it_works_item_1 -%}
+                <li class="wayfx-product__accordion-item">
+                    <div class="wayfx-product__accordion-title">{{ 'products.hero.how_it_works' | t }}</div>
+                    <div class="wayfx-product__accordion-content wayfx-product__accordion-content--steps" style="display: none;">
+                        {%- if how_it_works_paragraph -%}{{ how_it_works_paragraph }}{% endif %}
+                        {%- if how_it_works_item_1 -%}
+                            <ol>
+                              <li>{{ how_it_works_item_1 }}</li>
+                              {%- if how_it_works_item_2 -%}<li>{{ how_it_works_item_2 }}</li>{%- endif -%}
+                              {%- if how_it_works_item_3 -%}<li>{{ how_it_works_item_3 }}</li>{%- endif -%}
+                              {%- if how_it_works_item_4 -%}<li>{{ how_it_works_item_4 }}</li>{%- endif -%}
+                              {%- if how_it_works_item_5 -%}<li>{{ how_it_works_item_5 }}</li>{%- endif -%}
+                            </ol>
+                        {%- endif -%}
+                    </div>
+                </li>
+            {%- endif -%}
+            {%- if how_to_use_item_1 or how_to_use_paragraph -%}
+                <li class="wayfx-product__accordion-item">
+                    <div class="wayfx-product__accordion-title">{{ 'products.hero.how_to_use' | t }}</div>
+                    <div class="wayfx-product__accordion-content wayfx-product__accordion-content--usage" style="display: none;">
+                        {%- if how_to_use_paragraph -%}{{ how_to_use_paragraph }}{%- endif -%}
+                        {%- if how_to_use_item_1 -%}
+                            <ol>
+                              <li>{{ how_to_use_item_1 }}</li>
+                              {%- if how_to_use_item_2 -%}<li>{{ how_to_use_item_2 }}</li>{%- endif -%}
+                              {%- if how_to_use_item_3 -%}<li>{{ how_to_use_item_3 }}</li>{%- endif -%}
+                              {%- if how_to_use_item_4 -%}<li>{{ how_to_use_item_4 }}</li>{%- endif -%}
+                              {%- if how_to_use_item_5 -%}<li>{{ how_to_use_item_5 }}</li>{%- endif -%}
+                            </ol>
+                        {%- endif -%}
+                    </div>
+                </li>
+            {%- endif -%}
+            {%- if ingredient_title_1 -%}
+                <li class="wayfx-product__accordion-item">
+                    <div class="wayfx-product__accordion-title">{{ 'products.hero.ingredients' | t }}</div>
+                    <div class="wayfx-product__accordion-content wayfx-product__accordion-content--ingredients" style="display: none;">
+                        <h5 class="h5--primary">{{ ingredient_title_1 }}</h5>
+                        {%- if ingredient_description_1 -%}
+                          {{ ingredient_description_1 }}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_2 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_2 }}</h5>
+                            {%- if ingredient_description_2 -%}
+                                {{ ingredient_description_2 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_3 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_3 }}</h5>
+                            {%- if ingredient_description_3 -%}
+                                {{ ingredient_description_3 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_4 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_4 }}</h5>
+                            {%- if ingredient_description_4 -%}
+                                {{ ingredient_description_4 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_5 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_5 }}</h5>
+                            {%- if ingredient_description_5 -%}
+                                {{ ingredient_description_5 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_6 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_6 }}</h5>
+                            {%- if ingredient_description_6 -%}
+                                {{ ingredient_description_6 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                       {%- if ingredient_title_7 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_7 }}</h5>
+                            {%- if ingredient_description_7 -%}
+                                {{ ingredient_description_7 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if ingredient_title_8 -%}
+                            <h5 class="h5--primary">{{ ingredient_title_8 }}</h5>
+                            {%- if ingredient_description_8 -%}
+                                {{ ingredient_description_8 }}
+                            {%- endif -%}
+                        {%- endif -%}
+
+                        <div class="wayfx-product__view-ingredients">
+                            <span data-fancybox data-src="#product_{{product.id}}_ingredients" data-touch="false">Full Ingredients</span>
+                        </div>
+
+                        {%- if ingredient_not_added_item_1 -%}
+                            <div class="wayfx-product__not-included">
+                                <!-- <h5 class="h5--primary">What we choose not to include</h5> -->
+                                <ul>
+                                  <li>{{ingredient_not_added_item_1}}</li>
+                                  {%- if ingredient_not_added_item_2 -%}<li>{{ingredient_not_added_item_2}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_3 -%}<li>{{ingredient_not_added_item_3}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_4 -%}<li>{{ingredient_not_added_item_4}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_5 -%}<li>{{ingredient_not_added_item_5}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_6 -%}<li>{{ingredient_not_added_item_6}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_7 -%}<li>{{ingredient_not_added_item_7}}</li>{%- endif -%}
+                                  {%- if ingredient_not_added_item_8 -%}<li>{{ingredient_not_added_item_8}}</li>{%- endif -%}
+                                </ul>
+                            </div>
+                        {%- endif -%}
+                    </div>
+                </li>
+            {%- endif -%}
+            {%- assign extra_block_heading = product.metafields.sf_product_layout_b.extra_block_heading -%}
+            {%- assign extra_block_image = product.metafields.sf_product_layout_b.extra_block_image -%}
+            {%- assign extra_block_item_heading_1 = product.metafields.sf_product_layout_b.extra_block_item_heading_1 -%}
+            {%- assign extra_block_item_description_1 = product.metafields.sf_product_layout_b.extra_block_item_description_1 -%}
+            {%- assign extra_block_item_heading_2 = product.metafields.sf_product_layout_b.extra_block_item_heading_2 -%}
+            {%- assign extra_block_item_description_2 = product.metafields.sf_product_layout_b.extra_block_item_description_2 -%}
+            {%- assign extra_block_item_heading_3 = product.metafields.sf_product_layout_b.extra_block_item_heading_3 -%}
+            {%- assign extra_block_item_description_3 = product.metafields.sf_product_layout_b.extra_block_item_description_3 -%}
+            {%- assign extra_block_cta_link = product.metafields.sf_product_layout_b.extra_block_cta_link -%}
+            {%- assign extra_block_cta_text = product.metafields.sf_product_layout_b.extra_block_cta_text -%}
+            {%- assign extra_block_2_image = product.metafields.sf_product_layout_b.extra_block_2_image -%}
+            {%- assign extra_block_2_description = product.metafields.sf_product_layout_b.extra_block_2_description %}
+            {%- assign extra_block_2_references = product.metafields.sf_product_layout_b.extra_block_references -%}
+            {%- if extra_block_heading -%}
+                <li class="wayfx-product__accordion-item">
+                    <div class="wayfx-product__accordion-title">{{ extra_block_heading }}</div>
+                    <div class="wayfx-product__accordion-content wayfx-product__accordion-content--treatments" style="display: none;">
+                        {%- if extra_block_image -%}
+                          <div class="wayfx-image">
+                            <img width="514" height="281" loading="lazy" src="https://cdn.medik8.com/{{ extra_block_image }}/" alt="" />
+                          </div>
+                        {%- endif -%}
+                        {%- if extra_block_item_heading_1 -%}
+                          <div class="wayfx-text">
+                              <h5 class="h5--primary">{{ extra_block_item_heading_1 }}</h5>
+                              {{ extra_block_item_description_1 }}
+                          </div>
+                        {%- endif -%}
+                        {%- if extra_block_item_heading_2 -%}
+                          <div class="wayfx-text">
+                              <h5 class="h5--primary">{{ extra_block_item_heading_2 }}</h5>
+                              {{ extra_block_item_description_2 }}
+                          </div>
+                        {%- endif -%}
+                        {%- if extra_block_item_heading_3 -%}
+                          <div class="wayfx-text">
+                              <h5 class="h5--primary">{{ extra_block_item_heading_3 }}</h5>
+                              {{ extra_block_item_description_3 }}
+                          </div>
+                        {%- endif -%}
+                        {%- if extra_block_cta_link -%}
+                          <div class="wayfx-button">
+                              <a href="{{ extra_block_cta_link }}" class="btn btn--large">{{ extra_block_cta_text }}</a>
+                          </div>
+                        {%- endif -%}
+                    </div>
+                </li>
+                {%- endif -%}
+                {%- if extra_block_2_description -%}
+                  <li class="wayfx-product__accordion-item">
+                      <div class="wayfx-product__accordion-title">{{ 'products.hero.science_behind' | t }}</div>
+                      <div class="wayfx-product__accordion-content wayfx-product__accordion-content--results" style="display: none;">
+                          {%- if extra_block_2_image -%}
+                            <div class="wayfx-image">
+                              <img width="514" height="281" loading="lazy" src="https://cdn.medik8.com/{{ extra_block_2_image }}/" alt="" />
+                            </div>
+                          {%- endif -%}
+                          <div class="wayfx-text">
+                            {{ extra_block_2_description }}
+                          </div>
+                          {%- if extra_block_2_references -%}
+                            <div class="wayfx-references">
+                                {{ extra_block_2_references }}
+                            </div>
+                          {%- endif -%}
+                      </div>
+                  </li>
+                {%- endif -%}
+            </ul>
+    </div>
+  {%- endif -%}
+  </div>
+
+  </div>
+   {% render 'product.ingredients-modal',
+              product_subtitle:product_subtitle,
+              full_ingredient_list:full_ingredient_list,
+              full_ingredient_disclaimer:full_ingredient_disclaimer
+  %}
+</div>
+
+{% schema %}
+    {
+        "name": "Product Hero [NEW]",
+        "presets": [
+          {
+            "name": "Product Hero [NEW]"
+          }
+        ],
+        "templates": ["product"],
+        "tag": "section",
+        "class": "wayfx-product__section wayfx-product__hero f-product__section",
+        "settings": [
+          {
+            "type": "text",
+            "id": "shipping_popup",
+            "label": "Shipping/Delivery information"
+          },
+          {
+            "type": "textarea",
+            "id": "popup_text",
+            "label": "Easy Returns Popup Text"
+          },
+          {
+            "type": "header",
+            "content": "OOS notification"
+          },
+          {
+            "type": "checkbox",
+            "id": "oos__show",
+            "label": "Show email capture",
+            "info": "Show the OOS email capture form. This will add the user to the stock notification flow on Klaviyo. Klaviyo API key can be found in theme settings/modules",
+            "default":true
+          },
+
+          {
+            "type": "text",
+            "id": "oos__heading",
+            "label": "Heading"
+          },
+          {
+            "type": "richtext",
+            "id": "oos__content",
+            "label": "Tagline / below heading text"
+          },
+          {
+            "type": "text",
+            "id": "oos__button_text",
+            "label": "Button text"
+          },
+          {
+            "type": "richtext",
+            "id": "oos__below_button__default",
+            "label": "Below button (default)"
+          },
+          {
+            "type": "richtext",
+            "id": "oos__below_button__success",
+            "label": "Below button (user added)"
+          },
+          {
+            "type": "richtext",
+            "id": "oos__below_button__error",
+            "label": "Below button (error)"
+          },
+          {
+            "type": "header",
+            "content": "Loyalty Lion"
+          },
+          {
+            "type": "richtext",
+            "id": "loyalty_lion__hint_text",
+            "label": "Hint text",
+            "default":"<p>Earn 1 point for every £1 spent with our rewards programme, Me&amp;Medik8. Simply create an account to join. Collect points every time you shop and redeem them for rewards, including money off future purchases.<br><br>You can also enjoy lots of exclusive benefits from secret promotions, free shipping and a gift on your birthday.</p>"
+          }
+        ]
+    }
+{% endschema %}
+
+{%- if template == 'product' -%}
+    <style type="text/css">
+        .wayfx-product__hero {
+            background: var(--color-white);
+        }
+    </style>
+{%- endif -%}
+
+{%- if template == 'product.alternate' %}
+    <style type="text/css">
+        .wayfx-product__photos-block {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 100px;
+        }
+    </style>
+{%- endif -%}
+
+<style>
+  .wayfx-product__thumbnail svg {
+    padding: 10px;
+  }
+  .product-single__media video {
+    width:100%;
+  }
+</style>
+
+<script>
+  $(document).ready(function() {
+    $('.wayfx-product__featured-photo').slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      draggable: false,
+      fade: true,
+      asNavFor: '.wayfx-product__thumbnails'
+    }).addClass('loaded');
+
+    $('.wayfx-product__thumbnails').slick({
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      asNavFor: '.wayfx-product__featured-photo',
+      dots: false,
+      arrows: false,
+      focusOnSelect: true,
+      variableWidth: true
+    }).show();
+
+    $(".wayfx-product__thumbnail").on( "click", function() {
+        $('.product-single__media video').get(0).pause()
+    });
+
+    $(".wayfx-product__accordion-title").on( "click", function() {
+      $(this).parent().toggleClass('wayfx-product__accordion-item--open');
+      $(this).next('.wayfx-product__accordion-content').slideToggle(100);
+    });
+
+    $('#productSelect').change(function() {
+      var $option = $(this).find('option:selected'),
+          value = $option.data('image-id'),
+          low_stock = $option.data('low-stock'),
+          price = $option.data('price'),
+          discounted_price = $option.data('discounted-price'),
+          thumbnail_image = $('.wayfx-product__thumbnails .variant-image-' + value);
+
+
+      {% comment %} @TODO to be reviewed - the refresh on gift cards does not make sense. Interferes with the discount mechanism  {% endcomment %}
+      {% if productIsGiftCard %}
+        window.location.search = '?variant=' + $option.val();
+      {% endif %}
+
+      // Fixes wishlist on browsers that support pushstate
+
+        {% comment %} if (window.history.pushState) {
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?variant=' + $option.val();
+            window.history.pushState({path:newurl},'',newurl);
+        } {% endcomment %}
+
+
+      if(low_stock === 'true') {
+        $('.wayfx-product__low-stock-wrap').show();
+      } else {
+        $('.wayfx-product__low-stock-wrap').hide();
+      }
+
+      $('#ProductPrice').text(price);
+      $('#DiscountedPrice').text(discounted_price);
+
+      {% comment %} {% if current_variant.compare_at_price >= current_variant.price %}
+        $('#ProductPrice').text(discounted_price);
+        $('#DiscountedPrice').text(price);
+      {% else %}
+        $('#ProductPrice').text(price);
+      {% endif %} {% endcomment %}
+
+
+      thumbnail_image.each(function(){
+        var thumbnail_id = parseInt($(this).data('slick-index'));
+        if(thumbnail_id > -1) {
+          $('.wayfx-product__thumbnails').slick('slickGoTo', thumbnail_id);
+        }
+      });
+    });
+
+    {% unless productIsGiftCard %}
+    const $AddToCart = $('#AddToCart')
+    const $AddToCartDisabled = $('#AddToCartDisabled')
+        $('#productSelect').change(function() {
+
+          let priceBox = $("#ProductPrice");
+          let discountLabel = $("#DiscountLabel");
+          let discountBox = $("#DiscountedPrice");
+
+          var $option = $(this).find('option:selected'),
+          price = $option.data('price'),
+          discounted_price = $option.data('discounted-price');
+
+          if(discounted_price) {
+            discountBox.show();
+            discountLabel.show();
+            priceBox.addClass('slashed-price');
+            discountBox.text(discounted_price);
+          } else {
+            discountBox.hide();
+            discountLabel.hide();
+            priceBox.removeClass('slashed-price');
+            priceBox.text(price);
+          }
+
+          // if variant is out of stock
+          const outOfStock = $option.attr('data-disabled') ? true : false
+          $AddToCart.toggle(!outOfStock)
+          $AddToCart.prop('disabled',outOfStock)
+          $AddToCartDisabled.toggle(outOfStock)
+        })
+    {% endunless%}
+
+    if (window.location.href.indexOf('?variant=') > 0) {
+      let searchParams = new URLSearchParams(window.location.search);
+      var variant_id = searchParams.get('variant'),
+          thumbnail_image = $('.wayfx-product__thumbnails .variant-id-' + variant_id);
+          thumbnail_image.each(function(){
+        var thumbnail_id = parseInt($(this).data('slick-index'));
+        if(thumbnail_id > -1) {
+          $('.wayfx-product__thumbnails').slick('slickGoTo', thumbnail_id);
+        }
+      });
+    }
+  });
+
+</script>

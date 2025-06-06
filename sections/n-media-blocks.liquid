@@ -1,0 +1,337 @@
+{%- assign media_text_color = section.settings.media_text_color -%}
+{%- assign heading = section.settings.heading -%}
+{%- assign block_one_image = section.settings.block_one_image -%}
+{%- assign block_one_mobile_heading = section.settings.block_one_mobile_heading -%}
+
+{%- assign block_two_image = section.settings.block_two_image -%}
+{%- assign block_two_background_color = section.settings.block_two_background_color -%}
+{%- assign block_two_heading = section.settings.block_two_heading -%}
+{%- assign block_two_mobile_heading = section.settings.block_two_mobile_heading -%}
+{%- assign block_two_link = section.settings.block_two_link -%}
+{%- assign block_two_text = section.settings.block_two_text -%}
+
+{%- assign block_three_image = section.settings.block_three_image -%}
+{%- assign block_three_mobile_image = section.settings.block_three_mobile_image -%}
+{%- assign block_three_link = section.settings.block_three_link -%}
+{%- assign block_three_heading = section.settings.block_three_heading -%}
+{%- assign block_three_text = section.settings.block_three_text -%}
+{%- assign block_three_button_text = section.settings.block_three_button_text -%}
+
+{%- assign block_four_image = section.settings.block_four_image -%}
+{%- assign block_four_link = section.settings.block_four_link -%}
+{%- assign block_four_heading = section.settings.block_four_heading -%}
+
+<style type="text/css">
+    .wayfx-block--media-grid .wayfx-block__two .wayfx-block__content {background-image: url('{{ block_two_image | image_url: width: 1100 }}');}
+    .wayfx-block--media-grid .wayfx-block__three .wayfx-block__content {background-image: url('{{ block_three_image | image_url: height: 300 }}');}
+    .wayfx-block--media-grid .wayfx-block__four .wayfx-block__content {background-image: url('{{ block_four_image | image_url: width: 900 }}');}
+    @media all and (max-width: 1023px) { .wayfx-block--media-grid .wayfx-block__three .wayfx-block__content {background-image: url('{{ block_three_mobile_image | image_url: width: 700 | image_tag }}');} }
+    .wayfx-block--media-grid h3.h3--primary.wayfx-desktop { color: {{ media_text_color }};}
+   .wayfx-block--media-grid .wayfx-block__two p:last-of-type {color: {{ media_text_color }};}
+</style>
+
+{% capture block_one %}
+    <div class="grid__item one-half wayfx-block__one">
+        <div class="wayfx-block__content">
+            <h3 class="h3--primary wayfx-mobile">{{ block_one_mobile_heading }}</h3>
+            <img width="575" height="540" loading="lazy" src="{{ block_one_image | image_url: width: 1100 }}" alt="" />
+            <i class="wayfx-mobile wayfx-icon wayfx-icon-long-arrow-right"></i>
+        </div>
+    </div>
+{% endcapture %}
+
+{% capture block_two %}
+    <div loading="lazy" class="grid__item one-half wayfx-block__two">
+        <a class="wayfx-block__content" href="{{ block_two_link }}" style="background-color: {{ block_two_background_color }};">
+            <h3 class="h3--primary wayfx-desktop">{{ block_two_heading }}</h3>
+            <h3 class="h3--primary wayfx-mobile">{{ block_two_mobile_heading }}</h3>
+            {{ block_two_text }}
+          	<i class="wayfx-mobile wayfx-icon wayfx-icon-long-arrow-right"></i>
+        </a>
+    </div>
+{% endcapture %}
+
+{% capture block_three %}
+    <div loading="lazy" class="grid__item one-whole wayfx-block__three">
+        <a class="wayfx-block__content" href="{{ block_three_link }}">
+            {%- if block_three_heading -%}
+                <h3 class="h3--primary">{{ block_three_heading }}</h3>
+            {%- endif -%}
+            {%- if block_three_text -%}
+                <p class="p--md">{{ block_three_text }}</p>
+            {%- endif -%}
+            {%- if block_three_button_text -%}
+                <div class="btn btn--large wayfx-desktop">{{ block_three_button_text }}</div>
+            {%- endif -%}
+            <i class="wayfx-mobile wayfx-icon wayfx-icon-long-arrow-down"></i>
+        </a>
+    </div>
+{% endcapture %}
+
+{% capture block_four %}
+    <div loading="lazy" class="grid__item large--one-half wayfx-block__four">
+        <a data-fancybox class="wayfx-block__content" href="{{ block_four_link }}">
+            <div>
+                <div class="wayfx-block__play">
+                    <i class="wayfx-icon wayfx-icon-play"></i>
+                </div>
+                <h3 class="h3--secondary">
+                    <span>{{ block_four_heading }}</span>
+                </h3>
+            </div>
+        </a>
+    </div>
+{% endcapture %}
+
+{% capture block_five %}
+    <div class="wayfx-block__content">
+        <div class="wayfx-block__slider slider--dot-alt" style="display: none;">
+            {% for block in section.blocks %}
+                {% case block.type %}
+                {% when 'testimonials' %}
+                {%- assign quote = block.settings.quote -%}
+                {%- assign person = block.settings.person -%}
+                {%- assign title = block.settings.title -%}
+                    <div class="wayfx-block__slide">
+                        <blockquote>
+                            <p>{{ quote }}</p>
+                            <cite>
+                                <span class="wayfx-block__five-person">{{ person }}</span>
+                                <span class="wayfx-block__five-title">{{ title }}</span>
+                            </cite>
+                        </blockquote>
+                    </div>
+                {% endcase %}
+            {% endfor %}
+        </div>
+    </div>
+{% endcapture %}
+
+  <div class="wayfx-wrapper">
+    {%- if heading -%}
+        <h2 class="h2--primary text-center">{{ heading }}</h2>
+    {%- endif -%}
+    <div class="grid wayfx-row__one">
+      {{ block_one }}
+      {%- if block_two_heading -%}
+          {{ block_two }}
+      {%- endif -%}
+      {%- if block_three_heading -%}
+          {{ block_three }}
+      {%- endif -%}
+    </div>
+   {%- if block_three_heading -%}
+        <div class="grid wayfx-row__two">
+          {{ block_three }}
+        </div>
+    {%- endif -%}
+    <div class="grid wayfx-row__three">
+        {% if block_four_heading %}
+          {{ block_four }}
+        {% endif %}
+      <div class="grid__item large--one-half wayfx-block__five">
+          <a href="{{ block_three_link }}" class="btn btn--xlarge wayfx-mobile">
+              {{ block_three_button_text }}
+          </a>
+        {{ block_five }}
+      </div>
+    </div>
+  </div>
+
+{% schema %}
+    {
+      "name": "Media Grid",
+      "presets": [
+        {
+          "name": "Media Grid"
+        }
+      ],
+      "tag": "section",
+      "class": "wayfx-block wayfx-block--media-grid",
+      "settings": [
+        {
+            "id": "media_text_color",
+            "type": "color",
+            "label": "Text Color",
+		    "default": "#ffffff"
+        },
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "block_one_image",
+            "type": "image_picker",
+            "label": "Block 1 Image"
+        },
+        {
+            "id": "block_one_mobile_heading",
+            "type": "text",
+            "label": "Block 1 Mobile Heading",
+            "info": "This text will display on the card for mobile devices."
+        },
+        {
+            "id": "block_two_heading",
+            "type": "text",
+            "label": "Block 2 Desktop Heading"
+        },
+        {
+            "id": "block_two_mobile_heading",
+            "type": "text",
+            "label": "Block 2 Mobile Heading",
+            "info": "This text will replace the desktop heading for mobile devices."
+        },
+        {
+            "id": "block_two_text",
+            "type": "richtext",
+            "label": "Block 2 Paragraph"
+        },
+        {
+            "id": "block_two_image",
+            "type": "image_picker",
+            "label": "Block 2 Background"
+        },
+        {
+            "id": "block_two_background_color",
+            "type": "color",
+            "label": "Block 2 Background Color"
+        },
+        {
+            "id": "block_two_link",
+            "type": "url",
+            "label": "Block 2 Link"
+        },
+        {
+            "id": "block_three_heading",
+            "type": "text",
+            "label": "Block 3 Heading"
+        },
+        {
+            "id": "block_three_text",
+            "type": "text",
+            "label": "Block 3 Paragraph"
+        },
+        {
+            "id": "block_three_image",
+            "type": "image_picker",
+            "label": "Block 3 Desktop Background"
+        },
+        {
+            "id": "block_three_mobile_image",
+            "type": "image_picker",
+            "label": "Block 3 Mobile Background"
+        },
+        {
+            "id": "block_three_link",
+            "type": "url",
+            "label": "Block 3 Link"
+        },
+        {
+            "id": "block_three_button_text",
+            "type": "text",
+            "label": "Block 3 Button Text"
+        },
+        {
+            "id": "block_four_heading",
+            "type": "text",
+            "label": "Block 4 Heading"
+        },
+        {
+            "id": "block_four_image",
+            "type": "image_picker",
+            "label": "Block 4 Background"
+        },
+        {
+            "id": "block_four_link",
+            "type": "url",
+            "label": "Block 4 Video Link"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "testimonials",
+            "name": "Testimonials",
+            "settings": [
+                {
+                    "id": "quote",
+                    "type": "textarea",
+                    "label": "Quote"
+                },
+                {
+                    "id": "person",
+                    "type": "text",
+                    "label": "Person"
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title"
+                }
+            ]
+        }
+      ]
+    }
+{% endschema %}
+
+{% javascript %}
+
+ $(document).ready(function() {
+      $('.wayfx-block--media-grid .wayfx-block__slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            draggable: true,
+            infinite: true,
+            dots: true,
+            adaptiveHeight: false,
+            mobileFirst: true,
+            responsive: [{
+                breakpoint: 768,
+                settings: {
+                    adaptiveHeight: false,
+                    arrows: true,
+                    draggable: false
+                }
+            }]
+      }).show();
+
+      var settings = {
+        arrows: false,
+        draggable: true,
+        infinite: false,
+        dots: false,
+        adaptiveHeight: false,
+        mobileFirst: true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        centerMode: true,
+        variableWidth: false,
+        responsive: [{
+            breakpoint: 1024,
+            settings: {
+                settings: "unslick"
+            }
+        }]
+    }
+
+    var $slides = $('.wayfx-block--media-grid .wayfx-row__one');
+
+    $(window).on('load resize orientationchange', function () {
+        if ($(window).width() > 1023) {
+            if ($slides.hasClass('slick-initialized')) {
+                $slides.slick('unslick');
+            }
+            $slides.show();
+            return
+        }
+        if (!$slides.hasClass('slick-initialized')) {
+            return $slides.each(function() {
+                $(this).slick(settings).show();
+            });
+        }
+    });
+
+ });
+
+{% endjavascript %}

@@ -1,0 +1,241 @@
+<link rel="stylesheet" href="{{ 'MOS2-hero-with-list.css' | asset_url  }}" media="print" onload="this.media='all'">
+<div class="hero-with-list hero-with-list--{{ section.id }}">
+  {% render 'global.lazy-image', 
+            image_desktop:section.settings.image_desktop,
+            image_mobile:section.settings.image_mobile,
+            image_class:'hero-with-list__image'
+  %}
+  <div class="hero-with-list__grid">
+    <div class="hero-with-list__text-block
+         {% if section.settings.layout__desktop == 'list-left' %}
+         @desktop__order-two
+         {% else %}
+         @desktop__order-one
+         {% endif %}
+         {% if section.settings.layout__mobile == 'list-top' %}
+         @tablet__order-two
+         {% else %}
+         @tablet__order-one
+         {% endif %}">
+
+      <h2 class="h2--secondary hero-with-list__h-xl">{{ section.settings.title }}</h2>
+      {% if section.settings.content != blank %}
+      <div class="wayfx-block--feature hero-with-list__rte">{{ section.settings.content }}</div>
+      {% endif %}
+      {% if section.settings.text_cta__text != blank and section.settings.text_cta__url != blank %}
+        {% if section.settings.text_cta__desktop or section.settings.text_cta__mobile %}
+          <a href="{{ section.settings.text_cta__url }}"
+             title="{{ section.settings.text_cta__text }}"
+             class="btn btn--xlarge hero-with-list__text-btn
+             {% if section.settings.text_cta__desktop %}@desktop__d-iblock {% else %}@desktop__hide {% endif %}
+             {% if section.settings.text_cta__mobile %}@tablet__d-iblock {% else %}@tablet__hide {% endif %}">
+            {{ section.settings.text_cta__text }}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="hero-with-list__list-block
+         {% if section.settings.layout__desktop == 'list-left' %}
+         @desktop__order-one
+         {% else %}
+         @desktop__order-two
+         {% endif %}
+         {% if section.settings.layout__mobile == 'list-top' %}
+         @tablet__order-one
+         {% else %}
+         @tablet__order-two
+         {% endif %}">
+      {% if section.settings.list_title != blank %}
+      <h3 class="hero-with-list__list-heading">{{ section.settings.list_title }}</h3>
+      {% endif %}
+      {% if section.blocks.size %}
+      <ul class="ticklist hero-with-list__ticklist">
+        {% for block in section.blocks %}
+        <li class="ticklist__item">{{ block.settings.title }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if section.settings.list_cta__text != blank and section.settings.list_cta__url != blank %}
+        {% if section.settings.list_cta__desktop or section.settings.list_cta__mobile %}
+          <a href="{{ section.settings.list_cta__url }}"
+             title="{{ section.settings.list_cta__text }}"
+             class="btn btn--xlarge  hero-with-list__list-btn 
+                    {% if section.settings.list_cta__desktop %}@desktop__d-iblock {% else %}@desktop__hide {% endif %}
+                    {% if section.settings.list_cta__mobile %}@tablet__d-iblock {% else %}@tablet__hide {% endif %}">
+             {{ section.settings.list_cta__text }}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% assign desktop_ar = section.settings.image_desktop.aspect_ratio %}
+{% assign mobile_ar = desktop_ar %}
+{% if section.settings.image_mobile %}
+  {% assign mobile_ar = section.settings.image_mobile.aspect_ratio %}
+{% endif %}
+
+<style type="text/css">
+
+  .hero-with-list--{{ section.id }} .hero-with-list__grid{
+    min-height:calc(100vw / {{ desktop_ar }});
+  }
+
+
+  @media all and (max-width: 1024px) {
+    .hero-with-list--{{ section.id }} .hero-with-list__grid{
+      min-height:calc(100vw / {{ mobile_ar }});
+    }
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Hero with list",
+  "tag": "section",
+  "presets": [
+    {
+      "name": "Hero with list"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Image @desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Image @mobile"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout__desktop",
+      "label": "Layout @desktop",
+      "default":"list-right",
+      "options": [
+          { "value": "list-right", "label": "List right / Text left"},
+          { "value": "list-left", "label": "List left / Text right"}
+      ]
+    },
+
+    {
+      "type": "select",
+      "id": "layout__mobile",
+      "label": "Layout @mobile",
+      "default":"list-bottom",
+      "options": [
+          { "value": "list-bottom", "label": "List bottom / Text top"},
+          { "value": "list-top", "label": "List top / Text bottom"}
+      ]
+    },
+
+    {
+      "type": "header",
+      "content": "List content"
+    },
+   
+    {
+      "type": "paragraph",
+      "content": "List items are defined using blocks. To add a new list item, add a block to this section."
+    },
+    {
+      "type": "text",
+      "id": "list_title",
+      "label": "Heading above list",
+      "default":"Your benefits:"
+    },
+    {
+      "type": "text",
+      "id": "list_cta__text",
+      "label": "Button text",
+      "default":"Sign up"
+    },
+    {
+      "type": "url",
+      "id": "list_cta__url",
+      "label": "Button url"
+    },
+    
+    {
+      "type": "checkbox",
+      "id": "list_cta__desktop",
+      "label": "Show button @desktop",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "list_cta__mobile",
+      "label": "Show button @mobile",
+      "default": false
+    },
+
+    {
+      "type": "header",
+      "content": "Text content"
+    },
+
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default":"Me&Medik8"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Paragraph",
+      "default":"<p>Join now to earn points every time you shop on Medik8.com, to redeem and make savings on future purchases</p>"
+    },
+    {
+      "type": "text",
+      "id": "text_cta__text",
+      "label": "Button text",
+      "default":"Sign up"
+    },
+    {
+      "type": "url",
+      "id": "text_cta__url",
+      "label": "Button url"
+    },  
+    {
+      "type": "checkbox",
+      "id": "text_cta__desktop",
+      "label": "Show button @desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "text_cta__mobile",
+      "label": "Show button @mobile",
+      "default": false
+    }
+  ],
+
+  "max_blocks": 10,
+  "blocks": [
+     {
+       "name": "List item",
+       "type": "list-item",
+       "settings": [
+        
+         {
+          "type": "richtext",
+          "id": "title",
+          "label": "text",
+          "default":"<p>Edit this in block settings</p>"
+         }
+       ]
+     }
+  ]
+}
+{% endschema %}

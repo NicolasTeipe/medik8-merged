@@ -1,0 +1,86 @@
+{%- assign sidebar = section.settings.sidebar_menu -%}
+{%- assign sidebar_color_scheme = section.settings.sidebar_color_scheme %}
+
+
+<div class="wayfx-content-with-sidebar">
+  <div class="wayfx-sidebar wayfx-sidebar--{{ sidebar_color_scheme }} link-list">
+      
+
+    {%- assign sidebar_heading = section.settings.sidebar_heading -%}
+        {% if sidebar_heading %}
+            <h3>{{ section.settings.sidebar_heading }}</h3>
+        {% endif %}
+        <ul class="wayfx-sidebar__parent">
+            {% for link in linklists[sidebar].links %}
+                <li>
+                    {% if link.url == '#' %}
+                        <h4>{{ link.title }}</h4>
+                    {% else %}
+                        <h4>
+                            <a href="{{ link.url }}">{{ link.title }}</a>
+                        </h4>
+                    {% endif %}
+                    {% if link.links != blank %}
+                        <ul class="wayfx-sidebar__children">
+                            {% for child_link in link.links %}
+                                {% if child_link.active %}
+                                    <li class="wayfx-sidebar__active">
+                                        {{ child_link.title }}
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+  </div>
+</div>
+</div>
+
+<style>
+
+.link-list{
+  min-width:100%;
+}
+
+</style>
+
+{% schema %}
+{
+  "name": "Link List",
+  "tag": "section",
+  "class": "wayfx-wrapper",
+  "settings": [
+      {
+          "id": "sidebar_heading",
+          "type": "text",
+          "label": "Sidebar Heading"
+      },
+      {
+          "id": "sidebar_menu",
+          "type": "link_list",
+          "label": "Sidebar Menu"
+      },
+      {
+          "type": "select",
+          "id": "sidebar_color_scheme",
+          "options": [
+              { "value": "light", "label": "Light"},
+              { "value": "dark", "label": "Dark"}
+          ],
+          "label": "Sidebar Color Scheme"
+      }
+  ],
+  "presets": [
+    {
+      "name": "Link List"
+    }
+  ]
+}
+{% endschema %}

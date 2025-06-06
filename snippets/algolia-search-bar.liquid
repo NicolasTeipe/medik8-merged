@@ -1,0 +1,44 @@
+
+
+  <div class="wayfx-header__search">
+    <div class="wayfx-header__search-overlay"></div>
+    <button aria-label="Search" id="wayfxSearchTrigger" class="wayfx-header__icon">
+        <i class="wayfx-icon wayfx-icon-search"></i>
+    </button>
+    <form action="/search" method="get" role="search" class="search-form" autocomplete="off">
+      <button aria-label="Search for this" type="button" id="wayfxSearchBackClose" class="wayfx-header__search-back-close">
+        <i class="wayfx-icon wayfx-icon-long-arrow-left"></i>
+      </button>
+        {% comment %}<input type="hidden" name="type" value="product">{% endcomment %}
+        <input aria-label="{{ 'general.search.placeholder' | t }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}">
+        <button aria-label="Close Search" type="button" id="wayfxSearchClose" class="wayfx-header__search-close">
+            <i class="wayfx-icon wayfx-icon-close-thin"></i>
+        </button>
+    </form>
+  </div>
+
+  <style type="text/css">
+    {% comment %}@TODO: move to none-critical / chunk {% endcomment %}
+    .aa-suggestions p.aa-product-title{
+      max-width:calc(100% - 20px - 1.2rem);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .aa-article-text, .aa-page-text, .aa-collection-text, .aa-product-text{
+      overflow:hidden;
+    }
+
+    @media all and (max-width: 1023px) {
+      .wayfx-header .wayfx-header__search{
+        position:static;
+      }
+
+      .wayfx-header .wayfx-header__search form{
+        top:0;
+        left:0;
+        width:100%;
+      }
+    }
+  </style>

@@ -1,0 +1,102 @@
+{%- assign image = section.settings.image | image_url: width: 560 -%}
+{% assign image_link = section.settings.image_link %}
+
+<div class="wayfx-wrapper" id="{{section.settings.title}}">
+    <div class="grid">
+      <div class="grid__item one-whole large--six-tenths">
+
+        {% for block in section.blocks %}
+
+        {%- assign block_heading = block.settings.block_heading -%}
+        {%- assign block_paragraph = block.settings.block_paragraph -%}
+        {%- assign block_cta_link = block.settings.block_cta_link -%}
+        {%- assign block_cta_text = block.settings.block_cta_text -%}
+
+          {% if block_heading != blank %}
+          <div class="wayfx-block__item">
+            <h3 class="h3--primary">{{ block_heading }}</h3>
+            {% if block_paragraph != blank %}<p>{{ block_paragraph }}</p>{% endif %}
+            {% if block_cta_text != blank %}<a href="{{ block_cta_link }}" class="btn--outline btn--large">{{ block_cta_text }}</a>{% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+
+      </div>
+
+      {%- comment -%}
+        Commenting out below block as 'block_image' does not exist.
+        Additionally, this entire file does not appear to be called from anywhere.
+        Not deleting incase it has a use that is currently unknown.
+      {%- endcomment -%}
+
+      {%- comment -%}
+        {% unless block_image contains 'no-image' %}
+          <div class="grid__item one-whole large--four-tenths">
+            <div class="wayfx-block__image">
+              <a href="{{ image_link }}">
+                <img loading="lazy" data-blink-src="{{ image }}" alt="" width="560" height="560" style="margin: 2rem auto"/>
+              </a>
+            </div>
+          </div>
+        {% endunless %}
+      {%- endcomment -%}
+
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "Content w/ Sidebar Image",
+    "tag": "section",
+    "class": "wayfx-block wayfx-block--content-1column mos2--component",
+    "presets": [
+      {
+        "name": "Content w/ Sidebar Image"
+      }
+    ],
+    "settings": [
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Side Image",
+            "info": "This image will display on the right side of this content layout"
+        },
+        {
+            "id": "image_link",
+            "type": "url",
+            "label": "Side Image Link",
+            "info": "This controls the cta link for the sidebar image"
+        }
+    ],
+    "blocks": [
+      {
+          "type": "block",
+          "name": "Block",
+          "limit": 4,
+          "settings": [
+            {
+                "id": "block_heading",
+                "type": "text",
+                "label": "Block Heading"
+            },
+            {
+                "id": "block_paragraph",
+                "type": "textarea",
+                "label": "Block Paragraph",
+                "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+            },
+            {
+                "id": "block_cta_link",
+                "type": "url",
+                "label": "Block CTA Link"
+            },
+            {
+                "id": "block_cta_text",
+                "type": "text",
+                "label": "Block CTA Text"
+            }
+          ]
+      }
+    ]
+}
+{% endschema %}
