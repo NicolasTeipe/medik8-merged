@@ -1,0 +1,46 @@
+<section class="regime-footer">
+  <div class="wayfx-wrapper">
+    <div class="regime-padding-x">
+      {% if section.settings.title != blank %}
+        <h3>
+          {{ section.settings.title }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.menu %}
+        <ul>
+          {% for link in section.settings.menu.links %}
+            <li>
+              <a href="{{ link.url }}">
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Regime footer",
+    "presets": [
+      {
+        "name": "Regime footer"
+      }
+    ],
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Menu "
+      }
+    ]
+  }
+{% endschema %}

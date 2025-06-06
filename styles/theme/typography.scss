@@ -1,0 +1,47 @@
+blockquote {
+  font-size: calc(((18) / (var(--font-size-base))) * 1em);
+  font-style: normal;
+  text-align: center;
+  padding: 0 30px;
+  margin: 0; }
+  .rte blockquote {
+    border-color: var(--color-border);
+    border-width: 1px 0;
+    border-style: solid;
+    padding: 30px 0;
+    margin-bottom: 27.5px; }
+  blockquote p + cite {
+    margin-top: 27.5px; }
+  blockquote cite {
+    display: block;
+    font-size: 0.85em;
+    font-weight: var(--font-weight-body); }
+    blockquote cite::before {
+      content: '\2014 \0020'; }
+
+code,
+pre {
+  font-family: Consolas, monospace;
+  font-size: 1em; }
+
+pre {
+  overflow: auto; }
+
+input,
+textarea,
+select,
+.disclosure__toggle {
+  font-size: calc(var(--font-size-base) * 1px);
+  font-family: var(--font-stack-body);
+  font-style: var(--font-style-body);
+  font-weight: var(--font-weight-body);
+  color: var(--color-text);
+  line-height: 1.5; }
+
+@media only screen and (max-width: 989px) {
+  input,
+  textarea,
+  select,
+  .disclosure__toggle,
+  button {
+    font-size: 16px; } }

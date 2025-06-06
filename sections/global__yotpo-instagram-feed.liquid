@@ -1,13 +1,34 @@
 
-<template class="section--{{ section.id }}">
-  {{ section.settings.html_section }}
-</template>
+  <div class="yotpo-ugc-wrapper {% if section.settings.fixed_width == true %} block-grid block-grid--index{% endif %}">
+    <template class="section--{{ section.id }}">
+      {{ section.settings.html_section }}
+    </template>
+  </div>
+
+<style>
+  #shopify-section-{{ section.id }} {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    background-color: {{ section.settings.section_bg_color }};
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+</style>
 
 <script type="module">
   import {DynanicRenderSection,YotpoObserver} from {{ 'scripts.globalYotpoInstagramFeed.js' | asset_url | json }};
 
   let renderSection = new DynanicRenderSection({
-    element:document.querySelector(`#shopify-section-{{ section.id }}`),
+    element:document.querySelector(`#shopify-section-{{ section.id }} .yotpo-ugc-wrapper`),
     content:document.querySelector(`.section--{{ section.id }}`)
   })
 
@@ -29,9 +50,113 @@
   "name": "global/yotpo-insta-feed",
   "settings": [
     {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
       "type": "html",
       "id": "html_section",
       "label": "HTML Section"
+    },
+    {
+      "type": "checkbox",
+      "id": "fixed_width",
+      "label": "Fixed Width",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
     }
   ],
   "presets": [

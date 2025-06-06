@@ -1,0 +1,14 @@
+<cart-footer-main>
+  <template>
+    {
+      "button_text":{{ settings.cart__button_text | json }},
+      "total_text":{{ settings.cart__total_text | json }},
+      "lp__show":{{ settings.cart__lp__show | json }},
+      "lp__label":{{ settings.cart__lp__label | json }},
+      "lp__hint":{{ 'products.product.loyalty_lion__hint_text' | t | replace: '**cart.currency.symbol**', cart.currency.symbol | json }},
+      "dv2_fg__show":{{ settings.dv2_fg__show | json }},
+      "dv2_fg__label":{{ settings.dv2_fg__label | json }},
+      "dv2_fg__tooltip":{{ settings.dv2_fg__tooltip | json }}
+    }
+  </template>
+</cart-footer-main>

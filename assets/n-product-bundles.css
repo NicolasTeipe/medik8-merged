@@ -25,7 +25,10 @@
     .atc-wrapper {
       margin: 10px 0 0; } }
   .atc-wrapper #AddToCart {
-    margin-bottom: 24px !important; }
+    margin-bottom: 0px !important; }
+    @media screen and (min-width: 768px) {
+      .atc-wrapper #AddToCart {
+        margin-bottom: 10px !important; } }
     .atc-wrapper #AddToCart s {
       color: #969696;
       padding-right: 2px; }

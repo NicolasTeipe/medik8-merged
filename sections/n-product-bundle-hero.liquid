@@ -1,3 +1,5 @@
+<!-- sections/n-product-bundle-hero.liquid -->
+
 {%- assign product_description = product.metafields.sf_product_hero.description -%}
 {%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
 {%- assign highlight_title_1 = product.metafields.sf_product_hero.highlight_1_heading -%}
@@ -135,18 +137,12 @@
 
       {%- comment -%} *** REVIEWS & WISHLIST ***{%- endcomment -%}
       <div class="wayfx-product__actions">
-          <div class="yotpo bottomLine"
-               data-product-id="{{ product.id }}"
-               data-product-models="{{ product.id }}"
-               data-name="{{ product.title | escape }}"
-               data-url="{{ shop.url }}{{ product.url }}"
-               data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26' | image_tag}}"
-               data-description="{{ product.description | escape }}"
-               data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
-          </div>
-          <div class="wayfx-product__wishlist">
-            {% render 'product-wishlist' with product %}
-          </div>
+        {%- if settings.yotpo_stars_instance_id != blank -%}
+          <div class="yotpo-widget-instance" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+        {%- endif -%}
+        <div class="wayfx-product__wishlist">
+          {% render 'product-wishlist' with product %}
+        </div>
       </div>
 
 

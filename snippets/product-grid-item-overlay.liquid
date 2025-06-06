@@ -1,3 +1,5 @@
+<!-- snippets/product-grid-item-overlay.liquid -->
+
 {%- assign productIsGiftCard = false -%}
 {%- if product.gift_card? -%}
     {%- assign productIsGiftCard = true -%}
@@ -80,9 +82,6 @@
   endfor
 %}
 
-{%- if product.type == 'Bundles' -%}
-  {{ "n-product-bundles.css" | asset_url | stylesheet_tag }}
-{%- endif -%}
 
 <global-product-quick-view 
   id="product_{{ product_id }}_information" 
@@ -92,33 +91,31 @@
     style="display:block;"
   {% endif %}
 >
-    <div class="wayfx-product__grid">
+    <div class="wayfx-product__grid" data-variant-id="{{ product.selected_or_first_available_variant.id }}">
         <div class="wayfx-product__photos-wrapper">
-            {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+            {%- if product.type == 'Bundles' -%}
+              {{ "n-product-bundles.css" | asset_url | stylesheet_tag }}
+            {%- endif -%}
+
+            {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card', no_script: 'true' -%}
+
             <img class="js-prod-qv__image" loading="lazy" width="480" height="480" src="{{ product_image | image_url: width: 480 }}" alt="{{ product.featured_image.alt | escape }}" />
-            {% if product.type == 'Bundles' %}
+            
+            {%- comment -%} Price block {%- endcomment -%}
             <p class="js-prod-qv__price wayfx-product__grid-price flex flex-grid--d2 align-center justify-center">
-              {% if product.compare_at_price %}
-              <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-              {% endif %}
-              {{ product.price | money_without_trailing_zeros }}
+              {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'quick_view', sold_out_price: 'true', no_script: 'true' -%}
             </p>
-            {% else %}
-            <p class="js-prod-qv__price wayfx-product__grid-price flex flex-grid--d2 align-center justify-center">
-              {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <s>{{ variant.price | money_without_trailing_zeros }}</s>
-                {% elsif  variant.compare_at_price > variant.price %}
-                <s>{{ variant.compare_at_price }}</s>
-              {% endif %}
-              {{ product_price | money_without_trailing_zeros }}
-          	</p>
-            {% endif %}
+
+            {%- comment -%} Select / Add to Cart block {%- endcomment -%}
           	<div class="wayfx-product__grid-add">
-              {%- if product.type == 'Bundles' and bundleIsAvailable -%}
+              {%- if product.type == 'Bundles' and bundleIsAvailable and product.metafields.custom.bundle_items.value -%}
                 <button 
                   class="js-btn-qv-bundle-atc btn btn--full btn--large">
                   <span id="AddToCartText">
                     {{ 'products.product.add_to_cart' | t }}
+                    {% if settings.low_stock_label == true and variant_inventory > 0 and variant_inventory <= settings.low_stock_trigger %}
+                      <span class="js-prod-qv__low-stock f-w600"> - {{ 'products.product.low_stock' | t }}</span>
+                    {% endif %}
                   </span>
                 </button>
 
@@ -165,7 +162,7 @@
       
                       {%- assign variant_sold_out = false -%}
                       {%- assign variant_low_stock = false -%}
-                      {%- if _variant.inventory_quantity > 0 and _variant.inventory_quantity < 20 -%}
+                      {%- if settings.low_stock_label == true and _variant.inventory_quantity > 0 and _variant.inventory_quantity <= settings.low_stock_trigger -%}
                         {%- assign variant_low_stock = true -%}
                       {%- endif -%}
                       {%- if productIsGiftCard == false %}
@@ -180,14 +177,10 @@
                                 {% if _variant.image %}
                                 data-image="{{ _variant.image | image_url: width: 480 }}"
                                 {% endif %}
-                                data-price="{{ _variant.price | money_without_trailing_zeros }}"
-                                {%- unless _variant.title contains "travel" or _variant.title contains "Travel" -%}
-                                {% if _variant.compare_at_price >= _variant.price %}
-                                data-discounted-price="{{ _variant.price | money_without_trailing_zeros }}"
-                                {% elsif variant_discount_price %}
-                                data-discounted-price="{{ variant_discount_price | money_without_trailing_zeros }}"
-                                {% endif %}
-                                {%- endunless -%}
+
+                                data-price="{%- render 'price-v2', variant: _variant, style: 'quick_view', sold_out_price: 'true', no_script: 'true' -%}"
+                                data-label="{%- render 'product-labels-v2', variant: _variant, type: 'product-card', no_script: 'true' -%}"
+
                                 {% if _variant == product.selected_or_first_available_variant %}selected{% endif %}
                                 >
                                 {{ _variant.title }}
@@ -217,7 +210,12 @@
 
                   {%- else -%}                  
                     <button class="js-prod-qv__atc btn--full btn" onClick="GlobalCartMain.addProductFromButton(event)">
-                      <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+                      <span class="text">
+                        {{ 'products.product.add_to_cart' | t }}
+                      </span>
+                      {% if settings.low_stock_label == true and variant_inventory > 0 and variant_inventory <= settings.low_stock_trigger %}
+                        <span class="js-prod-qv__low-stock f-w600"> - {{ 'products.product.low_stock' | t }}</span>
+                      {% endif %}
                     </button>
                     <a class="wayfx-product__grid-product-link" href="{{ variant.url }}">{{ 'products.general.view_product' | t }}</a>
                   {%- endif -%}
@@ -227,31 +225,21 @@
 
           	</div>
         </div>
+
         <div class="wayfx-product__details">
             <div class="wayfx-product__actions">
-              <button data-href="{{ product.url }}#shopify-section-product-reviews">
-                <div class="yotpo bottomLine"
-                    data-appkey="{{ settings.yotpo_api_key }}"
-                    data-domain="{{shop.permanent_domain | escape }}"
-                    data-product-id="{{ product.id }}"
-                    data-product-models="{{ product.id }}"
-                    data-name="{{ product.title | escape }}"
-                    data-url="{{ shop.url }}{{ product.url }}"
-                    data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
-                    data-description="{{ product.description | escape }}"
-                    data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+              {%- if settings.yotpo_stars_instance_id != blank -%}
+                <button data-href="{{ product.url }}#shopify-section-product-reviews-js">
+                  <div class="yotpo-widget-instance no-events{% if product_size != blank %} yotpo-widget-instance--right-side-dot{% endif %}" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+                </button>
+              {%- endif -%}
+              {%- if product_size != blank -%}
+                <div class="wayfx-product__size" style="margin-left: 0;">
+                  {{ product_size }}
                 </div>
-              </button>
-                {% if product_size != 0 and product_size != 1 %}
-                    <div class="wayfx-product__size" style="margin-left: 0;">
-                        {{ product_size }}
-                    </div>
-                {% endif %}
+              {%- endif -%}
             </div>
-          	
-          	<div class="js-prod-qv__low-stock wayfx-product__low-stock-wrap" {% unless low_stock %}style="display:none"{% endunless %}>
-              <div class="wayfx-product__low-stock">{{ 'products.product.low_stock' | t }}</div>
-          	</div>
+
             <h1 class="js-prod-qv__title wayfx-product__title">{{ product_title }}</h1>
             {%- if product_subtitle -%}
                 <h2 class="wayfx-product__subtitle">{{ product_subtitle }}</h2>

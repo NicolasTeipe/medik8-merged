@@ -1,0 +1,65 @@
+
+
+{% if section.blocks %}
+<sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    <cart-message-bar 
+      class="block-12/12"
+      observer_key="{{ section.id }}">
+      <template>
+        {
+          "blocks":{{ section.blocks | map: 'settings' | json }},
+          "options":{
+            "loop":true
+          }{% if section.settings.autoplay != 0 %},
+          "plugins":{
+            "autoplay":{
+              "delay": {{ section.settings.autoplay }}
+            }
+          }{% endif %}
+        }
+      </template>
+    </cart-message-bar>
+  </template>
+</sidebar-cart-section>
+{% endif %}
+
+{% schema %}
+{ 
+  "name":"sb-cart/message-bar",
+  "settings": [
+    {
+      "type": "range",
+      "id": "autoplay",
+      "label": "Autoplay speed",
+      "min": 0,
+      "max": 5000,
+      "step": 100,
+      "unit": "ms",
+      "default": 2000 ,
+      "info": "Set to 0 to disable autoplay"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "message",
+      "limit": 8,
+      "settings": [
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "text",
+          "default":"<p>Edit in settings</p>"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,61 +1,38 @@
 
 <script type="text/javascript">
 
+  //pollyfill for references to window.globalSideBarUI__cart.open()
+  window.globalSideBarUI__cart = {
+    open:async () => {
+      const globalSideBarCartUi$ = new ObserverLite({key:'GlobalSidebar.SidebarCart'})
+      const globalSideBarCartUi = await globalSideBarCartUi$.once() 
+      globalSideBarCartUi.open()
+    }
+  }
+
   function globalInlineAtcErrorMessage(parent,error){
-    let errors = parseHTML(`<span style="text-align:center;display:block" class="js-product-form-errors errors qty-error">${error}</span>`)
+    let errors = parent.querySelector('.js-product-form-errors') 
+    errors?.remove()
+    errors = parseHTML(`<span style="text-align:center;display:block" class="js-product-form-errors errors qty-error">${error}</span>`)
     parent.appendChild(errors)
     errors = parent.querySelector('.js-product-form-errors')
-    const qtySelector = parent.querySelector('input[name="quantity"]')
     setTimeout( () => {
       errors.remove()
     },2500)  
   }
 
-  (() => {
+  (async () => {
     const GlobalCartMain = window.GlobalCartMain = new GlobalCart({
       money_format: {{ shop.money_format | json }},
-      cart:{{ cart | json }}
+      cart:{% render 'global.cart_json' %},
+      currency_symbol: {{ cart.currency.symbol | json }},
+      market: {{ request.locale.root_url | json }}
     })
     
-    GlobalCartMain.getAllDiscountCodes = () => {
-      return new Promise( async (resolve,reject) => {
-        const {cart} = await new GlobalCart()
-        // get from cart (only returns codes if items are in cart)
-        let code
-        // if cart has items, we can take the cart.discount_applications as truth
-        if(cart.items.length){
-          code = [...
-            new Set(
-              cart.items.filter(
-                ({discounts}) => discounts?.length
-              ).map(
-                ({discounts}) => discounts.map(({title}) => title)
-              ).flat()
-            )
-          ]
-          code = code.length ? code[0] : false
-          localStorage.setItem('discountCode',code)
-          resolve(code)
-        }else{
-          // use cookie - when user visits /discounts/CODE then this cookie is added, but it doesnt persist
-          code = Object.fromEntries(new URLSearchParams(document.cookie.replace(/; /g, "&")))?.discount_code || false
-          if(code){
-            localStorage.setItem('discountCode',code)
-          }else{
-            code = localStorage.getItem('discountCode')
-          }
-          resolve(code)
-        }
-      })
-    }
-
-
     // placeholder thumb ATC events, remove the inline JS calls?
-    GlobalCartMain.addProductFromButton = (e,data) => {
+    GlobalCart.prototype.addProductFromButton = function(e,data){
 
-      e.preventDefault();
-      const monster_active = !!document.querySelector('script[src*="/cart_renderer."]');
-      if(monster_active && ShopifyAnalytics.meta.page.pageType === "product") return;
+      e.preventDefault()
       const btn = e.currentTarget
       let form = false
       data = data || false
@@ -64,7 +41,7 @@
       form = e.currentTarget.closest('form')
       if(!data && form){
         // handle isntances when atc is called inside form element
-        data = GlobalCartMain.serialize(form)
+        data = this.serialize(form)
         let variantInventoryQty = form.querySelector('input[name="quantity"]') ? parseInt(form.querySelector('input[name="quantity"]').dataset.variantInventoryQty) : false
         if(variantInventoryQty){
           data.properties = {
@@ -98,18 +75,8 @@
       }
  
       // add it to the cart
-      GlobalCartMain.addToCart(data)
+      this.addToCart(data)
       .then( () => { 
-        const monster_active = !!document.querySelector('script[src*="/cart_renderer."]');
-        if(monster_active) {
-          if(window.openCart) {
-            monster_refresh();
-          } else {
-            setTimeout(() => {
-              monster_refresh();
-            }, 2000);
-          }
-        }
         btn.classList.remove('btn--loading')
         btn.classList.add('btn--added')
         const orignalAtcHtml = btn.innerHTML
@@ -132,33 +99,10 @@
       })
       return false
     }
-  
 
   })()
     
   DomReadyPromise().then( async () => {
-
-    window.GlobalLocaleLoaderMain = new GlobalLocaleLoader({
-      translations:{
-        cart:{
-          general:{
-            title:{{ 'cart.general.title' | t | json }},
-            remove:{{ 'cart.general.remove' | t | json }},
-            subtotal:{{ 'cart.general.subtotal' | t | json }},
-            checkout:{{ 'cart.general.checkout' | t | json }},
-            empty_message: '{{ settings.cart_empty_message }}'
-          },
-          product:{
-            free_sample:{{ 'cart.product.free_sample' | t | json }},
-            free_gift:{{ 'cart.product.free_gift' | t | json }},
-            birthday_gift:{{ 'cart.product.birthday_gift' | t | json }},
-            bundle:{{ 'cart.product.bundle' | t | json }},
-            subscription:{{ 'cart.product.subscription' | t | json }},
-          }
-        }
-      }
-    })
-
     // Update the cart counters
     const cartCounters = document.querySelectorAll('.js-global-cart-counter')
     const updateCounters = () => {
@@ -170,176 +114,20 @@
       updateCounters()
     })
 
-  
-  }).catch(err => {
-    console.log(err)
-  })
-  
-  // Native / Good cart
-  {% if settings.enable_sidebarcart %}
-  DomReadyPromise().then( async () => {
+    const accessToken = {{ shop.metafields.storefront_api.token | json }}
+    const permanentDomain = {{ shop.permanent_domain | json }}
+    const version = "2024-07"
 
-    const globalSideBarCartInstance = window.globalSideBarCartInstance = new GlobalSidebarCartUI()
-    // create / add the sidebar and sidebar cart
-    // placeholder, todo: move to liquid or in its own exported function
-    const globalSideBarUI__cart = window.globalSideBarUI__cart = document.createElement('global-sidebar')
-    globalSideBarUI__cart.classList.add('js-sidebar-cart')
-    globalSideBarUI__cart.attributes.container_right = true
-    globalSideBarUI__cart.attributes.button_hide = true
-    globalSideBarUI__cart.innerHTML = `
-      <template>
-      </template>
-    ` 
-    globalSideBarUI__cart.querySelector('template').appendChild(globalSideBarCartInstance)  
-    document.body.appendChild(globalSideBarUI__cart)
-  
-    document.querySelectorAll('.js-cart-toggle').forEach(element => element.addEventListener('click',(e) => {
-      e.preventDefault()
-      globalSideBarUI__cart.open()
-    }))
-
-
-    {% if settings.progress_discount__remove_free_gifts %}
-    customElements.define('global-freegift-toggle', 
-      class extends HTMLElement{
-        constructor(params) {
-          super();
-          this.line_item = params?.line_item
-        }
-
-        connectedCallback(){
-          // temp fix - use domready to wait for discounts when this is rendered on /cart page
-          DomReadyPromise().then( async () => {
-            this.GlobalCartInstance = await new GlobalCart() 
-            this.storage = JSON.parse(localStorage.getItem('discounts'))
-            const hasVisibleTiers =  Object.values(this.storage.mechanics).filter(({visible}) => visible).length
-            const activeDiscountCode = await this.GlobalCartInstance.getAllDiscountCodes()
-            const active = hasVisibleTiers && !this.storage.vip_access || hasVisibleTiers && this.storage.vip_access == activeDiscountCode
-
-            if(this.mounted || !active){
-              return
-            }
-
-            this.mounted = true
-            this.innerHTML = `
-            <div class="rte toast-message-info">
-              <input id="remove_gifts"
-                     type="checkbox"
-                     name="removeGifts"
-                     ${window.discountsIsFreeGiftDisabled() ? 'checked' : ''}/>
-              <label for="remove_gifts" class="remove_gifts">
-                <small id="gift-text">
-                  {{ settings.progress_discount__remove_free_gifts_message }}
-                </small>
-                <span class="tooltip"><i class="fa fa-question-circle"></i>
-                  <span class="tooltiptext">
-                    {{ settings.progress_discount__remove_free_gifts_tooltip }}
-                  </span>
-                </span>
-              </label>
-            </div>
-            `
-            this.style.display = await window.discountsUnlockedProducts() ? 'flex' : 'none'
-            this.checkbox = this.querySelector('[name="removeGifts"]')
-            this.checkbox.addEventListener('change', async () => {
-              await window.discountsToggleGifts()
-            })
-
-            this.GlobalCartInstance.subscribe( async () => {
-              this.style.display = await window.discountsUnlockedProducts() ? 'flex' : 'none'
-            })
-          }).catch(err => {
-          })
-        }
-      }
-    )
-    {% endif %}
-
-    if(customElements.get('global-freegift-toggle')){
-      globalSideBarCartInstance.extensions.push({
-        extensionPoint:'footer:top',
-        hideOnEmptyCart:true,
-        content:'<global-freegift-toggle class="cell-r cb--d3 justify-right"></global-freegift-toggle>'
-      })
-    }
-
-    {% if settings.show_roswell_sampler and  settings.sample_collection.products != blank %}
-    {% capture ROSWELL %}
-      {% render 'roswell-sample-selector' %}
-    {% endcapture %}
-    const ROSWELL = {{ ROSWELL | json }}
-    if(ROSWELL){
-       const RoswellLoader = new DynamicImporter([
-        {
-          type:'js',
-          url:{{ 'scripts.dist.roswell_samples.js' | asset_url | json }}
-        }
-      ])
-      globalSideBarCartInstance.extensions.push({
-        extensionPoint:'footer:top',
-        loader:RoswellLoader ,
-        hideOnEmptyCart:true,
-        content:ROSWELL
-      })
-    }
-    {% endif %}
-    {% if settings.enable_sidebarcart_upsells and shop.metaobjects.cart_upsells.values and settings.show_roswell_sampler == false %}
-    const CartUpsellLoader = new DynamicImporter([
-      {
-        type:'js',
-        url:{{ 'scripts.dist.cart_upsells.js' | asset_url | json }}
-      }
-    ])
-    globalSideBarCartInstance.extensions.push({
-      extensionPoint:'footer:top',
-      loader:CartUpsellLoader ,
-      hideOnEmptyCart:true,
-      content:`
-        <global-cart-upsells class="d-block">
-          <template>
-            {
-              "layout":{
-                "items_in_view":3
-              },
-              "customer":{
-                "id":{{ customer.id | json }},
-                "tags":{{ customer.tags | json }},
-                "email": {{ customer.email | json }},
-                "orders_count": {{ customer.orders_count | json }}
-              },
-              "translations":{
-                "item_in_bag":{{ 'cart_upsell.item_in_bag' | t | json }},
-                "max_item_in_bag":{{ 'cart_upsell.max_item_in_bag' | t | json }}
-              },
-              "upsell_blocks":[
-                {% for upsell in shop.metaobjects.cart_upsells.values  %}
-                  {
-                    "id": {{ upsell.system.id | json }}, 
-                    "order":{{ upsell.order.value | json }},
-                    "heading": {{ upsell.heading.value | json }},
-                    "sub_heading": {{ upsell.heading.sub_heading.value | json }},
-                    "logic_minimum_spend": {{ upsell.logic_minimum_spend.value | json }},
-                    "logic_customer_tags": {{ upsell.logic_customer_tags.value | json }},
-                    "logic_cart_content_variant_ids": {{ upsell.logic_cart_content_variants.value | map: 'id' | json }},
-                    "logic_cart_content_variants_excluding_ids": {{ upsell.logic_cart_content_variants_excluding.value | map: 'id' | json }},
-                    "logic_new_customers_only": {{ upsell.logic_new_customers_only.value | json }},
-                    "max_items": {{ upsell.max_items.value | json }},
-                    "samples_use_global_max":{{ upsell.samples_use_global_max.value | json  }},
-                    "validation_error_message": {{ upsell.validation_error_message.value | json }},
-                    "upsells": {{ upsell.upsells.value | json }}
-                  }{% unless forloop.last %},{% endunless %}
-                {% endfor %}
-              ]
-            }
-          </template>
-        </global-cart-upsells>
-      `
+    window.sfapi = new StoreFrontApi({
+      accessToken:accessToken,
+      storeUrl:`https://${permanentDomain}`,
+      version:version
     })
-    {% endif %}
+
+
   }).catch(err => {
     console.log(err)
   })
-  {% endif %}
 
 </script>
 

@@ -1,0 +1,144 @@
+{% if settings.country_selector_modal_enabled %}
+  class GeoLocator {
+    constructor() {
+      this.id = Math.floor(Math.random() * 999999999999);
+      this.lsKey = `gbl_loco_key`;
+      this.ObserverLite = new ObserverLite();
+      const params = this.getParams(window.location.href); // Ensure params are based on the current URL
+      if (params.relocate) {
+        this.setLs('doNotRelocate', true);
+      }
+      const lsData = this.getLs();
+      if (!lsData.doNotRelocate) {
+        this.getLocation().then((data) => {
+          this.locationData = data;
+          this.next(data);  // Trigger the next observer with location data
+        });
+      }
+    }
+
+    getParams(e) {
+      var r = {},
+        t = document.createElement("a");
+      t.href = e;
+      for (var n = t.search.substring(1).split("&"), a = 0; a < n.length; a++) {
+        var o = n[a].split("=");
+        r[o[0]] = decodeURIComponent(o[1]);
+      }
+      return r;
+    }
+
+    setLs(key, value) {
+      let data = window.localStorage.getItem(this.lsKey)
+        ? JSON.parse(window.localStorage.getItem(this.lsKey))
+        : {};
+      data[key] = value;
+      window.localStorage.setItem(this.lsKey, JSON.stringify(data));
+    }
+
+    getLs() {
+      let data = window.localStorage.getItem(this.lsKey)
+        ? JSON.parse(window.localStorage.getItem(this.lsKey))
+        : {};
+      return data;
+    }
+
+    subscribe(callback) {
+      return this.ObserverLite.subscribe(callback);
+    }
+
+    next(data) {
+      this.ObserverLite.next(data);
+    }
+
+    getLocation() {
+      return new Promise((resolve, reject) => {
+        fetch('https://api.bigdatacloud.net/data/reverse-geocode-client')
+          .then((response) => response.json())
+          .then((data) => {
+            resolve(data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+  }
+
+  // Build redirect modal
+  {% assign current_store_name_template_var = localization.country %}
+  {% assign  recomended_store_name_template_var = '${recomendedCountry.name}' %}
+  {% assign  location_name_template_var = '${geoLocator.locationData.countryName}' %}
+
+  {% capture heading %}{{ 'general.country_selector.heading_html' | t: recomended_store:recomended_store_name_template_var }}{% endcapture %}
+  {% capture recomendedStoreCta %}{{ 'general.country_selector.go_to_recomended_cta_html' | t: recomended_store:recomended_store_name_template_var }}{% endcapture %}
+  {% capture stayOnStoreCta %}{{ 'general.country_selector.stay_on_current_cta_html' | t: current_store:current_store_name_template_var }}{% endcapture %}
+  {% capture no_country_for_user_title %}{{ 'general.country_selector.no_country_for_user_title' | t }}{% endcapture %}
+  {% capture no_country_for_user_text %}{{ 'general.country_selector.no_country_for_user_text_html' | t: location:location_name_template_var  }}{% endcapture %}
+
+  function ShowLocationModal(recomendedCountry){
+    const modalContent = recomendedCountry ? (`
+        <div class="geo-loaction-hint flex column-nowrap flex-grid--d2">
+          <h3 class="h3--secondary row center">{{ heading }}</h3>                         
+          <a href="${recomendedCountry.website}?redirect=true" class="btn btn--xlarge btn--full">{{ recomendedStoreCta }}</a>
+          <button class="btn btn--xlarge btn--full modal-close">{{ stayOnStoreCta }}</button>
+          <button class="js-show-store-toggle">Choose another country</button>
+        </div>
+      `) : (`
+      <div class="geo-loaction-hint flex column-nowrap flex-grid--d2">
+        <h3 class="h3--secondary row center">{{ no_country_for_user_title }}</h3>     
+        <p class="row center">{{ no_country_for_user_text }}</p>
+        <button class="btn btn--xlarge btn--full modal-close" data-fancybox-close>{{ stayOnStoreCta }}</button>
+        <button class="js-show-store-toggle">Choose another country</button>
+      </div>
+    `)
+
+    const modalBox = new ModalBox({
+      content: modalContent,
+      settings: {
+        containerCloseButton: true,
+        contentClass: "modal-content--country-selector block-rel"
+      },
+    })
+
+    modalBox.subscribe(({type}) => {
+      if(type == 'open:rendered'){
+        const toggle = modalBox.wrapper.querySelector('.js-show-store-toggle')
+        toggle.addEventListener('click', () => {
+          const html = parseHTML('<div class="flex justify-center"><global-country-selector class="country-selector country-selector--in-modal"></global-country-selector></div>')
+          toggle.parentNode.replaceChild(html, toggle)
+        })
+      }
+      if(type == 'close:finish'){
+        countriesData.setLs('doNotRelocate',true);
+      }
+    })
+
+    modalBox.open()
+  }
+
+  // Do not run the geoLocator if the page is not on a Medik8 domain or Shopify URL
+  // This is intended to resolve the issue with the countries popup modal appearing when opening live streams
+  const hostname = window.location.href
+  if(!hostname.includes('medik8')) return
+
+  // Use GeoLocator if popup needed (popup will show if local storage flag inside countriesData util is not set)
+  const {doNotRelocate} = countriesData.getLs()
+  if (doNotRelocate) return
+
+  const geoLocator = new GeoLocator()
+  geoLocator.subscribe(async (locationData) => {
+    const _countriesData = await countriesData
+    if(locationData && !locationData.error && _countriesData.currentCountry?.isoAlpha2 != locationData?.countryCode){
+      const countriesJSON = await _countriesData.getCountriesJson()
+
+      if(!countriesJSON || !locationData.countryCode){
+        return
+      }
+      let recomendedCountry = _countriesData.getCountry('isoAlpha2', locationData.countryCode)
+      if(recomendedCountry?.zone != _countriesData.currentCountry?.zone){
+        ShowLocationModal(recomendedCountry,_countriesData.currentCountry)
+      }
+    }
+  })
+{% endif %}

@@ -136,8 +136,9 @@ document.addEventListener ("DOMContentLoaded", function() {
       return response.json();
     }).then((json) => {
       {% comment %} console.log('Result: ', json) {% endcomment %}
-      window.GlobalCartMain.updateData()
-      window.globalSideBarUI__cart.open()
+      document.dispatchEvent(new CustomEvent('update-drawer-cart', {
+        detail: { openDrawer: true }
+      }));
       $("#bundle--{{section.id}}")
           .removeClass('btn--adding')
             .html(buttonHtml);
@@ -150,8 +151,16 @@ document.addEventListener ("DOMContentLoaded", function() {
 
 {% schema %}
   {
-    "name": "Product Bundle Builder",
+    "name": "Bundle Builder DEPRECATED",
     "settings": [
+      {
+        "type": "header",
+        "content": "IMPORTANT: Do Not Use"
+      },
+      {
+        "type": "paragraph",
+        "content": "This section is not compatible with the new price component - it may display incorrect prices."
+      },
       {
         "type": "header",
         "content": "Bundle header"

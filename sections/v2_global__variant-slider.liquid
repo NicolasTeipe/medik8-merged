@@ -1,0 +1,487 @@
+<!-- sections/v2_global__variant-slider.liquid -->
+
+{% assign components = 'scripts.components.dist.GlobalVariantSlider.js' | asset_url %}
+
+{% capture content %}
+  <div class="gvs-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+    {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+      {% 
+        render 'v2_global.section_heading', 
+        heading: section.settings.heading,
+        sub_heading: section.settings.sub_heading
+      %}
+    {% endif %}
+
+    {%- assign compare_label_text = '' -%}
+    {%- if settings.compare_at_label_text != blank -%}
+      {%- assign compare_label_text = settings.compare_at_label_text -%}
+    {%- endif -%}
+
+    <global-variant-slider  class="block-grid block-grid--index cell-l cell-r">
+      <template>
+        {
+          "VariantMetaObjects": [
+            {%- for block in section.blocks -%}
+              {% assign metaobj = shop.metaobjects['global_variant_slider'][block.settings.metaobject_handle] %}
+              {
+                "title": "{{ metaobj.title }}",
+                "variantList": [
+                  {%- render 'variant-json-builder', metaobj: metaobj -%}
+                ]
+              }
+              {% unless forloop.last %},{% endunless %}
+            {%-  endfor -%}
+          ],
+          "translations": {
+            "quickview":"{{ 'products.general.quickview' | t }}",
+            "add_to_cart":"{{ 'products.product.add_to_cart' | t }}",
+            "compare_label":"{{ compare_label_text }}",
+            "view_bundle":"View Bundle - Need Translation"
+          }
+        }
+      </template>
+
+      <global-carousel class="block-oh block-rel gvs__menu">
+        <template>
+          {
+            "options":{ 
+              "loop": false,
+              "skipSnaps": true,
+              "breakpoints": {
+                "(min-width: 768px)": { "active": false }
+              }
+            },
+            "plugins":{
+              "nav": {
+                "nextBtn": ".gvs-icon-chevron--next",
+                "prevBtn": ".gvs-icon-chevron--prev"
+              }
+            }
+          }
+        </template>
+
+        {%- if section.blocks.size > 1 -%}
+          <div class="block-grid global-carousel__items global-carousel__items--overflow-visibile">
+            <div class="global-carousel__container gvs-menu">
+              {%- for block in section.blocks -%}
+                <span class="js-gvs-menu-option gvs-menu-option t-r t-ucase {% if forloop.first %}group-active{% endif %}" data-idx="{{ forloop.index0 }}">
+                  {{ shop.metaobjects['global_variant_slider'][block.settings.metaobject_handle].title }}
+                </span>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="gvs-icon-chevron gvs-icon-chevron--prev">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+          </svg>
+        </div>
+        <div class="gvs-icon-chevron gvs-icon-chevron--next">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+          </svg>
+        </div>
+      </global-carousel>
+
+      <div class="gvs-slider"></div>
+
+    </global-variant-slider>
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }} .gvs-container {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .gvs-container {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+  
+    .gvs-container {
+      background-color: #f7f7f7
+    }
+
+    .group-active,
+    .gvs-menu-option:hover {
+      border-bottom: 2px solid #000;
+    }
+
+    .gvs-menu-option:not(:last-child) {
+      margin-right: 35px;
+    }
+
+    @media all and (min-width: 768px) {
+      .gvs-menu-option:not(:last-child) {
+        margin-right: 50px;
+      }
+    }
+  
+    .mx-10 {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+  
+    .mr-20 {
+      margin-right: 20px
+    }
+  
+    .gvs-menu {
+      margin-bottom: 15px;
+      white-space: nowrap;
+    }
+  
+    .gvs-menu span {
+      cursor: pointer;
+    }
+  
+    .gvs-icon-chevron {
+      position: absolute;
+      top: 0;
+      background: #f7f7f7;
+      width: 30px;
+      height: 100%;
+    }
+  
+    .gvs-icon-chevron[disabled="disabled"] {
+      display: none;
+    }
+  
+    .gvs-icon-chevron--prev {
+      left: 0;
+      text-align: left;
+    }
+
+    .gvs-icon-chevron--prev svg {
+      transform: rotate(180deg)
+    }
+
+    .gvs-icon-chevron--next {
+      right: 0;
+      text-align: right;
+    }
+
+    .gvs-icon-chevron--prev::after,
+    .gvs-icon-chevron--next::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 80px;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .gvs-icon-chevron--prev::after {
+      background: linear-gradient(to left, transparent, #fff);
+      left: 0;
+    }
+  
+    .gvs-icon-chevron--next::before {
+      background: linear-gradient(to right, transparent, #fff);
+      right: 0;
+    }
+
+    @media all and (min-width: 550px) {
+      .gvs-menu {
+        justify-content: center
+      }
+  
+      .gvs-icon-chevron {
+        display: none
+      }
+    }
+  
+    .gvs-slider__scrollbar--small {
+      display: none;
+    }
+    
+    @media all and (min-width: 768px) {
+      .gvs-slider__scrollbar--small {
+        display: block;
+        width: 15%;
+        height: 2px;
+        margin: 24px auto 12px;
+        visibility: hidden;
+      }
+
+      .gvs-slider:hover .gvs-slider__scrollbar--small {
+        visibility: visible;
+      }
+    }
+  
+    .gvs__nav {
+      display: none;
+      user-select: none;
+    }
+  
+    .gvs__nav[disabled="disabled"] {
+      display: none;
+    }
+    
+    @media screen and (min-width: 768px){
+      .gvs__nav {
+        display: block;
+        background-color: #FFFFFFB3;
+        line-height: 0;
+        padding: 9px;
+        border: 1px solid #000;
+        position: absolute;
+        top: 148px
+      }
+    }
+    
+    .gvs__nav--prev svg {
+      transform: rotate(180deg);
+    }
+    
+    .gvs__nav--prev {
+      left: 20px;
+    }
+    
+    .gvs__nav--next {
+      right: 20px;
+    }
+    
+    .gvs__slide {
+      flex-shrink: 0;
+      margin: 0 -50px !important;
+      width: 50%;
+    }
+  
+    .gvs-slider global-product-card {
+      width: 75%;
+      min-width: 75%;
+    }
+  
+    @media all and (min-width: 400px) {
+      .gvs-slider global-product-card {
+        width: 66%;
+        min-width: 66%;
+      }
+    }
+  
+    @media all and (min-width: 550px) {
+      .gvs-slider global-product-card {
+        width: 45%;
+        min-width: 45%;
+      }
+    }
+  
+    @media all and (min-width: 1024px) {
+      .gvs-slider global-product-card {
+        width: 30%;
+        min-width: 30%;
+      }
+    }
+  
+    @media all and (min-width: 1200px) {
+      .gvs-slider global-product-card {
+        width: 24%;
+        min-width: 24%;
+      }
+    }
+
+    .template-index.dark-mode .gvs-icon-chevron svg {
+      position: relative;
+      filter: invert(1);
+      z-index: 2;
+    }
+
+    .template-index.dark-mode .gvs-icon-chevron {
+      background-color: transparent;
+    }
+
+    .template-index.dark-mode .group-active,
+    .template-index.dark-mode .gvs-menu-option:hover {
+      border-bottom: 2px solid var(--bodyText);
+    }
+
+    .template-index.dark-mode .gvs-icon-chevron--prev::after {
+      background: linear-gradient(to left, transparent, var(--body-Background));
+    }
+
+    .template-index.dark-mode .gvs-icon-chevron--next::before {
+      background: linear-gradient(to right, transparent, var(--body-Background));
+    }
+
+    .template-index.dark-mode .gvs-slider__scrollbar--small {
+      filter: invert(1);
+    }
+  </style>
+{% endcapture %}
+
+{%- comment -%} *** Section Loader *** {%- endcomment -%}
+{% assign components =  components | split:',' %}
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }} 
+      </template>
+  </global-section-loader>
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/variant-slider",
+  "presets": [ 
+    {
+      "name": "V2/GBL/variant-slider"
+    }
+  ],
+  "settings":[
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Block",
+      "name": "Variant List",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "metaobject_handle",
+          "label": "Metaobject Handle",
+          "info": "Must be for Metaobject type 'Global Variant Slider'"
+        },
+      ]
+    }  
+  ]
+}
+{% endschema %}

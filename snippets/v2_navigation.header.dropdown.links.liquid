@@ -1,0 +1,59 @@
+{%- assign multi_list = false -%}
+
+{%- for link in links -%}
+  {%- if link.links.size > 0 -%}
+    {%- assign multi_list = true -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if multi_list -%}
+  <div class="flex gap mh-dropdown__links-wrapper{% if links__wrapper_span > 4 %} grow-1{% endif %}">
+    {%- for link in links -%}
+      <div class="grid-layout__item--span-{{ links__wrapper_span }} mh-dropdown__links flex flex-1-1-0 column-nowrap flex-grid--d3">
+        <a href="{{ link.url }}" class="h-style t-grey-2 t-xxs lh-1 ls-12 t-ucase f-w600 cb--d3">{{- link.title | split: '[' | first -}}</a>
+        {%- for child_link in link.links -%}
+          <a href="{{ child_link.url }}" class="flex align-center t-s f-w400 lh-1 cb--d3">
+            {{- child_link.title | split: '[' | first -}}
+            {%- render 'v2_nav_labels', str: child_link.title, style: 'nav-link' -%}
+            {{- child_link.title | split: '[' | first -}}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- else -%}
+  <div class="grid-layout__item--span-{{ links__wrapper_span }} flex grow-1 block-12/12 flex-grid--x2">
+    <div class="mh-dropdown__links flex column-nowrap flex-grid--d3">
+      {%- if block.settings.list_heading != blank -%}
+        <h3 class="h-style t-grey-3 t-xxs lh-1 ls-12 t-ucase f-w400 grid-layout__item--span-2 cb--d3">{{ block.settings.list_heading }}</h3>
+      {%- endif -%}
+      {%- for link in links limit: 10 -%}
+        <a href="{{ link.url }}" class="d-block d-block t-rm f-w400 lh-1 cb--d3">
+          {%- render 'v2_nav_labels', str: link.title, style: 'nav-link' -%}
+          {{- link.title | split: '[' | first -}}
+        </a>
+      {%- endfor -%}
+    </div>
+    {%- if links.size > 10 -%}
+      <div class="mh-dropdown__links flex column-nowrap flex-grid--d3{% if block.settings.list_heading != blank %} mh-dropdown__links--column-1-wt-title{% endif %}">
+        {%- for link in links offset: 10 limit: 10 -%}
+          <a href="{{ link.url }}" class="d-block d-block t-rm f-w400 lh-1 cb--d3">
+            {%- render 'v2_nav_labels', str: link.title, style: 'nav-link' -%}
+            {{- link.title | split: '[' | first -}}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- if links.size > 20 -%}
+      <div class="mh-dropdown__links flex column-nowrap flex-grid--d3{% if block.settings.list_heading != blank %} mh-dropdown__links--column-1-wt-title{% endif %}">
+        {%- for link in links offset: 20 limit: 10 -%}
+          <a href="{{ link.url }}" class="d-block d-block t-rm f-w400 lh-1 cb--d3">
+            {%- render 'v2_nav_labels', str: link.title, style: 'nav-link' -%}
+            {{- link.title | split: '[' | first -}}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

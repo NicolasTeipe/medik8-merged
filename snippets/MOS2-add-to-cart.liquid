@@ -16,7 +16,7 @@
   endfor
 %}
 
-{%- if product.type == 'Bundles' and bundleIsAvailable -%}
+{%- if product.type == 'Bundles' and bundleIsAvailable and product.metafields.custom.bundle_items.value -%}
   {%- render 'bundle-atc-btn', product: product -%}
 {%- else -%}
 

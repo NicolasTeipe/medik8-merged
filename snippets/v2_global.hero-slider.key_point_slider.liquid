@@ -1,0 +1,109 @@
+{% if settings.show_kps %}
+  {% capture slides %}
+    {% for i in (1..6) %}
+      {% capture icon %}kps_{{ forloop.index }}__icon{% endcapture %}
+      {% capture title %}kps_{{ forloop.index }}__title{% endcapture %}
+     
+      {% if settings[icon] and settings[title] != blank %}
+        {% assign title = settings[title] %}
+        <div class="global-carousel__slide global-carousel__slide--auto flex justify-center flex-item-grid__child">
+          <div class="kps-slider__item">
+            {{ settings[icon] | 
+              image_url: width: 64 | 
+              image_tag: 
+                widths: '64,32',
+                preload: preload, 
+                loading: 'lazy', 
+                alt: title,
+                class: 'block-ar-1'
+            }}
+            <span class="kps-slider__text">
+              {{ title | truncate: 22}}
+            </span>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endcapture %}
+
+  {% if slides != blank %}
+    <global-carousel class="block-rel kps-slider__carousel">
+      <template>
+        {
+          "options":{ 
+            "loop":false,
+            "skipSnaps": true
+          },
+          "plugins":{
+            "nav":{}
+          }
+        }
+      </template>
+      <div class="global-carousel__items t-s">
+        <div class="global-carousel__container flex-item-grid flex-item-grid--gap-d2 @mobile__flex-item-grid--1">
+          {{ slides }}
+        </div>
+      </div>
+      <button aria-label="Prev slide" class="global-carousel__nav-prev btn-reset global-carousel-nav-btn global-carousel-nav-btn--prev global-carousel-nav-btn--abs"></button>
+      <button aria-label="Next slide" class="global-carousel__nav-next btn-reset global-carousel-nav-btn global-carousel-nav-btn--next global-carousel-nav-btn--abs"></button>
+    </global-carousel>
+  {% endif %}
+
+  <style>
+    .kps-slider__wrapper{
+      border-radius:5px;
+      width:calc(100% - var(--gutter-unit-x2));
+      max-width:calc({{ container_width }}px - var(--gutter-unit-x2));
+      margin:0 auto;
+      height:64px;
+      position:relative;
+      background:#fff;
+      padding-left:var(--gutter-unit-d2);
+      padding-right:var(--gutter-unit-d2);
+      position:absolute;
+      bottom:0;
+      left:50%;
+      transform:translate(-50%,50%);
+    }
+
+    @media screen and (min-width: 768px) {
+      .kps-slider__wrapper {
+        padding: 0 12px;
+      }
+
+      .kps-slider__wrapper .global-carousel__container{
+        --count: 3;
+        --offset: 2;
+        --calc-count: 3;
+        --calc-offset: 2;
+      }
+    }
+
+    @media screen and (min-width: 1024px) {
+      .kps-slider__wrapper .global-carousel__container{
+        --count: 4;
+        --offset: 3;
+        --calc-count: 4;
+        --calc-offset: 3;
+      }
+    }
+
+    .kps-slider__carousel{
+      padding-left:calc(20px + 7px);
+      padding-right:calc(20px + 7px);
+    }
+
+    .kps-slider__item{
+      display: inline-grid;
+      margin:0 auto;
+      grid-template-columns: 40px auto; 
+      gap: var(--gutter-unit-d3); 
+      align-items: center; 
+    }
+
+    .kps-slider__text{
+      white-space: nowrap;
+    }
+  </style>
+
+{% endif %}

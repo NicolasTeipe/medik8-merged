@@ -1,0 +1,14 @@
+<sidebar-cart-section class="d-block cell-l cell-r bg-grey-1 bg-secondary block-bottom">
+  <template data-settings>
+    {
+      "id":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    <div class="block-rel tac flex flex-grid--d2 column-nowrap">
+      <cart-beam>
+        {% render 'beam-select-nonprofit' %}
+      </cart-beam>
+    </div>
+  </template>
+</sidebar-cart-section>

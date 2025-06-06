@@ -1,0 +1,139 @@
+{{ 'recharge-widget.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'regime.js' | asset_url }}" defer></script>
+
+<section class="regime-tabs" data-regime-tab-group>
+  {% if metaobject.product_list_tags %}
+    <div class="wayfx-wrapper">
+      <div class="regime-padding-x">
+        <ul class="regime-tabs__menu">
+          {% for tag in metaobject.product_list_tags.value %}
+            {% liquid
+              assign tag_handle = tag | handle
+
+              assign aria_controls = null | sort
+
+              for product_list in metaobject.product_lists.value
+                if product_list.tag.value == metaobject.product_list_tags.value[0]
+                  assign aria_control = 'regime-tab-panel-' | append: tag_handle | append: '-' | append: product_list.system.handle
+
+                  assign aria_control_as_array = aria_control | sort
+
+                  assign aria_controls = aria_controls | concat: aria_control_as_array
+                endif
+              endfor
+
+              assign aria_controls = aria_controls | join: ' '
+            %}
+
+            <li class="regime-tabs__item">
+              <button
+                class="
+                  regime-tabs__button is-small
+
+                  {% if forloop.first %}
+                    is-active
+                  {% endif %}
+                "
+                type="button"
+                role="tab"
+                aria-controls="{{ aria_controls }}"
+                id="regime-tab-button-{{ tag_handle }}"
+                data-regime-tab-button="{{ tag_handle }}"
+
+                {% if forloop.first %}
+                  aria-selected="true"
+                {% endif %}
+              >
+                {{ tag }}
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  {% for product_list in metaobject.product_lists.value %}
+    {% assign product_list_tag_handle = product_list.tag.value | handle %}
+
+    <div
+      class="
+        regime-product-cards regime-tabs__panel
+
+        {% if product_list.tag.value == metaobject.product_list_tags.value[0] %}
+          is-active
+        {% endif %}
+
+        {% unless metaobject.product_list_tags.value contains product_list.tag.value %}
+          is-active
+        {% endunless %}
+    
+        {% if product_list.block %}
+          is-block
+        {% endif %}
+
+        {% assign modulo = forloop.index | modulo: 2 %}
+
+        {% if modulo == 0 %}
+          is-background-image
+        {% endif %}
+      "
+      role="tabpanel"
+      aria-labelledby="regime-tab-button-{{ product_list_tag_handle }}"
+      data-regime-tab-panel="{{ product_list_tag_handle }}"
+
+      {% if product_list.tag.value != metaobject.product_list_tags.value[0] %}
+        aria-hidden="true"
+      {% else %}
+        aria-hidden="false"
+      {% endif %}
+    >
+      <div class="regime-product-cards__inner wayfx-wrapper">
+        <div class="regime-padding-x">
+          {% if product_list.description %}
+            <div class="regime-product-cards__text text-center">
+              {{ product_list.description | metafield_tag | replace: '<p', '<p class="p--lg text-center"' }}
+            </div>
+          {% endif %}
+    
+          <h2 class="regime-product-cards__title h2--secondary text-center">
+            {% liquid
+              if product_list.icon
+                render 'regime-icon', name: product_list.icon.value
+              endif
+            %}
+
+            {{ product_list.title }}
+          </h2>
+          
+          {% if product_list.products %}
+            <ul class="regime-product-cards__list">
+              {% for product in product_list.products.value %}
+                <li class="regime-product-cards__item">
+                  {% liquid 
+                    assign card_id = 'card-' | append: product_list.system.id | append: '-' | append: forloop.index
+
+                    render 'regime-product-card', forloop: forloop, card_id: card_id, product: product
+                  %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>  
+  {% endfor %}
+</section>
+
+{% schema %}
+  {
+    "name": "Regime product lists",
+    "presets": [
+      {
+        "name": "Regime product lists"
+      }
+    ],
+    "settings": []
+  }
+{% endschema %}

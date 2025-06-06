@@ -1,36 +1,39 @@
 {% assign dob = customer.metafields.loyaltylion.birthday | date: '%Y-%m-%d' %}
+{% assign claimed_date = customer.metafields.custom.birthday_gift_claimed | date: "%s" | times: 1 %}
 
 {% assign nowYear = 'now' | date: '%Y'%}
 {% assign nowEpoch = 'now' | date: '%s'%}
+{% assign nowMonth = 'now' | date: '%m' %}
+{% assign nowDay = 'now' | date: '%d' %}
 {% assign nowTimestamp = 'now' | date: '%Y-%m-%d' %}
 
 
 {% assign birthYear = dob | date: '%Y'%}
 {% assign birthEpoch = dob | date: '%s' %}
+{% assign birthMonth = dob | date: '%m' %}
+{% assign birthDay = dob | date: '%d' %}
 {% assign birthTimestanp = dob | date: '%Y-%m-%d' %}
 
-{% comment %} Assign the first claim to previous year DOB  and avoid having an empty "claimed" variable {% endcomment %}
-{% if claimed == blank %}
-  {% assign initial_claim = dob | replace: birthYear, nowYear | date: '%s' | minus: 31536000 %}
-  {% assign  claimed = initial_claim | date: '%Y-%m-%d' %}
-{% endif %}
-
-{% assign claimedEpoch = claimed | date: '%s' %}
-{% assign claimedTimestamp = claimed | date: '%Y-%m-%d' %}
-
-{% assign birthDateEpoch = dob | replace: birthYear, nowYear | date: '%s' %}
-{% assign BirthDateTimestamp = birthDateEpoch | date: '%d/%m/%Y' %}
-
-{% assign since_claimed = nowEpoch | minus: claimedEpoch | divided_by: 3600 | divided_by: 24 %}
-{% assign since_birthday = nowEpoch | minus: birthDateEpoch | divided_by: 3600 | divided_by: 24 %}
-
-{%- assign date_minus_31_days = 'now' | date: "%s" | minus: 2678400 -%}
-{%- assign claimed_date = customer.metafields.custom.birthday_gift_claimed | date: "%s" | times: 1 -%}
+{%- assign date_minus_31_days = 'now' | date: "%s" | minus: 2678400 %}
 
 {%- assign has_claimed = false -%}
 {% if claimed_date >= date_minus_31_days %}
   {%- assign has_claimed = true -%}
 {% endif %}
+
+{%- assign had_birthday = false -%}
+{%- if nowMonth > birthMonth -%}
+  {%- assign had_birthday = true -%}
+{%- elsif nowMonth == birthMonth and nowDay >= birthDay -%}
+  {%- assign had_birthday = true -%}
+{%- endif -%}
+
+{% assign birthDateEpoch = dob | replace: birthYear, nowYear | date: '%s' %}
+{%- if had_birthday == false -%}
+  {%- assign birthDateEpoch = birthDateEpoch | minus: 31536000 -%}
+{%- endif -%}
+
+{% assign since_birthday = nowEpoch | minus: birthDateEpoch | divided_by: 3600 | divided_by: 24 %}
 
 {% comment %} Add 30 days claiming period from birth date {% endcomment %}
 {% assign claimEpoch = birthDateEpoch | plus: 2592000  %}
@@ -43,8 +46,8 @@
 
 {%- comment -%} Identify correct LL tier {%- endcomment -%}
 {%- for tag in customer.tags -%}
-  {%- if tag contains 'Tier: Crystal' -%}
-    {%- assign tiersStr = tiersStr | append: tag | replace: 'Tier: ', '' -%}
+  {%- if tag contains 'Tier: Crystal' or tag contains 'tier: Crystal' -%}
+    {%- assign tiersStr = tiersStr | append: tag | replace: 'Tier: ', '' | replace: 'tier: ', '' -%}
   {%- endif -%}
 {%- endfor -%}
 
@@ -108,18 +111,6 @@
         <p class="p--lg">Keep an eye on your inbox for your birthday gift next year. <br>View your points balance and available rewards <a href="/pages/my-medik8-rewards">here</a>.</p>
       </div>
     </div>
-    <div class="wayfx-block--404__products">
-      <div class="wayfx-wrapper">
-        <h2 class="h2--primary text-center">Our Best Sellers</h2>
-        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
-          {%- paginate collections['best-sellers'].products by 8 -%}
-          {%- for product in collections['best-sellers'].products -%}
-          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
-          {%- endfor -%}
-          {%- endpaginate -%}
-        </div>
-      </div>
-    </div>
   </section>
 {% endcapture %}
 
@@ -129,18 +120,6 @@
       <div class="wayfx-block--404__heading text-center">
         <h1 class="h2--primary">Sorry, it appears that your claiming period expired</h1>
         <p class="p--lg">Keep an eye on your inbox for your birthday gift next year. <br>View your points balance and available rewards <a href="/pages/my-medik8-rewards">here</a>.</p> 
-      </div>
-    </div>
-    <div class="wayfx-block--404__products">
-      <div class="wayfx-wrapper">
-        <h2 class="h2--primary text-center">Our Best Sellers</h2>
-        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
-          {%- paginate collections['best-sellers'].products by 8 -%}
-          {%- for product in collections['best-sellers'].products -%}
-          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
-          {%- endfor -%}
-          {%- endpaginate -%}
-        </div>
       </div>
     </div>
   </section>
@@ -154,18 +133,6 @@
         <p class="p--lg">Please register your date of birth below or check our  <a href="/pages/my-medik8-rewards">rewards page</a></p>
         <div data-lion-rules-list></div>
         <small class="tc">Please see our <a style="text-decoration:underline" href="/pages/rewards-terms-conditions">Terms & Conditions</a> for more details.</small>
-      </div>
-    </div>
-    <div class="wayfx-block--404__products">
-      <div class="wayfx-wrapper">
-        <h2 class="h2--primary text-center">Our Best Sellers</h2>
-        <div class="wayfx-products wayfx-products--best-sellers slider--dot-alt">
-          {%- paginate collections['best-sellers'].products by 8 -%}
-          {%- for product in collections['best-sellers'].products -%}
-          {% render 'product-grid-item', product: product, product_layout: 'standard' %}
-          {%- endfor -%}
-          {%- endpaginate -%}
-        </div>
       </div>
     </div>
   </section>
@@ -257,7 +224,7 @@
   {% if dob == blank %}
     {{birthday_required}}
   {% else %}
-    {% if since_claimed >= 365 and has_claimed == false %}
+    {% if has_claimed == false %}
       {% if since_birthday >= 0 and since_birthday <= 30 %}
         {%- if currentTier contains 'Deluxe' -%}
           {{ birthday_content }}

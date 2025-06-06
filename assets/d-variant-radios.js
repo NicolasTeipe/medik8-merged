@@ -20,7 +20,7 @@ class VariantSelects extends HTMLElement {
     this.updateOptions();
     this.updateMasterId();
     this.updateInventoryQty();
-    this.toggleAddButton(true, '', false);
+    //this.toggleAddButton(true, '', false);
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
@@ -32,6 +32,7 @@ class VariantSelects extends HTMLElement {
       this.updateMedia();
       this.updateURL();
       this.updateVariantInput();
+      this.updateSubscriptions();
       this.renderProductInfo();
       this.updateShareUrl();
       this.next()
@@ -88,11 +89,9 @@ class VariantSelects extends HTMLElement {
 
     const prevActiveSlide = productGalleryContainer.querySelector('.product-image-carousel__slide.active-slide');
     const newActiveSlide = productGalleryContainer.querySelector(`[data-variant-media-id="${ mediaId }"]`);
-    const image = productGalleryContainer.querySelector('.active-image img.gallery-main-image');
     
-    if(!prevActiveSlide || !newActiveSlide || !image) return;
+    if(!prevActiveSlide || !newActiveSlide) return;
 
-    image.srcset = replaceSrcsetURLs(image.srcset, newActiveSlide.dataset.image);
     prevActiveSlide.classList.remove('active-slide');
     newActiveSlide.classList.add('active-slide');
 
@@ -170,84 +169,164 @@ class VariantSelects extends HTMLElement {
     // if (productForm) productForm.handleErrorMessage();
   }
 
-  renderProductInfo() {
+  async renderProductInfo() {
     const requestedVariantId = this.currentVariant.id;
-    const sectionId = this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section;
+    const sectionId = this.dataset.originalSection
+      ? this.dataset.originalSection
+      : this.dataset.section;
+  
+    const url =  `${this.dataset.url}?variant=${requestedVariantId}&section_id=${
+      this.dataset.originalSection
+        ? this.dataset.originalSection
+        : this.dataset.section
+    }`
 
-    fetch(
-      `${this.dataset.url}?variant=${requestedVariantId}&section_id=${
-        this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section
+    const response = await fetch(
+     url
+    );
+    const responseText = await response.text();
+  
+    // prevent unnecessary ui changes from abandoned selections
+    if (this.currentVariant.id !== requestedVariantId) return;
+  
+    const html = new DOMParser().parseFromString(responseText, 'text/html');
+    const destination = document.getElementById(`price-${this.dataset.section}`);
+    const source = html.getElementById(
+      `price-${
+        this.dataset.originalSection
+          ? this.dataset.originalSection
+          : this.dataset.section
       }`
-    )
-      .then((response) => response.text())
-      .then((responseText) => {
-        // prevent unnecessary ui changes from abandoned selections
-        if (this.currentVariant.id !== requestedVariantId) return;
+    );
+    const skuSource = html.getElementById(
+      `Sku-${
+        this.dataset.originalSection
+          ? this.dataset.originalSection
+          : this.dataset.section
+      }`
+    );
+    const skuDestination = document.getElementById(`Sku-${this.dataset.section}`);
+    const inventorySource = html.getElementById(
+      `Inventory-${
+        this.dataset.originalSection
+          ? this.dataset.originalSection
+          : this.dataset.section
+      }`
+    );
+  
+    const oosPopover = document.getElementById('OutOfStockPopover');
+    const oosPopoverSource = html.getElementById('OutOfStockPopover');
+  
+    const inventoryDestination = document.getElementById(
+      `Inventory-${this.dataset.section}`
+    );
+  
+    if (source && destination) destination.innerHTML = source.innerHTML;
+    if (inventorySource && inventoryDestination)
+      inventoryDestination.innerHTML = inventorySource.innerHTML;
+    if (skuSource && skuDestination) {
+      skuDestination.innerHTML = skuSource.innerHTML;
+      skuDestination.classList.toggle(
+        'visibility-hidden',
+        skuSource.classList.contains('visibility-hidden')
+      );
+    }
+    if (oosPopover && oosPopoverSource)
+      oosPopover.replaceWith(oosPopoverSource.cloneNode(true))
+  
+    const price = document.getElementById(`price-${this.dataset.section}`);
+    if (price) price.classList.remove('visibility-hidden');
 
-        const html = new DOMParser().parseFromString(responseText, 'text/html');
-        const destination = document.getElementById(`price-${this.dataset.section}`);
-        const source = html.getElementById(
-          `price-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`
-        );
-        const skuSource = html.getElementById(
-          `Sku-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`
-        );
-        const skuDestination = document.getElementById(`Sku-${this.dataset.section}`);
-        const inventorySource = html.getElementById(
-          `Inventory-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`
-        );
-        const atc = document.getElementById(`productInfoAtcContainer`);
-        const atcSource = html.getElementById(`productInfoAtcContainer`);
+    const addToCartTextSource = html.getElementById('AddToCartText')
+    const addToCartTextDestination = document.getElementById('AddToCartText')
+    if (addToCartTextSource && addToCartTextDestination)
+      addToCartTextDestination.innerHTML = addToCartTextSource.innerHTML;
 
-        const oosPopover = document.getElementById('OutOfStockPopover');
-        const oosPopoverSource = html.getElementById('OutOfStockPopover');
+    const labelSource = html.querySelector('.f-product-hero__details .label-wrapper')
+    const labelDestination = document.querySelector(
+      '.f-product-hero__details .label-wrapper'
+    );
+    if (labelSource && labelDestination) {
+      const clonedNode = labelSource.cloneNode(true);
+      labelDestination.replaceWith(clonedNode);
+    }
+  
+    if (inventoryDestination)
+      inventoryDestination.classList.toggle(
+        'visibility-hidden',
+        inventorySource.innerText === ''
+      );
+  
+    const addButtonUpdated = html.querySelector(
+      `.ProductSubmitButton-${sectionId}`
+    );
 
-        const inventoryDestination = document.getElementById(`Inventory-${this.dataset.section}`);
-
-        if (source && destination && !window.rechargeWidgetLoaded) destination.innerHTML = source.innerHTML;
-        if (inventorySource && inventoryDestination) inventoryDestination.innerHTML = inventorySource.innerHTML;
-        if (skuSource && skuDestination) {
-          skuDestination.innerHTML = skuSource.innerHTML;
-          skuDestination.classList.toggle('visibility-hidden', skuSource.classList.contains('visibility-hidden'));
-        }
-        if (atc && atcSource && !window.rechargeWidgetLoaded) atc.innerHTML = atcSource.innerHTML;
-        if (oosPopover && oosPopoverSource) oosPopover.innerHTML = oosPopoverSource.innerHTML;
-
-        const price = document.getElementById(`price-${this.dataset.section}`);
-
-        if (price) price.classList.remove('visibility-hidden');
-
-        if (inventoryDestination)
-          inventoryDestination.classList.toggle('visibility-hidden', inventorySource.innerText === '');
-
-        const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
-        this.toggleAddButton(
-          addButtonUpdated ? addButtonUpdated.hasAttribute('disabled') : true,
-          window.variantStrings.soldOut
-        );
-
-        publish(PUB_SUB_EVENTS.variantChange, {
-          data: {
-            sectionId,
-            html,
-            variant: this.currentVariant,
-          },
-        });
-      });
+    this.toggleAddButton(
+      addButtonUpdated ? addButtonUpdated.classList.contains('hide') : true,
+      window.variantStrings.soldOut
+    );
+  
+    publish(PUB_SUB_EVENTS.variantChange, {
+      data: {
+        sectionId,
+        html,
+        variant: this.currentVariant,
+      },
+    });
+  
+    await Promise.all([
+      sitewide && sitewide.updatePriceV2(String(requestedVariantId)),
+      sitewide && sitewide.updateLabelV2(String(requestedVariantId)),
+    ]);
+  
+    // if subs are active, price box to contain price of correct subs option (onetime / subsave)
+    if (window.rechargeWidgetLoaded) {
+      const pricePre = document.querySelector(
+        '.rc_container_wrapper .rc-option--active s.rc_widget__price'
+      ).textContent;
+      const priceAct = document.querySelector(
+        '.rc_container_wrapper .rc-option--active span.rc_widget__price'
+      ).textContent;
+  
+      const priceBox = document.querySelector('#AddToCart');
+      priceBox.querySelector('s.price-v2__pre-pdp') &&
+        (priceBox.querySelector('s.price-v2__pre-pdp').textContent = pricePre);
+      priceBox.querySelector('span.price-v2__actual-pdp').textContent = priceAct;
+    }
+  
+    // Update LL points
+    const priceActual = document.querySelector(
+      '#AddToCart .price-v2__actual-pdp'
+    )?.textContent || false;
+    const loyaltyHint = document.querySelector('.js-loyalty-hint__price');
+    const loyaltyHintParent = loyaltyHint?.closest('product-loyalty-points-hint-v2') || false
+    if(!priceActual && loyaltyHint){
+      loyaltyHintParent.style.display = 'none'
+      return
+    }
+    if (loyaltyHint) loyaltyHint.innerHTML = priceActual;
+    loyaltyHintParent.style.display = 'flex'
+    window.loyaltylion.ui && window.loyaltylion.ui.refresh();
   }
+  
 
-  toggleAddButton(disable = true, text, modifyClass = true) {
-    const productForm = document.getElementById(`product-form-${this.dataset.section}`);
+  toggleAddButton(disable, text, modifyClass) {
+    const productForm = document.querySelector(`.product-form-${this.dataset.section}`);
     if (!productForm) return;
     const addButton = productForm.querySelector('[name="add"]');
     const addButtonText = productForm.querySelector('[name="add"] > span');
+    const oosButton = productForm.querySelector('.js-out-of-stock-trigger ')
     if (!addButton) return;
 
     if (disable) {
       addButton.setAttribute('disabled', 'disabled');
+      addButton.classList.add('hide')
+      oosButton.classList.remove('hide')
       if (text) addButtonText.textContent = text;
     } else {
       addButton.removeAttribute('disabled');
+      addButton.classList.remove('hide')
+      oosButton.classList.add('hide')
       addButtonText.textContent = window.variantStrings.addToCart;
     }
 
@@ -272,6 +351,25 @@ class VariantSelects extends HTMLElement {
   getVariantData() {
     this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
     return this.variantData;
+  }
+
+  updateSubscriptions() {
+    // update compare-at pricing
+    const variantCompare = document
+      .querySelector(`#AddToCartForm option[value="${this.currentVariant.id}"]`)
+      .getAttribute('data-compare');
+  
+    const comparesToUpdate = document.querySelectorAll(
+      's.rc_widget__price.compare-at--onetime, s.rc_widget__price.compare-at--subsave'
+    );
+  
+    comparesToUpdate.forEach(c => {
+      c.textContent = c.getAttribute('update') === 'true' ? variantCompare : '';
+    });
+  
+    // update sitewide pricing
+    sitewide &&
+      sitewide.updateSubscriptionPricing(String(this.currentVariant.id));
   }
 }
 

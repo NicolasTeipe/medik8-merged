@@ -8,9 +8,13 @@
   </section>
 {%- endif -%}
 
-{%- if settings.progress_discount__enabled == "collection" or settings.progress_discount__enabled == "both" -%}
-  <global-aov-bar class="js-collection-aov collection-aov-bar"></global-aov-bar>
-{%- endif -%}
+{% if settings.d2__collection__show %}
+  <div class="js-collection-aov collection-aov-bar wayfx-collection__progress">
+    <div class="wayfx-wrapper">
+      <global-cart-progress-bar class="d-block"></global-cart-progress-bar>
+    </div>
+  </div>
+{% endif %}
   
 {% schema %}
   {

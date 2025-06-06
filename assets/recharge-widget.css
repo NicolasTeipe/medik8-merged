@@ -11,7 +11,7 @@
     padding-left: 0px;
     padding-bottom: 0px;
     color: #121212; }
-    .rc-container-wrapper .rc-template__legacy-radio .rc_widget__option__plans .rc-selling-plans__label {
+    .rc-container-wrapper .rc-template__legacy-radio .rc_widget__option__plans .rc-selling-plans__label:not(.visually-hidden) {
       border: 0px;
       clip: unset;
       height: unset;

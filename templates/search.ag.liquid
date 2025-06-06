@@ -2,101 +2,13 @@
 <script type="text/javascript" src="{{ 'scripts.chunks.search-template.algolia-version.js' | asset_url }}" defer></script> 
 
 
-<style>
-
-  {% comment %} global {% endcomment %}
-  .ls-1{letter-spacing:0.1px;}
-  .ls-1_5{letter-spacing:0.15px;}
-  .ls-10{letter-spacing:1px}
-  .ls-15{letter-spacing:1.5px}
-  .ls-20{letter-spacing:2px}
-
-  .lh-14{line-height:14px;}
-  .lh-16{line-height:16px;}
-  .lh-18{line-height:18px;}
-  .lh-20{line-height:20px;}
-
-  .t-grey-1{color:#777575}
-
-  .flex-grid-y--d2{ gap:var(--gutter-unit-d2) 0;}
-  .flex-grid-y--d3{ gap:var(--gutter-unit-d3) 0;}
-
-  .grow-1{flex-grow:1;}
+<style type="text/css">
 
   {% comment %} chunk collection / search OR none critical{% endcomment %}
-
-  .scroll-flex {
-    height: 100%;
-    display: flex;
-    -webkit-box-direction: normal;
-    -webkit-box-orient: vertical;
-    flex-direction: column;
-  }
-  
-  .scroll-flex__scroll {
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    -webkit-box-flex: 1;
-    flex: 1 1 100%
-  }
-  
-  .scroll-flex__fixed {
-    -webkit-box-flex: 1;
-    flex: 1 1 auto;
-  }
-
-  .gbl-styled-checkbox{
-    position:relative;
-  }
-
-  .gbl-styled-checkbox__input{
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    opacity:0;
-    appearance:none;
-    margin:0;
-  }
-
-  .gbl-styled-checkbox__input:checked + .gbl-styled-checkbox__content:before{
-    background: #000 url("data:image/svg+xml,%3Csvg width='11' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='translate(-5 -5)' fill='none' fill-rule='evenodd'%3E%3Cpath d='M15.575 5.729l-.971-.632a.607.607 0 00-.818.148l-4.763 6.72-2.19-2.095a.607.607 0 00-.83 0l-.832.796a.547.547 0 000 .796l3.367 3.22c.188.18.485.318.751.318.267 0 .536-.16.71-.401l5.733-8.09a.546.546 0 00-.157-.78z' fill='%23FFF' fill-rule='nonzero'/%3E%3C/g%3E%3C/svg%3E%0A") no-repeat center center;
-    border-color: #000;
-  }
-
-
-  .gbl-styled-checkbox__content{
-    cursor:pointer;
-    padding-left:calc(20px + var(--gutter-unit-d2));
-  }
-
-  .gbl-styled-checkbox:hover .gbl-styled-checkbox__content{
-    color: #000;
-    text-decoration: underline;
-  }
-
-  .gbl-styled-checkbox__content:before{
-    content:'';
-    width:20px;
-    height:20px;
-    border:1px solid #b4b4b4;
-    position:absolute;
-    left:0;
-    top:50%;
-    transform:translate(0,-50%);
-  }
-
-  .gbl-styled-checkbox:hover .gbl-styled-checkbox__content:before{
-    border:1px solid #666;
-  }
-
-
   global-product-thumbnail .yotpo.bottomLine.yotpo-small{
     margin-bottom:var(--gutter-unit-d2);
   }
-
+  
   .gbl-filter-toggle-btn{
     background: #fff;
     border: 1px solid #e2e2e2;
@@ -106,7 +18,7 @@
     padding:0 var(--gutter-unit-d2);
     text-transform: none;
   }
-
+  
   .gbl-styled-select{
     display:flex;
     flex-flow: row wrap;
@@ -117,7 +29,7 @@
     border: 1px solid #e2e2e2;
     min-height: 46px;
   }
-
+  
   .gbl-styled-select__select{
     padding:0 37px 0 0;
     height:100%;
@@ -126,18 +38,18 @@
     flex-grow:1;
     font-size:var(--t-r);
   }
-
+  
   .gbl-styled-select__label{
     color:#666;
   }
-
+  
   .gbl-styled-select__select:hover,
   .gbl-styled-select__select:focus
   {
     border:none;
     outline:none;
   }
-
+  
   @media all and (max-width: 1023px) {
     .gbl-styled-select__select,
     .gbl-styled-select__label,
@@ -188,13 +100,7 @@
   .filter-sidebar__ledgend{
     float:left;
   }
-
-  .filter-sidebar__input-content{
-    min-height:38px;
-    font-size:var(--t-rm);
-    color:#666;
-  }
-
+  
   .collection-v2__products-wrapper{
     width:75%;
   }
@@ -231,7 +137,7 @@
         </global-filter-sidebar>
       </div>
       <div class="collection-v2__products-wrapper">
-        <search-results-products class="block-12/12 d-block"></search-results-prodducts>
+        <search-results-products class="block-12/12 d-block"></search-results-products>
       </div>
     </div>
     <div class="flex row-wrap align-top justify-left ct--x2 cb--x2 @tablet__ct" style="display:none" aria-hidden="true" data-section-type="articles">
@@ -319,7 +225,9 @@
           product_plural:"Products",
           thumbnail:{
             quickview:{{ 'products.general.quickview' | t | json }},
-            add_to_cart:{{ 'products.product.add_to_cart' | t | json }}
+            add_to_cart:{{ 'products.product.add_to_cart' | t | json }},
+            compare_label:"{{ settings.compare_at_label_text }}",
+            view_bundle: 'View Bundle' // temp until legacy bundles phased out
           }
         },
         articles:{

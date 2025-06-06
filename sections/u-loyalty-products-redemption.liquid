@@ -1,0 +1,164 @@
+{% capture bp-mobile %}{{ settings.bp_mobile }}px{% endcapture %}
+{% capture bp-tablet %}{{ settings.bp_tablet }}px{% endcapture %}
+
+{% if section.settings.enabled %}
+  <loyaltylion-products data-anchor="products">
+    <template>
+      { 
+        "VariantMetaObjects": [
+      {% assign metaobj = shop.metaobjects.redemption_products['redemption-products'] %}
+            { 
+              "title": "{{ metaobj.title }}", 
+              "variantList": [
+      {%- render 'variant-json-builder', metaobj: metaobj -%}
+              ] 
+            } 
+        ]
+    }
+    </template>
+  </loyaltylion-products>
+
+
+<script
+  type="text/javascript"
+>
+  class LoyaltyLionProducts extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      DomReadyPromise().then(async () => {
+        this.util = await new LoyaltyLionUtil();
+
+        window.lion.on('cart.changed', () => { return })
+
+        window.lion.on('cart.addedItem', () => {
+          document.dispatchEvent(new CustomEvent('loyalty.redemption'))
+        })
+
+        window.lion.on('cart.removedItems', () => {
+          document.dispatchEvent(new CustomEvent('loyalty.redemption'))
+        })
+
+        let template = this.querySelector(':scope > template');
+
+        if (template) {
+          try {
+            this.settings = JSON.parse(template.innerHTML);
+          } catch (err) {
+            console.log(err);
+          }
+        }
+        this.render()
+        
+        setTimeout(() => {
+          window.loyaltylion.ui.refresh()
+
+          const cards = this.querySelectorAll('global-product-card')
+
+          cards.forEach(card => {
+            const lionButton = card.querySelector('.lion-action-button')
+
+            if(!lionButton) {
+              card.remove()
+            }
+          })
+        }, 0)
+      });
+    }
+
+    render() {
+      return new Promise((resolve) => {
+        const { _customer } = this.util.loyaltylion;
+  
+        this.innerHTML = `
+          <style>
+            .loyalty-products-grid {
+              display: grid;
+              grid-template-columns: repeat(1, 1fr);
+              column-gap: 16px;
+            }
+
+            .variant-title-container {
+              flex-basis: 100%;
+            }
+
+            @media screen and (min-width: {{ bp-mobile }}) {
+              .loyalty-products-grid {
+                grid-template-columns: repeat(2, 1fr);
+              }
+            }
+
+            @media screen and (min-width: {{  bp-tablet }}) {
+              .loyalty-products-grid {
+                grid-template-columns: repeat(3, 1fr);
+              }
+            })
+          </style>
+          <div data-anchor="loyalty-products" class="ct--x3 cb--x3 cell-l cell-r">
+              <div data-anchor="loyalty-products" class="tac column-wrap cb--d flex flex-grid">
+                  <h2 class="h-style h-style--accent t-xl lh-s cell-l cell-r">{{  section.settings.title }}</h1>
+                  <div class="rte-content t-m lh-ml block-c block-6/12 cell-l cell-r @mobile__tablet-9/12 @mobile__block-12/12">
+                    <p>
+                      {{ section.settings.subtitle }}
+                    </p>
+                  </div>
+              </div>
+              <div class="loyalty-products-grid flex row-wrap block-12/12 justify-space gap--d1 block-grid block-grid--f">   
+                  ${this.settings.VariantMetaObjects[0].variantList
+                    .map((variant) => {
+                      return `
+                          <div style="display: flex">
+                              <global-product-card class="cell-r--d2 grid__item">
+                                  <template>
+                                      {
+                                          "product": ${JSON.stringify(variant)},
+                                          "translations": {
+                                              "add_to_cart": "Redeem"
+                                          },
+                                          "type": "redemption"
+                                      }
+                                  </template>
+                              </global-product-card>
+                          </div>
+                      `;
+                    })
+                    .join('')}
+              </div>
+          </div>
+        `;
+
+        resolve(true)
+      })
+    }
+  }
+
+  customElements.define('loyaltylion-products', LoyaltyLionProducts);
+</script>
+{% endif %}
+{% schema %}
+{
+  "name": "u/loyalty/products-list",
+  "limit": 1,
+  "settings": [
+    { 
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show Section",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Products"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Section Copy"
+    }
+  ]
+}
+{% endschema %}

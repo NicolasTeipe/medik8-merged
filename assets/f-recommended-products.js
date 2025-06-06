@@ -17,7 +17,12 @@ class RecommendedProducts extends HTMLElement {
   connectedCallback() {
     this.productId = this.getAttribute('product-id');
     this.currency = this.getAttribute('currency');
+    this.compareLabel = this.getAttribute('compare-label');
     this.sitewide = this.getAttribute('sitewide');
+    this.yotpoInstanceId = this.getAttribute('data-yotpo-instance-id');
+    this.yotpoCartProductId = this.getAttribute('data-yotpo-cart-product-id');
+    this.yotpoSectionId = this.getAttribute('data-yotpo-section-id');
+    this.productHandles = JSON.parse(this.getAttribute('product-handles'));
     this.getProductData(this.intents);
     this.initKeenSlider();
   }
@@ -30,11 +35,36 @@ class RecommendedProducts extends HTMLElement {
   async getProductData(intents) {
     try {
       const intent = intents.shift();
-      const r = await fetch(
-        `${this.route}recommendations/products.json?product_id=${this.productId}&limit=${this.productsNum}&intent=${intent}`
-      );
+
+      let url;
+    
+      if (this.productHandles && this.productHandles.length) {
+        let productHandlesQuery = this.productHandles
+          .map((productHandle) => `handle:"${productHandle}"`)
+          .join(' OR ');
+
+        url = `${this.route}search?type=product&q=${productHandlesQuery}&view=products-json`;
+      } else {
+        url = `${this.route}recommendations/products.json?product_id=${this.productId}&limit=${this.productsNum}&intent=${intent}`;
+      }
+
+      if (!this.productId && !this.productHandles?.length) {
+        return this.style.display = 'none';
+      };
+
+      const r = await fetch(url);
+
       const data = await r.json();
-      this.products.push(...data.products);
+
+      let sortedProducts = data.products;
+
+      if (this.productHandles?.length) {
+        sortedProducts = this.productHandles.map((productHandle) => {
+          return data.products.find((product) => product.handle == productHandle);
+        });
+      }
+
+      this.products.push(...sortedProducts);
 
       // decide if need to fetch more product data or notify observer
       this.products.length >= this.productsNum || intents.length === 0
@@ -80,7 +110,19 @@ class RecommendedProducts extends HTMLElement {
         const id = obj.id.split('/Product/')[1];
         const productDataItem = productData.find(x => x.id === Number(id));
         if (productDataItem) {
-          Object.assign(productDataItem, obj);
+          // add product id & metafield data to product
+          productDataItem.metafields = productDataItem.metafields || [];
+          Object.assign(productDataItem.metafields, obj.metafields);
+          productDataItem.id = obj.id;
+
+          // add variant metafield data to each variant
+          productDataItem.variants.forEach(v => {
+            const matchedVariant = obj.variants.nodes.find(
+              objVariant => Number(objVariant.id.split('/ProductVariant/')[1]) === v.id
+            );
+            v.metafields = v.metafields ||[]
+            Object.assign(v.metafields, matchedVariant.metafields)
+          })
         }
       }
 
@@ -109,6 +151,26 @@ class RecommendedProducts extends HTMLElement {
     });
   }
 
+  initYotpoOnView(section) {
+    if (!section) return; // Exit if no section provided
+
+    const observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+            observer.disconnect(); // Stop observing once it enters the viewport
+            window.yotpoWidgetsContainer?.initWidgets(); // Initialise Yotpo widgets
+        }
+    }, { threshold: 0 });
+
+    observer.observe(section);
+
+    // Fallback: If section is already in view, initialise immediately
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+        observer.disconnect();
+        window.yotpoWidgetsContainer?.initWidgets();
+    }
+  }
+
   /**
    * Update product cards with data pulled in from API's
    * @param {array} productData - data combined from the recommendations & storefront API's
@@ -123,6 +185,7 @@ class RecommendedProducts extends HTMLElement {
       this.setProductBadge(productCard, productInfo);
       this.setOptionsValues(productCard, productInfo);
       this.setPrice(productCard, productInfo);
+      this.buildLabel(productCard, productInfo);
     });
 
     // Once built, show content and ensure heights are even
@@ -130,8 +193,8 @@ class RecommendedProducts extends HTMLElement {
     this.showTextContent();
     this.adjustHeights('.js-pc_title');
     this.adjustHeights('.js-pc-subheading');
-
-    // *** END ***
+    
+    this.initYotpoOnView(this)
   }
 
   // >> Helper Methods
@@ -161,18 +224,7 @@ class RecommendedProducts extends HTMLElement {
     )}${productSize}`;
 
     const productReviews = productCard.querySelector('.js-pc_reviews');
-    const reviewHTML = this.getMetaFieldValue(productInfo, 'catalog_bottomline')
-      ?.replace(' Reviews', '')
-      ?.replace(' Review', '');
-
-    if (reviewHTML) {
-      productReviews.innerHTML = reviewHTML;
-      const productReviewLink =
-        productReviews.querySelector('.js-pc_reviews a');
-      productReviewLink?.removeAttribute('href');
-    } else {
-      productReviews.style.height = "17px"
-    }
+    productReviews.innerHTML = this.buildReviews(productInfo)
   }
 
   /**
@@ -191,7 +243,9 @@ class RecommendedProducts extends HTMLElement {
    */
   setProductHref(productCard, productInfo) {
     productCard.querySelectorAll('.js-href').forEach(c => {
-      c.href = `/products/${productInfo.handle}#shopify-section-product-reviews`;
+      c.href = c.classList.contains('js-pc_reviews')
+        ? `/products/${productInfo.handle}#shopify-section-product-reviews-js`
+        : `/products/${productInfo.handle}`;
     });
   }
 
@@ -274,8 +328,9 @@ class RecommendedProducts extends HTMLElement {
         v => v.id === Number(selectElement.value)
       );
 
-      // update price
+      // update price & label
       this.setPrice(productCard, productInfo, matched);
+      this.buildLabel(productCard, productInfo, matched);
     });
   }
 
@@ -296,20 +351,20 @@ class RecommendedProducts extends HTMLElement {
       const priceElement = productCard.querySelector('.js-price');
       if (!priceElement) return;
 
-      const sitewideModifier =
-        1 - Number(this.sitewide / 100);
+      const priceActual = `<span class='cell-l--d2 price-v2__${
+        selectedVariant.id
+      }'>${this.formatPrice(selectedVariant.price)}</span>`;
 
-      if (selectedVariant.compare_at_price) {
-        priceElement.innerHTML = `<s class="cell-r--d2">${this.formatPrice(
-          selectedVariant.compare_at_price
-        )}</s>${this.formatPrice(selectedVariant.price)}`;
-      } else if (sitewideModifier < 1) {
-        priceElement.innerHTML = `<s class="cell-r--d2">${this.formatPrice(
-          selectedVariant.price
-        )}</s>${this.formatPrice(selectedVariant.price * sitewideModifier)}`;
-      } else {
-        priceElement.textContent = this.formatPrice(selectedVariant.price);
-      }
+      const priceHtml = selectedVariant.compare_at_price
+        ? `<s>${this.formatPrice(
+            selectedVariant.compare_at_price
+          )}</s>${priceActual}`
+        : priceActual;
+
+      priceElement.innerHTML = priceHtml;
+
+      sitewide &&
+        sitewide.updatePriceV2(String(selectedVariant.id), priceElement);
     };
 
     // Only set price if the price element is available - otherwise, wait.
@@ -351,6 +406,34 @@ class RecommendedProducts extends HTMLElement {
     return price;
   }
 
+  buildLabel(productCard, productInfo, selectedVariant) {
+    selectedVariant = selectedVariant || productInfo.variants[0];
+
+    // find badge for selected variant
+    const badge = productInfo.variants
+      .find(v => (v.id === selectedVariant.id))
+      .metafields.find(k => k?.key === 'badge')?.value;
+
+    const labelWrapper = productCard.querySelector('.label-wrapper');
+    labelWrapper.classList.add(`label-wrapper__${selectedVariant.id}`);
+
+    const labelContent = selectedVariant.compare_at_price
+      ? this.compareLabel
+      : badge;
+
+    labelWrapper.innerHTML = labelContent
+      ? `<span class='badge-v2 badge-v2__product-card' aria-label='${labelContent}'>${labelContent}</span>`
+      : '';
+
+    sitewide && sitewide.updateLabelV2(String(selectedVariant.id))
+  }
+
+  buildReviews(product) {
+    return `
+      <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="${window?.yotpoStarsInstanceId}" data-yotpo-product-id="${product.id.split('/Product/')[1]}" data-yotpo-cart-product-id="" data-yotpo-section-id="${window?.yotpoSectionId}"></div>
+    `
+  }
+
   /**
    * Unhide text elements to reveal product data
    */
@@ -386,7 +469,6 @@ class RecommendedProducts extends HTMLElement {
             id
             metafields(identifiers: 
               [
-                {namespace: "yotpo", key: "catalog_bottomline"},
                 {namespace: "sf_product_hero", key: "sub_heading"},
                 {namespace: "sf_product_hero", key: "size"},
                 {namespace: "pdp", key: "recommendations_api_badge"}
@@ -394,6 +476,19 @@ class RecommendedProducts extends HTMLElement {
               value
               key
               namespace
+            }
+            variants(first: 10) {
+              nodes {
+                id
+                metafields(identifiers: 
+                  [
+                    {namespace: "custom", key: "badge"}
+                  ]) {
+                  value
+                  key
+                  namespace
+                }
+              }
             }
           }
         }

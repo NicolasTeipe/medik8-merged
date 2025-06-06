@@ -1,0 +1,12 @@
+<!-- snippets/policy.liquid -->
+
+{%- capture content_with_wrapped_tables -%}
+  {{ content | replace: "<table", "<div class='table-wrapper'><table" | replace: "</table>", "</table></div>" }}
+{%- endcapture -%}
+
+<div class="block-grid block-grid--index cell-l cell-r ct cb tac">
+  <h1>{{  page.title }}</h1>
+  <div class="rte tal">
+    {{ content_with_wrapped_tables }}
+  </div>
+</div>

@@ -1,0 +1,1133 @@
+<!-- sections/v2_navigation__main.liquid -->
+
+<global-header-main class="flex column-nowrap">
+  <div class="block-grid--index block-c mh__container">
+    <div class="mh__wrapper">
+      <div class="mh__top-bar @tablet__hide">
+        <div class="flex block-r gbl-justify-right">
+          {%- assign header_extra_links = section.settings.header_extra_links.links -%}
+          <ul class="links-list">
+            {%- if header_extra_links.size > 0 -%}
+              {%- for link in header_extra_links -%}
+                <li class="links-list__item">
+                  {%- if link.title contains "Hiring" -%}
+                    <a href="{{ link.url }}" class="links-list__link">
+                      {{ link.title }}
+                      {%- render 'icon.v2_nav.red-dot.svg' -%}
+                    </a>
+                  {%- elsif link.title contains "Reward" -%}
+                    {%- liquid 
+                      assign hasDropDown = false
+                      for block in section.blocks
+                        if block.settings.title == link.title 
+                          assign hasDropDown = block
+                          break
+                        endif
+                      endfor
+                    -%}
+                    <div class="mh__main-link-wrap flex{% if hasDropDown %} mh__main-link-wrap--has-dropdown has-dropdown{% endif %}">
+                      <a href="{{ link.url }}" class="links-list__link{% if hasDropDown %} has-underline-effect has-underline-effect--full-width{% endif %}">
+                        {%- render 'icon.v2_nav.crystal.svg' -%}
+                        {{ link.title }}
+                      </a>
+                      {% if hasDropDown %}
+                        {% render 'v2_navigation.header.dropdown', block:hasDropDown %}
+                      {% endif %}
+                    </div>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="links-list__link">
+                      {{ link.title }}
+                    </a>
+                  {% endif %}
+                </li>
+              {%- endfor -%}
+            {%- endif -%}
+            <li class="links-list__item mh__item--country">
+              {%- if settings.country_selector_enabled -%}
+                {%- render 'country-selector', show_currency: false, class: " flex" -%}
+              {%- endif -%}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <a aria-label="Home" class="mh__logo" href="{{ shop.secure_url }}" itemprop="url">
+        <svg class="mh__logo-img" xmlns="http://www.w3.org/2000/svg" role="graphics-symbol" aria-label="Medik8 Logo" width="146" height="34" viewBox="0 0 258.89 58.44"> <g id="Medik8_Logo_Black_TM" data-name="Medik8_Logo_Black TM" transform="translate(-78.39 -183.38)"> <g id="Group_1" data-name="Group 1"> <path id="Path_1" data-name="Path 1" d="M329.46,199.81c0,4.18-1.26,8.92-5.37,12.24-6.4-3.32-12.71-6.32-12.71-12.87,0-4.66,3-9.48,8.61-9.48,5.76,0,9.47,3.48,9.47,10.11m-22.11,29.21c0-5.21,2.53-10.42,6.47-12.48,7.03,3.87,14.84,7.19,14.84,14.29a9.942,9.942,0,0,1-9.87,10.19c-5.67.01-11.44-3.23-11.44-12m-4.81-26.05c0,6.32,4.9,9.95,10.5,13.11-7.5,2.45-12.16,8.05-12.16,13.74,0,6.16,5.84,12,17.37,12,9.32,0,19.03-4.42,19.03-14.92,0-7.58-6.16-11.21-12.48-14.53,6.87-2.61,10.66-6.87,10.66-11.53,0-7.5-7.82-11.92-15.79-11.92-8.53-.01-17.13,5.44-17.13,14.05m-32.93-19.59h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v47.06c0,2.92-.63,3.08-6.08,3.47v.79h20.92v-.79c-5.45-.39-6.08-.55-6.08-3.47V220.81a6.006,6.006,0,0,1,5.45,3.08l11.61,17.13H299.7v-.63c-3-.39-4.11-2.45-5.05-3.79l-14.37-19.58,7.66-9.16c2.13-2.68,3.4-4.74,9-5.53v-.79H279.33v.79c9.16.47,8.69,4.03,6.24,7.03l-5.76,7.11c-2.76,3.24-3.87,3.71-10.19,3.71v-36.8ZM245.8,200.76h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v29.69c0,2.92-.63,3.08-6.08,3.47v.79h20.92v-.79c-5.45-.39-6.08-.55-6.08-3.47Zm-10.43-9.4c0,3.24,2.53,5.13,5.76,5.13s5.76-1.9,5.76-5.13c0-3.16-2.53-5.13-5.76-5.13s-5.76,1.97-5.76,5.13m-13.47-7.98h-.79l-14.05,1.74v.79c5.45.39,6.08.55,6.08,3.79v14.05a16.05,16.05,0,0,0-9.32-3c-9.79,0-18.63,7.66-18.63,20.53,0,11.84,6,20.53,16.11,20.53a15.657,15.657,0,0,0,11.84-5.69h.39l.16,5.69h.79l13.5-1.74v-.79c-5.45-.39-6.08-.55-6.08-3.79Zm-16.59,55.28c-5.92,0-10.82-6-10.82-17.69,0-10.98,3.24-19.42,10.58-19.42,3.32,0,8.05,1.97,8.05,10.74v22.98a12.032,12.032,0,0,1-7.81,3.39m-40.85-37.11c3.95,0,6.63,2.53,6.71,9.08a38.61,38.61,0,0,1-.63,6.63H153.8c.63-9.63,5.05-15.71,10.66-15.71m.39-.79c-9.87,0-19.9,7.5-19.9,20.92,0,10.66,6.55,20.13,19.11,20.13a19.866,19.866,0,0,0,14.61-6.4l-.32-.63a15.605,15.605,0,0,1-10.11,3.71c-7.9,0-14.53-6.16-14.53-18.79v-1.66H178.5a19.785,19.785,0,0,0,.63-4.74c.02-9.31-7.25-12.54-14.28-12.54m-38.05,36c0,2.92-.63,3.08-6.08,3.47v.79h21.24v-.79c-5.45-.39-6.08-.55-6.08-3.47V190.02c0-2.92.63-3.08,6.08-3.47v-.79H127.43l-15.16,42.16L94.5,185.75H78.39v.79c6.4.39,7.03.55,7.03,3.47v46.74c0,2.92-.63,3.08-7.03,3.47v.79H96.63v-.79c-9.08-.39-10.42-.55-10.42-3.47V189.14l21.87,52.27h.55l18.48-52.19Z"/> </g> </g></svg>
+      </a>
+
+      <nav class="mh__main-nav flex row-wrap align-center justify-center @tablet__hide">
+        {% for link in section.settings.main-menu.links %}
+          {% liquid 
+            assign hasDropDown = false
+            for block in section.blocks
+              if block.settings.title == link.title 
+                assign hasDropDown = block
+                break
+              endif
+            endfor
+          %}
+          <div class="mh__main-link-wrap flex{% if hasDropDown %} mh__main-link-wrap--has-dropdown has-dropdown{% endif %}">
+            <a class="mh__main-link t-rm f-w400{% if hasDropDown %} has-underline-effect{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+            {% if hasDropDown %}
+              {% render 'v2_navigation.header.dropdown', block:hasDropDown %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </nav>
+
+      <div class="flex row-wrap align-center justify-right mh__header-buttons flex-no-wrap">
+        <button aria-label="Search" id="header-search-icon" class="mh__icon-nav-item">
+          {%- render 'icon.v2_nav.search.svg' -%}
+        </button>
+        {% comment %} {%- if settings.country_selector_enabled -%}
+          {%- render 'country-selector', class: " mh__icon-nav-item mh__icon-nav-item--country", show_full_name: false -%}
+        {%- endif -%} {% endcomment %}
+        <div class="@tablet__hide">
+          <a aria-label="Wishlist" href="#swym-wishlist" class="swym-wishlist mh__icon-nav-item">
+            {%- render 'icon.v2_nav.wishlist.svg' -%}
+          </a>
+        </div>
+        <div style="display:none;" id="swym-wishlist">
+        </div>
+        {% if shop.customer_accounts_enabled %}
+        <a 
+          aria-label="My account" 
+          class="mh__icon-nav-item"
+          href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="mh__icon-nav-item flex @tablet__hide">
+          {%- render 'icon.v2_nav.account.svg' -%}
+        </a>
+        {% endif %}
+        {% comment %} {% if section.settings.account_sibling_link_text != blank and section.settings.account_sibling_link_url != blank %}
+          {% liquid 
+            assign hasDropDown = false
+            for block in section.blocks
+              if block.settings.title == section.settings.account_sibling_link_text
+                assign hasDropDown = block
+                break
+              endif
+            endfor
+          %}
+          <div class="mh__main-link-wrap mh__main-link-wrap--rewards{% if hasDropDown %} mh__main-link-wrap--has-dropdown has-dropdown{% endif %}">
+            <a class="mh__main-link t-s f-w400" href="{{ section.settings.account_sibling_link_url }}">{{ section.settings.account_sibling_link_text }}</a>
+            {% if hasDropDown %}
+              {% render 'v2_navigation.header.dropdown', block:hasDropDown %}
+            {% endif %}
+          </div>
+        {% endif %} {% endcomment %}
+        <a 
+          href="/cart" 
+          class=" js-cart-toggle mh__icon-nav-item mh__icon-nav-item--bag block-rel"
+          aria-controls="CartDrawer"
+          aria-expanded="false">
+          {% render 'icon.v2_nav.bag.svg' %}
+          <span class="js-global-cart-counter mh__cart-counter">{{ cart.item_count }}</span>
+        </a>
+        <button aria-label="Mobile menu" id="navMenuTrigger" class="js-sidebar-mobile__toggle mh__icon-nav-item mh__icon-nav-item--mob-menu btn-reset @tablet__show burger" aria-expanded="false">
+          <div class="burger__container">
+            <span class="burger__line burger__line--1"></span>
+            <span class="burger__line burger__line--2"></span>
+            <span class="burger__line burger__line--3"></span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</global-header-main>
+
+<script type="text/javascript">
+  DomReadyPromise().then( () => {
+
+    // create an observer to pass the dropdowns data to mobile nav
+    const HeaderMainSectionDataProducer$ = new ObserverLite({key:'HeaderMainSectionDataProducer$'})
+    HeaderMainSectionDataProducer$.next({
+      settings: {{ section.settings | json }},
+      blocks: [
+        {% for block in section.blocks %}
+          {
+            type: {{ block.type | json }},
+            settings: {{ block.settings | json }},
+            links:[
+              {% for link in block.settings.linklist.links %}
+                {
+                  url: {{ link.url | json }},
+                  title: {{ link.title | json }},
+                  links:[
+                    {% for link in link.links %}
+                      {
+                        url: {{ link.url | json }},
+                        title: {{ link.title | json }}
+                      }
+                      {% unless forloop.last %},{% endunless %}
+                    {% endfor %}
+                  ]
+                }
+                {% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ]
+          }
+          {% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    })
+  
+    
+    // init countries data util
+    window.countriesData = new CountriesData({
+      jsonDataUrl:{{ 'countries.json' | asset_url | json }},
+      selectorSettings:{
+        country_selector_heading:{{ settings.country_selector_heading | json }},
+        country_selector_footer_url: {{ settings.country_selector_footer_url | json }},
+        country_selector_footer_text: {{ settings.country_selector_footer_text | json }}
+      }
+    })
+    
+    {%- render 'v2-global__geo-locator-popup.js' -%}
+  })
+</script>
+
+{% schema %}
+    {
+        "name": "navigation/main",
+        "tag": "div",
+        "settings": [
+          {
+            "type": "link_list",
+            "id": "main-menu",
+            "label": "Main Menu"
+          },
+          {
+            "type": "link_list",
+            "id": "header_extra_links",
+            "label": "Extra link"
+          }
+        ],
+        "blocks":[ 
+          { 
+            "type":"2_cta",
+            "name":"Child w/ 2 square CTA",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              { 
+                "type":"link_list",
+                "id":"linklist",
+                "label":"link list"
+              },
+              {
+                "type": "header",
+                "content": "Mobile settings"
+              },
+              {
+                "type": "checkbox",
+                "id": "are_navs_collapsed",
+                "label": "Are navs collapsed",
+                "default": false,
+                "info": "Should the mobile navigation for this slide dropdowns be displayed open or closed initially?"
+              },
+              {
+                "type": "checkbox",
+                "id": "footer__items",
+                "label": "Show footer items",
+                "default": false,
+                "info": "Presets can be configured in the top level settings of global/sidebar-nav"
+              },
+              { 
+                "type":"header",
+                "content":"View All Link"
+              },
+              { 
+                "type":"text",
+                "id":"view_all__text",
+                "label":"Text"
+              },
+              { 
+                "type":"url",
+                "id":"view_all__link",
+                "label":"URL"
+              },
+              { 
+                "type":"header",
+                "content":"CTAs"
+              },
+              { 
+                "type":"text",
+                "id":"cta_section__title",
+                "label":"CTA Section title",
+              },
+      
+              { 
+                "type":"header",
+                "content":"CTA #1"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_1__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_1__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_1__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_1__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #2"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_2__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_2__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_2__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_2__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #3"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_3__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_3__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_3__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_3__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #4"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_4__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_4__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_4__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_4__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #5"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_5__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_5__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_5__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_5__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #6"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_6__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_6__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_6__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_6__link",
+                "label":"link",
+                "default":"/"
+              }
+            ]
+          },
+          { 
+            "type":"2_cta_rect",
+            "name":"2 rect cta",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              { 
+                "type":"link_list",
+                "id":"linklist",
+                "label":"link list"
+              },
+              {
+                "type": "header",
+                "content": "Mobile settings"
+              },
+              {
+                "type": "checkbox",
+                "id": "are_navs_collapsed",
+                "label": "Are navs collapsed",
+                "default": false,
+                "info": "Should the mobile navigation for this slide dropdowns be displayed open or closed initially?"
+              },
+              {
+                "type": "checkbox",
+                "id": "footer__items",
+                "label": "Show footer items",
+                "default": false,
+                "info": "Presets can be configured in the top level settings of global/sidebar-nav"
+              },
+              { 
+                "type":"header",
+                "content":"View All Link"
+              },
+              { 
+                "type":"text",
+                "id":"view_all__text",
+                "label":"Text"
+              },
+              { 
+                "type":"url",
+                "id":"view_all__link",
+                "label":"URL"
+              },
+              { 
+                "type":"header",
+                "content":"CTAs"
+              },
+
+              { 
+                "type":"text",
+                "id":"cta_section__title",
+                "label":"CTA Section title",
+              },
+      
+              { 
+                "type":"header",
+                "content":"CTA #1"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_1__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_1__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_1__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_1__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #2"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_2__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_2__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_2__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_2__link",
+                "label":"link",
+                "default":"/"
+              },
+            ]
+          },
+          { 
+            "type":"3_cta",
+            "name":"Child w/ 3 square CTA",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              { 
+                "type":"link_list",
+                "id":"linklist",
+                "label":"link list"
+              },
+              {
+                "type": "header",
+                "content": "Mobile settings"
+              },
+              {
+                "type": "checkbox",
+                "id": "are_navs_collapsed",
+                "label": "Are navs collapsed",
+                "default": false,
+                "info": "Should the mobile navigation for this slide dropdowns be displayed open or closed initially?"
+              },
+              {
+                "type": "checkbox",
+                "id": "footer__items",
+                "label": "Show footer items",
+                "default": false,
+                "info": "Presets can be configured in the top level settings of global/sidebar-nav"
+              },
+              { 
+                "type":"header",
+                "content":"View All Link"
+              },
+              { 
+                "type":"text",
+                "id":"view_all__text",
+                "label":"Text"
+              },
+              { 
+                "type":"url",
+                "id":"view_all__link",
+                "label":"URL"
+              },
+              { 
+                "type":"header",
+                "content":"CTAs"
+              },
+
+              { 
+                "type":"text",
+                "id":"cta_section__title",
+                "label":"CTA Section title",
+              },
+      
+              { 
+                "type":"header",
+                "content":"CTA #1"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_1__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_1__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_1__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_1__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #2"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_2__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_2__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_2__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_2__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #3"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_3__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_3__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_3__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_3__link",
+                "label":"link",
+                "default":"/"
+              }
+            ]
+          },
+          { 
+            "type":"4_cta",
+            "name":"Child w/ 4 square CTA",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              { 
+                "type":"link_list",
+                "id":"linklist",
+                "label":"link list"
+              },
+              {
+                "type": "header",
+                "content": "Mobile settings"
+              },
+              {
+                "type": "checkbox",
+                "id": "are_navs_collapsed",
+                "label": "Are navs collapsed",
+                "default": false,
+                "info": "Should the mobile navigation for this slide dropdowns be displayed open or closed initially?"
+              },
+              {
+                "type": "checkbox",
+                "id": "footer__items",
+                "label": "Show footer items",
+                "default": false,
+                "info": "Presets can be configured in the top level settings of global/sidebar-nav"
+              },
+              { 
+                "type":"header",
+                "content":"View All Link"
+              },
+              { 
+                "type":"text",
+                "id":"view_all__text",
+                "label":"Text"
+              },
+              { 
+                "type":"url",
+                "id":"view_all__link",
+                "label":"URL"
+              },
+              { 
+                "type":"header",
+                "content":"CTAs"
+              },
+
+              { 
+                "type":"text",
+                "id":"cta_section__title",
+                "label":"CTA Section title",
+              },
+      
+              { 
+                "type":"header",
+                "content":"CTA #1"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_1__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_1__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_1__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_1__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #2"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_2__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_2__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_2__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_2__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #3"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_3__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_3__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_3__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_3__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #4"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_4__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_4__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_4__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_4__link",
+                "label":"link",
+                "default":"/"
+              }
+            ]
+          },
+          { 
+            "type":"6_cta",
+            "name":"Child w/ 6 square CTA",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              {
+                "type": "header",
+                "content": "Mobile settings"
+              },
+              {
+                "type": "checkbox",
+                "id": "are_navs_collapsed",
+                "label": "Are navs collapsed",
+                "default": false,
+                "info": "Should the mobile navigation for this slide dropdowns be displayed open or closed initially?"
+              },
+              {
+                "type": "checkbox",
+                "id": "footer__items",
+                "label": "Show footer items",
+                "default": false,
+                "info": "Presets can be configured in the top level settings of global/sidebar-nav"
+              },
+              { 
+                "type":"header",
+                "content":"View All Link"
+              },
+              { 
+                "type":"text",
+                "id":"view_all__text",
+                "label":"Text"
+              },
+              { 
+                "type":"url",
+                "id":"view_all__link",
+                "label":"URL"
+              },
+              { 
+                "type":"header",
+                "content":"CTAs"
+              },
+      
+              { 
+                "type":"text",
+                "id":"cta_section__title",
+                "label":"CTA Section title",
+              },
+              { 
+                "type":"header",
+                "content":"CTA #1"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_1__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_1__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_1__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_1__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #2"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_2__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_2__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_2__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_2__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #3"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_3__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_3__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_3__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_3__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #4"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_4__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_4__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_4__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_4__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #5"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_5__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_5__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_5__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_5__link",
+                "label":"link",
+                "default":"/"
+              },
+              { 
+                "type":"header",
+                "content":"CTA #6"
+              },
+              { 
+                "type":"image_picker",
+                "id":"cta_6__image",
+                "label":"image"
+              },
+              { 
+                "type":"text",
+                "id":"cta_6__title",
+                "label":"title",
+                "default":"CTA title"
+              },
+              { 
+                "type":"inline_richtext",
+                "id":"cta_6__text",
+                "label":"text",
+                "default":"CTA text"
+              },
+              { 
+                "type":"url",
+                "id":"cta_6__link",
+                "label":"link",
+                "default":"/"
+              }
+            ]
+          },
+          { 
+            "type":"no_cta",
+            "name":"no CTAs",
+            "settings":[ 
+              { 
+                "type":"text",
+                "id":"title",
+                "label":"parent link title (must match exactly)"
+              },
+              { 
+                "type":"header",
+                "content":"links"
+              },
+              { 
+                "type":"text",
+                "id":"list_heading",
+                "label":"list heading"
+              },
+              { 
+                "type":"link_list",
+                "id":"linklist",
+                "label":"link list"
+              }
+              
+            ]
+          }
+        ]
+    }
+{% endschema %}

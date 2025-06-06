@@ -1,2 +1,65 @@
-<global-country-selector class="country-selector"></global-country-selector>
+<!-- snippets/country-selector.liquid -->
 
+{%- comment -%} 
+  The command below generates the list of country logos used in the country selector. Run it in the terminal from the root of the project directory.
+  
+  Command:
+  echo -e "\n\"$(ls ./assets/flag-*.svg | sed 's|.*/||' | sed 's|^flag-||' | sed 's|\.svg$||' | tr '\n' ',' | sed 's/,$//')\""
+
+  Example output:
+  "ad,ae,ag,ai,al,ao,ar,at,au,ax,bb,be,bg,bh,bi,bl,bm,bn,bs,bw,cc,cf,ch,ck,cl,cm,co,cv,cx,cy,cz,de,dj,dk,dz,ee,es,et,eu,fi,fj,fk,fo,fr,gb,gd,gg,gh,gl,gp,gr,gs,hk,hr,hu,id,ie,im,int,io,is,it,je,jo,jp,ke,kg,kh,ki,kn,kr,kw,ky,la,lc,li,lk,lr,ls,lt,lu,lv,ma,mc,mf,mg,mn,mo,mq,mr,ms,mt,mu,mv,mw,mx,my,nc,nf,ng,nl,no,om,pe,ph,pk,pl,pm,pt,qa,ro,rs,rw,sa,sb,sc,se,sg,sh,si,sj,sk,sm,sn,sr,tc,td,tf,tg,tj,tk,tl,tm,tn,to,tr,tt,tv,tw,tz,ua,ug,us,va,vc,vg,vu,za"
+
+  Simply copy and paste the code below into the logo_codes, ensuring you include the split filter at the end.
+
+  To add a flag, the source files are located here:
+  https://github.com/HatScripts/circle-flags/tree/gh-pages/flags
+{%- endcomment -%}
+
+{%- assign country_code = settings.country_flag_preload -%}
+
+{%- assign logo_codes = "ad,ae,ag,ai,al,ao,ar,at,au,ax,bb,be,bg,bh,bi,bl,bm,bn,bs,bw,cc,cf,ch,ck,cl,cm,co,cv,cx,cy,cz,de,dj,dk,dz,ee,es,et,eu,fi,fj,fk,fo,fr,gb,gd,gg,gh,gl,gp,gr,gs,hk,hr,hu,id,ie,im,int,io,is,it,je,jo,jp,ke,kg,kh,ki,kn,kr,kw,ky,la,lc,li,lk,lr,ls,lt,lu,lv,ma,mc,mf,mg,mn,mo,mq,mr,ms,mt,mu,mv,mw,mx,my,nc,nf,ng,nl,no,om,pe,ph,pk,pl,pm,pt,qa,ro,rs,rw,sa,sb,sc,se,sg,sh,si,sj,sk,sm,sn,sr,tc,td,tf,tg,tj,tk,tl,tm,tn,to,tr,tt,tv,tw,tz,ua,ug,us,va,vc,vg,vu,za" | split: ','-%}
+
+<global-country-selector class="country-selector{%- if class != blank -%}{{ class }}{%- endif -%}"{% if show_full_name %}show_full_name{% endif %}>
+  <div class="country-selector__active">
+    <div class="country-flag">
+      {%- unless country_code == "unset" -%}
+        <img height="18" width="18" loading="eager" src="{{ 'flag-' | append: country_code | append: '.svg' | asset_url }}" alt="Flag of the United Kingdom">
+      {%- endunless -%}
+    </div>
+    {%- if show_full_name -%}
+      <div class="country country-name">
+        {%- if country_code == "uk" -%}
+          United Kingdom
+        {%- elsif country_code == "us" -%}
+          United States
+        {%- elsif country_code == "eu" -%}
+          European Union
+        {%- elsif country_code == "int" -%}
+          International
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- capture code_minifer -%}
+  [
+  {% for code in logo_codes %}
+    {
+      "id": {{ forloop.index }},
+      "isoAlpha2": "{{ code }}",
+      "url": "{{ 'flag-' | append: code | append: '.svg' | asset_url }}"
+    }{% if forloop.last == false %},{% endif %}
+  {% endfor %}
+  ]
+  {%- endcapture -%}
+
+  <script type="type/template" data-counties-logo-sources>
+    {{- code_minifer
+      | strip
+      | strip_newlines
+      | replace: '  ', ''
+      | replace: ': ', ':'
+      | replace: ' {', '{'
+    -}}
+  </script>
+</global-country-selector>

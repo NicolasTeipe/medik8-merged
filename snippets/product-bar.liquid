@@ -1,3 +1,5 @@
+<!-- snippets/product-bar.liquid -->
+
 <div id="wayfx-product-bar">
     <div class="wayfx-wrapper">
         <div class="wayfx-product-bar__left">
@@ -8,20 +10,14 @@
                 </div>
             {% endif %}
         </div>
-        <div class="wayfx-product-bar__right">
-            <div class="wayfx-product__actions">
-                <div class="yotpo bottomLine"
-                     data-product-id="{{ product.id }}"
-                     data-product-models="{{ product.id }}"
-                     data-name="{{ product.title | escape }}"
-                     data-url="{{ shop.url }}{{ product.url }}"
-                     data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
-                     data-description="{{ product.description | escape }}"
-                     data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
-                </div>
-                <button class="js-anchor-scroll-button btn btn--small">{{ 'products.product.buy_now' | t }}</button>
-            </div>
-        </div>
+        {%- if settings.yotpo_stars_instance_id != blank -%}
+          <div class="wayfx-product-bar__right">
+              <div class="wayfx-product__actions">
+                  <div class="yotpo-widget-instance" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+                  <button class="js-anchor-scroll-button btn btn--small">{{ 'products.product.buy_now' | t }}</button>
+              </div>
+          </div>
+        {%- endif -%}
     </div>
 </div>
 
@@ -41,11 +37,21 @@
     
     const showProductBar = () => {
       const viewportTop = window.pageYOffset
-      const header = document.querySelector('.js-header-main')
-      let additionalOffset = 0
-      const msgBar = document.querySelector('.js-below-header-msg-bar')
-      if(msgBar) additionalOffset += msgBar.offsetHeight - 1
-      const stickyTopValue = header.offsetHeight + additionalOffset + (header.offsetTop - viewportTop)
+      let header = document.querySelector('.js-header-main')
+      let stickyTopValue = 0
+
+      if(header === null) {
+        // v2 nav
+        header = document.querySelector('header')
+        stickyTopValue = header.offsetHeight + (header.offsetTop - viewportTop)
+      } else {
+        // v1 nav
+        let additionalOffset = 0
+        const msgBar = document.querySelector('.js-below-header-msg-bar')
+        if(msgBar) additionalOffset += msgBar.offsetHeight - 1
+        stickyTopValue = header.offsetHeight + additionalOffset + (header.offsetTop - viewportTop)
+      }
+
       const addToCart = document.querySelector('#AddToCart')
       const wayfxProductBar = document.querySelector('#wayfx-product-bar')
     

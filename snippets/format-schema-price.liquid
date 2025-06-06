@@ -1,0 +1,22 @@
+{%- comment -%}
+  Detects whether a currency amount uses period or comma as decimal separator
+  by checking which character appears last in the string
+{%- endcomment -%}
+
+{%- assign price = price | money_without_currency -%}
+
+{%- assign comma_pos = price | split: '' | find_index: ',' -%}
+{%- assign comma_pos = comma_pos | default: 0 -%}
+{%- assign period_pos = price | split: '' | find_index: '.' -%}
+{%- assign period_pos = period_pos | default: 0 -%}
+
+{%- assign decimal_separator = '' -%}
+{%- if comma_pos > period_pos -%}
+  {%- comment -%} has comma decimal separator {%- endcomment -%}
+  {{- price | replace: '.', '' | replace: ',', '.' -}}
+{%- elsif period_pos > comma_pos -%}
+  {%- comment -%} has period decimal separator {%- endcomment -%}
+  {{- price | replace: ',', '' -}}
+{%- else -%}
+  {{- price -}}
+{%- endif -%}

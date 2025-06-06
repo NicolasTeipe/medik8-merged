@@ -1,4 +1,6 @@
-{% if section.blocks %}
+<!-- sections/header-below.liquid -->
+
+{% if section.blocks.size > 0 %}
   {{ "header-below.css" | asset_url | stylesheet_tag }}
 
     <div class="js-below-header-msg-bar keen-slider  below-header-msg-bar__slider">
@@ -52,6 +54,8 @@
         },
         [KSautoPlay]
       )
+    
+      if(belowHeaderMsgsSlider) document.body.classList.add('has-product-bar')
     })
   </script>
   
@@ -59,6 +63,23 @@
     .below-header-msg-bar {
       background: {{ section.settings.background_color }};
     }
+
+    {%- unless settings.use_v2_navigation -%}
+      .below-header-msg-bar {
+        top: 73px; 
+      }
+      @media all and (min-width: {{ settings.bp_mobile }}px) {
+        .below-header-msg-bar {
+          top: 67px; 
+        }
+      }
+      
+      @media all and (min-width: {{ settings.bp_tablet }}px) {
+        .below-header-msg-bar {
+          top: 102px
+        }
+      }
+    {%- endunless -%}
   </style>
   
   {% endif %}

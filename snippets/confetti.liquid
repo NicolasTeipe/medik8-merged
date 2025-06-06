@@ -1,0 +1,250 @@
+{%- if settings.ff_confetti and request.page_type == 'index'-%}
+  <style>
+  #tsparticles canvas {
+    z-index: 1000000
+  }
+  </style>
+
+  <div id="tsparticles"></div>
+
+  <script>
+    (async () => {
+      if (localStorage.getItem('confettiTriggered') === null) {
+        localStorage.setItem('confettiTriggered', '1');
+    
+        loadScript(
+          'https://cdn.jsdelivr.net/npm/tsparticles@3.4.0/tsparticles.bundle.min.js',
+          triggerConfetti
+        );
+      }
+    })();
+
+    function loadScript(url, callback) {
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = url;
+      script.crossOrigin = 'anonymous';
+      script.defer = true;
+      script.onload = callback;
+      script.onerror = function () {
+        console.error('The script ' + url + ' failed to load.');
+      };
+      document.head.appendChild(script);
+    }
+    
+    async function triggerConfetti() {
+      const isNotDesktop = window.matchMedia('(max-width: 1400px)').matches;
+      loadFull(tsParticles);
+
+      tsParticles.load({
+        id: 'tsparticles',
+        options: confettiOptions(isNotDesktop),
+      });
+    }
+
+    const confettiOptions = isNotDesktop => {
+      return {
+        emitters: [
+          {
+            position: {
+              x: 0,
+              y: isNotDesktop ? 20 : 30,
+            },
+            startCount: isNotDesktop ? 50 : 100,
+            rate: {
+              quantity: isNotDesktop ? 2 : 5,
+              delay: 0.15,
+            },
+            life: {
+              duration: 4,
+              delay: 0,
+              count: 1,
+            },
+            particles: {
+              move: {
+                direction: 'top-right',
+                outModes: {
+                  top: 'none',
+                  left: 'none',
+                  default: 'destroy',
+                },
+              },
+            },
+          },
+          {
+            position: {
+              x: 100,
+              y: isNotDesktop ? 20 : 30,
+            },
+            startCount: isNotDesktop ? 50 : 100,
+            rate: {
+              quantity: isNotDesktop ? 2 : 5,
+              delay: 0.15,
+            },
+            life: {
+              duration: 4,
+              delay: 0,
+              count: 1,
+            },
+            particles: {
+              move: {
+                direction: 'top-left',
+                outModes: {
+                  top: 'none',
+                  right: 'none',
+                  default: 'destroy',
+                },
+              },
+            },
+          },
+        ],
+        particles: {
+          move: {
+            decay: isNotDesktop ? 0.10 : 0.07,
+            direction: 'top',
+            enable: true,
+            gravity: {
+              enable: true,
+            },
+            outModes: {
+              top: 'none',
+              default: 'destroy',
+            },
+            speed: {
+              min: isNotDesktop ? 10 : 35,
+              max: isNotDesktop ? 20 : 50,
+            },
+          },
+          number: {
+            value: 0,
+          },
+          shape: {
+            type: ['image'],
+            options: {
+              image: [
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-03.png?v=1715337757',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-02_ed6cff29-9605-4eda-ac88-40c2f0def30f.png?v=1715337757',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-04.png?v=1715337757',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-06.png?v=1715337758',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-05.png?v=1715337757',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+                {
+                  src: 'https://cdn.shopify.com/s/files/1/0486/3036/6360/files/20240319_-_Confetti-07.png?v=1715337758',
+                  width: 32,
+                  height: 32,
+                  particles: {
+                    size: {
+                      value: 8,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          opacity: {
+            value: 1,
+          },
+          rotate: {
+            value: {
+              min: 0,
+              max: 360,
+            },
+            direction: 'random',
+            animation: {
+              enable: true,
+              speed: 30,
+            },
+          },
+          tilt: {
+            direction: 'random',
+            enable: true,
+            value: {
+              min: 0,
+              max: 360,
+            },
+            animation: {
+              enable: true,
+              speed: 30,
+            },
+          },
+          size: {
+            value: {
+              min: 5,
+              max: 10,
+            },
+            animation: {
+              enable: true,
+              startValue: 'min',
+              count: 1,
+              speed: 16,
+              sync: true,
+            },
+          },
+          roll: {
+            darken: {
+              enable: true,
+              value: 25,
+            },
+            enable: true,
+            speed: {
+              min: 5,
+              max: 15,
+            },
+          },
+          wobble: {
+            distance: 30,
+            enable: true,
+            speed: {
+              min: -7,
+              max: 7,
+            },
+          },
+        },
+      };
+    };
+  </script>
+{%- endif -%}

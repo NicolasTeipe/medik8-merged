@@ -1,0 +1,13 @@
+{% assign beam_language = 'en' %}
+
+<div
+  data-beam-widget="select-nonprofit"
+  data-cart-empty="false"
+>
+  <beam-select-nonprofit
+    apiKey="{{ settings.beam_api_key }}"
+    storeId="{{ settings.beam_store_id }}"
+    lang="{{ beam_language }}"
+    baseUrl="{{ settings.beam_base_url }}"
+  ></beam-select-nonprofit>
+</div>

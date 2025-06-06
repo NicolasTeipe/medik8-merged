@@ -11,20 +11,30 @@
     <div class="inner">
       <form action="/search" method="get" role="search" class="block-rel" autocomplete="off">
         {{ wayfx_search_icon }}
+
+        <label class="visually-hidden" for="algolia-search-header-q">
+          {{ 'general.search.placeholder' | t }}
+        </label>
+
         <input aria-label="{{ 'general.search.placeholder' | t }}"
-                type="search"
-                name="q"
-                placeholder="{{ 'general.search.placeholder' | t }}"
-                class="ag-input t-rm">
-                <input hidden name="view" value="ag">
+          type="search"
+          name="q"
+          id="algolia-search-header-q"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          class="ag-input t-rm"
+        />
+
+        <input type="hidden" name="view" value="ag">
+
+        <button aria-label="Close Search" type="button" id="algoliaSearchClose">
+          {%- render 'icon-close' -%}
+        </button>
       </form>
-      <div class="ag-products"></div>
+      <div class="ag-products">
+        <ul class="ag-products-slider flex ticklist"></ul>
+      </div>
       <div class="ag-links"></div>
     </div>
-
-    <button aria-label="Close Search" type="button" id="algoliaSearchClose">
-      {%- render 'icon-close' -%}
-    </button>
 
     <template>
       {%- assign link_list = section.settings.algolia_links_default -%}

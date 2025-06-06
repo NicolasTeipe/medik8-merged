@@ -71,6 +71,11 @@
     }
 
     connectedCallback() {
+      // avoid re-binding events when item is moved in the DOM (MED-2708 for why we do this)
+      if(this.mounted){
+        return
+      }
+      this.mounted = true
       this.localName == 'how-to-use' && this.patchTestModal();
       this.localName == 'strength-ladder' && this.strengthQuiz();
 
@@ -120,7 +125,7 @@
         overlay.classList.add('accordion-overlay');
         overlay.style.zIndex = 9000;
         overlay.addEventListener('click', removeZoom);
-        document.body.appendChild(overlay);
+        this.image.parentNode.appendChild(overlay);
         document.body.classList.add('body-scroll-lock')
         document.body.style.top = `-${scrollPosition}px`;
 

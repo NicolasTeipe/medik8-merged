@@ -1,0 +1,49 @@
+<script type="module" async crossorigin>
+  import { addBeamAttributesToCart, getCurrentCart, trackCart } from "https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/integrations/shopify.js";
+  import { events, getCookieValue, waitForElement } from "https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/integrations/utils.esm.js";
+  import { getConfig } from "https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/integrations/beam.js";
+
+  // CSS Selector for the Cart DOM element that will have a MutationObserver
+  const cartItemObserverTargets = ["sidebar-cart"];
+
+  const beam = await getConfig();
+  await beam.readyPromise;
+
+  let lastSelectedNonprofitId = null; // used to avoid duplicate calls
+  window.addEventListener(
+    events.BeamNonprofitSelectEvent.eventName,
+    async (event) => {
+      const {selectedNonprofitId, selectionId} = event.detail;
+      if (selectedNonprofitId !== lastSelectedNonprofitId) {
+        await addBeamAttributesToCart({
+          selectedNonprofitId,
+          selectionId,
+          cartId: await getCookieValue("cart"),
+          storeId: beam.storeId,
+          chainId: beam.chainId,
+        })
+      }
+      lastSelectedNonprofitId = selectedNonprofitId;
+    }
+  );
+
+  let pauseObserver = false; // used to control throttling of API call
+  const cartChangeObserver = new MutationObserver(
+    async (mutationsList, observer) => {
+      if (pauseObserver) return; // throttled
+      await trackCart(beam, (await getCurrentCart(beam)).cart);
+      pauseObserver = true; // throttle for a few ms
+      setTimeout(() => { pauseObserver = false }, 100);
+    }
+  );
+
+  cartItemObserverTargets.forEach(async (target) => {
+    const observerElement = await waitForElement(target);
+    if (observerElement) {
+      cartChangeObserver.observe(observerElement, {attributes: false, childList: true, subtree: true});
+    }
+  });
+
+  // Make sure initial cart value is registered
+  await trackCart(beam, (await getCurrentCart(beam)).cart);
+</script>

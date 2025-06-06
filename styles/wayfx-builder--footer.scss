@@ -1,0 +1,66 @@
+.wayfx-builder-footer {
+  margin-top: 28px;
+
+  @media all and (min-width: 768px) {
+      text-align: center;
+  }
+
+  @media all and (max-width: 767px) {
+      border-top: 1px solid #E8E8E8;
+      margin-top: 0;
+      padding-top: 39px;
+  }
+
+  .wayfx-builder-footer__copyright {
+      color: #666;
+      font-size: 14px;
+line-height: 1; 
+
+      @media all and (min-width: 768px) {
+          text-align: center;
+      }
+  }
+
+  .wayfx-builder-footer__links {
+      margin-top: 16px;
+      margin-bottom: 56px;
+
+      @media all and (max-width: 767px) {
+          margin-bottom: 24px;
+      }
+
+      ul {
+          display: inline-flex;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+
+          @media all and (max-width: 767px) {
+              flex-wrap: wrap;
+          }
+
+          li {
+              margin-left: 8px;
+              margin-right: 8px;
+    line-height: 1; 
+
+              @media all and (max-width: 767px) {
+                  flex: 1 50%;
+                  margin: 8px 0;
+                  max-width: 50%;
+              }
+
+              a {
+                  color: #666;
+                  font-size: 12px;
+                  text-decoration: underline;
+
+                  &:hover {
+                      color: #000;
+                  }
+              }
+          }
+      }
+
+  }
+}

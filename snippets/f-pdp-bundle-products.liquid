@@ -1,0 +1,99 @@
+{% comment %} {{ "n-product-bundles.css" | asset_url | stylesheet_tag }} {% endcomment %}
+
+<ul class="variant-wrapper">
+  {%- for p in product.metafields.bundles.items.value -%}
+
+    {%- comment -%} Build bundle title data {%- endcomment -%}
+    {%- assign title = p.title -%}
+    {%- if title == "Default Title" -%}
+      {%- assign title = p.product.title -%}
+    {%- endif -%}
+
+    {%- comment -%} Build bundle text data {%- endcomment -%}
+    {%- assign subtitle = p.product.metafields.sf_product_hero.sub_heading.value -%}
+
+    {%- comment -%} Build bundle size data {%- endcomment -%}
+    {%- assign size = p.metafields.sf_settings.size -%}
+    {%- if size == 0 -%}
+      {%- assign size = p.product.metafields.sf_product_hero.size -%}
+    {%- endif -%}
+
+    <li class="bundle-variant">
+      {%- render 'global.lazy-image',
+        image_desktop:p.product.featured_image,
+        image_mobile:p.product.featured_image,
+        image_class:'variant-image' -%}
+      <div class="variant-content">
+        <div class="bundle_title">{{ title }} - {{ size }}</div>
+        <div class="bundle_subtitle">{{ subtitle }}</div>
+       
+        {%- assign visibility = product.metafields.bundles.product_price_visibility.value | split: ',' -%}
+        {%- if visibility[forloop.index0] == 'show' -%}
+          <div class="flex align-space bundle-key-{{ forloop.index }}">
+            <div class="bundle_price"><span>{{ 'products.bundles.usual_price' | t }}</span> {{ p.price | money_without_trailing_zeros }}</div>
+          </div>
+        {%- endif -%}
+      </div>
+    </li>
+  {%- endfor -%}
+</ul>
+
+<style>
+  .variant-wrapper {
+    margin: 0;
+  }
+  @media screen and (min-width: 768px) {
+    .variant-wrapper {
+      order: -1;
+    }
+  }
+  .variant-wrapper .bundle-variant {
+    display: flex;
+    border-top: 1px solid #e2e2e2;
+    margin: 0;
+    padding: 15px 0;
+  }
+  .variant-wrapper .bundle-variant:first-of-type {
+    margin-top: 10px;
+  }
+  .variant-wrapper .bundle-variant .variant-image {
+    width: 50px;
+  }
+  .variant-wrapper .bundle-variant .variant-content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    font-weight: 400;
+  }
+  .variant-wrapper .bundle-variant .variant-content div:not(:last-child) {
+    margin-bottom: 6px;
+  }
+  .variant-wrapper .bundle-variant .variant-content .bundle_title {
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 1.25;
+  }
+  .variant-wrapper .bundle-variant .variant-content .bundle_subtitle {
+    font-size: 12px;
+    line-height: 14px;
+    line-height: 1;
+    color: #6e6e6e;
+  }
+  .variant-wrapper .bundle-variant .variant-content .bundle_price {
+    font-size: 14px;
+    line-height: 16px;
+    color: #111111;
+    font-weight: 600;
+  }
+  .variant-wrapper .bundle-variant .variant-content .bundle_price span {
+    color: #969696;
+    font-weight: 400;
+    margin-right: 4px;
+  }
+  .variant-wrapper .bundle-variant .variant-content .bundle_size {
+    font-size: 14px;
+    line-height: 16px;
+    color: #111111;
+    {% comment %} font-weight: 600; {% endcomment %}
+  }
+</style>

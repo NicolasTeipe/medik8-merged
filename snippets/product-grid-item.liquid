@@ -1,3 +1,5 @@
+<!-- snippets/product-grid-item.liquid -->
+
 {%- assign site_wide_enabled = settings.site_wide__enabled -%}
 {%- assign site_wide_percentage = settings.site_wide__percentage | divided_by: 100.0 -%}
 {%- assign site_wide_label = settings.site_wide__label -%}
@@ -7,15 +9,12 @@
 {%- endif -%}
 {%- assign site_wide_collection = settings.site_wide__collection -%}
 
-
 {%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
-
 {%- assign product_size = product.metafields.sf_product_hero.size -%}
 {%- assign product_type = product.type -%}
 {%- assign product_csa = '' -%}
 {%- assign discount_off = product.price | times: builder_discount | divided_by: 100 -%}
 {%- assign discount_price = product.price | minus: discount_off | money_without_trailing_zeros -%}
-{%- assign low_stock = false -%}
 {%- if product.compare_at_price > product.price -%}
   {%- assign on_sale = true -%}
 {%- endif -%}
@@ -144,10 +143,13 @@
 
 {%- case product_layout -%}
   {%- when 'basic' -%}
+    {%- comment -%}
+      No longer being used
+    {%- endcomment -%}
     <div class="wayfx-product__item wayfx-product__item--basic">
       <a title="{{ product.title }}" href="{{ product.url | within: collection }}" class="wayfx-product__grid-image">
 
-        {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+        {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
         <div class="reveal">
           <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
@@ -162,11 +164,11 @@
       </p>
       <a href="{{ product.url | within: collection }}" class="btn--medium btn--outline">Shop Now</a>
     </div>
- {%- when 'before-after' -%}
+{%- when 'before-after' -%}
     <div class="wayfx-product__item wayfx-product__item--before-after">
       <a title="{{ product.title }}" href="{{ product.url | within: collection }}" class="wayfx-product__grid-image">
 
-        {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+        {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
         <div class="reveal">
           <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
@@ -219,20 +221,7 @@
     {% endif %}
   </span>
   <p class="wayfx-product__grid-price--{{section.id}}">
-    {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-      <span style="margin-right: 5px;">
-        {%- if product.compare_at_price -%}
-          <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-        {%- else -%}
-          <s>{{ variant.price | money_without_trailing_zeros }}</s>
-        {%- endif -%}
-      </span>
-    {%- endif -%}
-    {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-        <span style="color: #fff; font-size: 120%; font-weight:800;">{{ discount_price | money_without_trailing_zeros }}</span>
-    {%- else -%}
-        <span>{{ variant.price | money_without_trailing_zeros }}</span>
-    {%- endif -%}
+    {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
   </p>
     <button data-variant-id="{{ variant.id }}"
             data-variant-inventory-qty="{{ variant.inventory_quantity }}"
@@ -262,7 +251,7 @@
   <p class="wayfx-product__grid-title">
     <a href="{{ variant.url | within: collection }}">{{ variant.title }}</a>
   </p>
-  {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+  {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
   <span class="wayfx-product__grid-description">
     {% if showcase_description != blank %}
       {{ showcase_description }}
@@ -271,20 +260,7 @@
     {% endif %}
   </span>
   <p class="wayfx-product__grid-price">
-    {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-      <span style="margin-right: 5px;">
-        {%- if product.compare_at_price -%}
-          <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-        {%- else -%}
-          <s>{{ variant.price | money_without_trailing_zeros }}</s>
-        {%- endif -%}
-      </span>
-    {%- endif -%}
-    {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-        <span style="color: #fff; font-size: 120%; font-weight:800;">{{ discount_price | money_without_trailing_zeros }}</span>
-    {%- else -%}
-        <span>{{ variant.price | money_without_trailing_zeros }}</span>
-    {%- endif -%}
+    {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
   </p>
     <button data-variant-id="{{ variant.id }}"
             data-variant-inventory-qty="{{ variant.inventory_quantity }}"
@@ -300,6 +276,11 @@
 
 
 {%- when 'bundler' -%}
+  {%- comment -%}
+    DEPRECATED
+    Do not use this layout anymore. Not currently in use, and not compatible with either
+    new pricing snippet or original sitewide pricing.
+  {%- endcomment -%}
   {% if block.settings.product_variant != blank %}
     {% assign variant_id = block.settings.product_variant %}
   {% else %}
@@ -336,21 +317,20 @@
         </span>
       {% endunless %}
     </p>
-    <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews">
-      <div class="yotpo bottomLine"
-        style="pointer-events: none;display:inline-block;"
-        data-product-id="{{ variant_id }}">
-      </div>
-    </a>
+    {%- if settings.yotpo_stars_instance_id != blank -%}
+      <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews">
+        <div class="yotpo-widget-instance no-events" style="pointer-events: none;" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+      </a>
+    {%- endif -%}
   </div>
 
 
 
- {%- when 'standard' -%}
+{%- when 'standard' -%}
   <div class="wayfx-product__item wayfx-product__item--standard">
-    <a title="{{ product.title }}" href="{{ product.url | within: collection }}" class="wayfx-product__grid-image">
+    <a title="{{ product.title }}" href="{{ product.url | within: collection }}" class="wayfx-product__grid-image wayfx-product__grid-image-wrapper">
 
-      {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+      {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
       <div class="reveal">
         <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
@@ -364,25 +344,22 @@
       {{ product_subtitle }}
     </p>
     <p class="wayfx-product__grid-price">
-      {% if on_sale %}
-        <s>{{ product.selected_or_first_available_variant.compare_at_price | money_without_trailing_zeros }}</s>
-      {% endif %}
-      <span>{{ product.selected_or_first_available_variant.price | money_without_trailing_zeros }}</span>
+      {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
     </p>
-    <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews">
-      <div class="yotpo bottomLine"
-        style="pointer-events: none;display:inline-block;"
-        data-product-id="{{ product.id }}">
-      </div>
-    </a>
+    {%- if settings.yotpo_stars_instance_id != blank -%}
+      <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews">
+        <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+      </a>
+    {%- endif -%}
   </div>
- {%- when 'builder' -%}
+{%- when 'builder' -%}
+    {%- comment -%}
+      DEPRECATED
+      Do not use this layout anymore. Not currently in use, and not compatible with either
+      new pricing snippet or original sitewide pricing.
+    {%- endcomment -%}
     {%- if product.variants.size > 1 -%}
       {%- for variant in product.variants -%}
-        {%- assign low_stock = false -%}
-        {%- if variant.inventory_quantity > 0 and variant.inventory_quantity < 20 -%}
-          {%- assign low_stock = true -%}
-        {%- endif -%}
         {%- assign sold_out = true -%}
         {%- if variant.available -%}
           {%- assign sold_out = false -%}
@@ -399,7 +376,7 @@
           <div class="wayfx-product__grid-details">
             <div class="wayfx-product__grid-image" data-fancybox data-src="#product_{{ variant.id }}_information" data-touch="false">
 
-                {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+                {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
                 <img loading="lazy" width="581" height="581" src="{{ product_image | image_url }}" alt="{{ product.featured_image.alt | escape }}">
                 <div class="wayfx-product__quick-view">{{ 'products.general.key_benefits' | t }}</div>
@@ -415,8 +392,7 @@
                 {{ variant_size }}
               </p>
               <p class="wayfx-product__grid-price">
-                <span class="wayfx-product__grid-discount-price">{{ discount_price }}</span>
-                <span class="wayfx-product__grid-original-price">{{ variant.price | money_without_trailing_zeros }}</span>
+                {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
               </p>
             </div>
           </div>
@@ -449,18 +425,15 @@
               {%- endif -%}
           </div>
           {%- assign show_close_button = true -%}
-          {%- render 'product-grid-item-overlay', variant_overlay: true, variant: variant, product: product , on_sale:on_sale,low_stock:low_stock,sold_out:sold_out  %}
+          {%- render 'product-grid-item-overlay', variant_overlay: true, variant: variant, product: product , on_sale:on_sale,sold_out:sold_out  %}
         </div>
       {%- endfor -%}
     {%- else -%}
-      {%- if product.variants.first.inventory_quantity > 0 and product.variants.first.inventory_quantity < 20 -%}
-        {%- assign low_stock = true -%}
-      {%- endif -%}
       <div class="wayfx-product__item">
         <div class="wayfx-product__grid-details">
           <div class="wayfx-product__grid-image" data-fancybox data-src="#product_{{ product.id }}_information" data-touch="false">
 
-              {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+              {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
               <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url }}" alt="{{ product.featured_image.alt | escape }}">
               <div class="wayfx-product__quick-view">{{ 'products.general.key_benefits' | t }}</div>
@@ -472,7 +445,7 @@
             <p class="wayfx-product__grid-subtitle">
               {{ product_subtitle }}
             </p>
-            {%- if product_size != 0 and product_size != 1 -%}
+            {%- if product_size != blank -%}
               <p class="wayfx-product__grid-size">
                 {{ product_size }}
               </p>
@@ -503,8 +476,7 @@
                         data-product-title="{{ product.title }}"
                         data-type="{{ collection_name }}">
                   <span class="wayfx-product__grid-price">
-                    <span class="wayfx-product__grid-discount-price">{{ discount_price }}</span>
-                    <span class="wayfx-product__grid-original-price">{{ product.price | money_without_trailing_zeros }}</span>
+                    {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
                     <span> - </span>
                   </span>
                   <span class="wayfx-text">{%- if remove -%}{{ 'products.product.remove' | t }}{%- else -%}{{ 'products.product.add_to_cart' | t }}{%- endif -%}</span>
@@ -512,33 +484,31 @@
             {%- endif -%}
         </div>
         {%- assign show_close_button = true -%}
-        {%- render 'product-grid-item-overlay', variant_overlay: false, variant: variant, product: product , on_sale:on_sale,low_stock:low_stock,sold_out:sold_out -%}
+        {%- render 'product-grid-item-overlay', variant_overlay: false, variant: variant, product: product , on_sale:on_sale,sold_out:sold_out -%}
       </div>
     {%- endif -%}
-  {%- when 'related' -%}
-	{%- if product.variants.first.inventory_quantity > 0 and product.variants.first.inventory_quantity < 20 -%}
-      {%- assign low_stock = true -%}
-    {%- endif -%}
+{%- when 'related' -%}
     {%- if product.compare_at_price > product.price -%}
       {%- assign on_sale = true -%}
       {% assign discount_price = product.price%}
     {%- endif -%}
 	<div class="wayfx-product__item wayfx-product__item--grid grid__item">
+    <div class="block-rel wayfx-product__grid-image-wrapper">
       <a title="{{ product.title }}" href="{{ product.url }}" class="wayfx-product__grid-image">
 
-        {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+        {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
         <div class="reveal">
           <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
           <img loading="lazy" class="hidden" width="581" height="581" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ product.images[2].alt | escape }}-hover-{{ index }}" />
-          <div class="wayfx-product__quick-view" data-fancybox data-src="#product_{{product.id}}_information" data-touch="false">{{ 'products.general.quickview' | t }}</div>
-        </div>
-
-        <!-- Add Wishlist -->
-        <div class="wayfx-product__wishlist">
-          <button aria-label="Add {{ product.title }} to wishlist" data-with-epi="true" class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}" data-swaction="addToWishlist" data-product-id="{{product.id | json}}" data-variant-id="{{product.variants[0].id}}" data-product-url="{{ shop.url }}{{ product.url }}"></button>
         </div>
       </a>
+       <!-- Add Wishlist -->
+       <div class="wayfx-product__wishlist wayfx-product__wishlist--collection-thumb">
+        <button aria-label="Add {{ product.title }} to wishlist" data-with-epi="true" class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}" data-swaction="addToWishlist" data-product-id="{{product.id | json}}" data-variant-id="{{product.variants[0].id}}" data-product-url="{{ shop.url }}{{ product.url }}"></button>
+      </div>
+      <button class="wayfx-product__quick-view" data-fancybox data-src="#product_{{product.id}}_information" data-touch="false">{{ 'products.general.quickview' | t }}</button>
+    </div>
       <p class="wayfx-product__grid-title">
         <a href="{{ product.url }}">{{ product.title }}</a>
       </p>
@@ -549,53 +519,24 @@
 
 
         {% unless subtitle == false %}
-          {%- if product_size != 0 and product_size != 1 and product.type != 'Bundles' -%}
+          {%- if product_size != blank and product.type != 'Bundles' -%}
             {{ product_size }} /
           {%- endif -%}
         {% endunless%}
-        {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-          <span style="margin-right: 5px;">
-              {%- if product.compare_at_price -%}
-                <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-              {%- else -%}
-                <s>{{ product.price | money_without_trailing_zeros }}</s>
-              {%- endif -%}
-          </span>
-        {%- endif -%}
-        {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-          <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
-        {%- else -%}
-          <span>{{ product.selected_or_first_available_variant.price | money_without_trailing_zeros }}</span>
-        {%- endif -%}
+        {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
 
 
       </p>
       {% unless reviews == false%}
-      <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews">
-        <div class="yotpo bottomLine" style="pointer-events: none;"
-            data-product-id="{{ product.id }}">
-            {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
-            {%- assign time_now = 'now' | date: '%s' %}
-            {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
-            {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
-            {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.catalog_bottomline_update_time | date: '%s' %}
-            {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
-            {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
-              {%- assign yotpo_bottomline_obsolete = false %}
-            {%- else %}
-              {%- assign yotpo_bottomline_obsolete = true %}
-            {%- endif %}
-            {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
-              {{ product.metafields.yotpo.catalog_bottomline }}
-            {%- endif %}
-        </div>
+      <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews">
+        <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
       </a>
     {% endunless %}
       <div class="wayfx-product__grid-add">
           {%- comment -%}
             This should allow bundles to be used in the 'related' section and ensure they ATC correctly
           {%- endcomment -%}
-          {%- if product.type == 'Bundles' and bundleIsAvailable -%}
+          {%- if product.type == 'Bundles' and bundleIsAvailable and product.metafields.custom.bundle_items.value -%}
             {%- render 'bundle-atc-btn', product: product -%}
           {%- else -%}
           <form id="wayfx-product-{{ product.id }}" action="/cart/add" method="post" enctype="multipart/form-data">
@@ -627,13 +568,9 @@
           </form>
       {%- endif -%}
       </div>
-      {%- render 'product-grid-item-overlay', variant_overlay: variant_overlay, variant: variant, product: product, product_gift: "reward" , on_sale:on_sale,low_stock:low_stock,sold_out:sold_out  -%}
+      {%- render 'product-grid-item-overlay', variant_overlay: variant_overlay, variant: variant, product: product, product_gift: "reward" , on_sale:on_sale,sold_out:sold_out  -%}
     </div>
 {%- when 'full' -%}
-	{%- assign low_stock = false -%}
-	{%- if product.variants.first.inventory_quantity > 0 and product.variants.first.inventory_quantity < 20 -%}
-      {%- assign low_stock = true -%}
-    {%- endif -%}
     {%- if product.compare_at_price > product.price -%}
       {%- assign on_sale = true -%}
       {% assign discount_price = product.price%}
@@ -646,26 +583,20 @@
        <form id="wayfx-product-{{ product.id }}" action="/cart/add" method="post" enctype="multipart/form-data">
         <a title="{{ product.title }}" href="{{ product.url }}" class="wayfx-product__grid-image">
 
-          {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product  %}
+          {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
           <div class="reveal">
             <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
             <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ hover_image.alt |  escape }}-hover-{{ index }}" />
           </div>
         </a>
+        {%- if settings.yotpo_stars_instance_id != blank -%}
           <div class="wayfx-product__grid-actions">
-            <button data-href="{{ product.url }}#shopify-section-product-reviews">
-            <div class="yotpo bottomLine" style="pointer-events: none;"
-                data-product-id="{{ product.id }}"
-                data-product-models="{{ product.id }}"
-                data-name="{{ product.title | escape }}"
-                data-url="{{ shop.url }}{{ product.url }}"
-                data-image-url="{{ product.featured_image | image_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
-                data-description="{{ product.description | escape }}"
-                data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
-            </div>
+            <button data-href="{{ product.url }}#shopify-section-product-reviews-js">
+            <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
             </button>
           </div>
+        {%- endif -%}
         <p class="wayfx-product__grid-title">
           <a href="{{ product.url }}">{{ product.title }}</a>
         </p>
@@ -675,10 +606,16 @@
         {%- if product.variants.size > 1 -%}
           <div class="wayfx-product__grid-variant">
             <label for="id" class="hidden-label">{{product.variants}}</label>
-            <select name="id" id="id">
+            <select name="id" id="id" data-sitewide>
               {%- for variant in product.variants -%}
                 {%- if variant.available == true -%}
-                  <option value="{{ variant.id }}" data-price="{{ variant.price | money_without_trailing_zeros }}">{{ variant.title | escape }}</option>
+                  <option
+                    value="{{ variant.id }}"
+                    data-price="{%- render 'price-v2', variant: variant, style: 'select_option', sold_out_price:' true', no_script: 'true' -%}"
+                    data-label="{%- render 'product-labels-v2', variant: variant, type: 'product-card', no_script: 'true' -%}"
+                  >
+                    {{ variant.title | escape }}
+                  </option>
                 {%- endif -%}
               {%- endfor -%}
             </select>
@@ -687,22 +624,7 @@
           <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
       	{%- endif -%}
         <p class="wayfx-product__grid-price">
-
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="margin-right: 5px;">
-                  {%- if product.compare_at_price -%}
-                    <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-                  {%- else -%}
-                    <s>{{ product.price | money_without_trailing_zeros }}</s>
-                  {%- endif -%}
-                </span>
-            {%- endif -%}
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
-            {%- else -%}
-                <span>{{ product.price | money_without_trailing_zeros }}</span>
-            {%- endif -%}
-
+          {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'select_option', sold_out_price:' true' -%}
         </p>
         <div class="wayfx-product__grid-add">
           <input 
@@ -727,6 +649,9 @@
         </div>
       </form>
     </div>
+
+    {%- comment -%} End of when: 'full' {%- endcomment -%}
+
   {%- else -%}
 
 {%- if product.variants.size > 1 -%}
@@ -745,13 +670,9 @@
 
     {% unless variant.title contains "travel" or variant.title contains "Travel" %}
       {%- assign on_sale = false -%}
-      {%- assign low_stock = false -%}
       {%- assign sold_out = true -%}
         {%- if variant.available -%}
           {%- assign sold_out = false -%}
-        {%- endif -%}
-        {%- if variant.inventory_quantity > 0 and variant.inventory_quantity < 20 -%}
-          {%- assign low_stock = true -%}
         {%- endif -%}
         {%- if variant.compare_at_price > variant.price -%}
           {%- assign on_sale = true -%}
@@ -771,22 +692,20 @@
         {%- endif -%}
       {%- assign variant_size = variant.metafields.sf_settings.size -%}
       <div loading="lazy" class="wayfx-product__item wayfx-product__item--grid {% if one_quarter %}wayfx-product__item--grid-quarter {% endif %} grid__item" data-title="{{ variant.title }}" data-type="{{ product_types }}" data-csa="{{ product_csa }}" data-ingredients="{{ product_ingredients }}" data-concern="{{ product_concern }}">
-        <a title="{{ product.title }}" href="{%- if sold_out -%}{{ product.url }}{%- else -%}{{ variant.url }}{%- endif -%}" class="wayfx-product__grid-image">
-
-          {% render 'product-labels', product: variant, on_sale: on_sale, site_wide: site_wide_product %}
-
-          <div class="reveal">
-            <img loading="lazy" width="581" height="581" src="{{ product_image | image_url: width: 581, height: 581 }}" alt="{{ variant.title | escape }}">
-            <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ variant.title | escape }} hover" />
-            <div class="js-product-quickview wayfx-product__quick-view" data-product="{{ variant.url }}">{{ 'products.general.quickview' | t }}</div>
-          </div>
-
-
+        <div class="block-rel wayfx-product__grid-image-wrapper">
+          <a title="{{ product.title }}" href="{%- if sold_out -%}{{ product.url }}{%- else -%}{{ variant.url }}{%- endif -%}" class="wayfx-product__grid-image">
+            {%- render 'product-labels-v2', variant: variant, type: 'product-card' -%}
+            <div class="reveal">
+              <img loading="lazy" width="581" height="581" src="{{ product_image | image_url: width: 581, height: 581 }}" alt="{{ variant.title | escape }}">
+              <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ variant.title | escape }} hover" />
+            </div>
+          </a>
           <!-- Add Wishlist Variants -->
-          <div class="wayfx-product__wishlist">
+          <div class="wayfx-product__wishlist wayfx-product__wishlist--collection-thumb">
             <button aria-label="Add {{ product.title }} to wishlist" data-with-epi="true" class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}_{{variant.id}}" data-swaction="addToWishlist" data-product-id="{{product.id | json}}" data-variant-id="{{variant.id}}" data-product-url="{{ shop.url }}{{ product.url }}"></button>
           </div>
-        </a>
+          <button class="js-product-quickview wayfx-product__quick-view" data-product="{{ variant.url }}">{{ 'products.general.quickview' | t }}</button>
+        </div>
         <p class="wayfx-product__grid-title">
           <a href="{%- if sold_out -%}{{ product.url }}{%- else -%}{{ variant.url }}{%- endif -%}">{{ variant.title }}</a>
         </p>
@@ -798,44 +717,14 @@
           {% endif %}
         </p>
         <p class="wayfx-product__grid-price">
-
-            {{ variant_size }} /
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="margin-right: 5px;">
-                  {%- if product.compare_at_price -%}
-                    <s>{{ variant.compare_at_price | money_without_trailing_zeros }}</s>
-                  {%- else -%}
-                    <s>{{ variant.price | money_without_trailing_zeros }}</s>
-                  {%- endif -%}
-                </span>
-            {%- endif -%}
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
-            {%- else -%}
-                <span>{{ variant.price | money_without_trailing_zeros }}</span>
-            {%- endif -%}
-
+            {{ variant_size }} /&nbsp;
+            {%- render 'price-v2', variant: variant, style: 'product_card', sold_out_price:' true' -%}
         </p>
-       
-        <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews">
-          <div class="yotpo bottomLine" style="pointer-events: none;"
-              data-product-id="{{ product.id }}">
-              {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
-              {%- assign time_now = 'now' | date: '%s' %}
-              {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
-              {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
-              {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.catalog_bottomline_update_time | date: '%s' %}
-              {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
-              {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
-                {%- assign yotpo_bottomline_obsolete = false %}
-              {%- else %}
-                {%- assign yotpo_bottomline_obsolete = true %}
-              {%- endif %}
-              {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
-                {{ product.metafields.yotpo.catalog_bottomline }}
-              {%- endif %}
-          </div>
-        </a>
+        {%- if settings.yotpo_stars_instance_id != blank -%}
+          <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews">
+            <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+          </a>
+        {%- endif -%}
         <div class="wayfx-product__grid-add">
           {%- comment -%}
             Bundles will not have variants, so no requirement to render bundle button here.
@@ -864,38 +753,35 @@
                 {%- endif -%}
             </form>
         </div>
-       
       </div>
     {% endunless %}
   {%- endfor -%}
   {%- assign variant_overlay = false -%}
 {%- else -%}
-	{%- assign low_stock = false -%}
-	{%- if product.variants.first.inventory_quantity > 0 and product.variants.first.inventory_quantity < 20 -%}
-      {%- assign low_stock = true -%}
-    {%- endif -%}
     {%- if product.compare_at_price > product.price -%}
       {%- assign on_sale = true -%}
       {% assign discount_price = product.price%}
     {%- endif -%}
 
     <div loading="lazy" class="wayfx-product__item wayfx-product__item--grid {% if one_quarter %}wayfx-product__item--grid-quarter {% endif %} grid__item" data-title="{{ product.title }}" data-type="{{ product_types }}" data-csa="{{ product_csa }}" data-ingredients="{{ product_ingredients }}" data-concern="{{ product_concern }}">
+      <div class="block-rel wayfx-product__grid-image-wrapper">
       <a title="{{ product.title }}" href="{{ product.url }}" class="wayfx-product__grid-image">
 
-        {% render 'product-labels', product: product, on_sale: on_sale, site_wide: site_wide_product %}
+        {%- render 'product-labels-v2', variant: product.selected_or_first_available_variant, type: 'product-card' -%}
 
         <div class="reveal">
           <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url: width: 581, height: 581 }}" alt="{{ product.featured_image.alt | escape }}-{{ index }}">
           <img loading="lazy" width="581" height="581" class="hidden" src="{{ hover_image | image_url: width: 581, height: 581 }}" alt="{{ hover_image.alt | escape }}-hover-{{ index }}" />
-          <div class="js-product-quickview wayfx-product__quick-view" data-product="{{ product.url }}">{{ 'products.general.quickview' | t }}</div>
-        </div>
-
-
-        <!-- Add Wishlist -->
-        <div class="wayfx-product__wishlist">
-          <button aria-label="Add {{ product.title }} to wishlist" data-with-epi="true" class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}" data-swaction="addToWishlist" data-product-id="{{product.id | json}}" data-variant-id="{{product.variants[0].id}}" data-product-url="{{ shop.url }}{{ product.url }}"></button>
         </div>
       </a>
+        <!-- Add Wishlist -->
+        <div class="wayfx-product__wishlist wayfx-product__wishlist--collection-thumb">
+          <button aria-label="Add {{ product.title }} to wishlist" data-with-epi="true" class="swym-button swym-add-to-wishlist-view-product product_{{product.id}}" data-swaction="addToWishlist" data-product-id="{{product.id | json}}" data-variant-id="{{product.variants[0].id}}" data-product-url="{{ shop.url }}{{ product.url }}"></button>
+        </div>
+        <button class="js-product-quickview wayfx-product__quick-view" data-product="{{ product.url }}">
+          {{ 'products.general.quickview' | t }}
+        </button>
+      </div>
       <p class="wayfx-product__grid-title">
         <a href="{{ product.url }}">{{ product.title }}</a>
       </p>
@@ -903,47 +789,18 @@
         {{ product_subtitle }}
       </p>
       <p class="wayfx-product__grid-price">
-
-            {% if product_size != 0 and product_size != 1 and product.type != 'Bundles' %}
+            {% if product_size != blank and product.type != 'Bundles' %}
               {{ product_size }} /
             {% endif %}
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="margin-right: 5px;">
-                  {%- if product.compare_at_price -%}
-                    <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
-                  {%- else -%}
-                    <s>{{ product.price | money_without_trailing_zeros }}</s>
-                  {%- endif -%}
-                </span>
-            {%- endif -%}
-            {% if on_sale and site_wide_crossed_out_pricing_enabled %}
-                <span style="color: black;">{{ discount_price | money_without_trailing_zeros }}</span>
-            {%- else -%}
-                <span>{{ product.price | money_without_trailing_zeros }}</span>
-            {%- endif -%}
-
+            {%- render 'price-v2', variant: product.selected_or_first_available_variant, style: 'product_card', sold_out_price:' true' -%}
       </p>
-      <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews">
-        <div class="yotpo bottomLine" style="pointer-events: none;"
-            data-product-id="{{ product.id }}">
-            {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
-            {%- assign time_now = 'now' | date: '%s' %}
-            {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
-            {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
-            {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.catalog_bottomline_update_time | date: '%s' %}
-            {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
-            {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
-              {%- assign yotpo_bottomline_obsolete = false %}
-            {%- else %}
-              {%- assign yotpo_bottomline_obsolete = true %}
-            {%- endif %}
-            {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
-              {{ product.metafields.yotpo.catalog_bottomline }}
-            {%- endif %}
-        </div>
-      </a>
+      {%- if settings.yotpo_stars_instance_id != blank -%}
+        <a title="Product Reviews for {{ product.title }}" href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews">
+          <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+        </a>
+      {%- endif -%}
       <div class="wayfx-product__grid-add">
-        {%- if product.type == 'Bundles' and bundleIsAvailable -%}
+        {%- if product.type == 'Bundles' and bundleIsAvailable and product.metafields.custom.bundle_items.value -%}
           {%- render 'bundle-atc-btn', product: product -%}
         {%- else -%}
           <form id="wayfx-product-{{ product.id }}" action="/cart/add" method="post" enctype="multipart/form-data">

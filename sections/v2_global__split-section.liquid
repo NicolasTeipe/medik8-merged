@@ -1,0 +1,285 @@
+<!-- sections/v2_global__split-section.liquid -->
+
+{% capture content %}
+<div class="gbl-split-section-container" style="background-color:{{ section.settings.section_bg_color }}">
+  <div class="block-grid block-grid--index cell-l cell-r grid-layout gap--d2 align-center">
+    <div class="grid-layout__item--span-6 block-fh
+                @mobile__grid-layout__item--span-12">
+      {{ section.settings.image | 
+        image_url: width: 736 | 
+        image_tag: 
+          widths: '256, 512, 736, 1024',
+          loading: 'lazy', 
+          alt: section.settings.image.alt,
+          class: 'block-ar-1 block-objc block-mfrh'
+      }}
+    </div>
+    <div 
+      class="grid-layout__item--span-5 grid-layout__item--start-8 flex column-nowrap gap ct cb
+             @tablet__grid-layout__item--start-7 @tablet__cell-l--d2
+             @mobile__grid-layout__item--start-1 @mobile__grid-layout__item--span-12 @mobile__cb--none @mobile__cell-l--none">
+      {% if section.settings.heading %}
+        <h2 class="h-style t-lxl lh-s @mobile__t-l">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.paragraph != blank %} 
+        <div class="rte-content t-rm lh-r @mobile__t-s">
+          {{ section.settings.paragraph }}
+        </div>
+      {% endif %}
+      {% assign has_bullets = false %}
+      {% capture bullets %}
+        {% for block in section.blocks %}
+          {% if block.settings.text != blank %}
+            {% assign has_bullets = true %}
+            <li>{{ block.settings.text }}</li>
+          {% endif %}
+        {% endfor %}
+      {% endcapture %}
+      {% if has_bullets %}
+        <ul class="ul-style t-rm lh-r flex column-nowrap gap--d2 @mobile__t-s">
+        {{ bullets }}
+        </ul>
+      {% endif %}
+      {% assign has_ctas = false %}
+      {% capture ctas %}
+        {% if section.settings.cta_1_url and section.settings.cta_1_text != blank %}
+          {% assign has_ctas = true %}
+          {%- assign cta_1_classes = "v2-btn v2-btn--black" -%}
+          <a href="{{ section.settings.cta_1_url }}" class="{{ cta_1_classes }}">{{ section.settings.cta_1_text }}</a>
+        {% endif %}
+        {% if section.settings.cta_2_url and section.settings.cta_2_text != blank %}
+          {% assign has_ctas = true %}
+          {%- assign cta_2_classes = "v2-btn v2-btn--white" -%}
+          <a href="{{ section.settings.cta_2_url }}" class="{{ cta_2_classes }}">{{ section.settings.cta_2_text }}</a>
+        {% endif %}
+      {% endcapture %}
+      {% if has_ctas %}
+        <div class="flex row-wrap align-center justify-left gap--d2">
+          {{ ctas }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  #shopify-section-{{ section.id }} .gbl-split-section-container {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .gbl-split-section-container {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+</style>
+{% endcapture %}
+
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }}
+      </template>
+  </global-section-loader>
+
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+
+{% schema %}
+{
+  "name":"V2/GBL/split-section",
+  "presets": [ 
+    {
+      "name": "V2/GBL/split-section"
+    }
+  ],
+  "settings":[
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Aspect ratio of 1:1 recommended",
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "paragraph",
+      "label": "Paragraph",
+      "info": "Bullet points below can be added as 'Bullet' blocks",
+    },
+    {
+      "type": "header",
+      "content": "Content - CTA 1"
+    },
+    {
+      "type": "text",
+      "id": "cta_1_text",
+      "label": "CTA 1 Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_1_url",
+      "label": "CTA 1 link"
+    },
+    {
+      "type": "header",
+      "content": "Content - CTA 2"
+    },
+    {
+      "type": "text",
+      "id": "cta_2_text",
+      "label": "CTA 2 Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_2_url",
+      "label": "CTA 2 link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Bullet",
+      "name": "Bullet",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }   
+    
+  ]
+}
+{% endschema %}

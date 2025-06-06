@@ -1,0 +1,49 @@
+{% schema %}
+    {
+        "name": "Beam Community Impact",
+        "presets": [
+          {
+            "name": "Beam Community Impact"
+          }
+        ],
+        "settings": []
+    }
+{% endschema %}
+
+<script
+    type="module"
+    async
+    crossorigin
+    data-em-disable
+    data-categories="analytics"
+    src="https://production-beam-widgets.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/components/community-impact.js"
+></script>
+
+{% assign beam_partner_name = 'Medik8' %}
+{% assign beam_language = 'en' %}
+
+<div data-beam-widget="community-impact" class="beam-community-impact">
+
+   {% if shop.domain == "us.medik8.com" %}
+    <h2 id="beam-community-header" style="text-transform: capitalize;">The {{ beam_partner_name }} Community's Impact</h2>
+    <p id="beam-community-description">
+        1% of every {{ beam_partner_name }} purchase is donated to a nonprofit of your choice. <br>
+        Check out the impact the global {{ beam_partner_name }} community is making below.
+    </p>
+   {% else  %}
+    <h2 id="beam-community-header">The {{ beam_partner_name }} Community's Impact</h2>
+    <p id="beam-community-description">
+        1% of every {{ beam_partner_name }} purchase is donated to a nonprofit of your choice. <br>
+        Check out the impact the {{ beam_partner_name }} community is making below.
+    </p>
+   {% endif %}
+
+    <beam-community-impact
+        apiKey="{{ settings.beam_api_key }}"
+        chainId="{{ settings.beam_chain_id }}"
+        storeId="{{ settings.beam_store_id }}"
+        baseUrl="{{ settings.beam_base_url }}"
+        lang="{{ beam_language }}"
+        cardStyle="image"
+    ></beam-community-impact>
+</div>

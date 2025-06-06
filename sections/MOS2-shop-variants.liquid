@@ -25,6 +25,8 @@
               assign variant_inventory = variant.inventory_quantity
               assign variant_title = variant.title
               assign variant_price = variant.price
+              assign variant_url = variant.url
+              assign selected_variant = variant
             endif
           endfor
         else 
@@ -32,6 +34,7 @@
           assign variant_title = product.title 
           assign variant_price = product.price
           assign variant_inventory = product.variants.first.inventory_quantity
+          assign selected_variant = product.variant.first
         endif 
       %}
 
@@ -42,13 +45,16 @@
           <img loading="lazy" src="{{ block.settings.variant_image | image_url: width: 1100 }}"width="{{block.settings.variant_image.width}}" height="{{block.settings.variant_image.height}}" alt="{{block.settings.variant_image.alt}}">
         {% endif %}
         <div class="content-wrapper">
-          <p class="product__grid-title"><a href="{{ product.url }}">{{ variant_title }}</a></p>
+          <p class="product__grid-title"><a href="{{ variant_url }}">{{ variant_title }}</a></p>
           <p class="product__grid-subtitle">{{ block.settings.variant_subtitle }}</p>
           <div class="separator">
             <div class="line"></div>
           </div>
           <p class="product__grid-copy">{{ block.settings.variant_copy }}</p>
-          <p class="product__grid-price">{{ variant_price | money_without_trailing_zeros }}</p>
+
+          <div class="js-price-v2-wrapper row">
+            {%- render 'price-v2', variant: selected_variant, style: 'product_card', sold_out_price:' true' -%}
+          </div>
 
           <form class="product__grid-form" id="product-{{ variant_id }}" method="post" action="/cart/add">
             <input type="hidden" name="id" value="{{ variant_id }}" />     
@@ -72,6 +78,12 @@
 {%- if section.settings.dt_slider -%}
   {%- assign count = section.settings.max_before_slider -%}  
 {%- endif -%}
+
+<style>
+  #shopify-section-{{ section.id }} .js-price-v2-wrapper span {
+    font-weight: 600;
+  }
+</style>
 
 <script>
 $(document).ready(function() {

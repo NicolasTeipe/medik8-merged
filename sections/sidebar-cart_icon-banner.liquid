@@ -1,0 +1,54 @@
+
+
+
+
+<sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    <cart-icon-banner 
+      class="flex row-wrap align-center justify-center flex-grid--d3"
+      observer_key="{{ section.id }}">
+      <template>
+        {
+          "blocks":{{ section.blocks | map: 'settings' | json }} 
+        }
+      </template>
+    </cart-icon-banner>
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/icon-banner",
+  "blocks": [
+    {
+      "type": "item",
+      "name": "item",
+      "limit": 8,
+      "settings": [
+        {
+          "id": "threshold",
+          "type": "number",
+          "label": "threshold"
+        },
+        
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "text"
+        },
+        {
+          "id": "icon",
+          "type": "image_picker",
+          "label": "icon"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

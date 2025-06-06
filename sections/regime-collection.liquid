@@ -1,0 +1,104 @@
+{% assign newline = '
+' %}
+
+{% liquid
+  assign tags = settings.regime_collection_tags | split: newline | default: false
+
+  assign metaobjects = shop.metaobjects['regime'].values | sort_natural: 'order'
+%}
+
+<script src="{{ 'regime.js' | asset_url }}" defer></script>
+
+<section class="wayfx-wrapper">
+  <div class="regime-tabs regime-padding-x" data-regime-tab-group>
+    {% if tags %}
+      <ul class="regime-tabs__menu">
+        {% for tag in tags %}
+          {% liquid
+            assign tag_handle = tag | handle
+
+            assign aria_controls = null | sort
+
+            for metaobject in metaobjects
+              if metaobject.tag.value == tag
+                assign aria_control = 'regime-tab-panel-' | append: tag_handle | append: '-' | append: metaobject.system.handle
+
+                assign aria_control_as_array = aria_control | sort
+
+                assign aria_controls = aria_controls | concat: aria_control_as_array
+              endif
+            endfor
+
+            assign aria_controls = aria_controls | join: ' '
+          %}
+
+          <li class="regime-tabs__item">
+            <button
+              class="
+                regime-tabs__button
+
+                {% if forloop.first %}
+                  is-active
+                {% endif %}
+              "
+              type="button"
+              role="tab"
+              aria-controls="{{ aria_controls }}"
+              id="regime-tab-button-{{ tag_handle }}"
+              data-regime-tab-button="{{ tag_handle }}"
+
+              {% if forloop.first %}
+                aria-selected="true"
+              {% endif %}
+            >
+              {{ tag }}
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <ul class="regime-cards">
+      {% for metaobject in metaobjects %}
+        {% assign metaobject_tag_handle = metaobject.tag.value | handle %}
+
+        <li
+          class="
+            regime-cards__item regime-tabs__panel
+
+            {% if metaobject.tag.value == tags[0] %}
+              is-active
+            {% endif %}
+
+            {% unless tags contains metaobject.tag.value %}
+              is-active
+            {% endunless %}
+          "
+          id="regime-tab-panel-{{ metaobject_tag_handle }}-{{ metaobject.system.handle }}"
+          role="tabpanel"
+          aria-labelledby="regime-tab-button-{{ metaobject_tag_handle }}"
+          data-regime-tab-panel="{{ metaobject_tag_handle }}"
+
+          {% if metaobject.tag.value != tags[0] %}
+            aria-hidden="true"
+          {% else %}
+            aria-hidden="false"
+          {% endif %}
+        >
+          {% render 'regime-card', metaobject: metaobject %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Regime collection",
+    "presets": [
+      {
+        "name": "Regime collection"
+      }
+    ]
+  }
+{% endschema %}

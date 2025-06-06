@@ -1,0 +1,663 @@
+<!-- sections/v2_global__mid-page-hero.liquid -->
+
+{% liquid
+  assign block_types = section.blocks | map: 'type' | uniq
+%}
+
+{% assign initial_block = section.blocks | first %}
+
+{% capture content %}
+<global-mid-page-hero>
+  {% if section.blocks.size > 1 %}
+    <template block-settings>
+      {% for block in section.blocks %}
+        {% if block.type == 'before_after' %}
+          {% capture components %}{{ 'scripts.components.dist.GlobalBeforeAfterSlider.js' | asset_url }}{% endcapture %}  
+          {% render 'v2_global.before_after',
+            settings: block.settings,
+            desktop_width: 1024,
+            desktop_height: 430,
+            mobile_width: 512,
+            mobile_height: 876
+          %}
+          {% elsif block.type == 'static_image' %}
+            <div class="lh-0">
+                  {% liquid
+                    assign desktop_image_class = 'block-12/12' 
+                    assign hasMobileImage = false
+                    if block.settings.mb_image
+                    assign hasMobileImage = true
+                    assign desktop_image_class = 'block-12/12 @mobile__hide' 
+                    endif
+                  %}
+                  {{ block.settings.dt_image | 
+                    image_url: width: 1024 , height: 430| 
+                  image_tag: 
+                  widths: '256, 512, 736, 1024, 2048',
+                  loading: 'lazy', 
+                  alt: initial_block.settings.dt_image.alt,
+                    class: desktop_image_class
+                  }}
+                  {% if hasMobileImage %}
+                    {{ block.settings.mb_image | 
+                    image_url: width: 512 , height: 876| 
+                    image_tag: 
+                      widths: '256, 512, 736, 1024',
+                      loading: 'lazy', 
+                      alt: initial_block.settings.mb_image.alt,
+                      class: 'block-12/12 @mobile__show'
+                    }}
+                  {% endif %}
+                </div>
+          {% elsif block.type == 'video' %}
+            <global-video-thumbnail class="block-12/12 d-block">
+              <template>
+                {
+                  "video_id":{{ block.settings.video_url.id | json }},
+                  "video_type": {{ block.settings.video_url.type | json }},
+                  "video_description":{{ block.settings.video_description | json }},
+                  "video_aspect_ratio": "{{ block.settings.video_ar }}"
+                }
+              </template>
+              {% liquid
+                  assign desktop_image_class = 'block-12/12' 
+                  assign hasMobileImage = false
+                  if block.settings.image__mobile
+                  assign hasMobileImage = true
+                  assign desktop_image_class = 'block-12/12 @mobile__hide' 
+                endif
+              %}
+              {{ block.settings.image | 
+                image_url: width: 1024 , height: 430| 
+                image_tag: 
+                  widths: '256, 512, 736, 1024, 2048',
+                  loading: 'lazy', 
+                  alt: block.settings.image.alt,
+                  class: desktop_image_class
+              }}
+              {% if hasMobileImage %}
+                {{ block.settings.image__mobile | 
+                  image_url: width: 512 , height: 876| 
+                  image_tag: 
+                    widths: '256, 512, 736, 1024',
+                    loading: 'lazy', 
+                    alt: block.settings.image__mobile.alt,
+                    class: 'block-12/12 @mobile__show'
+                }}
+              {% endif %}
+            </global-video-thumbnail>
+          {% endif %}
+        {% unless forloop.last %}|||{% endunless %}
+      {% endfor %}
+    </template>
+  {% endif %}
+  <div class="mph-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+    {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+      {% 
+        render 'v2_global.section_heading', 
+        heading: section.settings.heading,
+        sub_heading: section.settings.sub_heading
+      %}
+    {% endif %}
+    <div class="block-grid block-grid--index cell-l cell-r @mobile__cell-l--none @mobile__cell-r--none">
+      <div class="block-12/12 block-rel">
+        {% if section.blocks.size > 1 %}
+          <div class="block-switcher-container">
+            <div 
+              class="block-switcher {% if section.blocks.size > 2 %}block-switcher--column{% endif %}"
+            >
+              {% for block in section.blocks %}
+                <button 
+                  class="block-switcher-button {% if forloop.first %}active{% endif %}"
+                >
+                  {{ block.settings.title }}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        <div class="mph-container-block">
+          {% case initial_block.type %}
+            {% when 'video' %}
+              {% capture components %}{{ 'scripts.components.dist.GlobalVideoThumbnail.js' | asset_url }}{% endcapture %}
+              <global-video-thumbnail class="block-12/12 d-block">
+                <template>
+                  {
+                    "video_id":{{ initial_block.settings.video_url.id | json }},
+                    "video_type": {{ initial_block.settings.video_url.type | json }},
+                    "video_description":{{ initial_block.settings.video_description | json }},
+                    "video_aspect_ratio": "{{ initial_block.settings.video_ar }}"
+                  }
+                </template>
+                {% liquid
+                    assign desktop_image_class = 'block-12/12' 
+                    assign hasMobileImage = false
+                    if initial_block.settings.image__mobile
+                    assign hasMobileImage = true
+                    assign desktop_image_class = 'block-12/12 @mobile__hide' 
+                  endif
+                %}
+                {{ initial_block.settings.image | 
+                  image_url: width: 1024 , height: 430| 
+                  image_tag: 
+                    widths: '256, 512, 736, 1024, 2048',
+                    loading: 'lazy', 
+                    alt: initial_block.settings.image.alt,
+                    class: desktop_image_class
+                }}
+                {% if hasMobileImage %}
+                  {{ initial_block.settings.image__mobile | 
+                    image_url: width: 512 , height: 876| 
+                    image_tag: 
+                      widths: '256, 512, 736, 1024',
+                      loading: 'lazy', 
+                      alt: initial_block.settings.image__mobile.alt,
+                      class: 'block-12/12 @mobile__show'
+                  }}
+                {% endif %}
+              </global-video-thumbnail>
+            {% when 'before_after' %}
+              {% capture components %}{{ 'scripts.components.dist.GlobalBeforeAfterSlider.js' | asset_url }}{% endcapture %}
+              {% 
+                render 'v2_global.before_after', 
+                settings: initial_block.settings,
+                desktop_width: 1024
+                desktop_height: 430,
+                mobile_width: 512
+                mobile_height: 876,
+              %}
+            {%- when 'static_image' -%}
+              {%- if initial_block.settings.dt_image and initial_block.settings.mb_image -%}
+                <div class="lh-0">
+                  {% liquid
+                    assign desktop_image_class = 'block-12/12' 
+                    assign hasMobileImage = false
+                    if initial_block.settings.mb_image
+                    assign hasMobileImage = true
+                    assign desktop_image_class = 'block-12/12 @mobile__hide' 
+                    endif
+                  %}
+                  {{ initial_block.settings.dt_image | 
+                    image_url: width: 1024 , height: 430| 
+                  image_tag: 
+                  widths: '256, 512, 736, 1024, 2048',
+                  loading: 'lazy', 
+                  alt: initial_block.settings.dt_image.alt,
+                    class: desktop_image_class
+                  }}
+                  {% if hasMobileImage %}
+                    {{ initial_block.settings.mb_image | 
+                    image_url: width: 512 , height: 876| 
+                    image_tag: 
+                      widths: '256, 512, 736, 1024',
+                      loading: 'lazy', 
+                      alt: initial_block.settings.mb_image.alt,
+                      class: 'block-12/12 @mobile__show'
+                    }}
+                  {% endif %}
+                </div>
+              {%- endif -%}
+
+          {% endcase %}
+        </div>
+
+        {% if section.settings.product != blank %}
+          {%- assign tb_lite = '' -%}
+          {%- if section.settings.tb_lite -%}
+            {%- assign tb_lite = 'tb_lite' -%}
+          {%- endif -%}
+    
+          <global-hotspot-item
+            class="global-hotspot-item--bottom-right {{ tb_lite }}"
+            data-product_handle="{{ section.settings.product }}"
+            {% if section.settings.variant_sku != blank %}
+            data-sku="{{ section.settings.variant_sku }}"
+            {% endif %}
+            always_visible
+            data-dark="{{ section.settings.dark }}"
+            data-tb_lite="{{ section.settings.tb_lite }}"
+            data-show_reviews="{{ section.settings.show_reviews }}">
+          </global-hotspot-item>
+        {% endif %}
+      </div>
+    </div>
+    {% if section.settings.cta_text != blank and section.settings.cta_url != blank %}
+      <div class="flex row-wrap justify-center cell-l cell-r">
+        <a class="v2-btn v2-btn--white" href="{{ section.settings.cta_url }}">{{ section.settings.cta_text }}</a>
+      </div>
+    {% endif %}
+  </div>
+</global-mid-page-hero>
+
+<style>
+  #shopify-section-{{ section.id }} .block-switcher-container {
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .block-switcher {
+    border-radius: 5px;
+    border: 1px solid var(--colorPrimary);
+    opacity: 1;
+    padding: 2px;
+    display: flex;
+  }
+
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .block-switcher--column {
+      flex-direction: column;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .block-switcher > button {
+    color: var(--colorTextBody);
+    font-size: 12px;
+    letter-spacing: 1.29px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+  }
+
+  #shopify-section-{{ section.id }} .block-switcher > button.active {
+    color: var(--color-white);
+    background: var(--color-black);
+    border-radius: 5px;
+  }
+
+  .template-index.dark-mode #shopify-section-{{ section.id }} .block-switcher > button.active {
+    color: var(--colorSecondary);
+    background: var(--colorPrimary);
+    border-radius: 5px;
+  }
+
+  #shopify-section-{{ section.id }} .block-switcher--column {
+    flex-direction: column;
+  }
+
+  @media screen and (max-width: 768px) {
+    #shopify-section-{{ section.id }} .block-switcher-container {
+      padding:12px;
+    }
+
+    #shopify-section-{{ section.id }} .block-switcher-button {
+      padding: 12px;
+    }
+  }
+
+  
+  #shopify-section-{{ section.id }} .mph-container {
+    margin-top: {{ section.settings.mb_margin_top }}px;
+    margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+    padding-top: {{ section.settings.mb_padding_top }}px;
+    padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .mph-container {
+      margin-top: {{ section.settings.dt_margin_top }}px;
+      margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+      padding-top: {{ section.settings.dt_padding_top }}px;
+      padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .static-img {
+    object-fit: cover;
+    aspect-ratio: .58 / 1;
+  }
+
+  @media screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} .static-img {
+      aspect-ratio: 2.4 / 1;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .invert {
+    background-color: white;
+    filter: invert(1);
+  }
+</style>
+{% endcapture %}
+
+{% liquid
+  assign components = 'scripts.components.dist.GlobalMidPageHero.js' | asset_url
+  assign videoUrl = 'scripts.components.dist.GlobalVideoThumbnail.js' | asset_url
+  assign beforeAfterUrl = 'scripts.components.dist.GlobalBeforeAfterSlider.js' | asset_url
+
+  if block_types contains 'before_after'
+    assign components = components | append: ',' | append: beforeAfterUrl
+  endif
+
+  if block_types contains 'video'
+    assign components = components | append: ',' | append: videoUrl
+  endif
+%}
+
+{% assign components =  components | split:',' %}
+
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }}
+      </template>
+  </global-section-loader>
+  
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/mid-page-hero",
+  "presets": [ 
+    {
+      "name": "V2/GBL/mid-page-hero"
+    }
+  ],
+  "settings":[
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+ 
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "Here you can define the heading and 2 x CTA tiles. The large/feature tile are defined as blocks"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+
+    {
+      "type": "inline_richtext",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    },
+
+    {
+      "type": "header",
+      "content": "Product Card - Mini"
+    },
+
+    {
+      "id": "product",
+      "type": "product",
+      "label": "Featured product"
+    },
+    {
+      "id": "variant_sku",
+      "type": "text",
+      "label": "Featured product - Variant SKU"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show Reviews",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "dark",
+      "label": "Dark Mode",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "tb_lite",
+      "label": "Tablet - Lite Version",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content - CTA"
+    },
+
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA link"
+    }
+    
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "before_after",
+      "name": "Before / After",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Will show in customization as name of block and be used as switch title if multiple blocks"
+        },
+        {
+          "type": "header",
+          "content": "Before"
+        },
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Before image @desktop",
+        },
+        {
+          "type": "image_picker",
+          "id": "before_image__mobile",
+          "label": "Before image @mobile",
+        },
+        {
+          "type": "text",
+          "id": "before_text",
+          "label": "Before text",
+          "default":"Before"
+        },
+        {
+          "type": "header",
+          "content": "After"
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "After image @dekstop",
+        }, 
+        {
+          "type": "image_picker",
+          "id": "after_image__mobile",
+          "label": "After image @mobile",
+        }, 
+        {
+          "type": "text",
+          "id": "after_text",
+          "label": "After text",
+          "default":"After"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "video",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Will show in customization as name of block and be used as switch title if multiple blocks"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Background image @desktop",
+        },
+        {
+          "type": "image_picker",
+          "id": "image__mobile",
+          "label": "Background image @mobile",
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "accept": [
+            "youtube"
+          ],
+          "default": "https://www.youtube.com/watch?v=ZciK4xCUPFk",
+          "label": "Video URL",
+          "info": "Youtube Supported"
+        },
+        {
+          "type": "text",
+          "id": "video_ar",
+          "label": "Video Aspect Ratio",
+          "info": "For example: 16 / 9",
+          "default": "16 / 9"
+        },
+      ]
+    }, 
+    {
+      "type": "static_image",
+      "name": "Static Image",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Will show in customization as name of block and be used as switch title if multiple blocks"
+        },
+        {
+          "type": "image_picker",
+          "id": "dt_image",
+          "label": "Image - Desktop",
+        },
+        {
+          "type": "image_picker",
+          "id": "mb_image",
+          "label": "Image - Mobile",
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

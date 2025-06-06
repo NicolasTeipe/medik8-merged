@@ -1,193 +1,178 @@
-{%- assign heading = section.settings.heading -%}
-{%- assign sub_heading = section.settings.subheading -%}
-{%- assign paragraph = section.settings.paragraph -%}
-{%- assign background_color = section.settings.background_color -%}
-{%- assign background_image = section.settings.background_image -%}
-{%- assign mobile_background_image = section.settings.mobile_background_image -%}
-{%- assign list_id = settings.klaviyo_list_id -%}
-{%- assign klaviyo_public_key = settings.klaviyo_api -%}
-{%- assign promo_code = settings.newsletter_discount_code -%}
-{%- assign confirmation_heading = section.settings.confirmation_heading -%}
-{%- assign confirmation_text = section.settings.confirmation_text -%}
+<!-- snippets/module-footer-newsletter.liquid -->
 
-<div class="module-footer-newsletter-wrapper">
-   <span class="heading-one" style="background-image: none; border: none">{{ settings.newsletter_title }}</span>
-   <span class="heading-three">{{ settings.newsletter_subtitle }}</span>
-   {% if settings.klaviyo_list_id != blank %}
-   <div loading="lazy">
-      <div class="wayfx-footer-newsletter__text">
-         {% if sub_heading %}
-         <div class="wayfx-footer-newsletter__sub-heading">{{ 'layout.footer.newsletter_subheading' | t }}</div>
-         {% endif %}
-         {% if heading %}
-         <h2 class="h2--primary">{{ heading }}</h2>
-         {% endif %}
-         {% if paragraph != blank %}
-         <p>{{ paragraph }}</p>
-         {% endif %}
-      </div>
+<script src="{{ 'scripts.components.dist.GlobalNewsletterForm.js' | asset_url }}" defer="defer"></script>
+
+{%- if section.settings.newsletter_title != blank -%}
+  <span class="footer__heading" style="background-image: none; border: none">{{ section.settings.newsletter_title }}</span>
+{%- endif -%}
+
+{%- if section.settings.newsletter_subtitle -%}
+  <span class="footer__subheading">{{ section.settings.newsletter_subtitle }}</span>
+{%- endif -%}
+
+{%- capture formTitleAndSubtitle -%}
+  <div class="wayfx-footer-newsletter__text">
+    {%- if section.settings.subheading -%}
+      <div class="wayfx-footer-newsletter__sub-heading">{{ 'layout.footer.newsletter_subheading' | t }}</div>
+    {%- endif -%}
+    {%- if section.settings.heading -%}
+    <h2 class="h2--primary">{{  section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.paragraph != blank %}
+      <p>{{ section.settings.paragraph }}</p>
+    {%- endif -%}
+  </div>
+{%- endcapture -%}
+
+{%- capture newsletterSmallPrint -%}
+  <div class="wayfx-footer-newsletter__terms">
+    <div>
+      <label for="email_footer_signup_{{ settings.klaviyo_list_id }}" class="module-footer-newsletter-label">
+        {{ section.settings.newsletter_small_print }}
+        <a class="js-policy-fancybox footer-privacy-link no-hover" href="/policies/privacy-policy">{{ 'layout.footer.privacy_policy' | t }}</a>
+      </label>
+      <input type="hidden" id="email_footer_signup_{{ settings.klaviyo_list_id }}">
+      {%- if section.settings.footer_extra_terms != blank -%}
+        <label for="email_footer_signup_{{ settings.klaviyo_list_id }}" class="module-footer-newsletter-label">
+          {{ section.settings.footer_extra_terms }}
+        </label>
+        <input type="hidden" id="footer_extra_terms">
+      {%- endif -%}
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture successMessage -%}
+  <p class="form-message form-message--success toast-message-success" tabindex="-1" data-form-status>
+    {{ 'layout.footer.subscribe_success' | t }}
+      {% if section.settings.newsletter_discount_code != blank %}
+        {{ 'layout.footer.use_code' | t: code: section.settings.newsletter_discount_code }} <span class="close-toast"><i class="fa fa-times"></i></span>
+      {% endif %}
+  </p>
+{%- endcapture -%}
+
+<newsletter-form>
+  {%- if settings.klaviyo_list_id != blank -%}
+    {%- assign list_id = settings.klaviyo_list_id -%}
+    <div>
+      {{ formTitleAndSubtitle }}
       <div class="wayfx-footer-newsletter__form">
-         <form id="email_footer_signup_{{ list_id }}"
-            class="klaviyo_bare_embed_{{ list_id }}"
-            action="#"
-            method="POST"
-            >
-            <div class="wayfx-footer-newsletter__fields flex-group">
-               <input type="hidden" name="list_id" value="{{ list_id }}">
-               <input type="hidden" name="key" value="{{ klaviyo_public_key }}">
-               <input type="hidden" name="source" value="Footer Newsletter">
-               <input type="hidden" name="hpf" value="">
-               <input type="email"
-                      aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
-                      aria-required="true"
-                      value="{{ customer.email }}"
-                      name="email"
-                      placeholder="Email address..."
-                      class="module-footer-newsletter-input"
-                      required/>
-               <button type="submit" aria-label="Join Newsletter"  class="btn module-footer-newsletter-button" name="commit"><i class="fa fa-angle-right"></i></button>
-            </div>
-            <div class="wayfx-footer-newsletter__terms">
-               <div style="line-height: 1">
-                  <label for="email_footer_signup_{{ settings.klaviyo_list_id }}" class="module-footer-newsletter-label">
-                    {{ settings.newsletter_small_print }}
-                    <br><br>
-                    <a class="js-policy-fancybox" href="/policies/privacy-policy">{{ 'layout.footer.privacy_policy' | t }}<i style="font-family: fontAwesome !important" class="fa fa-external-link"></i></a>
-                  </label>
-                  <input type="hidden" id="email_footer_signup_{{ settings.klaviyo_list_id }}">
-                 {% if settings.footer_extra_terms != blank %}
-                 	<br><br>
-                   <label for="email_footer_signup_{{ settings.klaviyo_list_id }}" class="module-footer-newsletter-label">
-                      {{ settings.footer_extra_terms }}
-                    </label>
-                    <input type="hidden" id="footer_extra_terms">
-                 
-                 {% endif %}
-               </div>
-            </div>
-         </form>
+        <form id="email_footer_signup_{{ list_id }}" class="klaviyo_bare_embed_{{ list_id }}" action="#" method="POST">
+          <div class="wayfx-footer-newsletter__fields flex-group">
+            <input type="hidden" name="list_id" value="{{ list_id }}">
+            <input type="hidden" name="key" value="{{ settings.klaviyo_api }}">
+            <input type="hidden" name="source" value="Footer Newsletter">
+            <input type="hidden" name="hpf" value="">
+            <input type="email"
+                    aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                    aria-required="true"
+                    value="{{ customer.email }}"
+                    name="email"
+                    placeholder="Email address..."
+                    class="module-footer-newsletter-input"
+                    required/>
+            <button type="submit" aria-label="Join Newsletter"  class="btn module-footer-newsletter-button" name="commit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="11" viewBox="0 0 17 11" fill="none">
+                <rect y="5" width="16" height="1" fill="currentColor"/>
+                <path d="M11 1L16 5.5L11 10" stroke="currentColor"/>
+              </svg>
+            </button>
+          </div>
+          {{ newsletterSmallPrint }}
+        </form>
       </div>
       <div class="wayfx-footer-newsletter__success hide">
-         <p class="form-message form-message--success toast-message-success" tabindex="-1" data-form-status>
-           {{ 'layout.footer.subscribe_success' | t }}
-            {% if settings.newsletter_discount_code != blank %}
-              {{ 'layout.footer.use_code' | t: code: settings.newsletter_discount_code }} <span class="close-toast"><i class="fa fa-times"></i></span>
-            {% endif %}
-         </p>
+        {{ successMessage }}
       </div>
-   </div>
+    </div>
+    <script type="text/javascript">
+      // Handle footer subscribe form
+      DomReadyPromise().then(() => {
+        const form = document.querySelector('#email_footer_signup_{{ list_id }}');
+        
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          const result = await klaviyoSubscribe(form);
 
-   {% else %}
-
-   <div class="newsletter-section{% if section.settings.show_background %} index-section--newsletter-background{% endif %}">
-      {%- assign formId = 'Contact_' | append: section.id -%}
-      {% form 'customer', id: formId, novalidate: 'novalidate', class: 'form-single-field' %}
-      {%- if form.errors contains 'email' -%}
-      <p id="{{ formId }}-email-error" class="input-error-message red">
-         <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
-         <span><i class="fa fa-exclamation-circle" style="font-family: 'Font Awesome 5 Free' !important;"></i> {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
-      </p>
-      {%- else -%}
-      {%- if form.posted_successfully? -%}
-      <p class="form-message form-message--success toast-message-success" tabindex="-1" data-form-status>
-        {{ 'layout.footer.subscribe_success' | t }}
-        {% if settings.newsletter_discount_code != blank %}
-          {{ 'layout.footer.use_code' | t: code: settings.newsletter_discount_code }} <span class="close-toast"><i class="fa fa-times"></i></span>
-        {% endif %}
-      </p>
-      {%- endif -%}
-      {%- endif -%}
-      {{ form.email }}
-      <input type="hidden" name="contact[tags]" value="newsletter">
-      <div class="input-group {% if form.errors %} input-group--error{% endif %} flex-group">
-         <input type="email"
-         name="contact[email]"
-         id="{{ formId }}-email"
-         class="module-footer-newsletter-input input-group__field{% if form.errors %} input--error{% endif %}"
-         value="{{ form.email }}"
-         placeholder="Email address..."
-         aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
-         aria-required="true"
-         autocorrect="off"
-         autocapitalize="off"
-         {% if form.errors %}
-         aria-invalid="true"
-         aria-describedby="{{ formId }}-email-error"
-         data-form-status
-         {% endif %}
-         >
-         <button aria-label="Join Newsletter" type="submit" class="btn module-footer-newsletter-button" name="commit"><i class="fa fa-angle-right"></i></button>
-      </div>
-      <div style="line-height: 1">
-      <label for="email_footer_signup_{{ settings.klaviyo_list_id }}" class="module-footer-newsletter-label">
-        {{ settings.newsletter_small_print }}
-        <br><br>
-        <a class="js-policy-fancybox" href="/policies/privacy-policy">Privacy Policy<i style="font-family: fontAwesome !important" class="fa fa-external-link"></i></a>
-      </label>
-      <input type="hidden" id="newsletter_small_print">
-      </div>
-      {% endform %}
-   </div>
-   {% endif %}
-
-</div>
-
-
-
-<script type="text/javascript">
-  
-
-  // Handle footer subscribe form
-  DomReadyPromise().then(() => {
-
-    const policyFancyBoxLinks = document.querySelectorAll('.js-policy-fancybox')
-    policyFancyBoxLinks.forEach( element => element.addEventListener('click', async (e) => {
-      e.preventDefault()
-      e.currentTarget.blur()
-      const url = `${element.href}.json`
-      window.loadedPolicyModals = window.loadedPolicyModals || {}
-      let modal = window.loadedPolicyModals[url] || false
-
-      if(!modal){
-        let content = await fetch(url)
-        content = content.status == 200 ? await content.json() : false
-        content = content?.policy?.body|| false
-        console.log(content)
-        if(!content){
-          return
-        }
-
-        modal = window.loadedPolicyModals[url] = new ModalBox({
-          content: 
-            `
-              <div style="width:100%;max-width:700px;background:#fff;padding:var(--gutter-unit);padding-right:0;">
-                <div style="max-height:75vh;overflow-x:hidden;overflow-y:auto;padding-right:var(--gutter-unit);">${content}</div>
-              </div>
-            `,
-          settings: {
-            containerCloseButton: true,
-          },
-        })
-      }
-
-      modal.open()
-    }))
-
-    const form = document.querySelector('#email_footer_signup_{{ list_id }}');
-    
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      const result = await klaviyoSubscribe(form);
-
-      if (result) {
-        document.querySelector('.wayfx-footer-newsletter__text').classList.add('hide');
-        document.querySelector('.wayfx-footer-newsletter__success').classList.remove('hide');
-        document
-        .querySelector('.wayfx-footer-newsletter__success .close-toast')
-        .addEventListener('click', (e) => {
-          e.target.closest('.wayfx-footer-newsletter__success').classList.add('hide');
+          if (result) {
+            document.querySelector('.wayfx-footer-newsletter__text').classList.add('hide');
+            document.querySelector('.wayfx-footer-newsletter__success').classList.remove('hide');
+            document
+            .querySelector('.wayfx-footer-newsletter__success .close-toast')
+            .addEventListener('click', (e) => {
+              e.target.closest('.wayfx-footer-newsletter__success').classList.add('hide');
+            });
+          }
         });
-      }
-    });
-  });
-</script>
+      });
+    </script>
+  {%- else -%}
+    <div class="newsletter-section">
+      {{ formTitleAndSubtitle }}
+
+      {%- assign formId = 'contact_' | append: section.id -%}
+
+      {%- form 'customer', id: formId, class: 'form-single-field' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        {%- comment -%}
+          Email submit successful!
+        {%- endcomment -%}
+        {%- assign posted_successfully = false -%}
+        {%- unless form.errors contains 'email' -%}
+          {%- if form.posted_successfully? -%}
+            {{ successMessage }}
+            {%- assign posted_successfully = true -%}
+          {%- endif -%}
+        {%- endunless -%}
+
+        <div class="input-group {% if form.errors %} input-group--error{% endif %} flex-group wayfx-footer-newsletter__fields{% if posted_successfully %} visually-hidden{% endif %}">
+          <input type="email"
+            name="contact[email]"
+            id="{{ formId }}-email"
+            class="module-footer-newsletter-input input-group__field{% if form.errors %} input--error{% endif %}"
+            value="{{ form.email }}"
+            placeholder="Email address..."
+            aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+            aria-required="true"
+            autocorrect="off"
+            autocapitalize="off"
+            {% if form.errors %}
+              aria-invalid="true"
+              aria-describedby="{{ formId }}-email-error"
+              data-form-status
+            {% endif %}
+          >
+          <button aria-label="Join Newsletter" type="submit" class="btn module-footer-newsletter-button" name="commit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="11" viewBox="0 0 17 11" fill="none" class="arrow-svg-icon"><rect y="5" width="16" height="1" fill="currentColor" /><path d="M11 1L16 5.5L11 10" stroke="currentColor" /></svg>
+          </button>
+        </div>
+
+        {%- comment -%}
+          Form Errors!
+        {%- endcomment -%}
+        {%- if form.errors -%}
+          <p id="{{ formId }}-email-error" class="input-error-message red">
+            <span class="visually-hidden">{{ 'general.accessibility.error' | t }}</span>
+            <span>
+              <i class="fa fa-exclamation-circle" style="font-family: 'Font Awesome 5 Free' !important;"></i>
+              {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.
+            </span>
+          </p>
+        {%- elsif form['posted_successfully?'] == false and form['tags'] == 'newsletter' -%}
+          <p id="{{ formId }}-email-error" class="input-error-message red">
+            <span class="visually-hidden">{{ 'general.accessibility.error' | t }}</span>
+            <span>
+              <i class="fa fa-exclamation-circle" style="font-family: 'Font Awesome 5 Free' !important;"></i>
+              The email is invalid or has already been used.
+            </span>
+          </p>
+        {%- endif -%}
+
+        {%- comment -%}
+          Form small print text box
+        {%- endcomment -%}
+        {{ newsletterSmallPrint }}
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</newsletter-form>

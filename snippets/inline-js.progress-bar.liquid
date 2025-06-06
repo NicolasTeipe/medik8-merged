@@ -1,0 +1,34 @@
+<script type="text/javascript">
+
+
+  DomReadyPromise().then( async () => {
+
+     // pipe tiers info into progress bar via GlobalCartProgressBarTiersProducer
+    const tiersProducer$ = await new GlobalCartProgressBarTiersProducer() 
+    {% if settings.show_roswell_sampler and settings.sample_collection.products != blank and settings.roswell_sample__aov__show %}
+      tiersProducer$.static.push({ 
+        amount: 0,
+        name: {{ settings.roswell_sample__aov__step_title | json }},
+        progressBarMessages_active: {{ settings.roswell_sample__aov__progressBarMessages_active | json }},
+        progressBarMessages_pending: {{ settings.roswell_sample__aov__progressBarMessages_pending | json  }},
+        threshold: {{ settings.sample_threshold | json }}
+      })
+      tiersProducer$.next()
+    {% endif %}
+  
+    {% if settings.d2__free_shipping__show %}
+      tiersProducer$.static.push({ 
+        amount: 0,
+        name: {{ settings.d2__free_shipping__step_title | json }},
+        progressBarMessages_active: {{ settings.d2__free_shipping__progressBarMessages_active | json }},
+        progressBarMessages_pending: {{ settings.d2__free_shipping__progressBarMessages_pending | json  }},
+        threshold: {{ settings.d2__free_shipping__threshold | json }}
+    })
+    tiersProducer$.next()
+    {% endif %}
+  
+   
+  }).catch(err => {
+    console.log(err)
+  })
+</script>

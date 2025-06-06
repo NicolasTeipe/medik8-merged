@@ -1,104 +1,194 @@
-{%- assign list_id = settings.klaviyo_list_id -%}
-{%- assign klaviyo_public_key = settings.klaviyo_api -%}
+<!-- sections/email-subscribe.liquid -->
 
+<script src="{{ 'scripts.components.dist.GlobalNewsletterForm.js' | asset_url }}" defer="defer"></script>
+
+{%- assign klaviyo_list_id = settings.klaviyo_list_id -%}
+{%- assign klaviyo_public_key = settings.klaviyo_api -%}
 {%- assign heading = section.settings.heading -%}
 {%- assign paragraph = section.settings.paragraph -%}
 {%- assign small_print = section.settings.small_print -%}
+{%- assign defaultFormId = 'contact_' | append: section.id -%}
 
 <div class="wayfx-block__text">
-  {% if heading != blank %}
-  <h2 class="h2--secondary">{{ heading }}</h2>
-  {% endif %}
-  {% if paragraph != blank %}
-  <p>{{ paragraph }}</p>
-  {% endif %}
+  {%- if heading != blank -%}
+    <h2 class="h2--secondary">{{ heading }}</h2>
+  {%- endif -%}
+  {%- if paragraph != blank -%}
+    <p>{{ paragraph }}</p>
+  {%- endif -%}
 </div>
 
-<form id="email_subscribe_signup_{{ list_id }}"
-  class="klaviyo_bare_embed_{{ list_id }}"
-  action="#"
-  method="POST"
-  >
-  <div class="email-subscribe__success hide">
-    <small style="display: inline-block; margin: 1rem 0" class="form-message form-message--success toast-message-success" tabindex="-1" data-form-status>
-      {{ section.settings.success }}
-    </small>
-  </div>
-  <div class="email-subscribe__fields flex-group" style="margin: 1rem 0; width: 100%">
-    <input type="hidden" name="list_id" value="{{ list_id }}">
-    <input type="hidden" name="key" value="{{ klaviyo_public_key }}">
-    <input type="hidden" name="source" value="{{ section.settings.source }}">
-    <input type="hidden" name="hpf" value="">
-    <input type="email" required value="{{ customer.email }}" name="email" placeholder="{{ 'contact.form.email' | t }}" class="email-subscribe-input"/>
-    <button type="submit" class="btn email-subscribe-button" name="commit"><i class="fa fa-angle-right"></i></button>
-  </div>
-  {% if small_print != blank %}
+{%- capture smallNewsletterPrint -%}
+  {%- if small_print != blank -%}
     <div style="margin: 0 .5rem;">
-      <input type="checkbox" required id="small_print_{{ settings.klaviyo_list_id }}" style="vertical-align: middle">
-      <label for="small_print_{{ settings.klaviyo_list_id }}" class="email-subscribe-label">
-      {{ small_print }}
-      </label>
+      {%- if klaviyo_list_id != blank and klaviyo_public_key != blank -%}
+        <input type="checkbox" required id="small_print_{{ klaviyo_list_id }}" style="vertical-align: middle">
+        <label for="small_print_{{ klaviyo_list_id }}" class="email-subscribe-label">
+          {{ small_print }}
+        </label>
+      {%- else -%}
+        <label for="small_print_{{ defaultFormId }}" class="email-subscribe-label">
+          {{ small_print }}
+        </label>
+      {%- endif -%}
     </div>
-  {% endif %}
-</form>
+  {%- endif -%}
+{%- endcapture -%}
 
-<script type="text/javascript">
-  // Handle subscribe form
-  DomReadyPromise().then(() => {
-    const form = document.querySelector('#email_subscribe_signup_{{ list_id }}');
-  
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      const result = await klaviyoSubscribe(form);
-  
-      if (result) {
-        document
-          .querySelector('.email-subscribe__success')
-          .classList.remove('hide');
-      }
-    });
-  });
-</script>
+{%- capture successMessage -%}
+  <small class="form-message form-message--success toast-message-success" data-form-status style="display: inline-block; margin: 1rem 0; font-size: 15px;"tabindex="-1">
+    {{ section.settings.success }}
+    <span class="close-toast">
+      <i class="fa fa-times"></i>
+    </span>
+  </small>
+{%- endcapture -%}
+
+<newsletter-form>
+  {%- if klaviyo_list_id != blank -%}
+    <form id="email_subscribe_signup_{{ klaviyo_list_id }}"
+      class="klaviyo_bare_embed_{{ klaviyo_list_id }}"
+      action="#"
+      method="POST">
+      <div class="email-subscribe__success hide">
+        {{ successMessage }}
+      </div>
+
+      <div class="email-subscribe__fields flex-group" style="margin: 1rem 0; width: 100%">
+        <input type="hidden" name="list_id" value="{{ klaviyo_list_id }}">
+        <input type="hidden" name="key" value="{{ klaviyo_public_key }}">
+        <input type="hidden" name="source" value="{{ section.settings.source }}">
+        <input type="hidden" name="hpf" value="">
+        <input type="email" required value="{{ customer.email }}" name="email" placeholder="{{ 'contact.form.email' | t }}" class="email-subscribe-input"/>
+        <button type="submit" class=" email-subscribe-button" name="commit">
+          {%- render "icon-chevron-right" -%}
+        </button>
+      </div>
+
+      {{ smallNewsletterPrint }}
+    </form>
+    <script type="text/javascript">
+      // Handle subscribe form
+      DomReadyPromise().then(() => {
+        const form = document.querySelector('#email_subscribe_signup_{{ klaviyo_list_id }}');
+      
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          const result = await klaviyoSubscribe(form);
+      
+          if (result) {
+            document
+              .querySelector('.email-subscribe__success')
+              .classList.remove('hide');
+          }
+        });
+      });
+    </script>
+  {%- else -%}
+    {%- form 'customer', id: defaultFormId, class: 'form-single-field' -%}
+
+      {%- if section.settings.source != blank -%}
+        <input type="hidden" name="contact[tags]" value="{{ section.settings.source }}">
+      {%- endif -%}
+
+      {%- comment -%}
+        Email submit successful!
+      {%- endcomment -%}
+      {%- assign posted_successfully = false -%}
+      {%- unless form.errors contains 'email' -%}
+        {%- if form.posted_successfully? -%}
+          {{ successMessage }}
+          {%- assign posted_successfully = true -%}
+        {%- endif -%}
+      {%- endunless -%}
+
+      <div class="email-subscribe__fields flex-group input-group{% if posted_successfully %} visually-hidden{% endif %}" style="margin: 1rem 0; width: 100%">
+        <input type="email"
+          name="contact[email]"
+          id="{{ defaultFormId }}-email"
+          class="email-subscribe-input{% if form.errors %} input--error{% endif %}"
+          value="{{ customer.email }}"
+          placeholder="Email address..."
+          aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+          aria-required="true"
+          autocorrect="off"
+          autocapitalize="off"
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="{{ defaultFormId }}-email-error"
+            data-form-status
+          {% endif %}
+        >
+        <button aria-label="Join Newsletter"type="submit" name="commit" class="email-subscribe-button no-hover">
+          {%- render "icon-chevron-right" -%}
+        </button>
+      </div>
+
+      {%- comment -%}
+        Form Errors!
+      {%- endcomment -%}
+      {%- if form.errors -%}
+        <p id="{{ defaultFormId }}-email-error" class="input-error-message red">
+          <span class="visually-hidden">{{ 'general.accessibility.error' | t }}</span>
+          <span>
+            <i class="fa fa-exclamation-circle" style="font-family: 'Font Awesome 5 Free' !important;"></i>
+            {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.
+          </span>
+        </p>
+      {%- elsif form['posted_successfully?'] == false and form['tags'] == section.settings.source -%}
+        <p id="{{ defaultFormId }}-email-error" class="input-error-message red">
+          <span class="visually-hidden">{{ 'general.accessibility.error' | t }}</span>
+          <span>
+            <i class="fa fa-exclamation-circle" style="font-family: 'Font Awesome 5 Free' !important;"></i>
+            The email is invalid or has already been used.
+          </span>
+        </p>
+      {%- endif -%}
+
+      {{ smallNewsletterPrint }}
+    {%- endform -%}
+  {%- endif -%}
+</newsletter-form>
 
 {% schema %}
 {
-    "name": "Email Subscribe",
-    "tag": "section",
-    "class": "mos2--component email-subscribe-wrapper",
-    "presets": [
-      {
-        "name": "Email Subscribe"
-      }
-    ],
-    "settings": [
-        {
-            "id": "heading",
-            "type": "text",
-            "label": "Heading"
-        },
-        {
-            "id": "paragraph",
-            "type": "textarea",
-            "label": "Paragraph",
-            "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
-        },
-        {
-            "id": "small_print",
-            "type": "text",
-            "label": "Small Print"
-        },
-        {
-          "id": "success",
-          "type": "textarea",
-          "label": "Success message",
-          "default":"Thanks for subscribing!"
-      },
-      {
-        "id": "source",
-        "type": "text",
-        "label": "source",
-        "default":"npdsignup"
-      }
-    ]
+  "name": "Email Subscribe",
+  "tag": "section",
+  "class": "mos2--component email-subscribe-wrapper",
+  "presets": [
+    {
+      "name": "Email Subscribe"
+    }
+  ],
+  "settings": [
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading"
+    },
+    {
+      "id": "paragraph",
+      "type": "textarea",
+      "label": "Paragraph",
+      "info": "HTML is allowed here. Please use the <p> tags for paragraphs. Example: <p>Text Here</p>"
+    },
+    {
+      "id": "small_print",
+      "type": "text",
+      "label": "Small Print"
+    },
+    {
+      "id": "success",
+      "type": "textarea",
+      "label": "Success message",
+      "default": "Thanks for subscribing!"
+    },
+    {
+      "id": "source",
+      "type": "text",
+      "label": "source",
+      "default": "npdsignup"
+    }
+  ]
 }
 {% endschema %}

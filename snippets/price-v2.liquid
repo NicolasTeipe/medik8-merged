@@ -1,0 +1,38 @@
+{%- comment -%}
+  Snippet to handle pricing across the theme. Handles the following:
+  - standard price w/ no reduction
+  - compare at pricing
+  
+  Sitewide pricing is handled by 'SitewidePriceHandler()'
+
+  Made up of 2 spans in a div.
+  - span 1 is compare at price OR product price if there is a sitewide active
+  - span 2 is actual product price OR sitewide price (if active)
+
+  Takes the following params
+  - variant: string - [ a Shopify variant obj ]
+  - style: string - [ used to identify which styles are required ]
+  - sold_out_price: string - ['true' or blank / '' - indicates whether or not price
+                              should be displayed for sold out items ]
+  - no_script: string - ['true' or blank / '' - indicates whether or not to include js
+{%- endcomment -%}
+
+{%- comment -%} Styles located in 'styles/none-critical.css.liquid' {%- endcomment -%}
+
+{%- assign variant_compare_at = variant.compare_at_price | default: 0 -%}
+
+{%- if variant.available or sold_out_price -%}
+  {%- if variant_compare_at > 0 -%}
+    <s class='price-v2-{{ style }} price-v2__pre-{{ style }}' aria-hidden='true' compare-at='{{ variant_compare_at }}'>{{ variant_compare_at | money_without_trailing_zeros }}</s>
+  {%- endif -%}
+  <span class='price-v2-{{ style }} price-v2__actual-{{ style }} price-v2__{{ variant.id }}' aria-label='Current price'>{{ variant.price | money_without_trailing_zeros }}</span>
+{%- endif -%}
+
+{%- unless no_script -%}
+  <script>
+    (async () => {
+      await DomReadyPromise();
+      sitewide && sitewide.updatePriceV2('{{ variant.id }}', document, true);
+    })();
+  </script>
+{%- endunless -%}

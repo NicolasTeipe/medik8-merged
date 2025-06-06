@@ -1,0 +1,91 @@
+{%- if settings.bloomreach_token != blank -%}
+  <!-- Bloomreach -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function subscribeCookieListener(dataLayer) {
+      // Step to process information already existing in the datalayer
+      dataLayer.forEach(processDatalayerEvent)
+
+      // Set-up a "listener"
+      const originalPush = dataLayer.push;
+      dataLayer.push = function() {
+          originalPush.apply(dataLayer, arguments);
+          Array.from(arguments).forEach(processDatalayerEvent);
+      };
+    
+    }
+  subscribeCookieListener(window.dataLayer);
+
+  function processDatalayerEvent(event){
+    if(event.event === "bre.cookie"){
+      Shopify.analytics.publish("bre.cookie",event);
+    }
+  }
+
+  function getCookieByName(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    var cookie = undefined;
+
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            cookie = c.substring(name.length, c.length);
+            break;
+        }
+    }
+
+    cookie = decodeURIComponent(cookie);
+    cookie = cookie.split('?')[0];
+    return cookie;
+  }
+  
+  </script>
+
+  <script>
+      !function(e,n,t,i,r,o){function s(e){if("number"!=typeof e)return e;var n=new Date;return new Date(n.getTime()+1e3*e)}var a=4e3,c="xnpe_async_hide";function p(e){return e.reduce((function(e,n){return e[n]=function(){e._.push([n.toString(),arguments])},e}),{_:[]})}function m(e,n,t){var i=t.createElement(n);i.src=e;var r=t.getElementsByTagName(n)[0];return r.parentNode.insertBefore(i,r),i}function u(e){return"[object Date]"===Object.prototype.toString.call(e)}o.target=o.target||"https://api.exponea.com",o.file_path=o.file_path||o.target+"/js/exponea.min.js",r[n]=p(["anonymize","initialize","identify","getSegments","update","track","trackLink","trackEnhancedEcommerce","getHtml","showHtml","showBanner","showWebLayer","ping","getAbTest","loadDependency","getRecommendation","reloadWebLayers","_preInitialize","_initializeConfig"]),r[n].notifications=p(["isAvailable","isSubscribed","subscribe","unsubscribe"]),r[n].segments=p(["subscribe"]),r[n]["snippetVersion"]="v2.7.0",function(e,n,t){e[n]["_"+t]={},e[n]["_"+t].nowFn=Date.now,e[n]["_"+t].snippetStartTime=e[n]["_"+t].nowFn()}(r,n,"performance"),function(e,n,t,i,r,o){e[r]={sdk:e[i],sdkObjectName:i,skipExperiments:!!t.new_experiments,sign:t.token+"/"+(o.exec(n.cookie)||["","new"])[1],path:t.target}}(r,e,o,n,i,RegExp("__exponea_etc__"+"=([\\w-]+)")),function(e,n,t){m(e.file_path,n,t)}(o,t,e),function(e,n,t,i,r,o,p){if(e.new_experiments){!0===e.new_experiments&&(e.new_experiments={});var l,f=e.new_experiments.hide_class||c,_=e.new_experiments.timeout||a,g=encodeURIComponent(o.location.href.split("#")[0]);e.cookies&&e.cookies.expires&&("number"==typeof e.cookies.expires||u(e.cookies.expires)?l=s(e.cookies.expires):e.cookies.expires.tracking&&("number"==typeof e.cookies.expires.tracking||u(e.cookies.expires.tracking))&&(l=s(e.cookies.expires.tracking))),l&&l<new Date&&(l=void 0);var d=e.target+"/webxp/"+n+"/"+o[t].sign+"/modifications.min.js?http-referer="+g+"&timeout="+_+"ms"+(l?"&cookie-expires="+Math.floor(l.getTime()/1e3):"");"sync"===e.new_experiments.mode&&o.localStorage.getItem("__exponea__sync_modifications__")?function(e,n,t,i,r){t[r][n]="<"+n+' src="'+e+'"></'+n+">",i.writeln(t[r][n]),i.writeln("<"+n+">!"+r+".init && document.writeln("+r+"."+n+'.replace("/'+n+'/", "/'+n+'-async/").replace("><", " async><"))</'+n+">")}(d,n,o,p,t):function(e,n,t,i,r,o,s,a){o.documentElement.classList.add(e);var c=m(t,i,o);function p(){r[a].init||m(t.replace("/"+i+"/","/"+i+"-async/"),i,o)}function u(){o.documentElement.classList.remove(e)}c.onload=p,c.onerror=p,r.setTimeout(u,n),r[s]._revealPage=u}(f,_,d,n,o,p,r,t)}}(o,t,i,0,n,r,e),function(e,n,t){var i;e[n]._initializeConfig(t),(null===(i=t.experimental)||void 0===i?void 0:i.non_personalized_weblayers)&&e[n]._preInitialize(t),e[n].start=function(i){i&&Object.keys(i).forEach((function(e){return t[e]=i[e]})),e[n].initialize(t)}}(r,n,o)}(document,"exponea","script","webxpClient",window,{
+      target: "https://api.uk.exponea.com",
+      token: "{{ settings.bloomreach_token }}",
+      compliance: {
+        opt_in: getCookieByName("__exponea_etc__") ? false : true,
+      },
+      data_layer: true,
+      experimental: {
+          non_personalized_weblayers: true
+      },
+      // replace with current customer ID or leave commented out for an anonymous customer
+      // customer: window.currentUserId,
+      track: {
+        visits: true,
+        google_analytics: false,
+      },
+  });
+
+  const customerPrivacyApi$ = new ObserverLite({key:'Shopify.customerPrivacyApi'})
+
+  customerPrivacyApi$.once().then((response) => {
+    if (response.analyticsAllowed === true) {
+      var customer = {};
+      var cart_id = getCookieByName('cart');
+      if (cart_id) customer.cart_id = cart_id;
+
+      {% if customer and customer.email %}
+        customer.email_id = {{ customer.email | json }};
+        customer.shopify_id = {{ customer.id | json }};
+      {% endif %}
+
+      exponea.start({
+        "customer": customer
+      });
+    } else {
+      exponea.start();
+    }
+  })
+    
+  </script>
+  <!-- End Bloomreach -->
+{%- endif -%}

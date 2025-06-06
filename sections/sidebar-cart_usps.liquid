@@ -1,0 +1,42 @@
+<sidebar-cart-section class="d-block cell-l cell-r">
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }}
+    }
+  </template>
+  {% if section.blocks.size > 0 %}
+  <template data-content>
+    <ul class="sb-cart-usps flex column-nowrap flex-grid-y--d3">
+      {% for block in section.blocks %}
+        <li class="sb-cart-usps__item lh-r">
+          {{ block.settings.text }}
+        </li>
+      {% endfor %}
+    </ul>
+  </template>
+  {% endif %}
+</sidebar-cart-section>
+{% unless section.blocks.size > 0 %}
+
+{% endunless %}
+
+{% schema %}
+{ 
+  "name":"sb-cart/usps",
+  "blocks": [
+    {
+      "type": "bullet",
+      "name": "bullet",
+      "limit": 8,
+      "settings": [
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -31,7 +31,7 @@
     @media all and (min-width: 768px) {
       .announcement-bar .message-block p,
       .announcement-bar .button-block {
-        font-size: 14px; } }
+        font-size: 13px; } }
   .announcement-bar .countdown-grid {
     display: grid;
     grid-template-columns: repeat(4, 65px);

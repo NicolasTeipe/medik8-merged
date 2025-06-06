@@ -1,0 +1,62 @@
+h3, .h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  margin: 0 0 17.5px;
+  font-family: var(--font-stack-header);
+  font-style: var(--font-style-header);
+  font-weight: var(--font-weight-header);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-wrap: break-word; }
+  h3 a, .h3 a,
+  h4 a,
+  .h4 a,
+  h5 a,
+  .h5 a,
+  h6 a,
+  .h6 a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit; }
+
+h3, .h3 {
+  font-size: calc(((var(--font-size-header)) / (var(--font-size-base))) * 1em);
+  text-transform: none;
+  letter-spacing: 0; }
+  @media only screen and (max-width: 749px) {
+    h3, .h3 {
+      font-size: calc(((var(--font-h3-mobile)) / (var(--font-size-base))) * 1em); } }
+
+
+h4,
+.h4 {
+  font-size: calc(((var(--font-h4-desktop)) / (var(--font-size-base))) * 1em); }
+  @media only screen and (max-width: 749px) {
+
+    h4,
+    .h4 {
+      font-size: calc(((var(--font-h4-mobile)) / (var(--font-size-base))) * 1em); } }
+
+
+h5,
+.h5 {
+  font-size: calc(((var(--font-h5-desktop)) / (var(--font-size-base))) * 1em); }
+  @media only screen and (max-width: 749px) {
+
+    h5,
+    .h5 {
+      font-size: calc(((var(--font-h5-mobile)) / (var(--font-size-base))) * 1em); } }
+
+
+h6,
+.h6 {
+  font-size: calc(((var(--font-h6-desktop)) / (var(--font-size-base))) * 1em); }
+  @media only screen and (max-width: 749px) {
+
+    h6,
+    .h6 {
+      font-size: calc(((var(--font-h6-mobile)) / (var(--font-size-base))) * 1em); } }

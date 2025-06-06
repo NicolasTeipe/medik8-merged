@@ -46,7 +46,6 @@
           <p class="p--lg" style="margin: 10px;">{{ 'customer.order.date' | t: date: order.created_at | date: "%B %d, %Y %I:%M%p" }}</p>
           <p>
             <button 
-              onclick="reorder()" 
               id="addAllToCart" 
               class="btn cell-l--d2 cell-r--d2 {% if can_be_reordered == false %} reorder-disabled{% endif %}" 
               {% if can_be_reordered == false %}disabled{% endif %}>
@@ -241,98 +240,114 @@
   customElements.define('global-sidebar-cart-toast', GlobalSidebarCartToast);
 
 
-  const showNativeSidebarCart = {{ settings.enable_sidebarcart | json }}
-  const GlobalCartMain = window.GlobalCartMain 
-  const addAllToCart = document.querySelector('#addAllToCart')
-  const itemsToAdd = {
-    items:[]
 
-  }
-  {% for line_item in order.line_items %}
-    {% unless line_item.properties._upsell_validation or line_item.product.handle contains 'sample' %}
-    {% assign product = all_products[line_item.product.handle] %}
-    {% if product.id != blank and line_item.variant.inventory_quantity >= line_item.quantity %}
-      itemsToAdd.items.push({
-        id:{{ line_item.variant.id | json }},
-        quantity:{{ line_item.quantity | json }}
+  DomReadyPromise().then( async () => {
+    const cart = await new GlobalCart()
+    const addAllToCart = document.querySelector('#addAllToCart')
+    const itemsToAdd = {
+      items:[]
+  
+    }
+    {% for line_item in order.line_items %}
+      {% unless line_item.properties._upsell_validation or line_item.product.handle contains 'sample' %}
+      {% assign product = all_products[line_item.product.handle] %}
+      {% if product.id != blank and line_item.variant.inventory_quantity >= line_item.quantity %}
+        itemsToAdd.items.push({
+          id:{{ line_item.variant.id | json }},
+          quantity:{{ line_item.quantity | json }}
+        })
+      {% endif %}
+      {% endunless %}
+    {% endfor %}
+  
+    function reorder(event) {
+      let newItemsToAdd = {
+        items: itemsToAdd.items.map( item => {
+          let quantity = item.quantity
+          let cartLineItemQty = cart.getLineItemsByVariantId(item.id)
+          cartLineItemQty = cartLineItemQty[0]?.quantity  || 0
+          const maxRemaining = 6 - cartLineItemQty
+          return {
+            id:item.id,
+            quantity: !maxRemaining ? 0 : quantity > maxRemaining ? quantity - maxRemaining : quantity
+          }
+        }).filter( ({quantity}) => quantity > 0)
+      }
+      if(!newItemsToAdd.items.length){
+        showToastWithError('There was an error adding those items',true)
+        return
+      } 
+      addAllToCart.classList.add('btn--loading')
+      cart.addToCart(newItemsToAdd)
+      .then( () => {
+        addAllToCart.classList.remove('btn--loading')
+        showToastWithSuccess()
       })
-    {% endif %}
-    {% endunless %}
-  {% endfor %}
-
-  function reorder(event) {
-    addAllToCart.classList.add('btn--loading')
-    GlobalCartMain.addToCart(itemsToAdd)
-    .then( () => {
-      addAllToCart.classList.remove('btn--loading')
-      showToastWithSuccess()
-    })
-    .catch(err => {
-      addAllToCart.classList.remove('btn--loading')
-      showToastWithError(err.description)
-    })
-  }
-
-  function showToastWithSuccess(){
-    if(!showNativeSidebarCart) return
-    const {globalSideBarUI__cart,globalSideBarCartInstance} = window
-    globalSideBarUI__cart.open()
+      .catch(err => {
+        addAllToCart.classList.remove('btn--loading')
+        showToastWithError(err.description)
+      })
+    }
+  
+    async function showToastWithSuccess(){
+      const globalSideBarCartUi$ = new ObserverLite({key:'GlobalSidebar.SidebarCart'})
+      const globalSideBarCartUi = await globalSideBarCartUi$.once() 
+      const SidebarCartItems$ = new ObserverLite({key:'GlobalSidebar.SidebarCart.Sections.CartItems'})
+      const SidebarCartItems = await SidebarCartItems$.once()
+      const toast = `
+        <global-sidebar-cart-toast>
+          <template>
+            {
+              "message":{{ 'customer.order.reorder_success' | t | json }},
+              "messageClass":"toast-message-success timer"
+            }
+          </template>
+        </global-sidebar-cart-toast>
+      `
+      SidebarCartItems.insertAdjacentHTML('afterbegin', toast);
+      globalSideBarCartUi.open()
+  
+    }
+  
+    async function showToastWithError(message,showInOrderUI){
+      const globalSideBarCartUi$ = new ObserverLite({key:'GlobalSidebar.SidebarCart'})
+      const globalSideBarCartUi = await globalSideBarCartUi$.once() 
+      const SidebarCartItems$ = new ObserverLite({key:'GlobalSidebar.SidebarCart.Sections.CartItems'})
+      const SidebarCartItems = await SidebarCartItems$.once()
     
-    const toast = `
-      <global-sidebar-cart-toast>
-        <template>
-          {
-            "message":{{ 'customer.order.reorder_success' | t | json }},
-            "messageClass":"toast-message-success timer"
-          }
-        </template>
-      </global-sidebar-cart-toast>
-    `
-
-    globalSideBarCartInstance.extensions.push({
-      extensionPoint:'header:bottom',
-      content:toast
-    })
-
-    if(globalSideBarCartInstance.rendered){
-      globalSideBarCartInstance.render()
+     
+      const itemCount = cart.cart?.item_count || 0
+  
+      const toast = `
+        <global-sidebar-cart-toast 
+          ${!itemCount ? (
+            `class="d-block row--d2"`
+          ) : ''}
+        >
+          <template>
+            {
+              "message":${JSON.stringify(message)},
+              "messageClass":"toast-message-error timer"
+            }
+          </template>
+        </global-sidebar-cart-toast>
+      `
+  
+      // if cart is empty, show the toast in the order UI else show in the cart UI
+      if(!itemCount || showInOrderUI){
+        document.querySelector('.js-order-page-top-info').insertAdjacentHTML('afterend',toast)
+        return
+      }
+  
+      SidebarCartItems.insertAdjacentHTML('afterbegin', toast);
+      globalSideBarCartUi.open()
+      
     }
-  }
 
-  function showToastWithError(message){
-    if(!showNativeSidebarCart) return
-    const itemCount = GlobalCartMain.cart?.item_count || 0
 
-    const toast = `
-      <global-sidebar-cart-toast 
-        ${!itemCount ? (
-          `class="d-block row--d2"`
-        ) : ''}
-      >
-        <template>
-          {
-            "message":${JSON.stringify(message)},
-            "messageClass":"toast-message-error timer"
-          }
-        </template>
-      </global-sidebar-cart-toast>
-    `
-
-    // if cart is empty, show the toast in the order UI else show in the cart UI
-    if(!itemCount){
-      document.querySelector('.js-order-page-top-info').insertAdjacentHTML('afterend',toast)
-      return
-    }
-    
-    const {globalSideBarUI__cart,globalSideBarCartInstance} = window
-    globalSideBarUI__cart.open()
-    globalSideBarCartInstance.extensions.push({
-      extensionPoint:'header:bottom',
-      content:toast
-    })
-
-    if(globalSideBarCartInstance.rendered){
-      globalSideBarCartInstance.render()
-    }
-  }
+    addAllToCart.addEventListener('click',reorder)
+  }).catch(err =>{
+    console.log(err)
+  })
+  
 </script>

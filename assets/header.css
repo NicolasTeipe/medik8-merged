@@ -4,14 +4,14 @@
   padding: 15px 0 0;
   position: sticky;
   position: -webkit-sticky;
-  top: -41px;
+  top: -1px;
   z-index: 1000; }
   @media (max-width: 768px) {
     .wayfx-header.modal-open {
       z-index: 1; } }
-  @media all and (max-width: 768px) {
+  @media all and (min-width: 768px) {
     .wayfx-header {
-      top: -1px; } }
+      top: -41px; } }
   @media all and (max-width: 1023px) {
     .wayfx-header {
       padding: 19px 0; } }
@@ -146,7 +146,11 @@
         outline: 0; }
   .wayfx-header .wayfx-header__logo {
     max-width: 100%;
-    text-align: center; }
+    text-align: center;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%; }
     @media all and (max-width: 1023px) {
       .wayfx-header .wayfx-header__logo {
         align-items: center;
@@ -179,7 +183,7 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    padding: 16px 0 0 0;
+    padding-top: 16px;
     position: relative; }
     @media all and (max-width: 1023px) {
       .wayfx-header .wayfx-header__nav--desktop {
@@ -221,7 +225,10 @@
       .wayfx-header .wayfx-header__nav--desktop .wayfx-header__dropdown.wayfx-header__dropdown--full {
         left: 0;
         padding: 48px 0;
-        width: 100%; }
+        transform: translateX(-50%);
+        width: 100vw;
+        width: 100dvw;
+        left: 50%; }
       .wayfx-header .wayfx-header__nav--desktop .wayfx-header__dropdown.wayfx-header__dropdown--small {
         margin-left: -17px;
         min-width: 207px;
@@ -538,3 +545,110 @@
   -ms-animation: 1s blink ease infinite;
   -o-animation: 1s blink ease infinite;
   animation: 1s blink ease infinite; }
+
+.template-index.dark-mode .wayfx-header {
+  background: var(--body-Background);
+  border-bottom: 1px solid var(--colorSecondary); }
+
+.template-index.dark-mode .wayfx-header__icon:hover {
+  filter: brightness(50%);
+  color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__search-back-close {
+  color: var(--colorLinkHover); }
+
+.template-index.dark-mode .wayfx-header__search-close {
+  transition: color 0.2s, filter 0.2s;
+  filter: brightness(100%);
+  color: var(--colorBorder);
+  transition: color 0.2s; }
+  .template-index.dark-mode .wayfx-header__search-close:hover {
+    filter: brightness(50%);
+    color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__search form {
+  background: var(--body-Background);
+  border: 1px solid var(--colorBorder); }
+
+.template-index.dark-mode form.wayfx-header__search-active {
+  border-color: var(--colorBorder); }
+
+.template-index.dark-mode input {
+  background: var(--body-Background);
+  color: var(--bodyText); }
+  @media all and (max-width: 1023px) {
+    .template-index.dark-mode input {
+      color: var(--bodyText);
+      filter: none; } }
+
+.template-index.dark-mode .banner-item input {
+  background: var(--color-white);
+  color: var(--color-black); }
+
+.template-index.dark-mode .wayfx-header__logo-link img,
+.template-index.dark-mode .wayfx-header__logo-link svg {
+  fill: var(--colorPrimary); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link > a {
+  color: var(--colorLinkHover); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link:hover > a span.wayfx-text:before {
+  background: var(--colorPrimary); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link .wayfx-header__dropdown {
+  background: var(--body-Background); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link .heading {
+  filter: brightness(50%);
+  color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link ol li::before {
+  color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__nav--desktop .wayfx-header__nav-link ul li a {
+  color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__shop-all-link {
+  color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-header__kit-link {
+  background: var(--body-Background); }
+  .template-index.dark-mode .wayfx-header__kit-link .wayfx-header__kit-title {
+    color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-header__kit-link .wayfx-header__kit-text {
+    filter: grayscale(100%) brightness(85%);
+    color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-header__kit-link .wayfx-header__kit-discount {
+    color: var(--bodyText); }
+
+.template-index.dark-mode .wayfx-mobile__nav {
+  background: var(--body-Background); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__heading-left button {
+    color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__heading-center {
+    color: var(--colorLinkHover); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__heading-right button {
+    color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__has-sub-menu {
+    background-image: var(--chevron-icon); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level0,
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level1,
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level2 {
+    background: var(--body-Background); }
+    .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level0 > li,
+    .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level1 > li,
+    .template-index.dark-mode .wayfx-mobile__nav .wayfx-mobile__body .wayfx-mobile__level2 > li {
+      border-top: 1px solid var(--colorBorder);
+      color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-header__nav-link > a {
+    color: var(--colorLinkHover); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-header__dropdown {
+    background: var(--body-Background); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-header__dropdown h5 {
+    color: var(--bodyText); }
+  .template-index.dark-mode .wayfx-mobile__nav .wayfx-header__dropdown ul li a {
+    color: var(--bodyText); }
+
+.template-index.dark-mode .global-cart-counter {
+  background: var(--colorPrimary);
+  color: var(--colorSecondary); }

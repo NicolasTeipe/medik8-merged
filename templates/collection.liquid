@@ -1,22 +1,20 @@
+<!-- templates/collection.liquid -->
+
 {%- if collection.image -%}
-{% section 'collection-header-with-image' %}
+  {% section 'collection-header-with-image' %}
 {%- else -%}
-{% section 'collection-header' %}
+  {% section 'collection-header' %}
 {%- endif -%}
 
-{% if collection.handle == "muestras" %}
-  <script>
-    window.location.href = "/collections/todos-los-productos";
-  </script>
+{% if settings.d2__collection__show %}
+  <div class="js-collection-aov collection-aov-bar">
+    <div class="wayfx-wrapper">
+      <global-cart-progress-bar class="d-block"></global-cart-progress-bar>
+    </div>
+  </div>
 {% endif %}
 
-
-{%- if settings.progress_discount__enabled == "collection" or settings.progress_discount__enabled == "both" -%}
-  <global-aov-bar class="js-collection-aov collection-aov-bar"></global-aov-bar>
-{%- endif -%}
-
-
-<div class="wayfx-wrapper">
+<div class="wayfx-wrapper ct">
   <div class="grid">
    {% section 'collection-sidebar' %}
     <div class="grid__item large--three-quarters">
@@ -42,36 +40,36 @@
         {% endfor %}
       </div>
       {%- endpaginate -%}
+
+      {%- render 'collection-faqs' -%}
     </div>
   </div>
 </div>
 
 {% if settings.collection_advert_enabled %}
-<span id="advert" style="display: none;">
-  {% render 'product-grid-item-ad' %}
-</span>
+  <span id="advert" style="display: none;">
+    {% render 'product-grid-item-ad' %}
+  </span>
 
 
-<script>
+  <script>
+    function collectionAdvert() {
+      let items = $('.wayfx-product__item:visible'),
+          advert = $('#advert').html(),
+          visibleAds = $('.wayfx-product__item-ad:visible');
 
-  function collectionAdvert() {
-    let items = $('.wayfx-product__item:visible'),
-        advert = $('#advert').html(),
-        visibleAds = $('.wayfx-product__item-ad:visible');
+      visibleAds.remove();
 
-    visibleAds.remove();
+      items.map(function(index) {
+        let item = $(this),
+            realIndex = index + 1;
+        item.find('.grid-item-index').html(realIndex)
+        if (realIndex == 3) {
+          $(advert).insertBefore(item);
+        }
+      })
+    }
 
-    items.map(function(index) {
-      let item = $(this),
-          realIndex = index + 1;
-      item.find('.grid-item-index').html(realIndex)
-      if (realIndex == 3) {
-        $(advert).insertBefore(item);
-      }
-    })
-  }
-
-  collectionAdvert();
-
-</script>
+    collectionAdvert();
+  </script>
 {% endif %}

@@ -1,0 +1,69 @@
+{% assign show_cta_wrapper = true %}
+{% assign cta_count = 2 %}
+{% assign cta_item_span = 2 %}
+{% assign cta_item_class = 'gap--d3 ' %}
+{% assign cta_item_image_class = 'block-ar-1 block-12/12 block-objc row--d4' %}
+{% assign cta_item_heading_class = 't-xxs' %}
+{% assign show_links_wrapper = true %}
+{% assign links__wrapper_span = 8 %}
+
+{% case block.type %}
+  {% when '2_cta_rect'%}
+    {% assign cta_item_span = 4 %}
+    {% assign cta_item_image_class = 'block-ar-2 block-12/12 block-objc row--d4' %}
+{% assign cta_item_heading_class = 't-rm' %}
+    {% assign links__wrapper_span = 4 %}
+  {% when '3_cta'%}
+    {% assign cta_count = 3 %}
+    {% assign links__wrapper_span = 6 %}
+  {% when '4_cta'%}
+    {% assign cta_count = 4 %}
+    {% assign links__wrapper_span = 4 %}
+  {% when '6_cta'%}
+    {% assign cta_count = 6 %}
+    {% assign show_links_wrapper = false %}
+  {% when 'no_cta'%}
+    {% assign links__wrapper_span = 12 %}
+    {% assign show_cta_wrapper = false %}
+{% endcase %}
+
+{% assign has_view_all_link = false %}
+{% if block.settings.view_all__text != blank and block.settings.view_all__link != blank %}
+  {% assign has_view_all_link = true %}
+{% endif %}
+
+{%- assign links = linklists[block.settings.linklist].links -%}
+
+<global-header-dropdown class="mh-dropdown bg-grey-2 tal">
+  <template>
+    <div class="block-grid block-grid--index flex gap cell-l cell-r block-rel ct--x2{% if has_view_all_link == false %} cb--x2{% endif %}{% if links.size > 10 %} multi-row-and-column{% endif %}">
+      
+      {% if show_links_wrapper %}
+        {% render 'v2_navigation.header.dropdown.links'
+          links: links,
+          block: block,
+          links__wrapper_span: links__wrapper_span
+        %}
+      {% endif %}
+
+      {% if show_cta_wrapper %}
+        {% render 'v2_navigation.header.dropdown.ctas'
+          block: block,
+          cta_count: cta_count,
+          cta_item_span: cta_item_span,
+          cta_item_class: cta_item_class,
+          cta_item_image_class: cta_item_image_class,
+          cta_item_heading_class: cta_item_heading_class
+        %}
+      {% endif %}
+    </div>
+
+    {% if has_view_all_link %}
+      <div class="block-12/12 ct cb row-top bdr-t bdr-grey-3 cell-l cell-r">
+        <div class="block-grid block-grid--index cell-l cell-r">
+          <a class="mh-dropdown__view-all f-w400 t-r flex align-center" href="{{ block.settings.view_all__link }}">{{ block.settings.view_all__text }}</a>
+        </div>
+      </div>
+    {% endif %}
+  </template>
+</global-header-dropdown>

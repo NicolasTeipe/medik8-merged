@@ -1,3 +1,5 @@
+<!-- sections/f-accordion-proven-results.liquid -->
+
 {% unless product.metafields.accordion.proven_results.value == blank %}
   <proven-results>
     <details class="wrapper" {{ section.settings.start_state }}>
@@ -47,12 +49,15 @@
                     assign stat_text = stat | replace: '_', ',' | replace: stat_num, ''
                   endif
                 %}
-                <span>{{ stat_num }}</span>{{ stat_text }}
+                <span>{{ stat_num }}</span><span>{{ stat_text | replace: '[sup]', '<sup>' | replace: '[/sup]', '</sup>' }}</span>
               </li>
             {%- endfor -%}
           </ul>
-
-          <p>{{ section.settings.smallprint }}</p>
+          {%- comment -%}
+            Inline styles tag comes with product/hydr8-b5-intense
+            which are erroring out in the HTML validator.
+          {%- endcomment -%}
+          <p>{{ section.settings.smallprint | strip_html }}</p>
         </div>
 
       </div>
@@ -75,6 +80,11 @@
       }
 
       connectedCallback() {
+        // avoid re-binding events when item is moved in the DOM (MED-2708 for why we do this)
+        if(this.mounted){
+          return
+        }
+        this.mounted = true
         this.viewportWidth < this.mobileWidthBp
           ? this.initPinchZoom()
           : this.handleImageClick()
@@ -91,7 +101,7 @@
       }
 
       handleImageClick() {
-        this.beforeAfterEl.addEventListener('click', () => {
+        this.beforeAfterEl?.addEventListener('click', () => {
 
           const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -99,7 +109,7 @@
           const overlay = document.createElement('div');
           overlay.classList.add('accordion-overlay');
           overlay.style.zIndex = 9000;
-          document.body.appendChild(overlay);
+          this.beforeAfterEl.parentNode.appendChild(overlay);
           document.body.classList.add('body-scroll-lock')
           document.body.style.top = `-${scrollPosition}px`;
 
@@ -177,6 +187,8 @@
     customElements.define('before-after-compare', BeforeAfterCompare)
 
   </script>
+
+  {% render 'f-product.sections-data-layer' %}
 {% endunless %}
 {% schema %}
     {

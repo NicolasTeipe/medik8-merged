@@ -1,15 +1,19 @@
+<!-- snippets/collection.sidebar.liquid -->
+
 {% capture mobile_filter_actions %}
-    <div>
-        <button class="btn--outline wayfx-collection__clear-filters" type="button">{{ 'collections.sidebar.clear_all' | t }}</button>
-    </div>
-    <div>
-        <button class="btn btn--large wayfx-collection__filter-close" type="button">{{ 'collections.sidebar.done' | t }}</button>
-    </div>
+  <div>
+    <button class="btn--outline wayfx-collection__clear-filters" type="button">{{ 'collections.sidebar.clear_all' | t }}</button>
+  </div>
+  <div>
+    <button class="btn btn--large wayfx-collection__filter-close" type="button">{{ 'collections.sidebar.done' | t }}</button>
+  </div>
 {% endcapture %}
+
 <div class="wayfx-collection__sidebar-header wayfx-collection__sidebar-header--desktop">
-    <span>Filtrar por</span>
-    <span class="wayfx-collection__clear-filters">{{ 'collections.sidebar.clear_filters' | t }}</span>
+  <span>Filter by</span>
+  <span class="wayfx-collection__clear-filters">{{ 'collections.sidebar.clear_filters' | t }}</span>
 </div>
+
 <div class="wayfx-collection__sidebar-header wayfx-collection__sidebar-header--mobile">
     <button aria-label="Close Filters" class="wayfx-collection__filter-close" type="button">
         <i class="wayfx-icon wayfx-icon-long-arrow-left"></i>
@@ -17,7 +21,7 @@
     <div class="wayfx-collection__sidebar-title">{{ 'collections.sidebar.filter_products' | t }}</div>
 </div>
 
-{% comment %} {%- assign filters-type = "Sueros, Hidratantes, Limpiadores y Tónicos, Exfoliantes y Mascarillas,  Kits, Ácidos directos, Ojos y Labios, Viaje, Accesorios" | split: ', ' -%}
+{% comment %} {%- assign filters-type = "Serums, Moisturizers, Cleansers & Toners, Exfoliators & Masks, Kits, Direct Acids, Eyes & Lips, Travel, Accessories" | split: ', ' -%}
 {%- assign concern-filters = "Fine Lines & Wrinkles, Anti-Pollution, Blemish, Dry & Dehydrated Skin, Pigmentation, Pore Refining, Redness, Body" | split: ', ' -%}
 {%- assign ingredients-filters = "Retinal, Retinol, Retinyl Retinoate, Peptides, Glycolic Acid, Niacinamide, Hyaluronic Acid, Ceramides, Salicylic Acid (BHA), Gluconolactone (PHA)" | split: ', ' -%}
 {%- assign csa-filters = "Vitamin C, Sunscreen, Vitamin A, CSA Kits, Advanced Line" | split: ', ' -%} {% endcomment %}
@@ -25,38 +29,34 @@
 {% assign filter-categories = settings.filter_categories | split: ', ' %}
 
 <div class="wayfx-collection__sidebar-filters">
-    <div class="wayfx-collection__filter-actions wayfx-collection__filter-actions--top">
-        {{ mobile_filter_actions }}
-    </div>
-    <div class="wayfx-collection__sidebar-flex">
-      {% for filter-cat in filter-categories %}
+  <div class="wayfx-collection__filter-actions wayfx-collection__filter-actions--top">
+    {{ mobile_filter_actions }}
+  </div>
 
-        {% if filter-cat == "type" %}
-          {% assign filter-id = "type" %}
-          {% assign filter-name = "tipo" %}
-          {%- assign filters = settings.filter_type | split: ', ' -%}
-        {% elsif filter-cat == "concern" %}
-          {% assign filter-id = "concern" %}
-          {% assign filter-name = "preocupación" %}
-          {%- assign filters = settings.filter_concern | split: ', ' -%}
-        {% elsif filter-cat == "ingredients" %}
-          {% assign filter-id = "ingredients" %}
-          {% assign filter-name = "ingredientes" %}
-          {%- assign filters = settings.filter_ingredients | split: ', ' -%}
-        {% elsif filter-cat == "csa" %}
-          {% assign filter-id = "csa" %}
-          {% assign filter-name = "csa" %}
-          {%- assign filters = settings.filter_csa | split: ', ' -%}
-        {% endif %}
+  <div class="wayfx-collection__sidebar-flex">
+    {% for filter-cat in filter-categories %}
+      {% if filter-cat == "type" %}
+        {% assign filter-id = "type" %}
+        {%- assign filters = settings.filter_type | split: ', ' -%}
+      {% elsif filter-cat == "concern" %}
+        {% assign filter-id = "concern" %}
+        {%- assign filters = settings.filter_concern | split: ', ' -%}
+      {% elsif filter-cat == "ingredients" %}
+        {% assign filter-id = "ingredients" %}
+        {%- assign filters = settings.filter_ingredients | split: ', ' -%}
+      {% elsif filter-cat == "csa" %}
+        {% assign filter-id = "csa" %}
+        {%- assign filters = settings.filter_csa | split: ', ' -%}
+      {% endif %}
 
-        {% assign showFilterSet = true %}
-        {% if collection.metafields.MOS2.collection_category and collection.metafields.MOS2.collection_category.value == filter-id %}
-          {% assign showFilterSet = false %}
-        {% endif %}
+      {% assign showFilterSet = true %}
+      {% if collection.metafields.MOS2.collection_category and collection.metafields.MOS2.collection_category.value == filter-id %}
+        {% assign showFilterSet = false %}
+      {% endif %}
 
-        {% if showFilterSet %}
+      {% if showFilterSet %}
         <div class="wayfx-collection__sidebar-block">
-          <h2 class="h3">{{filter-name | capitalize }}</h2>
+          <h2 class="h3">{{filter-id | capitalize }}</h2>
           <ul class="wayfx-filter wayfx-filter--{{filter-id}}">
             {%- for filter in filters -%}
               <li>
@@ -66,33 +66,29 @@
                   <span class="text">{{ filter }}</span>
                 </label>
               </li>
-
-		        	<script type="text/javascript">
-               
-                  if (window.location.href.includes("filter_{{filter-id}}={{ filter | handleize }}")) {
-                    const checkbox = document.querySelector(".wayfx-filter-{{filter-id}}--{{ filter | handleize }} input")
-                    if (!checkbox.checked) {
-                      setTimeout(() => {
-                        checkbox.checked = true
-                      }, 0)
-                    }
+              <script type="text/javascript">
+                if (window.location.href.includes("filter_{{filter-id}}={{ filter | handleize }}")) {
+                  const checkbox = document.querySelector(".wayfx-filter-{{filter-id}}--{{ filter | handleize }} input")
+                  if (!checkbox.checked) {
+                    setTimeout(() => {
+                      checkbox.checked = true
+                    }, 0)
                   }
-                
+                }
               </script>
-
             {%- endfor -%}
           </ul>
         </div>
       {% endif %}
-      {% endfor %}
-    </div>
-    <div class="wayfx-collection__filter-actions wayfx-collection__filter-actions--bottom">
-        {{ mobile_filter_actions }}
-    </div>
+    {% endfor %}
+  </div>
+
+  <div class="wayfx-collection__filter-actions wayfx-collection__filter-actions--bottom">
+    {{ mobile_filter_actions }}
+  </div>
 </div>
 
 <script type="text/javascript">
-
   function setQueryString() {
     const filters = document.querySelectorAll('.wayfx-filter-option input:checked')
     const flavours = Array.from(filters, f => f.dataset.type)
@@ -134,7 +130,7 @@
     const wayfxActiveFiltersCount = wayfxFilters.length
     const wayfxResetButton = document.querySelector('.wayfx-collection__clear-filters')
     wayfxActiveFiltersWrapper.innerHTML = `(${wayfxActiveFiltersCount})`
-     
+
     if (wayfxActiveFiltersCount > 0) {
       wayfxResetButton.style.display = 'inline-block'
     } else {
@@ -207,23 +203,18 @@
     filterCount()
     setQueryString()
   }
-  
-
 
   DomReadyPromise().then( () => {
-    
     window.collectionFiltersUpdate$ = window.collectionFiltersUpdate$ || new ObserverLite()
     const wayfxResetButton = document.querySelector('.wayfx-collection__clear-filters')
     const wayfxCloseFilters = document.querySelector('.wayfx-collection__filter-close')
     const wayfxFilterSidebar = document.querySelector('.wayfx-collection__sidebar')
-
     
     document.querySelectorAll('.wayfx-filter-option').forEach(element => {
       element.addEventListener('click', () => {
-       updateFilters()
+        updateFilters()
       })
     })
-
 
     wayfxCloseFilters.addEventListener('click', () => {
       wayfxFilterSidebar.style.display = 'none'
@@ -239,11 +230,4 @@
   }).catch(err => {
     console.log(err)
   })
-  
-
-    
-
-
-
 </script>
-

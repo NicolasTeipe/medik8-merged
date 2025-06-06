@@ -1,0 +1,223 @@
+<!-- snippets/global.hero-banner.liquid -->
+
+{%- 
+  liquid 
+  assign has_mobile_font_color = false
+  assign has_mobile_heading = false
+  assign has_mobile_text = false
+  assign has_mobile_cta = false
+
+  if settings.mobile__text_color != settings.desktop__text_color
+    assign has_mobile_font_color = true
+  endif
+
+  if settings.mobile__heading != blank and settings.mobile__heading != settings.desktop__heading
+    assign has_mobile_heading = true
+  endif
+
+  if settings.mobile__paragraph != blank and settings.mobile__paragraph != settings.desktop__paragraph
+    assign has_mobile_paragraph = true
+  endif
+
+  if settings.mobile__cta_text != blank and settings.mobile__cta_url != blank and settings.mobile__cta_text != settings.settings__cta_text
+    assign has_mobile_cta = true
+  endif
+-%}
+
+{% capture desktop_heading %}
+  {% if settings.desktop__heading != blank %}
+  <span 
+    class="{% if has_mobile_heading %}@mobile__hide {% endif %}" 
+    style="color:{{ settings.desktop__text_color }}">
+      {{ settings.desktop__heading }}
+  </span>
+  {% endif %}
+{% endcapture %}
+
+{% capture mobile_heading %}
+  {% if has_mobile_heading %}
+  <span 
+    class="@mobile__show" 
+    style="color:{%  
+      liquid 
+      if has_mobile_font_color
+        echo settings.mobile__text_color 
+      else
+        echo settings.desktop__text_color
+      endif
+    %}">
+      {{ settings.mobile__heading }}
+  </span>
+  {% endif %}
+{% endcapture %}
+
+{% capture desktop_parapgraph %}
+  {% if settings.desktop__paragraph != blank %}
+  <div 
+    class="rte-content t-rm lh-20{% if has_mobile_paragraph %} @mobile__hide {% endif %}" 
+    style="color:{{ settings.desktop__text_color }}">
+      {{ settings.desktop__paragraph }}
+  </div>
+  {% endif %}
+{% endcapture %}
+    
+{% capture mobile_paragraph %}
+  {% if has_mobile_paragraph %}
+  <div 
+    class="@mobile__show rte-content" 
+    style="color:{%  
+      liquid 
+      if has_mobile_font_color
+        echo settings.mobile__text_color 
+      else
+        echo settings.desktop__text_color
+      endif
+    %}">
+      {{ settings.mobile__paragraph }}
+  </div>
+  {% endif %}
+{% endcapture %}
+
+{% capture desktop_cta %}
+  {% if settings.desktop__cta_text != blank and settings.desktop__cta_url != blank %}
+  <a 
+    href="{{ settings.desktop__cta_url }}"
+    class="v2-btn v2-btn--{{ settings.desktop_cta_button }} {% if has_mobile_cta %}@mobile__hide {% endif %}">
+      {{ settings.desktop__cta_text }}
+  </a>
+  {% endif %}
+{% endcapture %}
+    
+{% capture mobile_cta %}
+  {% if has_mobile_cta %}
+  <a 
+    href="{{ settings.mobile__cta_url }}"
+    class="v2-btn v2-btn--{{ settings.mobile_cta_button }} @mobile__show">
+      {{ settings.mobile__cta_text }}
+  </a>
+  {% endif %}
+{% endcapture %}
+
+{%- capture desktop__cta_alignment -%}
+  {% case settings.desktop__text_align %}
+    {% when 'tar' %}
+      justify-right
+    {% when 'tal' %}
+      justify-left
+    {% else %}
+      justify-center
+  {% endcase %}
+{%- endcapture -%}
+
+{%- capture mobile__cta_alignment -%}
+  {% case settings.mobile__text_align %}
+    {% when 'tar' %}
+      @mobile__justify-right
+    {% when 'tal' %}
+      @mobile__justify-left
+    {% else %}
+      @mobile__justify-center
+  {% endcase %}
+{%- endcapture -%}
+
+<div class="{{ class }} block-rel" data-slide-delay="{{ slide_delay }}">
+  {% liquid
+    assign dekstopImageWrapperClass = 'block-rel'
+    if settings.mobile__image != blank or desktop_video != blank
+      assign dekstopImageWrapperClass = 'block-rel @mobile__hide'
+    endif 
+  %}
+
+  {%- if settings.desktop__image != blank or desktop_video != blank -%}
+    <div class="{{ dekstopImageWrapperClass }}">
+      {%- if desktop_video == blank -%}
+        {{ settings.desktop__image | 
+          image_url: width: 2048 | 
+          image_tag: 
+            widths: '2048,1566,1366,1280,1024',
+            preload: false, 
+            loading: loading, 
+            alt: settings.mobile__image.alt,
+            class: 'd-block block-12/12'
+        }}
+        {%- if desktop_hotspots != blank -%}
+          {{ desktop_hotspots }}
+        {%- endif -%}
+      {%- else -%}
+        {{ desktop_video }}
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {% if settings.mobile__image != blank or mobile_video != blank %}
+  <div class="block-rel @mobile__show">
+    {%- if mobile_video == blank -%}
+      {{ settings.mobile__image | 
+        image_url: width: 736 |  
+        image_tag: 
+          widths: '1280,1024,736,512,380,256',
+          preload: false, 
+          loading: loading , 
+          alt: settings.mobile__image.alt,
+          class: 'd-block block-12/12'
+      }}
+      {%- if mobile_hotspots != blank -%}
+        {{ mobile_hotspots }}
+      {%- endif -%}
+    {%- else -%}
+      {{ mobile_video }}
+    {%- endif -%}
+  </div>
+  {% endif %}
+
+  <div class="block-abtl block-fh block-12/12">
+    <div 
+      class="block-grid block-grid--index block-fh flex flex row-wrap
+      {{ settings.desktop__vertical }}  {{ settings.desktop__horizontal }} {{ settings.desktop__text_align }}
+      {{ settings.mobile__vertical }} {{ settings.mobile__horizontal }} {{ settings.mobile__text_align }}">
+      <div class="{{ contentWrapperClass }} {% if settings.mobile__vertical == '@mobile__align-top' %}pt-48{% endif %}"> 
+      
+        {% if desktop_heading != blank or mobile_heading != blank %}
+          {% assign heading_class = 'h-style h-style--accent t-xxl f-w500 lh-r @mobile__t-xl' %}
+          {% if settings.h1  %}
+          <h1 class="{{ heading_class }}">
+            {{ desktop_heading }}
+            {{ mobile_heading }}
+          </h1>
+          {% else %}
+          <h2 class="{{ heading_class }}">
+            {{ desktop_heading }}
+            {{ mobile_heading }}
+          </h2>
+          {% endif %}
+        {% endif %}
+
+        {% if desktop_parapgraph != blank %}  
+          {{ desktop_parapgraph }}
+        {% endif %}
+
+        {% if mobile_paragraph != blank %}
+          {{ mobile_paragraph }}
+        {% endif %}  
+
+        {%- liquid
+          assign force_cta_bottom = ''
+          if settings.force_cta_bottom == true and settings.mobile__vertical != '@mobile__align-bottom'
+            assign force_cta_bottom = 'ghs__force-cta-bottom'
+          endif
+        -%}
+
+        {% if desktop_cta != blank or  mobile_cta != blank %}
+        <div class="flex{{ desktop__cta_alignment }} {{ mobile__cta_alignment }} {{ force_cta_bottom }}">
+          {% if desktop_cta != blank %}
+            {{ desktop_cta }}
+          {% endif %}
+          {% if mobile_cta != blank %}
+            {{ mobile_cta }}
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>  
+    </div>
+  </div>
+</div>

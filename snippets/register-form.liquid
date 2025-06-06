@@ -21,7 +21,7 @@
     {{ form.errors | default_errors }}
 	{%- endif -%}
     <label for="FirstName" class="hidden-label">{{ 'customer.register.first_name' | t }}</label>
-    <input type="text" name="customer[first_name]" id="FirstName" class="input-full" placeholder="{{ 'customer.register.first_name' | t }}" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus>
+    <input type="text" name="customer[first_name]" id="FirstName" class="input-full" placeholder="{{ 'customer.register.first_name' | t }}" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words">
     <label for="LastName" class="hidden-label">{{ 'customer.register.last_name' | t }}</label>
     <input type="text" name="customer[last_name]" id="LastName" class="input-full" placeholder="{{ 'customer.register.last_name' | t }}" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocapitalize="words">
     <label for="Email" class="hidden-label">{{ 'customer.register.email' | t }}</label>
@@ -34,16 +34,48 @@
                            validationHintText="{{ 'customer.password_validation_hint' | t }}">
     </global-password-input>
     <button type="submit" class="btn btn--xlarge btn--full">{{ 'customer.register.submit' | t }}</button>
-    <div>
+
+    <div class="flex column-nowrap">
       <div class="checkbox">
         <input type="checkbox" required id="register_terms">
         <label for="register_terms">
-          	<small>
-              {{ 'customer.register.agree' | t }}
-              <a class="js-policy-fancybox" href="/policies/terms-of-service">{{ 'customer.register.tos' | t }}</a> &
-          	  <a class="js-policy-fancybox" href="/policies/privacy-policy">{{ 'customer.register.privacy' | t }}</a>.
-          	</small>
+          <small>
+            {{ 'customer.register.agree' | t }}
+            <a class="js-policy-fancybox" href="/policies/terms-of-service">{{ 'customer.register.tos' | t }}</a> &
+            <a class="js-policy-fancybox" href="/policies/privacy-policy">{{ 'customer.register.privacy' | t }}</a>.
+          </small>
         </label>
       </div>
+
+      {%- assign isKlaviyo = false -%}
+      {%- if settings.klaviyo_list_id != blank and settings.klaviyo_api != blank -%}
+        {%- assign isKlaviyo = true -%}
+      {%- endif -%}
+
+      {%- if settings.legal__nl_signup_on_register__show -%}
+        {%- if isKlaviyo -%}
+          <account-register-email-capture
+            list_id="{{ settings.klaviyo_list_id }}"
+            key="{{ settings.klaviyo_api }}">
+            <div class="checkbox">
+              <input type="checkbox" name="customer[accepts_marketing]" id="accepts_marketing"/>
+              <label for="accepts_marketing">
+                <small>{{ settings.legal__nl_signup_on_register__text }}</small>
+              </label>
+            </div> 
+          </account-register-email-capture>
+        {%- else -%}
+          <div class="accepts-marketing">
+            <div class="checkbox">
+              <input type="checkbox" name="customer[accepts_marketing]" id="accepts_marketing" />
+              <label for="accepts_marketing">
+                <small>{{ settings.legal__nl_signup_on_register__text }}</small>
+              </label>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <input type="hidden" name="customer[accepts_marketing]" value="false" />
+      {%- endif -%}
     </div>
 {% endform %}

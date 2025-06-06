@@ -177,7 +177,8 @@ export class GlobalSampleThumb extends HTMLElement {
       (customer.required?.new_customer_only && (!customer.current?.id || customer.current.orders_count > 0)) ||
       (customer.required?.existing_customer_only && (
         !customer.current?.id || customer.current.orders_count <= 1 
-      ))
+      )) || 
+      (customer.current && !customer.required.logic_allow_reorder && customer.current.upsell_offer_id_history?.offerIds?.some( offer_id => offer_id == validation.offer_id))
     ) : false
     
     // sesssion param visibility

@@ -1,0 +1,19 @@
+<sidebar-cart-section>
+  <template data-settings>
+    {
+      "id":{{ section.id | json }},
+      "observer_key":{{ section.id | json }}
+    }
+  </template>
+  <template data-content>
+    <global-cart-progress-bar class="d-block cart-progress-bar--small cell-l cell-r ct--d3 cb--d3" observer_key="{{ section.id }}"></global-cart-progress-bar>
+  </template>
+</sidebar-cart-section>
+
+{% schema %}
+{ 
+  "name":"sb-cart/progress-bar",
+  "settings": [
+  ]
+}
+{% endschema %}

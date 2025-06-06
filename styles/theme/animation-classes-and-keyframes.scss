@@ -1,0 +1,8 @@
+.is-transitioning {
+  display: block !important;
+  visibility: visible !important; }
+
+/*================ #Icons ================*/
+svg.icon:not(.icon--full-color) .icon-error__symbol,
+symbol.icon:not(.icon--full-color) .icon-error__symbol {
+  fill: #ffffff; }

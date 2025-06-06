@@ -1,3 +1,5 @@
+<!-- snippets/product-grid-item-overlay-testing.liquid -->
+
 {%- assign product_subtitle = product.metafields.sf_product_hero.sub_heading -%}
 {%- assign product_description = product.metafields.sf_product_hero.description -%}
 {%- assign product_size = product.metafields.sf_product_hero.size -%}
@@ -93,54 +95,16 @@
       
         <div class="wayfx-product__details">
             <div class="wayfx-product__actions">
-              
-              
-              <a href="{{ product.url }}#shopify-section-product-reviews" class="text-center-reviews" style="margin: 0; padding: 0;">
-                <div class="yotpo bottomLine" style="pointer-events: none;"
-                     data-product-id="{{ product.id }}">
-                  {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
-              {%- assign time_now = 'now' | date: '%s' %}
-              {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
-              {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
-              {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.catalog_bottomline_update_time | date: '%s' %}
-              {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
-              {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
-                  {%- assign yotpo_bottomline_obsolete = false %}
-              {%- else %}
-                {%- assign yotpo_bottomline_obsolete = true %}
-              {%- endif %}
-              {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
-                  {{ product.metafields.yotpo.catalog_bottomline }}
-                  {%- endif %}
-          </div>
-              </a>
-              
-              
-              {% comment %}
-                <div class="yotpo bottomLine"
-                    data-appkey="{{ settings.yotpo_api_key }}"
-                    data-domain="{{shop.permanent_domain | escape }}"
-                    data-product-id="{{ product.id }}"
-                    data-product-models="{{ product.id }}"
-                    data-name="{{ product.title | escape }}"
-                    data-url="{{ shop.url }}{{ product.url }}"
-                    data-image-url="{{ product.featured_image | product_img_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}"
-                    data-description="{{ product.description | escape }}"
-                    data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
-            
-                  <span style="border: 1px solid purple">
-                    {{ product.metafields.yotpo.richsnippetshtml }} &nbsp;&nbsp;•&nbsp;&nbsp;
-                  </span>
-                  
-                  
+              {%- if settings.yotpo_stars_instance_id != blank -%}
+                <a href="{{ product.url }}#shopify-section-product-reviews-js" class="text-center-reviews" style="margin: 0; padding: 0;">
+                  <div class="yotpo-widget-instance no-events" data-yotpo-instance-id="{{ settings.yotpo_stars_instance_id }}" data-yotpo-product-id="{{product.id}}" data-yotpo-cart-product-id="" data-yotpo-section-id="{{template.name}}"></div>
+                </a>
+              {%- endif -%}
+              {%- if product_size != blank -%}
+                <div class="wayfx-product__size" style="margin-left: 0;">
+                  {{ product_size }}
                 </div>
-              {% endcomment %}
-              
-                {% if product_size != 0 and product_size != 1 %}
-                    <div class="wayfx-product__size" style="margin-left: 0;">
-                        {{ product_size }}
-                    </div>
-                {% endif %}
+              {%- endif -%}
             </div>
           	{%- if low_stock -%}
           		<div class="wayfx-product__low-stock-wrap">

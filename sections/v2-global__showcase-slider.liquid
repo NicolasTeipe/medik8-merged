@@ -1,0 +1,293 @@
+{% assign components = 'scripts.components.dist.GlobalShowcaseSlider.js' | asset_url %}
+
+{% capture content %}
+  <div class="gss-container flex column-nowrap gap" style="background-color:{{ section.settings.section_bg_color }}">
+    {% if section.settings.heading != blank %}
+      {% render 'v2_global.section_heading' , heading: section.settings.heading %}
+    {% endif %}
+
+    <div class="gss__parent-container cell-l cell-r block-grid block-grid--index">
+      <global-showcase-slider>
+        <template>
+          {
+            "slidesCtaBlockContent": [
+              {%- for block in section.blocks -%}
+                {
+                  "heading": "{{ block.settings.header }}",
+                  "subheading": "{{ block.settings.subheader }}",
+                  "buttonText": "{{ block.settings.button_text }}",
+                  "buttonUrl": "{{ block.settings.button_url }}"
+                }
+                {% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ],
+            "features": {
+              "animateOnDrag": {{ section.settings.animate_on_drag }}
+            }
+          }
+        </template>
+
+        <global-carousel>
+          <template>
+            {
+              "options":{ 
+                "loop": true,
+                "skipSnaps": true
+              }
+            }
+          </template>
+
+            <div class="block-grid global-carousel__items block-rel">
+              <div class="global-carousel__container gss__carousel align-center row--d2">
+                {%- for block in section.blocks -%}
+                  <div class="block-ar-1 block-objc gss__slide" data-distance="{% if forloop.index == "1" %}0{% endif %}">
+                    {%- assign image_alt = block.settings.image.alt | default: block.settings.header -%}
+                    {{ block.settings.image | 
+                      image_url: width: 800 | 
+                      image_tag: 
+                      widths: '256, 512, 1024',
+                      loading: 'lazy', 
+                      class: '',
+                      image_alt: image_alt
+                    }}
+                  </div>
+                {%- endfor -%}
+              </div>
+
+
+              <button aria-label="Previous slide" class="js-gss__prev gss__nav gss__nav--prev">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+                </svg>
+              </button>
+              <button aria-label="Next slide" class="js-gss__next gss__nav gss__nav--next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9.99999 6.69225L15.3077 12L9.99999 17.3078L9.29224 16.6L13.8922 12L9.29224 7.4L9.99999 6.69225Z" fill="black"/>
+                </svg>
+              </button>
+            </div>
+
+        </global-carousel>
+
+        <div class="gss-cta-block flex flex-dir-col justify-center block-5/12 block-c tac"></div>
+
+      </global-showcase-slider>
+
+    </div>
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }} .gss-container {
+      margin-top: {{ section.settings.mb_margin_top }}px;
+      margin-bottom: {{ section.settings.mb_margin_bottom }}px;
+      padding-top: {{ section.settings.mb_padding_top }}px;
+      padding-bottom: {{ section.settings.mb_padding_bottom }}px;
+    }
+
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .gss-container {
+        margin-top: {{ section.settings.dt_margin_top }}px;
+        margin-bottom: {{ section.settings.dt_margin_bottom }}px;
+        padding-top: {{ section.settings.dt_padding_top }}px;
+        padding-bottom: {{ section.settings.dt_padding_bottom }}px;
+      }
+    }
+  </style>
+{% endcapture %}
+
+{% assign components =  components | split:',' %}
+{% if section.settings.lazyrender %}
+  <global-section-loader>
+    <template data-settings>
+      {
+        "components":{{ components | json }}
+      }
+    </template>
+      <template data-content>
+        {{ content }} 
+      </template>
+  </global-section-loader>
+
+{% else %}
+  {{ content }}
+  {% for component in components %}
+    <script src="{{ component }}" async></script>
+  {% endfor %}
+{% endif %}
+
+{% schema %}
+{
+  "name":"V2/GBL/showcase-slider",
+  "presets": [ 
+    {
+      "name": "V2/GBL/showcase-slider"
+    }
+  ],
+  "settings":[
+   
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyrender",
+      "label": "Lazy render this content",
+      "info": "Use for sections that are below the fold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background Color",
+      "default":"#fff"
+    },
+    {
+      "type": "header",
+      "content": "Layout: Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "mb_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Layout: Desktop"
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_top",
+      "label": "Margin - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_margin_bottom",
+      "label": "Margin - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_top",
+      "label": "Padding - top",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "range",
+      "id": "dt_padding_bottom",
+      "label": "Padding - bottom",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "header",
+      "content": "Experimental Features"
+    },
+    {
+      "type": "paragraph",
+      "content": "Use with caution"
+    },
+    {
+      "type": "checkbox",
+      "id": "animate_on_drag",
+      "label": "Animate On Drag",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Block",
+      "name": "Slide",
+      "limit": 9,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "header",
+          "label": "Header"
+        },
+        {
+          "type": "text",
+          "id": "subheader",
+          "label": "Subheader"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button Url"
+        }
+      ]
+    }  
+  ]
+}
+{% endschema %}

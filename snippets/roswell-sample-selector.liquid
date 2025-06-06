@@ -40,7 +40,7 @@
   {% assign sample_threshold = settings.sample_threshold | times: 100 %}
   <div class="sample-selector accordion-item--open">
     <div class="sample-selector-title">
-      Elige {{ max_sample }} Muestra Gratis
+      Choose Your {{ max_sample }} Free Samples
     </div>
     {% if settings.sample_collection != blank %}
       <div class="sample-selector-container">
@@ -53,7 +53,7 @@
           {% endfor %}
           {% assign remain_sample = max_sample | minus: sample_added %}
           {% if remain_sample > 0 %}
-            Elige {{ remain_sample }} Muestra{%- if remain_sample > 1 -%}s{%- endif -%} Gratis
+            Select {{ remain_sample }} more Free Sample{%- if remain_sample > 1 -%}s{%- endif -%}
           {% endif %}
         </div>
         <div class="sample-selector-inner-container">
@@ -77,12 +77,12 @@
               {% endfor %}
     
               <div class="sample-product" data-id="{{ product.selected_or_first_available_variant.id }}">
-                
+                <a href="{{ product.url }}">
                   <img loading="lazy" width="581" height="581" src="{{ product.featured_image.src | image_url }}" alt="{{ product.featured_image.alt | escape }}">
                   <p class="sample-title">
                     {{ product.title }}
                   </p>
-                
+                </a>
                 {% if product_size %}
                   <p class="sample-size">
                     {{ product_size }}
@@ -94,14 +94,14 @@
                   <input type="hidden" name="properties[_RoswellSample]" value="true" />
                   <button class="js-roswell__addToCart btn--full btn--outline {% if in_cart %}hide{% endif %}"
                           onClick="GlobalCartMain.addProductFromButton(event)">
-                    <span class="text">Añadir</span>
+                    <span class="text">Add</span>
                   </button>
                   {% if template == 'cart' %}
                     <a class="js-roswell__removeFromCart btn--full btn--outline ajaxcart__qty--remove icon-fallback-text {% unless in_cart %}hide{% endunless %}" href="/cart/change?line={{line}}&amp;quantity=0">
-                      <span class="text">Quitar</span>
+                      <span class="text">Remove</span>
                     </a>
                   {% else %}
-                    <button class="js-roswell__removeFromCart btn--full btn--outline ajaxcart__qty--remove icon-fallback-text {% unless in_cart %}hide{% endunless %}" data-id="{{key}}" data-qty="1" data-line="{{line}}" onClick="return false;"><span class="text">Quitar</span></button>
+                    <button class="js-roswell__removeFromCart btn--full btn--outline ajaxcart__qty--remove icon-fallback-text {% unless in_cart %}hide{% endunless %}" data-id="{{key}}" data-qty="1" data-line="{{line}}" onClick="return false;"><span class="text">Remove</span></button>
                   {% endif %}
                 </form>
               </div>

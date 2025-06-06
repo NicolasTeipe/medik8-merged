@@ -108,11 +108,9 @@
   .fancybox-slide--html {
     padding: 1em !important; } }
 
-.recharge-heading-h1 {
-  font-size: inherit;
-  text-transform: uppercase; }
-
-.recharge-heading-h2 {
+.recharge-heading-h1,
+.recharge-heading-h2,
+.recharge-button {
   font-size: inherit;
   text-transform: uppercase; }
 
@@ -120,8 +118,6 @@
   font-size: inherit; }
 
 .recharge-button {
-  font-size: inherit;
-  text-transform: uppercase;
   border-radius: 0.25rem; }
   .recharge-button:hover {
     background-color: inherit;
@@ -132,3 +128,6 @@
     .recharge-button-secondary:hover {
       background-color: #000000;
       color: #ffffff; }
+
+.recharge-card {
+  padding: 10px; }

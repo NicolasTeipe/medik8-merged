@@ -1,5 +1,6 @@
-<style>
+<!-- snippets/quick-view-item-script.liquid -->
 
+<style>
   .quick-view-item {
     transition: .33s all ease;
   }
@@ -122,6 +123,9 @@
           return
         }
 
+        // upd with sitewide pricing, if applicable
+        content = sitewide ? await sitewide.updateQuickView(content) : content
+
         modal = window.quickShopModals[url] = new ModalBox({
           content: content,
           settings: {
@@ -175,17 +179,9 @@
           })
         }
       }
-      const {YotpoObserver} = await import({{ 'scripts.globalYotpoInstagramFeed.js' | asset_url | json }})
-      const yotpo$ = window.yotpo$ = window.yotpo$ || new YotpoObserver()
-      // todo, replace with .once() pattern when observerv2 rolled out
-      if(yotpo$.yotpoAPI){
-        yotpo$.yotpoAPI.refreshWidgets()
+      if (window.yotpoWidgetsContainer !== undefined) {
+        window.yotpoWidgetsContainer.initWidgets()
         this.addReviewClickListener()
-      }else{
-        yotpo$.observer$.subscribe( () => {
-          yotpo$.yotpoAPI$.refreshWidgets()
-          this.addReviewClickListener()
-        })
       }
       const select = this.querySelector('.js-prod-qv__select')
       if(select){
@@ -193,8 +189,10 @@
           const selected = e.currentTarget.selectedOptions[0]
           this.onVariantChange(selected)
         })
-        this.onVariantChange(select.selectedOptions[0])
+        // this.onVariantChange(select.selectedOptions[0])
       }
+
+      this.showLowStockLabel = '{{ settings.low_stock_label }}' === 'true';
     }
 
     addReviewClickListener(){
@@ -211,23 +209,39 @@
 
     onVariantChange(option){
       const prodQv_image = this.querySelector('.js-prod-qv__image'),
-            prodQv_stock = this.querySelector('.js-prod-qv__low-stock'),
             prodQv_atc = this.querySelector('.js-prod-qv__atc'),
             prodQv_price = this.querySelector('.js-prod-qv__price')
 
-      const {disabled,lowStock,title,image,price,discountedPrice} = option.dataset
+      const atbButtonInStock =
+        '<span class="text">{{ 'products.product.add_to_cart' | t }}</span><span class="js-prod-qv__low-stock f-w600 hide"> - {{ 'products.product.low_stock' | t }}</span>'
+
+      const { disabled, lowStock, title, image, price, label, discountedPrice } =
+        option.dataset;
+
       prodQv_image.src = image ? image : prodQv_image.src
-      prodQv_price.innerHTML = discountedPrice ? `<s>${price}</s>${discountedPrice}` : `${price}`
-      prodQv_stock.style.display = prodQv_stock == 'true' ? 'block' : 'none'
+      prodQv_price.innerHTML = price
       if(disabled == 'true'){
         prodQv_atc.setAttribute('disabled',true)
       }else{
         prodQv_atc.removeAttribute('disabled')
       }
-      prodQv_atc.innerHTML = disabled != 'true' ? '<span class="text">{{ 'products.product.add_to_cart' | t }}</span>' : '{{ 'products.product.sold_out' | t }}'
-    }
+      prodQv_atc.innerHTML =
+        disabled != 'true'
+          ? atbButtonInStock
+          : '{{ 'products.product.sold_out' | t }}'
 
-  
+      if (this.showLowStockLabel) {
+        const prodQv_stock = this.querySelector('.js-prod-qv__low-stock');
+        prodQv_stock.classList.toggle('hide', lowStock !== 'true');
+      }
+
+      // update label
+      const currentLabel = this.querySelector('.label-wrapper')
+      if(currentLabel && label){
+        const labelNode = new DOMParser().parseFromString(label, 'text/html')
+        currentLabel.replaceWith(labelNode.body.firstChild)
+      }
+    }
   }
   
   customElements.define('global-product-quick-view', GlobalProductQuickView);

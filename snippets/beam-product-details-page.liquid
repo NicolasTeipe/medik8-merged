@@ -1,0 +1,36 @@
+<script
+  type="module"
+  async
+  crossorigin
+  data-em-disable
+  src="https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/components/product-details-page.esm.js"
+></script>
+
+<div
+  class="beam-sync-visibility"
+  data-beam-widget="product-details-page"
+  style="display:none; z-index:999"
+>
+  <beam-product-details-page
+    apiKey="{{ settings.beam_api_key }}"
+    storeId="{{ settings.beam_store_id }}"
+  ></beam-product-details-page>
+</div>
+
+<!-- -->
+<!-- Move the widget next to a parent element -->
+<!--  -->
+<script type="module" async crossorigin>
+  import { waitForElement } from "https://sdk.beamimpact.com/web-sdk/{{ settings.beam_sdk_version }}/dist/integrations/utils.esm.js";
+  const parentElementTarget = ".js-product-form-wrapper";
+
+  await waitForElement(parentElementTarget);
+  const targetElement = document.querySelector(parentElementTarget);
+  const beamWidget = document.querySelector('[data-beam-widget="product-details-page"]');
+
+  // Add the Beam widget into the parent element
+  if (targetElement && beamWidget) {
+    targetElement.appendChild(beamWidget);
+    beamWidget.style.display = "block";
+  }
+</script>

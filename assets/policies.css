@@ -6,3 +6,14 @@
 .shopify-policy__container a {
   color: #0000EE;
 }
+
+.shopify-policy__container {
+  overflow: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS */
+}

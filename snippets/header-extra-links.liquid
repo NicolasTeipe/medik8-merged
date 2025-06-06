@@ -3,11 +3,11 @@
   {% when 'desktop' %}
 
     <section class="wayfx-header__extra-links wayfx-header__extra-links--desktop">
-        <div class="wayfx-wrapper">
+        <div class="flex block-grid--index block-c cell-l cell-r">
           <div class="wayfx-header__extra-links__left">
-            {% if settings.country_selector_enabled %}
-              {% render 'country-selector' %}
-            {% endif %}
+            {%- if settings.country_selector_enabled -%}
+              {%- render 'country-selector', show_full_name: true -%}
+            {%- endif -%}
           </div>
           <div class="wayfx-header__extra-links__right">
             <div class="wayfx-header__extra-links__links">
@@ -34,9 +34,9 @@
 	<div class="wayfx-header__extra-links wayfx-header__extra-links--mobile">
       <div class="wayfx-header__row">
         <div class="wayfx-header__left">
-          {% if settings.country_selector_enabled %}
-            {% render 'country-selector' %}
-          {% endif %}
+          {%- if settings.country_selector_enabled -%}
+            {%- render 'country-selector', show_full_name: true -%}
+          {%- endif -%}
         </div>
         <div class="wayfx-header__right">
           <ul>

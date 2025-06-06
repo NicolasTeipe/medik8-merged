@@ -1,0 +1,26 @@
+{
+  "cart":{{ cart | json }},
+  "selling_plan_groups":[
+    {% for item in cart.items %}
+      {% assign selling_plan_group = false %}
+      {% for group in item.product.selling_plan_groups %}
+        {% if item.variant.selling_plan_allocations.first.selling_plan_group_id  == group.id %}
+          {% assign selling_plan_group = group %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      {
+        "variant_id":{{ item.variant_id | json }},
+        "selling_plan_group":{{ selling_plan_group | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "badges": [
+    {% for item in cart.items %}
+      {
+        "variant_id":{{ item.variant_id | json }},
+        "badge": {{ item.variant.metafields.custom.badge | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}   

@@ -1,0 +1,260 @@
+{%- assign b64_1px = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Ww8AAn8BfiZXqxQAAAAASUVORK5CYII=" -%}
+
+{% assign product_handles = section.settings.products | map: 'handle' %}
+
+{%- comment -%} check sitewide {%- endcomment -%}
+{%- if settings.site_wide__enabled and settings.site_wide__label_enabled %}
+  {%- unless settings.vip-pricing and settings.discounts__vip_code  != '' -%}
+    {%- capture sitewide_value -%}
+      {{- settings.site_wide__percentage -}}
+    {%- endcapture -%}
+  {%- endunless -%}
+{%- endif -%}
+
+
+<recommended-products
+    class="rec-products--{{ section.id }}"
+    product-id="{{ product.id }}"
+    currency="{{ cart.currency.symbol }}"
+    compare-label="{{ settings.compare_at_label_text }}"
+    sitewide="{{ sitewide_value }}"
+    product-handles='{{ product_handles | json }}'>
+    <h6 class="rec-products__title h-style f-w500 lh-reset tac">{{ section.settings.title }}</h6>
+    <div class="rec-products__para t-s h-style lh-m tac">
+    {{ section.settings.paragraph }}
+  </div>
+
+  {%- comment -%}
+    All product cards load blank and content is added via js after data is pulled in from API.
+    Due to how content is added, this productCard isn't suitable for use as a general PC template.
+  {%- endcomment -%}
+  <ul class="rec-products__wrapper block-oh ticklist">
+    {% for i in (1..4) %}
+      <li class="rec-products__wrapper--li keen-slider__slide">
+        <div class="js-product-card product-card--{{ section.id }}">
+          <a href="/" class="js-img js-href d-block block-rel">
+            <div class="label-wrapper" data-type="product-card"></div>
+            <img src="{{ b64_1px }}"
+              alt="Recommended Product {{ forloop.index }}"
+              width="400"
+              height="400"
+              loading="lazy"
+              class="product-card__image d-block">
+          </a>
+          <a href="/" class="js-href js-pc_title product-card__title d-block lh-reset t-ucase hide-on-load"></a>
+          <div class="js-pc-subheading product-card__subheading t-xxs f-w400 lh-m hide-on-load"></div>
+          <a href="/" aria-label="Product card reviews" class="js-href js-pc_reviews product-card__reviews d-block yotpo hide-on-load"></a>
+
+          {%- comment -%} Old price / size element - keep for reference
+            <div class="product-card__price-wrapper t-xxs f-w400 l-hm hide-on-load">
+              <span class="js-pc_size product-card__size"></span>
+              <span class="js-pc_price product-card__price"></span>
+            </div>
+          {%- endcomment -%}
+
+          <select name="options" id="options" title="variant selector" class="block-12/12 row-top"></select>
+
+          <button data-variant-id=""
+                  class="btn--full btn--outline atb"
+                  onClick="GlobalCartMain.addProductFromButton(event)">
+            <span>{{ 'products.product.add_to_cart' | t }}</span>
+            <span class="js-price"></span>
+          </button>
+        </div>
+      </li>
+    {%- endfor -%}
+  </ul>
+  
+</recommended-products>
+
+<script src="{{ 'f-recommended-products.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  {%- assign mobile-padding = section.settings.mobile-padding | plus: 100 | divided_by: 100.0 -%}
+
+  /* ----- Section outer / wrapper ----- */
+
+  #shopify-section-{{ section.id }} {
+    background-color: var(--color-grey)
+  }
+
+  .rec-products--{{ section.id }} {
+    display: block;
+    max-width: {{ section.settings.max-width }}px;
+    margin: auto;
+    padding: {{ section.settings.padding_top | times: mobile-padding | round: 0 }}px 0 {{ section.settings.padding_bottom | times: mobile-padding | round: 0 }}px 24px;
+    color: #111111;
+  }
+
+  .rec-products--{{ section.id }} .rec-products__title {
+    margin-bottom: 25px;
+    padding-right: 24px;
+    font-family: var(--font-accent);
+    font-size: 30px;
+  }
+
+  .rec-products--{{ section.id }} .rec-products__para {
+    width: 100%;
+    margin-bottom: 30px;
+    padding-right: 24px;
+  }
+
+  .rec-products--{{ section.id }} .rec-products__para cite{
+    font-size: 9px;
+    font-style: normal;
+    padding-top: 5px;
+  }
+
+  .rec-products--{{ section.id }} .rec-products__wrapper {
+    display: flex;
+    margin-bottom: 0;
+  }
+
+  .rec-products--{{ section.id }} .rec-products__wrapper--li {
+    margin-bottom: 0;
+    padding-bottom:2px;
+  }
+
+  @media all and (min-width: 768px) {
+    .rec-products--{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 48px {{ section.settings.padding_bottom }}px;
+    }
+
+    .rec-products--{{ section.id }} .rec-products__title {
+      margin-bottom: 30px;
+      padding-right: 0;
+      font-size: 40px;
+    }
+
+    .rec-products--{{ section.id }} .rec-products__para {
+      width: 50%;
+      margin: 0 auto 50px;
+      padding-right: 0;
+      font-size: 16px;
+    }
+
+    .rec-products--{{ section.id }} .rec-products__para cite{
+      font-size: 10px;
+    }
+
+    .rec-products--{{ section.id }} .rec-products__wrapper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 1fr;
+      grid-column-gap: 12px;
+      grid-row-gap: 0px;
+    }
+  }
+
+  @media all and (min-width: 1024px) {
+    .rec-products--{{ section.id }} .rec-products__wrapper {
+      grid-column-gap: 0;
+    }
+
+    .rec-products--{{ section.id }} .rec-products__wrapper--li {
+      padding-right: 12px;
+    }
+  }
+
+  /* ----- Product Card ----- */
+
+  .product-card--{{ section.id }} .product-card__image {
+    max-width: 100%;
+    margin-bottom: 16px;
+    border-radius: 5px;
+  }
+
+  .product-card--{{ section.id }} .product-card__badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background-color: var(--color-grey);
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 5px 12px;
+  }
+
+  .product-card--{{ section.id }} .hide-on-load {
+    display:none;
+  }
+  
+  .product-card--{{ section.id }} .product-card__title {
+    font-family: "ridley_groteskmedium";
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+  }
+  
+  .product-card--{{ section.id }} .product-card__subheading {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .product-card--{{ section.id }} .star-clickable {
+    flex-direction: row !important;
+  }
+
+  .product-card--{{ section.id }} .product-card__price-wrapper {
+    margin-top: 14px;
+  }
+
+  .product-card--{{ section.id }} .product-card__size:after {
+    content: "|";
+    margin: 0 7px 0 10px;
+  }
+
+  .product-card--{{ section.id }} .product-card__price s {
+    margin-right: 10px;
+  }
+
+  .product-card--{{ section.id }} .product-card__price span {
+    font-family: "ridley_groteskmedium";
+    font-weight: 500;
+  }
+
+  .product-card--{{ section.id }} .star-clickable .text-m {
+    font-size: 12px;
+  }
+
+  .product-card--{{ section.id }} select {
+    margin-bottom: 14px;
+    padding: 11px 10px 8px 20px;
+    font-size: 14px;
+    background-size: 14px;
+  }
+
+  .product-card--{{ section.id }} select.single {
+    background-image: none;
+    background-color: #fff;
+    border-color: #c7c7c7;
+    opacity: 1;
+  }
+
+  .product-card--{{ section.id }} button {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 20px 11px 20px;
+    font-size: 12px;
+  }
+
+  @media all and (min-width: 768px) {
+    .product-card--{{ section.id }} .product-card__badge {
+      bottom: 16px;
+      left: 16px;
+    }
+
+    .product-card--{{ section.id }} .product-card__title {
+      font-family: "ridley_groteskregular";
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .product-card--{{ section.id }} .product-card__subheading {
+      width: 65%;
+    }
+  }
+</style>

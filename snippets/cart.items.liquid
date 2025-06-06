@@ -1,0 +1,26 @@
+<cart-items class="flex column-wrap flex-grid--d2">
+  <template>
+    {
+      "translations":{
+        "product":{
+          "free_sample":{{ 'cart.product.free_sample' | t | json }},
+          "free_gift":{{ 'cart.product.free_gift' | t | json }},
+          "birthday_gift":{{ 'cart.product.birthday_gift' | t | json }},
+          "bundle":{{ 'cart.product.bundle' | t | json }},
+          "subscription":{{ 'cart.product.subscription' | t | json }},
+          "remove":{{ 'cart.general.remove' | t | json }}
+        }
+      },
+      "empty":{
+        "cart_empty_header":{{ settings.cart_empty_header | json }},
+        "cart_empty_message":{{ settings.cart_empty_message | json }},
+        "cart_empty_cta_text":{{ settings.cart_empty_cta_text | json }},
+        "cart_empty_cta_url":{{ settings.cart_empty_cta_url | json }}
+      },
+      "subscriptions":{
+        "show":{{ settings.cart__subscriptions__show | json }},
+        "button_text":{{ settings.cart__subscriptions__button_text | json }}
+      }
+    }
+  </template>
+</cart-items>
