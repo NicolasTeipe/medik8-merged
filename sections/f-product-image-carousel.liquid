@@ -1,0 +1,139 @@
+<div class="product-image-container">
+  <div class="active-image">
+    <div class="pinch-zoom">
+      {% assign first_image = product.images | first %}
+      <img src="{{ first_image | image_url: width: 600 }}">
+      <video class="hide"></video>
+    </div>
+  </div>
+  <ul class="keen-slider product-image-carousel">
+    {% for image in product.images %}
+      {% assign index = forloop.index %}
+      {% for block in section.blocks %}
+        {% if index == block.settings.index %}
+          <li class="keen-slider__slide product-image-carousel__slide" data-video="{{ block.settings.video }}">
+            {{ block.settings.thumbnail | image_url: width: 60 | image_tag }}
+          </li>
+        {% endif %}
+      {% endfor %}
+      <li class="keen-slider__slide product-image-carousel__slide" data-image="{{ image | image_url: width: 600 }}">
+        {{ image | image_url: width: 60 | image_tag }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<style>
+  .active-image {
+    overflow: hidden;
+    position: relative;
+    height: 600px;
+    width: 100%;
+  }
+  .product-image-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .product-image-carousel ul { list-style: none; }
+  .product-image-carousel li { display: inline-block; }
+  @media screen and (min-width: 768px) {
+    .product-image-container { flex-direction: row; }
+    .product-image-carousel {
+      max-height: 300px;
+      max-width: 60px;
+    }
+    .product-image-carousel { order: 0; }
+    .active-image { order: 1; }
+    .active-image.is-expanded, .active-image.is-expanded img { width: 100%; }
+    .active-image.is-expanded ~ .product-image-carousel { display: none; }
+  }
+</style>
+
+<script>
+  // Handle clicking of images on carousel
+  [...document.querySelectorAll('.product-image-carousel__slide')].forEach(slide => {
+    slide.addEventListener('click', () => {
+      const image = document.querySelector('.active-image img');
+      const video = document.querySelector('.active-image video');
+
+      video.classList.add('hide');
+      image.classList.remove('hide');
+
+      if(slide.dataset.image) image.src = slide.dataset.image;
+      if(slide.dataset.video) {
+        video.src = slide.dataset.video;
+        video.classList.remove('hide');
+        image.classList.add('hide');
+      }
+    });
+  });
+
+  // Handle desktop product image zoom
+  const activeImage = document.querySelector('.active-image');
+  activeImage.addEventListener('click', e => {
+    if(window.innerWidth < 768) return;
+    activeImage.classList.toggle('is-expanded');
+    document.querySelector('.product-image-container .navigation-wrapper').classList.toggle('hide');
+  });
+</script>
+
+<script type="module">
+  import { KSnavigation } from {{ "scripts.keenSlider.plugins.js" | asset_url | json }}
+
+  document.addEventListener('DOMContentLoaded', () => {
+    window.productImageCarousel = new KeenSlider('.product-image-carousel', {
+      loop: false,
+      vertical: false,
+      slides: { perView: 6 },
+      breakpoints: {
+        '(min-width: 768px)': { vertical: true, slides: { perView: 8 } }
+      }
+    }, [KSnavigation]);
+  });
+</script>
+
+<script type="module">
+  import PinchZoom from {{ 'pinch-zoom.js' | asset_url | json }}
+
+  // Initialise PinchZoom on active image container
+  const activeImage = document.querySelector('.pinch-zoom');
+  const pz = new PinchZoom(activeImage, {
+    minZoom: 1,
+    draggableUnzoomed: false
+  });
+  pz.enable();
+</script>
+
+{% schema %}
+  {
+    "name": "Product:Image Carousel",
+    "blocks": [
+      {
+        "name": "Video",
+        "type": "video_slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "thumbnail",
+            "label": "Thumbnail"
+          },
+          {
+            "type": "text",
+            "id": "video",
+            "label": "Video"
+          },
+          {
+            "type": "number",
+            "id": "index",
+            "label": "Position in carousel"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Product:Image Carousel"
+      }
+    ]
+  }
+{% endschema %}

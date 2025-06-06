@@ -5,18 +5,15 @@
       <ul class="js-faq-list content">
         {%- for block in section.blocks -%}
           <li class="js-faq faq hidden block-noselect block-rel">
-            <h6>{{ block.settings.question | replace: '[sup]', '<sup>' | replace: '[/sup]', '</sup>'}}</h6>
+            <h6>{{ block.settings.question }}</h6>
             <div class="faq-toggle-icon" data-state="plus">+</div>
-            {{ block.settings.answer | replace: '[sup]', '<sup>' | replace: '[/sup]', '</sup>' }}
+            {{ block.settings.answer }}
           </li>
         {%- endfor -%}
       </ul>
     </details>
   </faqs-x>
 {% endif %}
-
-{% render 'f-product.sections-data-layer' %}
-
 <script>
   class Faqs extends HTMLElement {
     constructor() {
@@ -24,15 +21,7 @@
     }
 
     connectedCallback() {
-      if(this.mounted){
-        return
-      }
-      this.mounted = true
-      DomReadyPromise().then( () => {
-        this.addFaqToggles()
-      }).catch(err => {
-        console.log(err)
-      })
+      this.addFaqToggles()
     }
 
     addFaqToggles() {

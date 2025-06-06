@@ -6,7 +6,7 @@
   padding: 0;
   position: sticky;
   position: -webkit-sticky;
-  bottom: 0;
+  top: 102px;
   z-index: 98; }
   @media (max-width: 768px) {
     .below-header-msg-bar.modal-open {
@@ -15,6 +15,14 @@
 @media all and (min-width: 1023px) {
   .below-header-msg-bar__slider {
     justify-content: center; } }
+
+@media all and (max-width: 1024px) {
+  .below-header-msg-bar {
+    top: 68px; } }
+
+@media all and (max-width: 767px) {
+  .below-header-msg-bar {
+    top: 73px; } }
 
 .below-header-msg-bar__message {
   display: flex;
@@ -62,7 +70,7 @@
   line-height: 1.4;
   font-family: ridley_groteskmedium,sans-serif; }
 
-#shopify-section-header-below .below-header-msg-bar__message a {
+.below-header-msg-bar__message a {
   color: #fff;
   text-decoration: underline; }
 
@@ -84,6 +92,3 @@
     display: none; }
   .keen-slider:not([data-keen-slider-disabled]) .keen-slider__slide.below-header-msg-bar__message {
     width: 100%; } }
-
-.template-index.dark-mode .below-header-msg-bar {
-  color: var(--colorTextBody); }

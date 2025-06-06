@@ -1,5 +1,3 @@
-<!-- sections/f-accordion-key-ingredients.liquid -->
-
 {% if section.blocks.size > 0 %}
   <key-ingredients>
     <details class="wrapper" {{ section.settings.start_state }}>
@@ -20,9 +18,7 @@
           {%- endif -%}
 
           <li class="list-item{{ isHidden }}">
-            {%- if block.settings.icon != blank -%}
-              <img src="{{ block.settings.icon | image_url: width: 50 }}" alt="Ingredient Icon {{ forloop.index }}" class="list-item-icon" width="50" height="auto" loading="lazy">
-            {%- endif -%}
+            <img src="{{ block.settings.icon | image_url: width: 50 }}" alt="Ingredient Icon {{ forloop.index }}" class="list-item-icon" width="50" height="auto" loading="lazy">
             <div class="copy">
               <div class="ki-title">{{ block.settings.title }}</div>
               {{ block.settings.paragraph }}
@@ -31,7 +27,7 @@
 
         {%- endfor -%}
         {%- unless section.settings.full-ingredients == blank -%}
-          <li id="full-ingredients-list">{{ 'products.ingredients.full_ingredients' | t }}</li>
+          <li id="full-ingredients-list">{{ 'products.ingredients.full_ingredients' | t }} y PRECAUCIONES</li>
           <template id="ingredients-template">
             <div class="title">{{ product.title }}</div>
             <div class="subtitle">{{ product.metafields.sf_product_hero.sub_heading.value }}</div>
@@ -49,8 +45,6 @@
   {%- render 'f-accordion.content-list'
     jsObjectName:'KeyIngredients',
     customElementName:'key-ingredients' -%}
-    
-  {% render 'f-product.sections-data-layer' %}
 {% endif %}
 {% schema %}
     {

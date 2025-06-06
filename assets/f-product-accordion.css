@@ -247,7 +247,7 @@
 
 .f-accordion before-after-compare.is-expanded {
   position: fixed;
-  z-index: 999999;
+  z-index: 10000;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -383,7 +383,7 @@
   font-weight: 400;
 }
 
-.f-accordion.accordion-proven-results ul.stats li > span:first-of-type {
+.f-accordion.accordion-proven-results ul.stats li > span {
   font-size: 21px;
   min-width: 68px;
   display: inline-flex;

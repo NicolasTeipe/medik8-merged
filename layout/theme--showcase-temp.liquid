@@ -1,0 +1,110 @@
+<!doctype html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="{{ request.locale.iso_code  }}"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js" lang="{{ request.locale.iso_code  }}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{ request.locale.iso_code }}"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  {%- if settings.favicon_enable -%}
+  <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+  {%- endif -%}
+  <title>
+    {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+  {%- if page_description -%}
+  <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+  {%- render 'social-meta-tags' -%}
+  {% if template contains 'collection' %}
+  <link rel="canonical" href="{{ shop.url }}{{ collection.url }}" />
+  {% else %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  {% endif %}
+  {%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-predictive-search.css' | asset_url }}" media="print" onload="this.media='all'">
+  {%- endif -%}
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+
+  <style>
+    .wayfx-product__item .wayfx-product__grid-image img {
+      object-fit: contain !important;
+    }
+  </style>
+
+
+  {%- render 'header-scripts' -%}
+
+  {{ "discounts.css" | asset_url | stylesheet_tag }}
+
+  {{ content_for_header }}
+
+  {% render 'module-header-scripts' %}
+{% comment %}theme-check-disable{% endcomment %}
+  {% include "loyaltylion" %}
+{% comment %}theme-check-enable{% endcomment %}
+
+{% render 'analyzify-gtm-body' %}
+
+        <!-- SlideRule Script Start -->
+        {% include 'sliderule-data' %}
+        <!-- SlideRule Script End -->
+        </head>
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}" >
+
+  {% render 'quick-view-item-script' %}
+  {% render 'module-body-scripts' %}
+
+  <div id="PageContainer">
+
+    {% section 'header' %}
+    {% section 'header-below' %}
+
+    <main role="main" class="wayfx-main">
+      {{ content_for_layout }}
+    </main>
+    {%- if template == 'index' or template == 'collection' %}
+        {% section 'global-3column-cta' %}
+    {% endif %}
+    {% section 'footer' %}
+  </div>
+
+  <script src="{{ 'wayfx.js' | asset_url }}" defer></script>
+
+
+  <script>
+    AOS.init({once: true});
+  </script>
+  <script type="text/javascript">(function e(){var e=document.createElement("script");e.type="text/javascript",e.async=true,e.src="//staticw2.yotpo.com/{{ settings.yotpo_api_key }}/widget.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})();</script>
+
+
+  <script>
+    {% comment %} Moved over from dawn {% endcomment %}
+
+    window.shopUrl = '{{ shop.url }}';
+    window.routes = {
+      predictive_search_url: '{{ routes.predictive_search_url }}'
+    };
+  </script>
+
+
+  <!-- Temp mobile viewport bug fix  -->
+  <style>
+
+    .js-drawer-open-right .drawer--right {
+      max-height: 100vh;
+      max-height: -webkit-fill-available;
+    }
+
+
+    #CartContainer {
+    	height: 90% !important;
+	}
+
+  </style>
+
+  
+{% render 'discounts' %}
+
+</body>
+</html>
